@@ -1,0 +1,22 @@
+{
+  "name": "ml",
+  "version": "0.0.0",
+  "homepage": "https://github.com/mljs/ml",
+  "authors": [
+    "Michaël Zasso"
+  ],
+  "description": "Machine learning tools",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "machine",
+    "learning",
+    "data",
+    "mining",
+    "datamining"
+  ],
+  "license": "MIT"
+}
