@@ -18,5 +18,6 @@
     "mining",
     "datamining"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "ignore": ["node_modules", "gulpfile.js", "index.js"]
 }
