@@ -22,7 +22,7 @@
   "homepage": "https://github.com/mljs/ml",
   "dependencies": {
     "ml-matrix": "0.0.1",
-    "ml-som": "0.0.1"
+    "ml-som": "0.0.2"
   },
   "devDependencies": {
     "browserify": "^6.2.0",
