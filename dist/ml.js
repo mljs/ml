@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.0.4
+ * @version v0.0.5
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -3182,9 +3182,9 @@ module.exports = require('./som');
 },{"./som":8}],6:[function(require,module,exports){
 var NodeSquare = require('./node-square');
 
-function NodeHexagonal(x, y, weights, gridDim) {
+function NodeHexagonal(x, y, weights, som) {
 
-    NodeSquare.call(this, x, y, weights, gridDim);
+    NodeSquare.call(this, x, y, weights, som);
 
     this.hX = x - Math.floor(y / 2);
     this.z = 0 - this.hX - y;
@@ -3202,16 +3202,20 @@ NodeHexagonal.prototype.getDistanceTorus = function getDistanceTorus(otherNode) 
     var distX = Math.abs(this.hX - otherNode.hX),
         distY = Math.abs(this.y - otherNode.y),
         distZ = Math.abs(this.z - otherNode.z);
-    return Math.max(Math.min(distX, this.gridDim.x - distX), Math.min(distY, this.gridDim.y - distY), Math.min(distZ, this.gridDim.z - distZ));
+    return Math.max(Math.min(distX, this.som.gridDim.x - distX), Math.min(distY, this.som.gridDim.y - distY), Math.min(distZ, this.som.gridDim.z - distZ));
+};
+
+NodeHexagonal.prototype.getPosition = function getPosition() {
+    throw new Error('Unimplemented : cannot get position of the points for hexagonal grid');
 };
 
 module.exports = NodeHexagonal;
 },{"./node-square":7}],7:[function(require,module,exports){
-function NodeSquare(x, y, weights, gridDim) {
+function NodeSquare(x, y, weights, som) {
     this.x = x;
     this.y = y;
     this.weights = weights;
-    this.gridDim = gridDim;
+    this.som = som;
 }
 
 NodeSquare.prototype.adjustWeights = function adjustWeights(target, learningRate, influence) {
@@ -3227,7 +3231,73 @@ NodeSquare.prototype.getDistance = function getDistance(otherNode) {
 NodeSquare.prototype.getDistanceTorus = function getDistanceTorus(otherNode) {
     var distX = Math.abs(this.x - otherNode.x),
         distY = Math.abs(this.y - otherNode.y);
-    return Math.max(Math.min(distX, this.gridDim.x - distX), Math.min(distY, this.gridDim.y - distY));
+    return Math.max(Math.min(distX, this.som.gridDim.x - distX), Math.min(distY, this.som.gridDim.y - distY));
+};
+
+NodeSquare.prototype.getPosition = function getPosition(element) {
+    var neighbors = this.neighbors || this.getNeighbors();
+    var neighbor, dist;
+    var position = [0.5, 0.5];
+    for (var i = 0; i < neighbors.length; i++) {
+        neighbor = neighbors[i];
+        dist = 1 - this.som.distance(neighbor.weights, element) / this.som.maxDistance;
+        var xFactor = (neighbor.x - this.x);
+        if (xFactor > 1) {
+            xFactor = -1;
+        } else if (xFactor < -1) {
+            xFactor = 1;
+        }
+        position[0] += xFactor * dist * 0.5;
+        var yFactor = (neighbor.y - this.y);
+        if (yFactor > 1) {
+            yFactor = -1;
+        } else if (yFactor < -1) {
+            yFactor = 1;
+        }
+        position[1] += yFactor * dist * 0.5;
+    }
+    return position;
+};
+
+NodeSquare.prototype.getNeighbors = function getNeighbors() {
+    var neighbors = [];
+    for (var i = -1; i <= 1; i++) {
+        var x = this.x + i;
+        if (x < 0) {
+            if (this.som.torus) {
+                x = this.som.gridDim.x -1;
+            } else {
+                continue;
+            }
+        } else if (x === this.som.gridDim.x) {
+            if (this.som.torus) {
+                x = 0;
+            } else {
+                continue;
+            }
+        }
+        for (var j = -1; j <= 1; j++) {
+            if(i === 0 && j === 0) {
+                continue;
+            }
+            var y = this.y + j;
+            if (y < 0) {
+                if (this.som.torus) {
+                    y = this.som.gridDim.y -1;
+                } else {
+                    continue;
+                }
+            } else if (y === this.som.gridDim.y) {
+                if (this.som.torus) {
+                    y = 0;
+                } else {
+                    continue;
+                }
+            }
+            neighbors.push(this.som.nodes[x][y]);
+        }
+    }
+    return this.neighbors = neighbors;
 };
 
 module.exports = NodeSquare;
@@ -3253,6 +3323,7 @@ function SOM(x, y, options, reload) {
     this.x = x;
     this.y = y;
 
+    options = options || {};
     this.options = {};
     for (var i in defaultOptions) {
         if (options.hasOwnProperty(i)) {
@@ -3273,10 +3344,28 @@ function SOM(x, y, options, reload) {
         this.creator = converters.creator;
     }
 
-    this.nodeType = this.options.gridType === 'rect' ? NodeSquare : NodeHexagonal;
-    this.distanceMethod = this.options.torus ? 'getDistanceTorus' : 'getDistance';
+    if (this.options.gridType === 'rect') {
+        this.nodeType = NodeSquare;
+        this.gridDim = {
+            x: x,
+            y: y
+        };
+    } else {
+        this.nodeType = NodeHexagonal;
+        var hx = this.x - Math.floor(this.y / 2);
+        this.gridDim = {
+            x: hx,
+            y: this.y,
+            z: -(0 - hx - this.y)
+        };
+    }
+
+    this.torus = this.options.torus;
+    this.distanceMethod = this.torus ? 'getDistanceTorus' : 'getDistance';
 
     this.distance = this.options.distance;
+
+    this.maxDistance = getMaxDistance(this.distance, this.numWeights);
 
     if (reload === true) { // For model loading
         this.done = true;
@@ -3285,6 +3374,11 @@ function SOM(x, y, options, reload) {
     if (!(x > 0 && y > 0)) {
         throw new Error('x and y must be positive');
     }
+
+    this.times = {
+        findBMU: 0,
+        adjust: 0
+    };
 
     this.randomizer = this.options.randomizer;
 
@@ -3313,11 +3407,10 @@ SOM.load = function loadModel(model, distance) {
         }
         var som = new SOM(x, y, model.options, true);
         som.nodes = new Array(x);
-        var gridDim = som._getGridDim();
         for (var i = 0; i < x; i++) {
             som.nodes[i] = new Array(y);
             for (var j = 0; j < y; j++) {
-                som.nodes[i][j] = new som.nodeType(i, j, model.data[i][j], gridDim);
+                som.nodes[i][j] = new som.nodeType(i, j, model.data[i][j], som);
             }
         }
         return som;
@@ -3351,26 +3444,10 @@ SOM.prototype.export = function exportModel(includeDistance) {
     return model;
 };
 
-SOM.prototype._getGridDim = function getGridDim() {
-    if (this.nodeType === NodeSquare) {
-        return {
-            x: this.x,
-            y: this.y
-        };
-    } else {
-        var hx = this.x - Math.floor(this.y / 2);
-        return {
-            x: hx,
-            y: this.y,
-            z: -(0 - hx - this.y)
-        }
-    }
-};
-
 SOM.prototype._initNodes = function initNodes() {
-    var i, j, k;
+    var now = Date.now(),
+        i, j, k;
     this.nodes = new Array(this.x);
-    var gridDim = this._getGridDim();
     for (i = 0; i < this.x; i++) {
         this.nodes[i] = new Array(this.y);
         for (j = 0; j < this.y; j++) {
@@ -3378,15 +3455,17 @@ SOM.prototype._initNodes = function initNodes() {
             for (k = 0; k < this.numWeights; k++) {
                 weights[k] = this.randomizer();
             }
-            this.nodes[i][j] = new this.nodeType(i, j, weights, gridDim);
+            this.nodes[i][j] = new this.nodeType(i, j, weights, this);
         }
     }
+    this.times.initNodes = Date.now() - now;
 };
 
 SOM.prototype.setTraining = function setTraining(trainingSet) {
     if (this.trainingSet) {
         throw new Error('training set has already been set');
     }
+    var now = Date.now();
     var convertedSet = trainingSet;
     var i, l = trainingSet.length;
     if (this.extractor) {
@@ -3403,6 +3482,7 @@ SOM.prototype.setTraining = function setTraining(trainingSet) {
         this.timeConstant = l / Math.log(this.mapRadius);
     }
     this.trainingSet = convertedSet;
+    this.times.setTraining = Date.now() - now;
 };
 
 SOM.prototype.trainOne = function trainOne() {
@@ -3444,8 +3524,13 @@ SOM.prototype.trainOne = function trainOne() {
 };
 
 SOM.prototype._adjust = function adjust(trainingValue, neighbourhoodRadius) {
-    var x, y, dist, influence;
+    var now = Date.now(),
+        x, y, dist, influence;
+
     var bmu = this._findBestMatchingUnit(trainingValue);
+
+    var now2 = Date.now();
+    this.times.findBMU += now2 - now;
 
     var radiusLimit = Math.floor(neighbourhoodRadius);
     var xMin = bmu.x - radiusLimit,
@@ -3477,6 +3562,8 @@ SOM.prototype._adjust = function adjust(trainingValue, neighbourhoodRadius) {
 
         }
     }
+
+    this.times.adjust += (Date.now() - now2);
 
 };
 
@@ -3520,23 +3607,27 @@ SOM.prototype._findBestMatchingUnit = function findBestMatchingUnit(candidate) {
 
 };
 
-SOM.prototype.predict = function predict(data) {
-    if (data instanceof Array) {
+SOM.prototype.predict = function predict(data, computePosition) {
+    if ((data instanceof Array) && data[0] instanceof Array) {
         var self = this;
         return data.map(function (element) {
-            return self._predict(element);
+            return self._predict(element, computePosition);
         });
     } else {
-        return this._predict(data);
+        return this._predict(data, computePosition);
     }
 };
 
-SOM.prototype._predict = function _predict(element) {
+SOM.prototype._predict = function _predict(element, computePosition) {
     if (!(element instanceof Array)) {
         element = this.extractor(element);
     }
     var bmu = this._findBestMatchingUnit(element);
-    return [bmu.x, bmu.y];
+    var result = [bmu.x, bmu.y];
+    if (computePosition) {
+        result[2] = bmu.getPosition(element);
+    }
+    return result;
 };
 
 // As seen in http://www.scholarpedia.org/article/Kohonen_network
@@ -3600,6 +3691,16 @@ function squareEuclidean(a, b) {
 
 function getRandomValue(arr, randomizer) {
     return arr[Math.floor(randomizer() * arr.length)];
+}
+
+function getMaxDistance(distance, numWeights) {
+    var zero = new Array(numWeights),
+        one = new Array(numWeights);
+    for (var i = 0; i < numWeights; i++) {
+        zero[i] = 0;
+        one[i] = 1;
+    }
+    return distance(zero, one);
 }
 
 module.exports = SOM;
