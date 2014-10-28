@@ -1,6 +1,7 @@
 {
   "name": "ml",
   "version": "0.0.3",
+  "main": ["dist/ml.js", "dist/ml.min.js"],
   "homepage": "https://github.com/mljs/ml",
   "authors": [
     "Michaël Zasso"
