@@ -27,7 +27,7 @@ var extended = [
 
 var succint = '// <%= pkg.name %>@v<%= pkg.version %>, <%= pkg.license %> licensed. <%= pkg.homepage %>\n';
 
-gulp.task('build', ['clean:dist', 'bump'] ,function () {
+gulp.task('build', ['clean:dist', 'bump', 'npm:update'] ,function () {
     var pkg = require('./package.json');
 
     var bundler = browserify({
@@ -35,7 +35,7 @@ gulp.task('build', ['clean:dist', 'bump'] ,function () {
         standalone: 'ML'
     });
 
-    bundler
+    return bundler
         .bundle()
         .pipe(source('ml.js'))
         .pipe(buffer())
@@ -62,25 +62,39 @@ gulp.task('bump', function() {
     } else {
         type = 'patch'
     }
-    gulp.src(['./package.json', './bower.json'])
+    return gulp.src(['./package.json', './bower.json'])
         .pipe(bump({type: type}))
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('tag', ['build'], function () {
-    var pkg = require('./package.json');
-    var v = 'v' + pkg.version;
-    var message = 'Release ' + v;
-    gulp.src('./')
-        .pipe(git.commit(message))
-        .pipe(git.tag(v, message))
-        .pipe(git.push('origin', 'master', '--tags'))
-        .pipe(gulp.dest('./'))
+gulp.task('npm:update', function (done) {
+    require('child_process').spawn('npm', ['update', '--production'], { stdio: 'inherit' })
+        .on('close', done);
 });
 
-gulp.task('npm', ['tag'], function (done) {
+var v, m;
+
+gulp.task('git:commit', ['build'], function () {
+    var pkg = require('./package.json');
+    v = 'v' + pkg.version;
+    m = 'Release ' + v;
+    return gulp.src('./')
+        .pipe(git.add())
+        .pipe(git.commit(m))
+        .pipe(gulp.dest('./'));
+});
+
+gulp.task('git:tag', ['git:commit'], function (done) {
+    git.tag(v, m, done);
+});
+
+gulp.task('git:push', ['git:tag'], function (done) {
+    git.push('origin', 'master', { args: '--tags' }, done);
+});
+
+gulp.task('npm:publish', ['git:push'], function (done) {
     require('child_process').spawn('npm', ['publish'], { stdio: 'inherit' })
         .on('close', done);
 });
 
-gulp.task('release', ['npm']);
+gulp.task('release', ['npm:publish']);
