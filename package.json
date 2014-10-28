@@ -30,6 +30,7 @@
     "gulp": "^3.8.9",
     "gulp-bump": "^0.1.11",
     "gulp-git": "^0.5.3",
+    "gulp-header": "^1.2.2",
     "gulp-rename": "^1.2.0",
     "gulp-size": "^1.1.0",
     "gulp-uglify": "^1.0.1",

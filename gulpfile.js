@@ -9,15 +9,27 @@ var browserify = require('browserify'),
     size = require('gulp-size'),
     git = require('gulp-git'),
     bump = require('gulp-bump'),
+    header = require('gulp-header'),
     del = require('del'),
-    fs = require('fs'),
     yargs = require('yargs');
 
 var argv = require('yargs').argv;
 
-gulp.task('default', ['build']);
+var extended = [
+    '/**',
+    ' * <%= pkg.name %> - <%= pkg.description %>',
+    ' * @version v<%= pkg.version %>',
+    ' * @link <%= pkg.homepage %>',
+    ' * @license <%= pkg.license %>',
+    ' */',
+    ''
+].join('\n');
 
-gulp.task('build', ['clean:dist'] ,function () {
+var succint = '// <%= pkg.name %>@v<%= pkg.version %>, <%= pkg.license %> licensed. <%= pkg.homepage %>\n';
+
+gulp.task('build', ['clean:dist', 'bump'] ,function () {
+    var pkg = require('./package.json');
+
     var bundler = browserify({
         entries: ['./index.js'],
         standalone: 'ML'
@@ -27,10 +39,12 @@ gulp.task('build', ['clean:dist'] ,function () {
         .bundle()
         .pipe(source('ml.js'))
         .pipe(buffer())
+        .pipe(header(extended, { pkg: pkg }))
         .pipe(size({title: 'full'}))
         .pipe(gulp.dest('./dist/'))
         .pipe(rename('ml.min.js'))
         .pipe(uglify())
+        .pipe(header(succint, { pkg: pkg }))
         .pipe(size({title: 'minified'}))
         .pipe(gulp.dest('./dist/'));
 });
@@ -39,7 +53,7 @@ gulp.task('clean:dist', function (cb) {
     del(['dist'], cb);
 });
 
-gulp.task('bump', ['build'], function() {
+gulp.task('bump', function() {
     var type;
     if (argv.major) {
         type = 'major';
@@ -53,8 +67,8 @@ gulp.task('bump', ['build'], function() {
         .pipe(gulp.dest('./'));
 });
 
-gulp.task('tag', ['bump'], function () {
-    var pkg = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+gulp.task('tag', ['build'], function () {
+    var pkg = require('./package.json');
     var v = 'v' + pkg.version;
     var message = 'Release ' + v;
     gulp.src('./')
