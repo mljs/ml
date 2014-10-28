@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.0.3
+ * @version v0.0.4
  * @link https://github.com/mljs/ml
  * @license MIT
  */
