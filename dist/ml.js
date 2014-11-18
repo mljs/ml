@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.0.5
+ * @version v0.1.0
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -12,17 +12,604 @@ Core utilities
 /*
 Math
  */
-exports.Matrix = require('ml-matrix');
+var Math = exports.Math = {};
+
+Math.Matrix = exports.Matrix = require('ml-matrix');
+Math.Distance = require('ml-distance');
 
 /*
 Neural networks
  */
-var nn= {};
+var nn = exports.nn = {};
 
 nn.SOM = require('ml-som');
+},{"ml-distance":52,"ml-matrix":54,"ml-som":56}],2:[function(require,module,exports){
+module.exports = function additiveSymmetric(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i]) * (a[i] + b[i])) / (a[i] * b[i]);
+    }
+    return 2 * d;
+};
 
-exports.nn = nn;
-},{"ml-matrix":3,"ml-som":5}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
+module.exports = function avg(a, b) {
+    var ii = a.length,
+        max = 0,
+        ans = 0,
+        aux = 0;
+    for (var i = 0; i < ii ; i++) {
+        aux = Math.abs(a[i] - b[i]);
+        ans += aux;
+        if (max < aux) {
+            max = aux;
+        }
+    }
+    return (max + ans) / 2;
+};
+
+},{}],4:[function(require,module,exports){
+module.exports = function bhattacharyya(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.sqrt(a[i] * b[i]);
+    }
+    return - Math.log(ans);
+};
+
+},{}],5:[function(require,module,exports){
+module.exports = function canberra(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.abs(a[i] - b[i]) / (a[i] + b[i]);
+    }
+    return ans;
+};
+
+},{}],6:[function(require,module,exports){
+module.exports = function chebyshev(a, b) {
+    var ii = a.length,
+        max = 0,
+        aux = 0;
+    for (var i = 0; i < ii ; i++) {
+        aux = Math.abs(a[i] - b[i]);
+        if (max < aux) {
+            max = aux;
+        }
+    }
+    return max;
+};
+
+},{}],7:[function(require,module,exports){
+module.exports = function clark(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += Math.sqrt(((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i])));
+    }
+    return 2 * d;
+};
+
+},{}],8:[function(require,module,exports){
+module.exports = function cosine(a, b) {
+    var ii = a.length,
+        p = 0,
+        p2 = 0,
+        q2 = 0;
+    for (var i = 0; i < ii ; i++) {
+        p += a[i] * b[i];
+        p2 += a[i] * a[i];
+        q2 += b[i] * b[i];
+    }
+    return p / (Math.sqrt(p2) * Math.sqrt(q2));
+};
+
+},{}],9:[function(require,module,exports){
+module.exports = function czekanowski(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.min(a[i], b[i]);
+        down += a[i] + b[i];
+    }
+    return 1 - (2 * up / down);
+};
+
+},{}],10:[function(require,module,exports){
+var czekanowski = require('./czekanowski');
+
+module.exports = function czekanowskiS(a, b) {
+    return 1 - czekanowski(a,b);
+};
+
+},{"./czekanowski":9}],11:[function(require,module,exports){
+module.exports = function dice(a, b) {
+    var ii = a.length,
+        p = 0,
+        q1 = 0,
+        q2 = 0;
+    for (var i = 0; i < ii ; i++) {
+        p += a[i] * a[i];
+        q1 += b[i] * b[i];
+        q2 += (a[i] - b[i]) * (a[i] - b[i]);
+    }
+    return q2 / (p + q1);
+};
+
+},{}],12:[function(require,module,exports){
+var dice = require('./dice');
+
+module.exports = function diceS(a, b) {
+    return 1 - dice(a,b);
+};
+
+},{"./dice":11}],13:[function(require,module,exports){
+module.exports = function divergence(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i]));
+    }
+    return 2 * d;
+};
+
+},{}],14:[function(require,module,exports){
+var squaredEuclidean = require('./squared-euclidean');
+
+module.exports = function euclidean(a, b) {
+    return Math.sqrt(squaredEuclidean(a, b));
+};
+},{"./squared-euclidean":44}],15:[function(require,module,exports){
+module.exports = function fidelity(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.sqrt(a[i] * b[i]);
+    }
+    return ans;
+};
+
+},{}],16:[function(require,module,exports){
+module.exports = function gower(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.abs(a[i] - b[i]);
+    }
+    return ans / ii;
+};
+
+},{}],17:[function(require,module,exports){
+module.exports = function harmonicMean(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += (a[i] * b[i]) / (a[i] + b[i]);
+    }
+    return 2 * ans;
+};
+
+},{}],18:[function(require,module,exports){
+module.exports = function hellinger(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.sqrt(a[i] * b[i]);
+    }
+    return 2 * Math.sqrt(1 - ans);
+};
+
+},{}],19:[function(require,module,exports){
+module.exports = function innerProduct(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += a[i] * b[i];
+    }
+    return ans;
+};
+
+},{}],20:[function(require,module,exports){
+module.exports = function intersection(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.min(a[i], b[i]);
+    }
+    return 1 - ans;
+};
+
+},{}],21:[function(require,module,exports){
+var intersection = require('./intersection');
+
+module.exports = function intersectionS(a, b) {
+    return 1 - intersection(a,b);
+};
+
+},{"./intersection":20}],22:[function(require,module,exports){
+module.exports = function jaccard(a, b) {
+    var ii = a.length,
+        p1 = 0,
+        p2 = 0,
+        q1 = 0,
+        q2 = 0;
+    for (var i = 0; i < ii ; i++) {
+        p1 += a[i] * b[i];
+        p2 += a[i] * a[i];
+        q1 += b[i] * b[i];
+        q2 += (a[i] - b[i]) * (a[i] - b[i]);
+    }
+    return q2 / (p2 + q1 - p1);
+};
+
+},{}],23:[function(require,module,exports){
+var jaccard = require('./jaccard');
+
+module.exports = function jaccardS(a, b) {
+    return 1 - jaccard(a, b);
+};
+
+},{"./jaccard":22}],24:[function(require,module,exports){
+module.exports = function jeffreys(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += (a[i] - b[i]) * Math.log(a[i] / b[i]);
+    }
+    return ans;
+};
+
+},{}],25:[function(require,module,exports){
+module.exports = function jensenDifference(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += ((a[i] * Math.log(a[i]) + b[i] * Math.log(b[i])) / 2) - ((a[i] + b[i]) / 2) * Math.log((a[i] + b[i]) / 2);
+    }
+    return ans;
+};
+
+},{}],26:[function(require,module,exports){
+module.exports = function jensenShannon(a, b) {
+    var ii = a.length,
+        p = 0,
+        q = 0;
+    for (var i = 0; i < ii ; i++) {
+        p += a[i] * Math.log(2 * a[i] / (a[i] + b[i]));
+        q += b[i] * Math.log(2 * b[i] / (a[i] + b[i]));
+    }
+    return (p + q) / 2;
+};
+
+},{}],27:[function(require,module,exports){
+module.exports = function kdivergence(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += a[i] * Math.log(2 * a[i] / (a[i] + b[i]));
+    }
+    return ans;
+};
+
+},{}],28:[function(require,module,exports){
+module.exports = function kulczynski(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.abs(a[i] - b[i]);
+        down += Math.min(a[i],b[i]);
+    }
+    return up / down;
+};
+
+},{}],29:[function(require,module,exports){
+var kulczynski = require('./kulczynski');
+
+module.exports = function kulczynskiS(a, b) {
+    return 1 / kulczynski(a, b);
+};
+
+},{"./kulczynski":28}],30:[function(require,module,exports){
+module.exports = function kullbackLeibler(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += a[i] * Math.log(a[i] / b[i]);
+    }
+    return ans;
+};
+
+},{}],31:[function(require,module,exports){
+module.exports = function kumarHassebrook(a, b) {
+    var ii = a.length,
+        p = 0,
+        p2 = 0,
+        q2 = 0;
+    for (var i = 0; i < ii ; i++) {
+        p += a[i] * b[i];
+        p2 += a[i] * a[i];
+        q2 += b[i] * b[i];
+    }
+    return p / (p2 + q2 - p);
+};
+
+},{}],32:[function(require,module,exports){
+module.exports = function kumarJohnson(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.pow(a[i] * a[i] - b[i] * b[i],2) / (2 * Math.pow(a[i] * b[i],1.5));
+    }
+    return ans;
+};
+
+},{}],33:[function(require,module,exports){
+module.exports = function lorentzian(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.log(Math.abs(a[i] - b[i]) + 1);
+    }
+    return ans;
+};
+
+},{}],34:[function(require,module,exports){
+module.exports = function manhattan(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += Math.abs(a[i] - b[i]);
+    }
+    return d;
+};
+
+},{}],35:[function(require,module,exports){
+module.exports = function matusita(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.sqrt(a[i] * b[i]);
+    }
+    return Math.sqrt(2 - 2 * ans);
+};
+
+},{}],36:[function(require,module,exports){
+module.exports = function minkowski(a, b, p) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += Math.pow(Math.abs(a[i] - b[i]),p);
+    }
+    return Math.pow(d,(1/p));
+};
+
+},{}],37:[function(require,module,exports){
+module.exports = function motyka(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.min(a[i], b[i]);
+        down += a[i] + b[i];
+    }
+    return 1 - (up / down);
+};
+
+},{}],38:[function(require,module,exports){
+module.exports = function pearson(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i])) / a[i];
+    }
+    return d;
+};
+
+},{}],39:[function(require,module,exports){
+module.exports = function pearson(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i])) / b[i];
+    }
+    return d;
+};
+
+},{}],40:[function(require,module,exports){
+module.exports = function probabilisticSymmetric(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i])) / (a[i] + b[i]);
+    }
+    return 2 * d;
+};
+
+},{}],41:[function(require,module,exports){
+module.exports = function ruzicka(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.min(a[i],b[i]);
+        down += Math.max(a[i],b[i]);
+    }
+    return up / down;
+};
+
+},{}],42:[function(require,module,exports){
+module.exports = function soergel(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.abs(a[i] - b[i]);
+        down += Math.max(a[i],b[i]);
+    }
+    return up / down;
+};
+
+},{}],43:[function(require,module,exports){
+module.exports = function sorensen(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.abs(a[i] - b[i]);
+        down += a[i] + b[i];
+    }
+    return up / down;
+};
+
+},{}],44:[function(require,module,exports){
+module.exports = function squaredEuclidean(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += (a[i] - b[i]) * (a[i] - b[i]);
+    }
+    return d;
+};
+},{}],45:[function(require,module,exports){
+module.exports = function squared(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i])) / (a[i] + b[i]);
+    }
+    return d;
+};
+
+},{}],46:[function(require,module,exports){
+module.exports = function squaredChord(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += (Math.sqrt(a[i]) - Math.sqrt(b[i])) * (Math.sqrt(a[i]) - Math.sqrt(b[i]));
+    }
+    return ans;
+};
+
+},{}],47:[function(require,module,exports){
+var squaredChord = require('./squaredChord');
+
+module.exports = function squaredChordS(a, b) {
+    return 1 - squaredChord(a, b);
+};
+
+},{"./squaredChord":46}],48:[function(require,module,exports){
+module.exports = function taneja(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += (a[i] + b[i]) / 2 * Math.log((a[i] + b[i]) / (2 * Math.sqrt(a[i] * b[i])));
+    }
+    return ans;
+};
+
+},{}],49:[function(require,module,exports){
+module.exports = function tanimoto(a, b) {
+    var ii = a.length,
+        p = 0,
+        q = 0,
+        m = 0;
+    for (var i = 0; i < ii ; i++) {
+        p += a[i];
+        q += b[i];
+        m += Math.min(a[i],b[i]);
+    }
+    return (p + q - 2 * m) / (p + q - m);
+};
+
+},{}],50:[function(require,module,exports){
+module.exports = function topsoe(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += a[i] * Math.log(2 * a[i] / (a[i] + b[i])) + b[i] * Math.log(2 * b[i] / (a[i] + b[i]));
+    }
+    return ans;
+};
+
+},{}],51:[function(require,module,exports){
+module.exports = function waveHedges(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += 1 - (Math.min(a[i], b[i]) / Math.max(a[i], b[i]));
+    }
+    return ans;
+};
+
+},{}],52:[function(require,module,exports){
+exports.euclidean = require('./dist/euclidean');
+exports.squaredEuclidean = require('./dist/squared-euclidean');
+exports.manhattan = require('./dist/manhattan');
+exports.minkowski = require('./dist/minkowski');
+exports.chebyshev = require('./dist/chebyshev');
+exports.sorensen = require('./dist/sorensen');
+exports.gower = require('./dist/gower');
+exports.soergel = require('./dist/soergel');
+exports.kulczynski = require('./dist/kulczynski');
+exports.kulczynskiS = require('./dist/kulczynskiS');
+exports.canberra = require('./dist/canberra');
+exports.lorentzian = require('./dist/lorentzian');
+exports.intersection = require('./dist/intersection');
+exports.intersectionS = require('./dist/intersectionS');
+exports.waveHedges = require('./dist/waveHedges');
+exports.czekanowski = require('./dist/czekanowski');
+exports.czekanowskiS = require('./dist/czekanowskiS');
+exports.motyka = require('./dist/motyka');
+exports.kulczynskiS = require('./dist/kulczynskiS');
+exports.ruzicka = require('./dist/ruzicka');
+exports.tanimoto = require('./dist/tanimoto');
+exports.innerProduct = require('./dist/innerProduct');
+exports.harmonicMean = require('./dist/harmonicMean');
+exports.cosine = require('./dist/cosine');
+exports.kumarHassebrook = require('./dist/kumarHassebrook');
+exports.jaccard = require('./dist/jaccard');
+exports.jaccardS = require('./dist/jaccardS');
+exports.dice = require('./dist/dice');
+exports.diceS = require('./dist/diceS');
+exports.fidelity = require('./dist/fidelity');
+exports.bhattacharyya = require('./dist/bhattacharyya');
+exports.hellinger = require('./dist/hellinger');
+exports.matusita = require('./dist/matusita');
+exports.squaredChord = require('./dist/squaredChord');
+exports.squaredChordS = require('./dist/squaredChordS');
+exports.pearson = require('./dist/pearson');
+exports.neyman = require('./dist/neyman');
+exports.squared = require('./dist/squared');
+exports.probabilisticSymmetric = require('./dist/probabilisticSymmetric');
+exports.divergence = require('./dist/divergence');
+exports.clark = require('./dist/clark');
+exports.additiveSymmetric = require('./dist/additiveSymmetric');
+exports.kullbackLeibler = require('./dist/kullbackLeibler');
+exports.jeffreys = require('./dist/jeffreys');
+exports.kdivergence = require('./dist/kdivergence');
+exports.topsoe = require('./dist/topsoe');
+exports.jensenShannon = require('./dist/jensenShannon');
+exports.jensenDifference = require('./dist/jensenDifference');
+exports.taneja = require('./dist/taneja');
+exports.kumarJohnson = require('./dist/kumarJohnson');
+exports.avg = require('./dist/avg');
+
+},{"./dist/additiveSymmetric":2,"./dist/avg":3,"./dist/bhattacharyya":4,"./dist/canberra":5,"./dist/chebyshev":6,"./dist/clark":7,"./dist/cosine":8,"./dist/czekanowski":9,"./dist/czekanowskiS":10,"./dist/dice":11,"./dist/diceS":12,"./dist/divergence":13,"./dist/euclidean":14,"./dist/fidelity":15,"./dist/gower":16,"./dist/harmonicMean":17,"./dist/hellinger":18,"./dist/innerProduct":19,"./dist/intersection":20,"./dist/intersectionS":21,"./dist/jaccard":22,"./dist/jaccardS":23,"./dist/jeffreys":24,"./dist/jensenDifference":25,"./dist/jensenShannon":26,"./dist/kdivergence":27,"./dist/kulczynski":28,"./dist/kulczynskiS":29,"./dist/kullbackLeibler":30,"./dist/kumarHassebrook":31,"./dist/kumarJohnson":32,"./dist/lorentzian":33,"./dist/manhattan":34,"./dist/matusita":35,"./dist/minkowski":36,"./dist/motyka":37,"./dist/neyman":38,"./dist/pearson":39,"./dist/probabilisticSymmetric":40,"./dist/ruzicka":41,"./dist/soergel":42,"./dist/sorensen":43,"./dist/squared":45,"./dist/squared-euclidean":44,"./dist/squaredChord":46,"./dist/squaredChordS":47,"./dist/taneja":48,"./dist/tanimoto":49,"./dist/topsoe":50,"./dist/waveHedges":51}],53:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('./matrix');
@@ -1708,12 +2295,12 @@ module.exports = {
     inverse: inverse,
     solve: solve
 };
-},{"./matrix":4}],3:[function(require,module,exports){
+},{"./matrix":55}],54:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./matrix');
 module.exports.Decompositions = module.exports.DC = require('./decompositions');
-},{"./decompositions":2,"./matrix":4}],4:[function(require,module,exports){
+},{"./decompositions":53,"./matrix":55}],55:[function(require,module,exports){
 'use strict';
 
 var Asplice = Array.prototype.splice,
@@ -3177,9 +3764,9 @@ Matrix.prototype.abs = function abs() {
 Matrix.MatrixError = MatrixError;
 
 module.exports = Matrix;
-},{}],5:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 module.exports = require('./som');
-},{"./som":8}],6:[function(require,module,exports){
+},{"./som":59}],57:[function(require,module,exports){
 var NodeSquare = require('./node-square');
 
 function NodeHexagonal(x, y, weights, som) {
@@ -3210,7 +3797,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 };
 
 module.exports = NodeHexagonal;
-},{"./node-square":7}],7:[function(require,module,exports){
+},{"./node-square":58}],58:[function(require,module,exports){
 function NodeSquare(x, y, weights, som) {
     this.x = x;
     this.y = y;
@@ -3301,7 +3888,7 @@ NodeSquare.prototype.getNeighbors = function getNeighbors() {
 };
 
 module.exports = NodeSquare;
-},{}],8:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 
 var NodeSquare = require('./node-square'),
@@ -3704,5 +4291,5 @@ function getMaxDistance(distance, numWeights) {
 }
 
 module.exports = SOM;
-},{"./node-hexagonal":6,"./node-square":7}]},{},[1])(1)
+},{"./node-hexagonal":57,"./node-square":58}]},{},[1])(1)
 });
