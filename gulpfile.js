@@ -10,8 +10,7 @@ var browserify = require('browserify'),
     git = require('gulp-git'),
     bump = require('gulp-bump'),
     header = require('gulp-header'),
-    del = require('del'),
-    yargs = require('yargs');
+    del = require('del');
 
 var argv = require('yargs').argv;
 
