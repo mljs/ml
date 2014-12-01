@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.1.0
+ * @version v0.1.1
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -4195,7 +4195,14 @@ SOM.prototype._findBestMatchingUnit = function findBestMatchingUnit(candidate) {
 };
 
 SOM.prototype.predict = function predict(data, computePosition) {
-    if ((data instanceof Array) && data[0] instanceof Array) {
+    if(typeof data === 'boolean') {
+        computePosition = data;
+        data = null;
+    }
+    if(!data) {
+        data = this.trainingSet;
+    }
+    if (Array.isArray(data) && Array.isArray(data[0])) {
         var self = this;
         return data.map(function (element) {
             return self._predict(element, computePosition);
@@ -4206,7 +4213,7 @@ SOM.prototype.predict = function predict(data, computePosition) {
 };
 
 SOM.prototype._predict = function _predict(element, computePosition) {
-    if (!(element instanceof Array)) {
+    if (!Array.isArray(element)) {
         element = this.extractor(element);
     }
     var bmu = this._findBestMatchingUnit(element);
@@ -4219,15 +4226,27 @@ SOM.prototype._predict = function _predict(element, computePosition) {
 
 // As seen in http://www.scholarpedia.org/article/Kohonen_network
 SOM.prototype.getQuantizationError = function getQuantizationError() {
-    var data = this.trainingSet,
-        l = data.length,
-        sum = 0,
-        bmu;
+    var fit = this.getFit(),
+        l = fit.length,
+        sum = 0;
     for (var i = 0; i < l; i++) {
-        bmu = this._findBestMatchingUnit(data[i]);
-        sum += Math.sqrt(squareEuclidean(data[i], bmu.weights));
+        sum += fit[i];
     }
     return sum / l;
+};
+
+SOM.prototype.getFit = function getFit(dataset) {
+    if (!dataset) {
+        dataset = this.trainingSet;
+    }
+    var l = dataset.length,
+        bmu,
+        result = new Array(l);
+    for (var i = 0; i < l; i++) {
+        bmu = this._findBestMatchingUnit(dataset[i]);
+        result[i] = Math.sqrt(this.distance(dataset[i], bmu.weights));
+    }
+    return result;
 };
 
 function getConverters(fields, fieldsOpt) {
