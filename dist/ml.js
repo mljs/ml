@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.1.1
+ * @version v0.1.2
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -3984,13 +3984,13 @@ function SOM(x, y, options, reload) {
 }
 
 SOM.load = function loadModel(model, distance) {
-    if(model.name === 'SOM') {
+    if (model.name === 'SOM') {
         var x = model.data.length,
             y = model.data[0].length;
-        if(distance) {
+        if (distance) {
             model.options.distance = distance;
-        } else if(model.options.distance) {
-            model.options.distance = eval('('+model.options.distance+')');
+        } else if (model.options.distance) {
+            model.options.distance = eval('(' + model.options.distance + ')');
         }
         var som = new SOM(x, y, model.options, true);
         som.nodes = new Array(x);
@@ -4089,7 +4089,7 @@ SOM.prototype.trainOne = function trainOne() {
             this._adjust(trainingValue, neighbourhoodRadius);
             this.learningRate = this.startLearningRate * Math.exp(-this.iterationCount / this.numIterations);
         } else { // Get next input vector
-            trainingSetFactor = - Math.floor(this.iterationCount / this.trainingSet.length);
+            trainingSetFactor = -Math.floor(this.iterationCount / this.trainingSet.length);
             neighbourhoodRadius = this.mapRadius * Math.exp(trainingSetFactor / this.timeConstant);
             trainingValue = this.trainingSet[this.iterationCount % this.trainingSet.length];
             this._adjust(trainingValue, neighbourhoodRadius);
@@ -4195,19 +4195,19 @@ SOM.prototype._findBestMatchingUnit = function findBestMatchingUnit(candidate) {
 };
 
 SOM.prototype.predict = function predict(data, computePosition) {
-    if(typeof data === 'boolean') {
+    if (typeof data === 'boolean') {
         computePosition = data;
         data = null;
     }
-    if(!data) {
+    if (!data) {
         data = this.trainingSet;
     }
-    if (Array.isArray(data) && Array.isArray(data[0])) {
+    if (Array.isArray(data) && (Array.isArray(data[0]) || (typeof data[0] === 'object'))) { // predict a dataset
         var self = this;
         return data.map(function (element) {
             return self._predict(element, computePosition);
         });
-    } else {
+    } else { // predict a single element
         return this._predict(data, computePosition);
     }
 };
