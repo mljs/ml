@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.1.3
+ * @version v0.1.4
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -3798,13 +3798,13 @@ function SOM(x, y, options, reload) {
 
     if (typeof this.options.fields === 'number') {
         this.numWeights = this.options.fields;
-        this.extractor = null;
-    } else {
-        var fields = Object.keys(this.options.fields);
-        this.numWeights = fields.length;
-        var converters = getConverters(fields, this.options.fields);
+    } else if (Array.isArray(this.options.fields)) {
+        this.numWeights = this.options.fields.length;
+        var converters = getConverters(this.options.fields);
         this.extractor = converters.extractor;
         this.creator = converters.creator;
+    } else {
+        throw new Error('Invalid fields definition');
     }
 
     if (this.options.gridType === 'rect') {
@@ -3932,7 +3932,7 @@ SOM.prototype.setTraining = function setTraining(trainingSet) {
     var convertedSet = trainingSet;
     var i, l = trainingSet.length;
     if (this.extractor) {
-        convertedSet = new Array(trainingSet);
+        convertedSet = new Array(l);
         for (i = 0; i < l; i++) {
             convertedSet[i] = this.extractor(trainingSet[i]);
         }
@@ -4125,26 +4125,26 @@ SOM.prototype.getFit = function getFit(dataset) {
     return result;
 };
 
-function getConverters(fields, fieldsOpt) {
+function getConverters(fields) {
     var l = fields.length,
         normalizers = new Array(l),
         denormalizers = new Array(l);
     for (var i = 0; i < l; i++) {
-        normalizers[i] = getNormalizer(fieldsOpt[fields[i]]);
-        denormalizers[i] = getDenormalizer(fieldsOpt[fields[i]]);
+        normalizers[i] = getNormalizer(fields[i].range);
+        denormalizers[i] = getDenormalizer(fields[i].range);
     }
     return {
         extractor: function extractor(value) {
             var result = new Array(l);
             for (var i = 0; i < l; i++) {
-                result[i] = normalizers[i](value[fields[i]]);
+                result[i] = normalizers[i](value[fields[i].name]);
             }
             return result;
         },
         creator: function creator(value) {
             var result = {};
             for (var i = 0; i < l; i++) {
-                result[fields[i]] = denormalizers[i](value[i]);
+                result[fields[i].name] = denormalizers[i](value[i]);
             }
             return result;
         }
