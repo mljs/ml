@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.1.2
+ * @version v0.1.3
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -3765,130 +3765,6 @@ Matrix.MatrixError = MatrixError;
 
 module.exports = Matrix;
 },{}],56:[function(require,module,exports){
-module.exports = require('./som');
-},{"./som":59}],57:[function(require,module,exports){
-var NodeSquare = require('./node-square');
-
-function NodeHexagonal(x, y, weights, som) {
-
-    NodeSquare.call(this, x, y, weights, som);
-
-    this.hX = x - Math.floor(y / 2);
-    this.z = 0 - this.hX - y;
-
-}
-
-NodeHexagonal.prototype = new NodeSquare;
-NodeHexagonal.prototype.constructor = NodeHexagonal;
-
-NodeHexagonal.prototype.getDistance = function getDistanceHexagonal(otherNode) {
-    return Math.max(Math.abs(this.hX - otherNode.hX), Math.abs(this.y - otherNode.y), Math.abs(this.z - otherNode.z));
-};
-
-NodeHexagonal.prototype.getDistanceTorus = function getDistanceTorus(otherNode) {
-    var distX = Math.abs(this.hX - otherNode.hX),
-        distY = Math.abs(this.y - otherNode.y),
-        distZ = Math.abs(this.z - otherNode.z);
-    return Math.max(Math.min(distX, this.som.gridDim.x - distX), Math.min(distY, this.som.gridDim.y - distY), Math.min(distZ, this.som.gridDim.z - distZ));
-};
-
-NodeHexagonal.prototype.getPosition = function getPosition() {
-    throw new Error('Unimplemented : cannot get position of the points for hexagonal grid');
-};
-
-module.exports = NodeHexagonal;
-},{"./node-square":58}],58:[function(require,module,exports){
-function NodeSquare(x, y, weights, som) {
-    this.x = x;
-    this.y = y;
-    this.weights = weights;
-    this.som = som;
-}
-
-NodeSquare.prototype.adjustWeights = function adjustWeights(target, learningRate, influence) {
-    for (var i = 0, ii = this.weights.length; i < ii; i++) {
-        this.weights[i] += learningRate * influence * (target[i] - this.weights[i]);
-    }
-};
-
-NodeSquare.prototype.getDistance = function getDistance(otherNode) {
-    return Math.max(Math.abs(this.x - otherNode.x), Math.abs(this.y - otherNode.y));
-};
-
-NodeSquare.prototype.getDistanceTorus = function getDistanceTorus(otherNode) {
-    var distX = Math.abs(this.x - otherNode.x),
-        distY = Math.abs(this.y - otherNode.y);
-    return Math.max(Math.min(distX, this.som.gridDim.x - distX), Math.min(distY, this.som.gridDim.y - distY));
-};
-
-NodeSquare.prototype.getPosition = function getPosition(element) {
-    var neighbors = this.neighbors || this.getNeighbors();
-    var neighbor, dist;
-    var position = [0.5, 0.5];
-    for (var i = 0; i < neighbors.length; i++) {
-        neighbor = neighbors[i];
-        dist = 1 - this.som.distance(neighbor.weights, element) / this.som.maxDistance;
-        var xFactor = (neighbor.x - this.x);
-        if (xFactor > 1) {
-            xFactor = -1;
-        } else if (xFactor < -1) {
-            xFactor = 1;
-        }
-        position[0] += xFactor * dist * 0.5;
-        var yFactor = (neighbor.y - this.y);
-        if (yFactor > 1) {
-            yFactor = -1;
-        } else if (yFactor < -1) {
-            yFactor = 1;
-        }
-        position[1] += yFactor * dist * 0.5;
-    }
-    return position;
-};
-
-NodeSquare.prototype.getNeighbors = function getNeighbors() {
-    var neighbors = [];
-    for (var i = -1; i <= 1; i++) {
-        var x = this.x + i;
-        if (x < 0) {
-            if (this.som.torus) {
-                x = this.som.gridDim.x -1;
-            } else {
-                continue;
-            }
-        } else if (x === this.som.gridDim.x) {
-            if (this.som.torus) {
-                x = 0;
-            } else {
-                continue;
-            }
-        }
-        for (var j = -1; j <= 1; j++) {
-            if(i === 0 && j === 0) {
-                continue;
-            }
-            var y = this.y + j;
-            if (y < 0) {
-                if (this.som.torus) {
-                    y = this.som.gridDim.y -1;
-                } else {
-                    continue;
-                }
-            } else if (y === this.som.gridDim.y) {
-                if (this.som.torus) {
-                    y = 0;
-                } else {
-                    continue;
-                }
-            }
-            neighbors.push(this.som.nodes[x][y]);
-        }
-    }
-    return this.neighbors = neighbors;
-};
-
-module.exports = NodeSquare;
-},{}],59:[function(require,module,exports){
 'use strict';
 
 var NodeSquare = require('./node-square'),
@@ -4310,5 +4186,143 @@ function getMaxDistance(distance, numWeights) {
 }
 
 module.exports = SOM;
-},{"./node-hexagonal":57,"./node-square":58}]},{},[1])(1)
+},{"./node-hexagonal":57,"./node-square":58}],57:[function(require,module,exports){
+var NodeSquare = require('./node-square');
+
+function NodeHexagonal(x, y, weights, som) {
+
+    NodeSquare.call(this, x, y, weights, som);
+
+    this.hX = x - Math.floor(y / 2);
+    this.z = 0 - this.hX - y;
+
+}
+
+NodeHexagonal.prototype = new NodeSquare;
+NodeHexagonal.prototype.constructor = NodeHexagonal;
+
+NodeHexagonal.prototype.getDistance = function getDistanceHexagonal(otherNode) {
+    return Math.max(Math.abs(this.hX - otherNode.hX), Math.abs(this.y - otherNode.y), Math.abs(this.z - otherNode.z));
+};
+
+NodeHexagonal.prototype.getDistanceTorus = function getDistanceTorus(otherNode) {
+    var distX = Math.abs(this.hX - otherNode.hX),
+        distY = Math.abs(this.y - otherNode.y),
+        distZ = Math.abs(this.z - otherNode.z);
+    return Math.max(Math.min(distX, this.som.gridDim.x - distX), Math.min(distY, this.som.gridDim.y - distY), Math.min(distZ, this.som.gridDim.z - distZ));
+};
+
+NodeHexagonal.prototype.getPosition = function getPosition() {
+    throw new Error('Unimplemented : cannot get position of the points for hexagonal grid');
+};
+
+module.exports = NodeHexagonal;
+},{"./node-square":58}],58:[function(require,module,exports){
+function NodeSquare(x, y, weights, som) {
+    this.x = x;
+    this.y = y;
+    this.weights = weights;
+    this.som = som;
+    this.neighbors = {};
+}
+
+NodeSquare.prototype.adjustWeights = function adjustWeights(target, learningRate, influence) {
+    for (var i = 0, ii = this.weights.length; i < ii; i++) {
+        this.weights[i] += learningRate * influence * (target[i] - this.weights[i]);
+    }
+};
+
+NodeSquare.prototype.getDistance = function getDistance(otherNode) {
+    return Math.max(Math.abs(this.x - otherNode.x), Math.abs(this.y - otherNode.y));
+};
+
+NodeSquare.prototype.getDistanceTorus = function getDistanceTorus(otherNode) {
+    var distX = Math.abs(this.x - otherNode.x),
+        distY = Math.abs(this.y - otherNode.y);
+    return Math.max(Math.min(distX, this.som.gridDim.x - distX), Math.min(distY, this.som.gridDim.y - distY));
+};
+
+NodeSquare.prototype.getNeighbors = function getNeighbors(xy) {
+    if (!this.neighbors[xy]) {
+        this.neighbors[xy] = new Array(2);
+
+        // left or bottom neighbor
+        var v;
+        if (this[xy] > 0) {
+            v = this[xy] - 1;
+        } else if (this.som.torus) {
+            v = this.som.gridDim[xy] - 1
+        }
+        if (typeof v !== 'undefined') {
+            var x, y;
+            if (xy === 'x') {
+                x = v;
+                y = this.y;
+            } else {
+                x = this.x;
+                y = v;
+            }
+            this.neighbors[xy][0] = this.som.nodes[x][y];
+        }
+
+        // top or right neighbor
+        var w;
+        if (this[xy] < (this.som.gridDim[xy] - 1)) {
+            w = this[xy] + 1;
+        } else if (this.som.torus) {
+            w = 0;
+        }
+        if (typeof w !== 'undefined') {
+            if (xy === 'x') {
+                x = w;
+                y = this.y;
+            } else {
+                x = this.x;
+                y = w;
+            }
+            this.neighbors[xy][1] = this.som.nodes[x][y];
+        }
+    }
+    return this.neighbors[xy];
+};
+
+NodeSquare.prototype.getPos = function getPos(xy, element) {
+    var neighbors = this.getNeighbors(xy),
+        distance = this.som.distance,
+        bestNeighbor,
+        direction;
+    if(neighbors[0]) {
+        if (neighbors[1]) {
+            var dist1 = distance(element, neighbors[0].weights),
+                dist2 = distance(element, neighbors[1].weights);
+            if(dist1 < dist2) {
+                bestNeighbor = neighbors[0];
+                direction = -1;
+            } else {
+                bestNeighbor = neighbors[1];
+                direction = 1;
+            }
+        } else {
+            bestNeighbor = neighbors[0];
+            direction = -1;
+        }
+    } else {
+        bestNeighbor = neighbors[1];
+        direction = 1;
+    }
+    var simA = 1 - distance(element, this.weights),
+        simB = 1 - distance(element, bestNeighbor.weights);
+    var factor = ((simA - simB) / (2 - simA - simB));
+    return 0.5 + 0.5 * factor * direction;
+};
+
+NodeSquare.prototype.getPosition = function getPosition(element) {
+    return [
+        this.getPos('x', element),
+        this.getPos('y', element)
+    ];
+};
+
+module.exports = NodeSquare;
+},{}]},{},[1])(1)
 });
