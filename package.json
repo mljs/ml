@@ -23,7 +23,8 @@
   "dependencies": {
     "ml-distance": "^1.0.0",
     "ml-matrix": "0.0.1",
-    "ml-som": "0.0.6"
+    "ml-som": "0.0.6",
+    "ml-stat": "^1.0.0"
   },
   "devDependencies": {
     "browserify": "^6.2.0",
