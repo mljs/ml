@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.2.0
+ * @version v0.2.1
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -4332,19 +4332,33 @@ module.exports = NodeSquare;
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
 function max(values) {
-    var max = -Infinity, l=values.length;
-    for(var i=0; i<l; i++) {
-        if(values[i] > max) max = values[i];
+    var max = -Infinity, l = values.length;
+    for (var i = 0; i < l; i++) {
+        if (values[i] > max) max = values[i];
     }
     return max;
 }
 
 function min(values) {
-    var min = Infinity, l=values.length;
-    for(var i=0; i<l; i++) {
-        if(values[i] < min) min = values[i];
+    var min = Infinity, l = values.length;
+    for (var i = 0; i < l; i++) {
+        if (values[i] < min) min = values[i];
     }
     return min;
+}
+
+function minMax(values) {
+    var min = Infinity,
+        max = -Infinity,
+        l = values.length;
+    for (var i = 0; i < l; i++) {
+        if (values[i] < min) min = values[i];
+        if (values[i] > max) max = values[i];
+    }
+    return {
+        min: min,
+        max: max
+    };
 }
 
 function mean(values) {
@@ -4651,6 +4665,7 @@ function cumulativeSum(array) {
 module.exports = {
     min: min,
     max: max,
+    minMax: minMax,
     mean: mean,
     geometricMean: geometricMean,
     logGeometricMean: logGeometricMean,
