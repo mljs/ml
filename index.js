@@ -16,6 +16,6 @@ Stat.matrix = require('ml-stat/matrix');
 /*
 Neural networks
  */
-var nn = exports.nn = {};
+var NN = exports.NN = exports.nn = {};
 
-nn.SOM = require('ml-som');
+NN.SOM = require('ml-som');

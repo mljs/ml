@@ -24,8 +24,7 @@
   ],
   "license": "MIT",
   "ignore": [
-    "node_modules",
-    "gulpfile.js",
-    "index.js"
+    "/*",
+    "!dist/*"
   ]
 }

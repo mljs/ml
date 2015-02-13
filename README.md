@@ -57,13 +57,24 @@ See [ml-matrix](https://github.com/mljs/matrix)
 `ML.Math.Distance`  
 See [ml-distance](https://github.com/mljs/distance)
 
+### Stat
+
+`ML.Stat`
+
+#### Utilities
+
+* Array: `ML.Stat.array`
+* Matrix: `ML.Stat.matrix`
+
+See [ml-stat](https://github.com/mljs/stat)
+
 ### Neural networks
 
-`ML.nn`
+`ML.NN`
 
 #### Self-organizing map
 
-`ML.nn.SOM`  
+`ML.NN.SOM`
 See [ml-som](https://github.com/mljs/som)
 
 ## License
