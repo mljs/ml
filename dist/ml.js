@@ -23,9 +23,10 @@ Stat.matrix = require('ml-stat/matrix');
 /*
 Neural networks
  */
-var nn = exports.nn = {};
+var NN = exports.NN = exports.nn = {};
 
-nn.SOM = require('ml-som');
+NN.SOM = require('ml-som');
+
 },{"ml-distance":52,"ml-matrix":54,"ml-som":56,"ml-stat/array":59,"ml-stat/matrix":60}],2:[function(require,module,exports){
 module.exports = function additiveSymmetric(a, b) {
     var i = 0,
