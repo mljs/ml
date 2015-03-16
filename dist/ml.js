@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.2.1
+ * @version v0.2.2
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -2281,9 +2281,17 @@ function inverse(matrix) {
     return solve(matrix, Matrix.eye(matrix.rows));
 }
 
+Matrix.prototype.inverse = function () {
+    return inverse(this);
+};
+
 function solve(leftHandSide, rightHandSide) {
     return leftHandSide.isSquare() ? new LuDecomposition(leftHandSide).solve(rightHandSide) : new QrDecomposition(leftHandSide).solve(rightHandSide);
 }
+
+Matrix.prototype.solve = function (other) {
+    return solve(this, other);
+};
 
 module.exports = {
     LuDecomposition: LuDecomposition,
@@ -2299,6 +2307,7 @@ module.exports = {
     inverse: inverse,
     solve: solve
 };
+
 },{"./matrix":55}],54:[function(require,module,exports){
 'use strict';
 
@@ -2328,10 +2337,6 @@ MatrixError.prototype = Object.create(Error.prototype);
 MatrixError.prototype.name = 'MatrixError';
 MatrixError.prototype.constructor = MatrixError;
 
-function throwError(message) {
-    throw new MatrixError(message);
-}
-
 /**
  * Real matrix.
  * @constructor
@@ -2346,18 +2351,18 @@ function Matrix(nRows, nColumns) {
         nRows = matrix.length;
         nColumns = matrix[0].length;
         if (typeof nColumns === 'undefined') {
-            throwError('Data must be a 2D array');
+            throw new MatrixError('Data must be a 2D array');
         }
         if (nRows > 0 && nColumns > 0) {
             for (; i < nRows; i++) {
                 if (matrix[i].length !== nColumns) {
-                    throwError('Inconsistent array dimensions');
+                    throw new MatrixError('Inconsistent array dimensions');
                 } else if (newInstance) {
                     matrix[i] = slice(matrix[i]);
                 }
             }
         } else {
-            throwError('Invalid dimensions: ' + nRows + 'x' + nColumns);
+            throw new MatrixError('Invalid dimensions: ' + nRows + 'x' + nColumns);
         }
     } else if (typeof nRows === 'number') { // Create empty matrix
         if (nRows > 0 && nColumns > 0) {
@@ -2366,10 +2371,10 @@ function Matrix(nRows, nColumns) {
                 matrix[i] = new Array(nColumns);
             }
         } else {
-            throwError('Invalid dimensions: ' + nRows + 'x' + nColumns);
+            throw new MatrixError('Invalid dimensions: ' + nRows + 'x' + nColumns);
         }
     } else {
-        throwError('Invalid arguments')
+        throw new MatrixError('Invalid arguments')
     }
 
     Object.defineProperty(matrix, 'rows', {writable: true, value: nRows});
@@ -2392,7 +2397,7 @@ Matrix.from1DArray = function from1DArray(newRows, newColumns, newData) {
 
     length = newRows * newColumns;
     if (length !== newData.length)
-        throwError('Data length does not match given dimensions');
+        throw new MatrixError('Data length does not match given dimensions');
 
     data = new Array(newRows);
     for (; i < newRows; i++) {
@@ -2556,7 +2561,7 @@ Matrix.expand = function expand(base, count) {
  */
 Matrix.checkMatrix = function checkMatrix(value) {
     if (!value) {
-        throwError('Argument has to be a matrix');
+        throw new MatrixError('Argument has to be a matrix');
     }
     if (value.klass !== 'Matrix') {
         value = new Matrix(value);
@@ -2598,7 +2603,7 @@ Object.defineProperty(Matrix.prototype, 'size', {
  */
 Matrix.prototype.checkRowIndex = function checkRowIndex(index) {
     if (index < 0 || index > this.rows - 1)
-        throwError('Row index out of range.');
+        throw new MatrixError('Row index out of range.');
 };
 
 /**
@@ -2608,7 +2613,7 @@ Matrix.prototype.checkRowIndex = function checkRowIndex(index) {
  */
 Matrix.prototype.checkColumnIndex = function checkColumnIndex(index) {
     if (index < 0 || index > this.columns - 1)
-        throwError('Column index out of range.');
+        throw new MatrixError('Column index out of range.');
 };
 
 /**
@@ -2618,7 +2623,7 @@ Matrix.prototype.checkColumnIndex = function checkColumnIndex(index) {
  */
 Matrix.prototype.checkDimensions = function checkDimensions(otherMatrix) {
     if ((this.rows !== otherMatrix.rows) || (this.columns !== otherMatrix.columns))
-        throwError('Matrices dimensions must be equal.');
+        throw new MatrixError('Matrices dimensions must be equal.');
 };
 
 /**
@@ -2947,7 +2952,7 @@ Matrix.prototype.setRow = function setRow(index, array) {
     this.checkRowIndex(index);
     if (Matrix.isMatrix(array)) array = array.to1DArray();
     if (array.length !== this.columns)
-        throwError('Invalid row size');
+        throw new MatrixError('Invalid row size');
     this[index] = slice(array);
     return this;
 };
@@ -2960,7 +2965,7 @@ Matrix.prototype.setRow = function setRow(index, array) {
 Matrix.prototype.removeRow = function removeRow(index) {
     this.checkRowIndex(index);
     if (this.rows === 1)
-        throwError('A matrix cannot have less than one row');
+        throw new MatrixError('A matrix cannot have less than one row');
     Asplice.call(this, index, 1);
     this.rows -= 1;
     return this;
@@ -2978,10 +2983,10 @@ Matrix.prototype.addRow = function addRow(index, array) {
         index = this.rows;
     }
     if (index < 0 || index > this.rows)
-        throwError('Row index out of range.');
+        throw new MatrixError('Row index out of range.');
     if (Matrix.isMatrix(array)) array = array.to1DArray();
     if (array.length !== this.columns)
-        throwError('Invalid row size');
+        throw new MatrixError('Invalid row size');
     Asplice.call(this, index, 0, slice(array));
     this.rows += 1;
     return this;
@@ -3027,7 +3032,7 @@ Matrix.prototype.setColumn = function setColumn(index, array) {
     if (Matrix.isMatrix(array)) array = array.to1DArray();
     var l = this.rows;
     if (array.length !== l)
-        throwError('Invalid column size');
+        throw new MatrixError('Invalid column size');
     for (var i = 0; i < l; i++) {
         this[i][index] = array[i];
     }
@@ -3042,7 +3047,7 @@ Matrix.prototype.setColumn = function setColumn(index, array) {
 Matrix.prototype.removeColumn = function removeColumn(index) {
     this.checkColumnIndex(index);
     if (this.columns === 1)
-        throwError('A matrix cannot have less than one column');
+        throw new MatrixError('A matrix cannot have less than one column');
     for (var i = 0, ii = this.rows; i < ii; i++) {
         this[i].splice(index, 1);
     }
@@ -3062,11 +3067,11 @@ Matrix.prototype.addColumn = function addColumn(index, array) {
         index = this.columns;
     }
     if (index < 0 || index > this.columns)
-        throwError('Column index out of range.');
+        throw new MatrixError('Column index out of range.');
     if (Matrix.isMatrix(array)) array = array.to1DArray();
     var l = this.rows;
     if (array.length !== l)
-        throwError('Invalid column size');
+        throw new MatrixError('Invalid column size');
     for (var i = 0; i < l; i++) {
         this[i].splice(index, 0, array[i]);
     }
@@ -3104,7 +3109,7 @@ Matrix.prototype.checkRowVector = function checkRowVector(vector) {
     if (Matrix.isMatrix(vector))
         vector = vector.to1DArray();
     if (vector.length !== this.columns)
-        throwError('vector size must be the same as the number of columns');
+        throw new MatrixError('vector size must be the same as the number of columns');
     return vector;
 };
 
@@ -3119,7 +3124,7 @@ Matrix.prototype.checkColumnVector = function checkColumnVector(vector) {
     if (Matrix.isMatrix(vector))
         vector = vector.to1DArray();
     if (vector.length !== this.rows)
-        throwError('vector size must be the same as the number of rows');
+        throw new MatrixError('vector size must be the same as the number of rows');
     return vector;
 };
 
@@ -3514,7 +3519,7 @@ Matrix.prototype.minColumnIndex = function minColumnIndex(index) {
  */
 Matrix.prototype.diag = function diag() {
     if (!this.isSquare())
-        throwError('Only square matrices have a diagonal.');
+        throw new MatrixError('Only square matrices have a diagonal.');
     var diag = new Array(this.rows);
     for (var i = 0, ii = this.rows; i < ii; i++) {
         diag[i] = this[i][i];
@@ -3583,7 +3588,7 @@ Matrix.prototype.cumulativeSum = function cumulativeSum() {
  */
 Matrix.prototype.dot = function dot(other) {
     if (this.size !== other.size)
-        throwError('vectors do not have the same size');
+        throw new MatrixError('vectors do not have the same size');
     var vector1 = this.to1DArray();
     var vector2 = other.to1DArray();
     var dot = 0, l = vector1.length;
@@ -3672,7 +3677,7 @@ Matrix.prototype.transpose = function transpose() {
  */
 Matrix.prototype.subMatrix = function subMatrix(startRow, endRow, startColumn, endColumn) {
     if ((startRow > endRow) || (startColumn > endColumn) || (startRow < 0) || (startRow >= this.rows) || (endRow < 0) || (endRow >= this.rows) || (startColumn < 0) || (startColumn >= this.columns) || (endColumn < 0) || (endColumn >= this.columns))
-        throwError('Argument out of range');
+        throw new MatrixError('Argument out of range');
     var newMatrix = new Matrix(endRow - startRow + 1, endColumn - startColumn + 1);
     for (var i = startRow; i <= endRow; i++) {
         for (var j = startColumn; j <= endColumn; j++) {
@@ -3697,13 +3702,13 @@ Matrix.prototype.subMatrixRow = function subMatrixRow(indices, startColumn, endC
         endColumn = this.columns - 1;
     }
     if ((startColumn > endColumn) || (startColumn < 0) || (startColumn >= this.columns) || (endColumn < 0) || (endColumn >= this.columns))
-        throwError('Argument out of range.');
+        throw new MatrixError('Argument out of range.');
     var l = indices.length, rows = this.rows,
         X = new Matrix(l, endColumn - startColumn + 1);
     for (var i = 0; i < l; i++) {
         for (var j = startColumn; j <= endColumn; j++) {
             if ((indices[i] < 0) || (indices[i] >= rows))
-                throwError('Argument out of range.');
+                throw new MatrixError('Argument out of range.');
             X[i][j - startColumn] = this[indices[i]][j];
         }
     }
@@ -3725,13 +3730,13 @@ Matrix.prototype.subMatrixColumn = function subMatrixColumn(indices, startRow, e
         endRow = this.rows - 1;
     }
     if ((startRow > endRow) || (startRow < 0) || (startRow >= this.rows) || (endRow < 0) || (endRow >= this.rows))
-        throwError('Argument out of range.');
+        throw new MatrixError('Argument out of range.');
     var l = indices.length, columns = this.columns,
         X = new Matrix(endRow - startRow + 1, l);
     for (var i = 0; i < l; i++) {
         for (var j = startRow; j <= endRow; j++) {
             if ((indices[i] < 0) || (indices[i] >= columns))
-                throwError('Argument out of range.');
+                throw new MatrixError('Argument out of range.');
             X[j - startRow][i] = this[j][indices[i]];
         }
     }
@@ -3744,7 +3749,7 @@ Matrix.prototype.subMatrixColumn = function subMatrixColumn(indices, startRow, e
  */
 Matrix.prototype.trace = function trace() {
     if (!this.isSquare())
-        throwError('The matrix is not square');
+        throw new MatrixError('The matrix is not square');
     var trace = 0, i = 0, l = this.rows;
     for (; i < l; i++) {
         trace += this[i][i];
