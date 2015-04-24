@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.2.2
+ * @version v0.2.3
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -2345,7 +2345,7 @@ MatrixError.prototype.constructor = MatrixError;
  */
 function Matrix(nRows, nColumns) {
     var i = 0, rows, columns, matrix, newInstance;
-    if (nRows instanceof Array) {
+    if (Array.isArray(nRows)) {
         newInstance = nColumns;
         matrix = newInstance ? slice(nRows) : nRows;
         nRows = matrix.length;
@@ -2536,7 +2536,7 @@ Matrix.stack = function stack(arg1) {
         }
         return r;
     }
-    else if (arg1 instanceof Array) {
+    else if (Array.isArray(arg1)) {
         var matrix = Matrix.empty(arguments.length, arg1.length);
         for (i = 0; i < arguments.length; i++)
             matrix.setRow(i, arguments[i]);
@@ -3773,6 +3773,7 @@ Matrix.prototype.abs = function abs() {
 Matrix.MatrixError = MatrixError;
 
 module.exports = Matrix;
+
 },{}],56:[function(require,module,exports){
 'use strict';
 
