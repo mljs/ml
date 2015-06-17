@@ -1,5 +1,5 @@
-UNRELEASED
-==========
+0.3.1 / 2015-06-17
+==================
 
 * Add ml.SL.SVM
 :arrow_up: matrix v0.0.4
