@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.2.3
+ * @version v0.3.0
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -27,7 +27,7 @@ var NN = exports.NN = exports.nn = {};
 
 NN.SOM = require('ml-som');
 
-},{"ml-distance":52,"ml-matrix":54,"ml-som":56,"ml-stat/array":59,"ml-stat/matrix":60}],2:[function(require,module,exports){
+},{"ml-distance":52,"ml-matrix":60,"ml-som":62,"ml-stat/array":65,"ml-stat/matrix":66}],2:[function(require,module,exports){
 module.exports = function additiveSymmetric(a, b) {
     var i = 0,
         ii = a.length,
@@ -616,10 +616,105 @@ exports.avg = require('./dist/avg');
 },{"./dist/additiveSymmetric":2,"./dist/avg":3,"./dist/bhattacharyya":4,"./dist/canberra":5,"./dist/chebyshev":6,"./dist/clark":7,"./dist/cosine":8,"./dist/czekanowski":9,"./dist/czekanowskiS":10,"./dist/dice":11,"./dist/diceS":12,"./dist/divergence":13,"./dist/euclidean":14,"./dist/fidelity":15,"./dist/gower":16,"./dist/harmonicMean":17,"./dist/hellinger":18,"./dist/innerProduct":19,"./dist/intersection":20,"./dist/intersectionS":21,"./dist/jaccard":22,"./dist/jaccardS":23,"./dist/jeffreys":24,"./dist/jensenDifference":25,"./dist/jensenShannon":26,"./dist/kdivergence":27,"./dist/kulczynski":28,"./dist/kulczynskiS":29,"./dist/kullbackLeibler":30,"./dist/kumarHassebrook":31,"./dist/kumarJohnson":32,"./dist/lorentzian":33,"./dist/manhattan":34,"./dist/matusita":35,"./dist/minkowski":36,"./dist/motyka":37,"./dist/neyman":38,"./dist/pearson":39,"./dist/probabilisticSymmetric":40,"./dist/ruzicka":41,"./dist/soergel":42,"./dist/sorensen":43,"./dist/squared":45,"./dist/squared-euclidean":44,"./dist/squaredChord":46,"./dist/squaredChordS":47,"./dist/taneja":48,"./dist/tanimoto":49,"./dist/topsoe":50,"./dist/waveHedges":51}],53:[function(require,module,exports){
 'use strict';
 
-var Matrix = require('./matrix');
+var Matrix = require('../matrix');
+
+// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
+function CholeskyDecomposition(value) {
+    if (!(this instanceof CholeskyDecomposition)) {
+        return new CholeskyDecomposition(value);
+    }
+    value = Matrix.checkMatrix(value);
+    if (!value.isSymmetric())
+        throw new Error('Matrix is not symmetric');
+
+    var a = value,
+        dimension = a.rows,
+        l = new Matrix(dimension, dimension),
+        positiveDefinite = true,
+        i, j, k;
+
+    for (j = 0; j < dimension; j++) {
+        var Lrowj = l[j];
+        var d = 0;
+        for (k = 0; k < j; k++) {
+            var Lrowk = l[k];
+            var s = 0;
+            for (i = 0; i < k; i++) {
+                s += Lrowk[i] * Lrowj[i];
+            }
+            Lrowj[k] = s = (a[j][k] - s) / l[k][k];
+            d = d + s * s;
+        }
+
+        d = a[j][j] - d;
+
+        positiveDefinite &= (d > 0);
+        l[j][j] = Math.sqrt(Math.max(d, 0));
+        for (k = j + 1; k < dimension; k++) {
+            l[j][k] = 0;
+        }
+    }
+
+    if (!positiveDefinite) {
+        throw new Error('Matrix is not positive definite');
+    }
+
+    this.L = l;
+}
+
+CholeskyDecomposition.prototype = {
+    get leftTriangularFactor() {
+        return this.L;
+    },
+    solve: function (value) {
+        value = Matrix.checkMatrix(value);
+
+        var l = this.L,
+            dimension = l.rows;
+
+        if (value.rows !== dimension) {
+            throw new Error('Matrix dimensions do not match');
+        }
+
+        var count = value.columns,
+            B = value.clone(),
+            i, j, k;
+
+        for (k = 0; k < dimension; k++) {
+            for (j = 0; j < count; j++) {
+                for (i = 0; i < k; i++) {
+                    B[k][j] -= B[i][j] * l[k][i];
+                }
+                B[k][j] /= l[k][k];
+            }
+        }
+
+        for (k = dimension - 1; k >= 0; k--) {
+            for (j = 0; j < count; j++) {
+                for (i = k + 1; i < dimension; i++) {
+                    B[k][j] -= B[i][j] * l[i][k];
+                }
+                B[k][j] /= l[k][k];
+            }
+        }
+
+        return B;
+    }
+};
+
+module.exports = CholeskyDecomposition;
+
+},{"../matrix":61}],54:[function(require,module,exports){
+'use strict';
+
+var Matrix = require('../matrix');
+var hypotenuse = require('./util').hypotenuse;
 
 // https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
 function EigenvalueDecomposition(matrix) {
+    if (!(this instanceof EigenvalueDecomposition)) {
+        return new EigenvalueDecomposition(matrix);
+    }
     matrix = Matrix.checkMatrix(matrix);
     if (!matrix.isSquare()) {
         throw new Error('Matrix is not a square matrix');
@@ -653,8 +748,43 @@ function EigenvalueDecomposition(matrix) {
         hqr2(n, e, d, V, H);
     }
 
-    return new EigenvalueDecompositionResult(n, e, d, V);
+    this.n = n;
+    this.e = e;
+    this.d = d;
+    this.V = V;
 }
+
+EigenvalueDecomposition.prototype = {
+    get realEigenvalues() {
+        return this.d;
+    },
+    get imaginaryEigenvalues() {
+        return this.e;
+    },
+    get eigenvectorMatrix() {
+        return this.V;
+    },
+    get diagonalMatrix() {
+        var n = this.n,
+            e = this.e,
+            d = this.d,
+            X = new Matrix(n, n),
+            i, j;
+        for (i = 0; i < n; i++) {
+            for (j = 0; j < n; j++) {
+                X[i][j] = 0;
+            }
+            X[i][i] = d[i];
+            if (e[i] > 0) {
+                X[i][i + 1] = e[i];
+            }
+            else if (e[i] < 0) {
+                X[i][i - 1] = e[i];
+            }
+        }
+        return X;
+    }
+};
 
 function tred2(n, e, d, V) {
 
@@ -1340,47 +1470,18 @@ function cdiv(xr, xi, yr, yi) {
     }
 }
 
-function EigenvalueDecompositionResult(n, e, d, V) {
-    this.n = n;
-    this.e = e;
-    this.d = d;
-    this.V = V;
-}
+module.exports = EigenvalueDecomposition;
 
-EigenvalueDecompositionResult.prototype = {
-    get realEigenvalues() {
-        return this.d;
-    },
-    get imaginaryEigenvalues() {
-        return this.e;
-    },
-    get eigenvectorMatrix() {
-        return this.V;
-    },
-    get diagonalMatrix() {
-        var n = this.n,
-            e = this.e,
-            d = this.d,
-            X = new Matrix(n, n),
-            i, j;
-        for (i = 0; i < n; i++) {
-            for (j = 0; j < n; j++) {
-                X[i][j] = 0;
-            }
-            X[i][i] = d[i];
-            if (e[i] > 0) {
-                X[i][i + 1] = e[i];
-            }
-            else if (e[i] < 0) {
-                X[i][i - 1] = e[i];
-            }
-        }
-        return X;
-    }
-};
+},{"../matrix":61,"./util":58}],55:[function(require,module,exports){
+'use strict';
+
+var Matrix = require('../matrix');
 
 // https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
 function LuDecomposition(matrix) {
+    if (!(this instanceof LuDecomposition)) {
+        return new LuDecomposition(matrix);
+    }
     matrix = Matrix.checkMatrix(matrix);
 
     var lu = matrix.clone(),
@@ -1441,17 +1542,12 @@ function LuDecomposition(matrix) {
         }
     }
 
-    return new LuDecompositionResult(lu, pivotVector, pivotSign);
-
-}
-
-function LuDecompositionResult(lu, vector, sign) {
     this.LU = lu;
-    this.pivotVector = vector;
-    this.pivotSign = sign;
+    this.pivotVector = pivotVector;
+    this.pivotSign = pivotSign;
 }
 
-LuDecompositionResult.prototype = {
+LuDecomposition.prototype = {
     isSingular: function () {
         var data = this.LU,
             col = data.columns;
@@ -1545,9 +1641,20 @@ LuDecompositionResult.prototype = {
     }
 };
 
+module.exports = LuDecomposition;
+
+},{"../matrix":61}],56:[function(require,module,exports){
+'use strict';
+
+var Matrix = require('../matrix');
+var hypotenuse = require('./util').hypotenuse;
+
 //https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 function QrDecomposition(value) {
-    value = Matrix.checkMatrix(value)
+    if (!(this instanceof QrDecomposition)) {
+        return new QrDecomposition(value);
+    }
+    value = Matrix.checkMatrix(value);
 
     var qr = value.clone(),
         m = value.rows,
@@ -1582,15 +1689,11 @@ function QrDecomposition(value) {
         rdiag[k] = -nrm;
     }
 
-    return new QrDecompositionResult(qr, rdiag);
-}
-
-function QrDecompositionResult(qr, rdiag) {
     this.QR = qr;
     this.Rdiag = rdiag;
 }
 
-QrDecompositionResult.prototype = {
+QrDecomposition.prototype = {
     solve: function (value) {
         value = Matrix.checkMatrix(value);
 
@@ -1690,8 +1793,19 @@ QrDecompositionResult.prototype = {
     }
 };
 
+module.exports = QrDecomposition;
+
+},{"../matrix":61,"./util":58}],57:[function(require,module,exports){
+'use strict';
+
+var Matrix = require('../matrix');
+var hypotenuse = require('./util').hypotenuse;
+
 // https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
 function SingularValueDecomposition(value, options) {
+    if (!(this instanceof SingularValueDecomposition)) {
+        return new SingularValueDecomposition(value, options);
+    }
     value = Matrix.checkMatrix(value);
 
     options = options || {};
@@ -1711,7 +1825,7 @@ function SingularValueDecomposition(value, options) {
     var swapped = false;
     if (m < n) {
         if (!autoTranspose) {
-            console.warn('WARNING: Computing SVD on a matrix with more columns than rows.');
+            console.warn('Computing SVD on a matrix with more columns than rows. Consider enabling autoTranspose');
         } else {
             a = a.transpose();
             m = a.rows;
@@ -2062,10 +2176,6 @@ function SingularValueDecomposition(value, options) {
         U = tmp;
     }
 
-    return new SingularValueDecompositionResult(m, n, s, U, V);
-}
-
-function SingularValueDecompositionResult(m, n, s, U, V) {
     this.m = m;
     this.n = n;
     this.s = s;
@@ -2073,7 +2183,7 @@ function SingularValueDecompositionResult(m, n, s, U, V) {
     this.V = V;
 }
 
-SingularValueDecompositionResult.prototype = {
+SingularValueDecomposition.prototype = {
     get condition() {
         return this.s[0] / this.s[Math.min(this.m, this.n) - 1];
     },
@@ -2119,8 +2229,9 @@ SingularValueDecompositionResult.prototype = {
         for (i = 0; i < scols; i++) {
             if (Math.abs(this.s[i]) <= e) {
                 Ls[i][i] = 0;
+            } else {
+                Ls[i][i] = 1 / this.s[i];
             }
-            else Ls[i][i] = 1 / this.s[i];
         }
 
 
@@ -2156,6 +2267,8 @@ SingularValueDecompositionResult.prototype = {
             for (j = 0; j < vcols; j++) {
                 if (Math.abs(this.s[j]) > e) {
                     X[i][j] = this.V[i][j] / this.s[j];
+                } else {
+                    X[i][j] = 0;
                 }
             }
         }
@@ -2179,92 +2292,12 @@ SingularValueDecompositionResult.prototype = {
     }
 };
 
-// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
-function CholeskyDecomposition(value) {
-    value = Matrix.checkMatrix(value);
-    if (!value.isSymmetric())
-        throw new Error('Matrix is not symmetric');
+module.exports = SingularValueDecomposition;
 
-    var a = value,
-        dimension = a.rows,
-        l = new Matrix(dimension, dimension),
-        positiveDefinite = true,
-        i, j, k;
+},{"../matrix":61,"./util":58}],58:[function(require,module,exports){
+'use strict';
 
-    for (j = 0; j < dimension; j++) {
-        var Lrowj = l[j];
-        var d = 0;
-        for (k = 0; k < j; k++) {
-            var Lrowk = l[k];
-            var s = 0;
-            for (i = 0; i < k; i++) {
-                s += Lrowk[i] * Lrowj[i];
-            }
-            Lrowj[k] = s = (a[j][k] - s) / l[k][k];
-            d = d + s * s;
-        }
-
-        d = a[j][j] - d;
-
-        positiveDefinite &= (d > 0);
-        l[j][j] = Math.sqrt(Math.max(d, 0));
-        for (k = j + 1; k < dimension; k++) {
-            l[j][k] = 0;
-        }
-    }
-
-    if (!positiveDefinite) {
-        throw new Error('Matrix is not positive definite');
-    }
-
-    return new CholeskyDecompositionResult(l);
-}
-
-function CholeskyDecompositionResult(l) {
-    this.L = l;
-}
-
-CholeskyDecompositionResult.prototype = {
-    get leftTriangularFactor() {
-        return this.L;
-    },
-    solve: function (value) {
-        value = Matrix.checkMatrix(value);
-
-        var l = this.L,
-            dimension = l.rows;
-
-        if (value.rows !== dimension) {
-            throw new Error('Matrix dimensions do not match');
-        }
-
-        var count = value.columns,
-            B = value.clone(),
-            i, j, k;
-
-        for (k = 0; k < dimension; k++) {
-            for (j = 0; j < count; j++) {
-                for (i = 0; i < k; i++) {
-                    B[k][j] -= B[i][j] * l[k][i];
-                }
-                B[k][j] /= l[k][k];
-            }
-        }
-
-        for (k = dimension - 1; k >= 0; k--) {
-            for (j = 0; j < count; j++) {
-                for (i = k + 1; i < dimension; i++) {
-                    B[k][j] -= B[i][j] * l[i][k];
-                }
-                B[k][j] /= l[k][k];
-            }
-        }
-
-        return B;
-    }
-};
-
-function hypotenuse(a, b) {
+exports.hypotenuse = function hypotenuse(a, b) {
     var r;
     if (Math.abs(a) > Math.abs(b)) {
         r = b / a;
@@ -2275,7 +2308,18 @@ function hypotenuse(a, b) {
         return Math.abs(b) * Math.sqrt(1 + r * r);
     }
     return 0;
-}
+};
+
+},{}],59:[function(require,module,exports){
+'use strict';
+
+var Matrix = require('./matrix');
+
+var SingularValueDecomposition = require('./dc/svd');
+var EigenvalueDecomposition = require('./dc/evd');
+var LuDecomposition = require('./dc/lu');
+var QrDecomposition = require('./dc/qr');
+var CholeskyDecomposition = require('./dc/cholesky');
 
 function inverse(matrix) {
     return solve(matrix, Matrix.eye(matrix.rows));
@@ -2294,26 +2338,27 @@ Matrix.prototype.solve = function (other) {
 };
 
 module.exports = {
-    LuDecomposition: LuDecomposition,
-    LU: LuDecomposition,
-    QrDecomposition: QrDecomposition,
-    QR: QrDecomposition,
     SingularValueDecomposition: SingularValueDecomposition,
     SVD: SingularValueDecomposition,
     EigenvalueDecomposition: EigenvalueDecomposition,
     EVD: EigenvalueDecomposition,
+    LuDecomposition: LuDecomposition,
+    LU: LuDecomposition,
+    QrDecomposition: QrDecomposition,
+    QR: QrDecomposition,
     CholeskyDecomposition: CholeskyDecomposition,
     CHO: CholeskyDecomposition,
     inverse: inverse,
     solve: solve
 };
 
-},{"./matrix":55}],54:[function(require,module,exports){
+},{"./dc/cholesky":53,"./dc/evd":54,"./dc/lu":55,"./dc/qr":56,"./dc/svd":57,"./matrix":61}],60:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./matrix');
 module.exports.Decompositions = module.exports.DC = require('./decompositions');
-},{"./decompositions":53,"./matrix":55}],55:[function(require,module,exports){
+
+},{"./decompositions":59,"./matrix":61}],61:[function(require,module,exports){
 'use strict';
 
 var Asplice = Array.prototype.splice,
@@ -3603,6 +3648,8 @@ Matrix.prototype.dot = function dot(other) {
  * @returns {Matrix}
  */
 Matrix.prototype.mmul = function mmul(other) {
+    if (!Matrix.isMatrix(other))
+        throw new MatrixError('parameter "other" must be a matrix');
     if (this.columns !== other.rows)
         console.warn('Number of columns of left matrix are not equal to number of rows of right matrix.');
 
@@ -3774,7 +3821,7 @@ Matrix.MatrixError = MatrixError;
 
 module.exports = Matrix;
 
-},{}],56:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 'use strict';
 
 var NodeSquare = require('./node-square'),
@@ -4196,7 +4243,7 @@ function getMaxDistance(distance, numWeights) {
 }
 
 module.exports = SOM;
-},{"./node-hexagonal":57,"./node-square":58}],57:[function(require,module,exports){
+},{"./node-hexagonal":63,"./node-square":64}],63:[function(require,module,exports){
 var NodeSquare = require('./node-square');
 
 function NodeHexagonal(x, y, weights, som) {
@@ -4227,7 +4274,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 };
 
 module.exports = NodeHexagonal;
-},{"./node-square":58}],58:[function(require,module,exports){
+},{"./node-square":64}],64:[function(require,module,exports){
 function NodeSquare(x, y, weights, som) {
     this.x = x;
     this.y = y;
@@ -4334,7 +4381,7 @@ NodeSquare.prototype.getPosition = function getPosition(element) {
 };
 
 module.exports = NodeSquare;
-},{}],59:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -4699,7 +4746,7 @@ module.exports = {
     cumulativeSum: cumulativeSum
 };
 
-},{}],60:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
