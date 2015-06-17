@@ -14,6 +14,13 @@ Stat.array = require('ml-stat/array');
 Stat.matrix = require('ml-stat/matrix');
 
 /*
+Supervised learning
+ */
+var SL = exports.SL = {};
+
+SL.SVM = require('ml-svm');
+
+/*
 Neural networks
  */
 var NN = exports.NN = exports.nn = {};

@@ -68,13 +68,22 @@ See [ml-distance](https://github.com/mljs/distance)
 
 See [ml-stat](https://github.com/mljs/stat)
 
+### Supervised learning
+
+`ML.SL`
+
+#### Support vector machines
+
+`ML.SL.SVM`  
+See [ml-svm](https://github.com/mljs/svm)
+
 ### Neural networks
 
 `ML.NN`
 
 #### Self-organizing map
 
-`ML.NN.SOM`
+`ML.NN.SOM`  
 See [ml-som](https://github.com/mljs/som)
 
 ## License

@@ -9,6 +9,7 @@ describe('ML', function () {
             'Math',
             'Matrix',
             'Stat',
+            'SL',
             'NN'
         ]);
     });
@@ -24,6 +25,12 @@ describe('ML', function () {
         ML.Stat.should.have.properties([
             'array',
             'matrix'
+        ]);
+    });
+
+    it('check SL', function () {
+        ML.SL.should.have.properties([
+            'SVM'
         ]);
     });
 

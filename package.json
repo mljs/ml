@@ -31,7 +31,8 @@
     "ml-distance": "1.0.0",
     "ml-matrix": "0.0.4",
     "ml-som": "0.0.6",
-    "ml-stat": "1.0.1"
+    "ml-stat": "1.0.1",
+    "ml-svm": "1.0.1"
   },
   "devDependencies": {
     "browserify": "^8.1.3",
