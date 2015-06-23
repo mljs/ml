@@ -21,6 +21,13 @@ var SL = exports.SL = {};
 SL.SVM = require('ml-svm');
 
 /*
+ Clustering
+ */
+var Clust = exports.Clust = {};
+
+Clust.kmeans = require('ml-kmeans');
+
+/*
 Neural networks
  */
 var NN = exports.NN = exports.nn = {};

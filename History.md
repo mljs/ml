@@ -1,7 +1,15 @@
+0.3.2 / 2015-06-23
+==================
+
+* Add ml.clust.kmeans
+
+:arrow_up: distance v1.0.2
+
 0.3.1 / 2015-06-17
 ==================
 
 * Add ml.SL.SVM
+
 :arrow_up: matrix v0.0.4
 
 0.2.3 / 2015-04-24

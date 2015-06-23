@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.3.1
+ * @version v0.3.2
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -28,13 +28,20 @@ var SL = exports.SL = {};
 SL.SVM = require('ml-svm');
 
 /*
+ Clustering
+ */
+var Clust = exports.Clust = {};
+
+Clust.kmeans = require('ml-kmeans');
+
+/*
 Neural networks
  */
 var NN = exports.NN = exports.nn = {};
 
 NN.SOM = require('ml-som');
 
-},{"ml-distance":52,"ml-matrix":60,"ml-som":62,"ml-stat/array":65,"ml-stat/matrix":66,"ml-svm":67}],2:[function(require,module,exports){
+},{"ml-distance":54,"ml-kmeans":55,"ml-matrix":64,"ml-som":66,"ml-stat/array":69,"ml-stat/matrix":70,"ml-svm":71}],2:[function(require,module,exports){
 module.exports = function additiveSymmetric(a, b) {
     var i = 0,
         ii = a.length,
@@ -534,20 +541,54 @@ module.exports = function taneja(a, b) {
 };
 
 },{}],49:[function(require,module,exports){
-module.exports = function tanimoto(a, b) {
-    var ii = a.length,
-        p = 0,
-        q = 0,
-        m = 0;
-    for (var i = 0; i < ii ; i++) {
-        p += a[i];
-        q += b[i];
-        m += Math.min(a[i],b[i]);
+var tanimotoS = require('./tanimotoS');
+
+module.exports = function tanimoto(a, b, bitvector) {
+    bitvector = bitvector || false;
+    if (bitvector)
+        return 1 - tanimotoS(a, b, bitvector);
+    else {
+        var ii = a.length,
+            p = 0,
+            q = 0,
+            m = 0;
+        for (var i = 0; i < ii ; i++) {
+            p += a[i];
+            q += b[i];
+            m += Math.min(a[i],b[i]);
+        }
+        return (p + q - 2 * m) / (p + q - m);
     }
-    return (p + q - 2 * m) / (p + q - m);
 };
 
-},{}],50:[function(require,module,exports){
+},{"./tanimotoS":50}],50:[function(require,module,exports){
+module.exports = function tanimotoS(a, b, bitvector) {
+    bitvector = bitvector || false;
+    if (bitvector) {
+        var inter = 0,
+            union = 0;
+        for (var j = 0; j < a.length; j++) {
+            inter += a[j] && b[j];
+            union += a[j] || b[j];
+        }
+        if (union === 0)
+            return 1;
+        return inter / union;
+    }
+    else {
+        var ii = a.length,
+            p = 0,
+            q = 0,
+            m = 0;
+        for (var i = 0; i < ii ; i++) {
+            p += a[i];
+            q += b[i];
+            m += Math.min(a[i],b[i]);
+        }
+        return 1 - (p + q - 2 * m) / (p + q - m);
+    }
+};
+},{}],51:[function(require,module,exports){
 module.exports = function topsoe(a, b) {
     var ii = a.length,
         ans = 0;
@@ -557,7 +598,127 @@ module.exports = function topsoe(a, b) {
     return ans;
 };
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
+"use strict";
+
+/**
+ * Function that creates the tree
+ * @param {Array <number>} X - chemical shifts of the signal
+ * @param {Array <number>} Y - intensity of the signal
+ * @param {number} from - the low limit of x
+ * @param {number} to - the top limit of x
+ * @param {number} minWindow - smallest range to accept in x
+ * @param {number} threshold - smallest range to accept in y
+ * @returns {{sum: number, center: number, left: {json}, right: {json}}}
+ * left and right have the same structure than the parent, or have a
+ * undefined value if are leafs
+ */
+function createTree (X, Y, from, to, minWindow, threshold) {
+    minWindow = minWindow || 0.16;
+    threshold = threshold || 0.01;
+    if ((to - from) < minWindow)
+        return undefined;
+    var sum = 0;
+    for (var i = 0; X[i] < to; i++) {
+        if (X[i] > from)
+            sum += Y[i];
+    }
+    if (sum < threshold) {
+        return undefined;
+    }
+    var center = 0;
+    for (var j = 0; X[j] < to; j++) {
+        if (X[i] > from)
+            center += X[j] * Y[j];
+    }
+    center = center / sum;
+    if (((center - from) < 10e-6) || ((to - center) < 10e-6)) return undefined;
+    if ((center - from) < (minWindow /4)) {
+        return createTree(X, Y, center, to, minWindow, threshold);
+    }
+    else {
+        if ((to - center) < (minWindow / 4)) {
+            return createTree(X, Y, from, center, minWindow, threshold);
+        }
+        else {
+            return {
+                'sum': sum,
+                'center': center,
+                'left': createTree(X, Y, from, center, minWindow, threshold),
+                'right': createTree(X, Y, center, to, minWindow, threshold)
+            };
+        }
+    }
+}
+
+/**
+ * Similarity between two nodes
+ * @param {{sum: number, center: number, left: {json}, right: {json}}} a - tree A node
+ * @param {{sum: number, center: number, left: {json}, right: {json}}} b - tree B node
+ * @param {number} alpha - weights the relative importance of intensity vs. shift match
+ * @param {number} beta - weights the relative importance of node matching and children matching
+ * @param {number} gamma - controls the attenuation of the effect of chemical shift differences
+ * @returns {number} similarity measure between tree nodes
+ */
+function S(a, b, alpha, beta, gamma) {
+    if (a === undefined || b === undefined) {
+        return 0;
+    }
+    else {
+        var C = (alpha*Math.min(a.sum, b.sum)/Math.max(a.sum, b.sum)+ (1-alpha)*Math.exp(-gamma*Math.abs(a.center - b.center)));
+    }
+    return beta*C + (1-beta)*(S(a.left, b.left, alpha, beta, gamma)+S(a.right, b.right, alpha, beta, gamma));
+}
+
+/**
+ * @type {number} alpha - weights the relative importance of intensity vs. shift match
+ * @type {number} beta - weights the relative importance of node matching and children matching
+ * @type {number} gamma - controls the attenuation of the effect of chemical shift differences
+ * @type {number} minWindow - smallest range to accept in x
+ * @type {number} threshold - smallest range to accept in y
+ */
+var defaultOptions = {
+    minWindow: 0.16,
+    threshold : 0.01,
+    alpha: 0.1,
+    beta: 0.33,
+    gamma: 0.001
+};
+
+/**
+ * Builds a tree based in the spectra and compares this trees
+ * @param {{x: Array<number>, y: Array<number>}} A - first spectra to be compared
+ * @param {{x: Array<number>, y: Array<number>}} B - second spectra to be compared
+ * @param {number} from - the low limit of x
+ * @param {number} to - the top limit of x
+ * @param {{minWindow: number, threshold: number, alpha: number, beta: number, gamma: number}} options
+ * @returns {number} similarity measure between the spectra
+ */
+function tree(A, B, from, to, options) {
+    options = options || {};
+    for (var o in defaultOptions)
+        if (!options.hasOwnProperty(o)) {
+            options[o] = defaultOptions[o];
+        }
+    var Atree, Btree;
+    if (A.sum)
+        Atree = A;
+    else
+        Atree = createTree(A.x, A.y, from, to, options.minWindow, options.threshold);
+    if (B.sum)
+        Btree = B;
+    else
+        Btree = createTree(B.x, B.y, from, to, options.minWindow, options.threshold);
+    return S(Atree, Btree, options.alpha, options.beta, options.gamma);
+}
+
+module.exports = {
+    calc: tree,
+    createTree: createTree
+};
+
+
+},{}],53:[function(require,module,exports){
 module.exports = function waveHedges(a, b) {
     var ii = a.length,
         ans = 0;
@@ -567,7 +728,7 @@ module.exports = function waveHedges(a, b) {
     return ans;
 };
 
-},{}],52:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 exports.euclidean = require('./dist/euclidean');
 exports.squaredEuclidean = require('./dist/squared-euclidean');
 exports.manhattan = require('./dist/manhattan');
@@ -589,6 +750,7 @@ exports.motyka = require('./dist/motyka');
 exports.kulczynskiS = require('./dist/kulczynskiS');
 exports.ruzicka = require('./dist/ruzicka');
 exports.tanimoto = require('./dist/tanimoto');
+exports.tanimotoS = require('./dist/tanimotoS');
 exports.innerProduct = require('./dist/innerProduct');
 exports.harmonicMean = require('./dist/harmonicMean');
 exports.cosine = require('./dist/cosine');
@@ -619,8 +781,157 @@ exports.jensenDifference = require('./dist/jensenDifference');
 exports.taneja = require('./dist/taneja');
 exports.kumarJohnson = require('./dist/kumarJohnson');
 exports.avg = require('./dist/avg');
+exports.tree = require('./dist/tree');
 
-},{"./dist/additiveSymmetric":2,"./dist/avg":3,"./dist/bhattacharyya":4,"./dist/canberra":5,"./dist/chebyshev":6,"./dist/clark":7,"./dist/cosine":8,"./dist/czekanowski":9,"./dist/czekanowskiS":10,"./dist/dice":11,"./dist/diceS":12,"./dist/divergence":13,"./dist/euclidean":14,"./dist/fidelity":15,"./dist/gower":16,"./dist/harmonicMean":17,"./dist/hellinger":18,"./dist/innerProduct":19,"./dist/intersection":20,"./dist/intersectionS":21,"./dist/jaccard":22,"./dist/jaccardS":23,"./dist/jeffreys":24,"./dist/jensenDifference":25,"./dist/jensenShannon":26,"./dist/kdivergence":27,"./dist/kulczynski":28,"./dist/kulczynskiS":29,"./dist/kullbackLeibler":30,"./dist/kumarHassebrook":31,"./dist/kumarJohnson":32,"./dist/lorentzian":33,"./dist/manhattan":34,"./dist/matusita":35,"./dist/minkowski":36,"./dist/motyka":37,"./dist/neyman":38,"./dist/pearson":39,"./dist/probabilisticSymmetric":40,"./dist/ruzicka":41,"./dist/soergel":42,"./dist/sorensen":43,"./dist/squared":45,"./dist/squared-euclidean":44,"./dist/squaredChord":46,"./dist/squaredChordS":47,"./dist/taneja":48,"./dist/tanimoto":49,"./dist/topsoe":50,"./dist/waveHedges":51}],53:[function(require,module,exports){
+},{"./dist/additiveSymmetric":2,"./dist/avg":3,"./dist/bhattacharyya":4,"./dist/canberra":5,"./dist/chebyshev":6,"./dist/clark":7,"./dist/cosine":8,"./dist/czekanowski":9,"./dist/czekanowskiS":10,"./dist/dice":11,"./dist/diceS":12,"./dist/divergence":13,"./dist/euclidean":14,"./dist/fidelity":15,"./dist/gower":16,"./dist/harmonicMean":17,"./dist/hellinger":18,"./dist/innerProduct":19,"./dist/intersection":20,"./dist/intersectionS":21,"./dist/jaccard":22,"./dist/jaccardS":23,"./dist/jeffreys":24,"./dist/jensenDifference":25,"./dist/jensenShannon":26,"./dist/kdivergence":27,"./dist/kulczynski":28,"./dist/kulczynskiS":29,"./dist/kullbackLeibler":30,"./dist/kumarHassebrook":31,"./dist/kumarJohnson":32,"./dist/lorentzian":33,"./dist/manhattan":34,"./dist/matusita":35,"./dist/minkowski":36,"./dist/motyka":37,"./dist/neyman":38,"./dist/pearson":39,"./dist/probabilisticSymmetric":40,"./dist/ruzicka":41,"./dist/soergel":42,"./dist/sorensen":43,"./dist/squared":45,"./dist/squared-euclidean":44,"./dist/squaredChord":46,"./dist/squaredChordS":47,"./dist/taneja":48,"./dist/tanimoto":49,"./dist/tanimotoS":50,"./dist/topsoe":51,"./dist/tree":52,"./dist/waveHedges":53}],55:[function(require,module,exports){
+module.exports = require('./kmeans');
+},{"./kmeans":56}],56:[function(require,module,exports){
+'use strict';
+
+/**
+ * Calculates the squared distance between two vectors
+ * @param {Array<number>} vec1 - the x vector
+ * @param {Array<number>} vec2 - the y vector
+ * @returns {number} sum - the calculated distance
+ */
+function squaredDistance(vec1, vec2) {
+    var sum = 0;
+    var dim = vec1.length;
+    for (var i = 0; i < dim; i++)
+        sum += (vec1[i] - vec2[i]) * (vec1[i] - vec2[i]);
+    return sum;
+}
+
+/**
+ * Calculates the sum of squared errors
+ * @param {Array <Array <number>>} data - the (x,y) points to cluster
+ * @param {Array <Array <number>>} centers - the K centers in format (x,y)
+ * @param {Array <number>} clusterID - the cluster identifier for each data dot
+ * @returns {number} the sum of squared errors
+ */
+function computeSSE(data, centers, clusterID) {
+    var sse = 0;
+    var nData = data.length;
+    var c = 0;
+    for (var i = 0; i < nData;i++) {
+        c = clusterID[i];
+        sse += squaredDistance(data[i], centers[c]);
+    }
+    return sse;
+}
+
+/**
+ * Updates the cluster identifier based in the new data
+ * @param {Array <Array <number>>} data - the (x,y) points to cluster
+ * @param {Array <Array <number>>} centers - the K centers in format (x,y)
+ * @returns {Array} the cluster identifier for each data dot
+ */
+function updateClusterID (data, centers) {
+    var nData = data.length;
+    var k = centers.length;
+    var aux = 0;
+    var clusterID = new Array(nData);
+    for (var i = 0; i < nData; i++)
+        clusterID[i] = 0;
+    var d = new Array(nData);
+    for (var i = 0; i < nData; i++) {
+        d[i] = new Array(k);
+        for (var j = 0; j < k; j++) {
+            aux = squaredDistance(data[i], centers[j]);
+            d[i][j] = new Array(2);
+            d[i][j][0] = aux;
+            d[i][j][1] = j;
+        }
+        var min = d[i][0][0];
+        var id = 0;
+        for (var j = 0; j < k; j++)
+            if (d[i][j][0] < min) {
+                min  = d[i][j][0];
+                id = d[i][j][1];
+            }
+        clusterID[i] = id;
+    }
+    return clusterID;
+}
+
+/**
+ * Update the center values based in the new configurations of the clusters
+ * @param {Array <Array <number>>} data - the (x,y) points to cluster
+ * @param {Array <number>} clusterID - the cluster identifier for each data dot
+ * @param K - number of clusters
+ * @returns {Array} he K centers in format (x,y)
+ */
+function updateCenters(data, clusterID, K) {
+    var nDim = data[0].length;
+    var nData = data.length;
+    var centers = new Array(K);
+    for (var i = 0; i < K; i++) {
+        centers[i] = new Array(nDim);
+        for (var j = 0; j < nDim; j++)
+            centers[i][j] = 0;
+    }
+
+    for (var k = 0; k < K; k++) {
+        var cluster = [];
+        for (var i = 0; i < nData;i++)
+            if (clusterID[i] == k)
+                cluster.push(data[i]);
+        for (var d = 0; d < nDim; d++) {
+            var x = [];
+            for (var i = 0; i < nData; i++)
+                if (clusterID[i] == k)
+                    x.push(data[i][d]);
+            var sum = 0;
+            var l = x.length;
+            for (var i = 0; i < l; i++)
+                sum += x[i];
+            centers[k][d] = sum / l;
+        }
+    }
+    return centers;
+}
+
+/**
+ * K-means algorithm
+ * @param {Array <Array <number>>} data - the (x,y) points to cluster
+ * @param {Array <Array <number>>} centers - the K centers in format (x,y)
+ * @param {number} maxIter - maximum of iterations allowed
+ * @param {number} tol - the error tolerance
+ * @returns {Array <number>} the cluster identifier for each data dot
+ */
+function kmeans(data, centers, maxIter, tol) {
+    maxIter = (typeof maxIter === "undefined") ? 100 : maxIter;
+    tol = (typeof tol === "undefined") ? 1e-6 : tol;
+
+    var nData = data.length;
+    if (nData == 0) {
+        return [];
+    }
+    var K = centers.length;
+    var clusterID = new Array(nData);
+    for (var i = 0; i < nData; i++)
+        clusterID[i] = 0;
+    if (K >= nData) {
+        for (var i = 0; i < nData; i++)
+            clusterID[i] = i;
+        return clusterID;
+    }
+    var lastDistance;
+    lastDistance = 1e100;
+    var curDistance = 0;
+    for (var iter = 0; iter < maxIter; iter++) {
+        clusterID = updateClusterID(data, centers);
+        centers = updateCenters(data, clusterID, K);
+        curDistance = computeSSE(data, centers, clusterID);
+        if ((lastDistance - curDistance < tol) || ((lastDistance - curDistance)/lastDistance < tol))
+            return clusterID;
+        lastDistance = curDistance;
+    }
+    return clusterID;
+}
+
+module.exports = kmeans;
+},{}],57:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -711,7 +1022,7 @@ CholeskyDecomposition.prototype = {
 
 module.exports = CholeskyDecomposition;
 
-},{"../matrix":61}],54:[function(require,module,exports){
+},{"../matrix":65}],58:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -1479,7 +1790,7 @@ function cdiv(xr, xi, yr, yi) {
 
 module.exports = EigenvalueDecomposition;
 
-},{"../matrix":61,"./util":58}],55:[function(require,module,exports){
+},{"../matrix":65,"./util":62}],59:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -1650,7 +1961,7 @@ LuDecomposition.prototype = {
 
 module.exports = LuDecomposition;
 
-},{"../matrix":61}],56:[function(require,module,exports){
+},{"../matrix":65}],60:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -1802,7 +2113,7 @@ QrDecomposition.prototype = {
 
 module.exports = QrDecomposition;
 
-},{"../matrix":61,"./util":58}],57:[function(require,module,exports){
+},{"../matrix":65,"./util":62}],61:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -2301,7 +2612,7 @@ SingularValueDecomposition.prototype = {
 
 module.exports = SingularValueDecomposition;
 
-},{"../matrix":61,"./util":58}],58:[function(require,module,exports){
+},{"../matrix":65,"./util":62}],62:[function(require,module,exports){
 'use strict';
 
 exports.hypotenuse = function hypotenuse(a, b) {
@@ -2317,7 +2628,7 @@ exports.hypotenuse = function hypotenuse(a, b) {
     return 0;
 };
 
-},{}],59:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('./matrix');
@@ -2359,13 +2670,13 @@ module.exports = {
     solve: solve
 };
 
-},{"./dc/cholesky":53,"./dc/evd":54,"./dc/lu":55,"./dc/qr":56,"./dc/svd":57,"./matrix":61}],60:[function(require,module,exports){
+},{"./dc/cholesky":57,"./dc/evd":58,"./dc/lu":59,"./dc/qr":60,"./dc/svd":61,"./matrix":65}],64:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./matrix');
 module.exports.Decompositions = module.exports.DC = require('./decompositions');
 
-},{"./decompositions":59,"./matrix":61}],61:[function(require,module,exports){
+},{"./decompositions":63,"./matrix":65}],65:[function(require,module,exports){
 'use strict';
 
 var Asplice = Array.prototype.splice,
@@ -3828,7 +4139,7 @@ Matrix.MatrixError = MatrixError;
 
 module.exports = Matrix;
 
-},{}],62:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 'use strict';
 
 var NodeSquare = require('./node-square'),
@@ -4250,7 +4561,7 @@ function getMaxDistance(distance, numWeights) {
 }
 
 module.exports = SOM;
-},{"./node-hexagonal":63,"./node-square":64}],63:[function(require,module,exports){
+},{"./node-hexagonal":67,"./node-square":68}],67:[function(require,module,exports){
 var NodeSquare = require('./node-square');
 
 function NodeHexagonal(x, y, weights, som) {
@@ -4281,7 +4592,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 };
 
 module.exports = NodeHexagonal;
-},{"./node-square":64}],64:[function(require,module,exports){
+},{"./node-square":68}],68:[function(require,module,exports){
 function NodeSquare(x, y, weights, som) {
     this.x = x;
     this.y = y;
@@ -4388,7 +4699,7 @@ NodeSquare.prototype.getPosition = function getPosition(element) {
 };
 
 module.exports = NodeSquare;
-},{}],65:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -4753,7 +5064,7 @@ module.exports = {
     cumulativeSum: cumulativeSum
 };
 
-},{}],66:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -5282,10 +5593,10 @@ module.exports = {
     weightedScatter: weightedScatter
 };
 
-},{}],67:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 exports.svm = require('./svm');
 exports.kernel = require('./kernel');
-},{"./kernel":68,"./svm":69}],68:[function(require,module,exports){
+},{"./kernel":72,"./svm":73}],72:[function(require,module,exports){
 'use strict';
 
 /**
@@ -5342,7 +5653,7 @@ function dot(p1, p2) {
 }
 
 module.exports = kernel;
-},{}],69:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 var kernel = require("./kernel");
 
@@ -5570,5 +5881,5 @@ SVM.prototype.predict = function (p) {
 };
 
 module.exports = SVM;
-},{"./kernel":68}]},{},[1])(1)
+},{"./kernel":72}]},{},[1])(1)
 });

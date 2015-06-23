@@ -34,6 +34,12 @@ describe('ML', function () {
         ]);
     });
 
+    it('check Clust', function () {
+        ML.Clust.should.have.properties([
+            'kmeans'
+        ]);
+    });
+
     it('check NN', function () {
         ML.NN.should.have.properties([
             'SOM'

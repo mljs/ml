@@ -72,6 +72,11 @@ See [ml-stat](https://github.com/mljs/stat)
 
 `ML.SL`
 
+### Clustering
+
+`ML.Clust`  
+See [ml-kmeans](https://github.com/mljs/kmeans)
+
 #### Support vector machines
 
 `ML.SL.SVM`  
