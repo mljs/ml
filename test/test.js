@@ -46,4 +46,9 @@ describe('ML', function () {
         ]);
     });
 
+    it('check AU', function () {
+        ML.AU.should.have.properties([
+            'ArrayUtils'
+        ]);
+    });
 });

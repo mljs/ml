@@ -91,6 +91,11 @@ See [ml-svm](https://github.com/mljs/svm)
 `ML.NN.SOM`  
 See [ml-som](https://github.com/mljs/som)
 
+#### Array Utils
+
+`ML.AU`
+See [ml-array-utils](https://github.com/mljs/ArrayUtils)
+
 ## License
 
   [MIT](./LICENSE)

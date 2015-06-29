@@ -33,3 +33,9 @@ Neural networks
 var NN = exports.NN = exports.nn = {};
 
 NN.SOM = require('ml-som');
+
+/*
+Array Utils
+*/
+var AU = exports.AU = exports.ArrayUtils = {};
+AU.ArrayUtils = require('ml-array-utils');
