@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.3.3
+ * @version v0.3.4
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -41,7 +41,350 @@ var NN = exports.NN = exports.nn = {};
 
 NN.SOM = require('ml-som');
 
-},{"ml-distance":54,"ml-kmeans":55,"ml-matrix":64,"ml-som":66,"ml-stat/array":69,"ml-stat/matrix":70,"ml-svm":71}],2:[function(require,module,exports){
+/*
+Array Utils
+*/
+var AU = exports.AU = exports.ArrayUtils = {};
+AU.ArrayUtils = require('ml-array-utils');
+
+},{"ml-array-utils":4,"ml-distance":57,"ml-kmeans":58,"ml-matrix":67,"ml-som":69,"ml-stat/array":72,"ml-stat/matrix":73,"ml-svm":74}],2:[function(require,module,exports){
+'use strict';
+
+/**
+ * Function that returns an array of points given 1D array as follows:
+ *
+ * [x1, y1, .. , x2, y2, ..]
+ *
+ * And receive the number of dimensions of each point.
+ * @param array
+ * @param dimensions
+ * @returns {Array} - Array of points.
+ */
+function coordArrayToPoints(array, dimensions) {
+    if(array.length % dimensions !== 0) {
+        throw new RangeError('Dimensions number must be accordance with the size of the array.');
+    }
+
+    var length = array.length / dimensions;
+    var pointsArr = new Array(length);
+
+    var k = 0;
+    for(var i = 0; i < array.length; i += dimensions) {
+        var point = new Array(dimensions);
+        for(var j = 0; j < dimensions; ++j) {
+            point[j] = array[i + j];
+        }
+
+        pointsArr[k] = point;
+        k++;
+    }
+
+    return pointsArr;
+}
+
+
+/**
+ * Function that given an array as follows:
+ * [x1, y1, .. , x2, y2, ..]
+ *
+ * Returns an array as follows:
+ * [[x1, x2, ..], [y1, y2, ..], [ .. ]]
+ *
+ * And receives the number of dimensions of each coordinate.
+ * @param array
+ * @param dimensions
+ * @returns {Array} - Matrix of coordinates
+ */
+function coordArrayToCoordMatrix(array, dimensions) {
+    if(array.length % dimensions !== 0) {
+        throw new RangeError('Dimensions number must be accordance with the size of the array.');
+    }
+
+    var coordinatesArray = new Array(dimensions);
+    var points = array.length / dimensions;
+    for (var i = 0; i < coordinatesArray.length; i++) {
+        coordinatesArray[i] = new Array(points);
+    }
+
+    for(i = 0; i < array.length; i += dimensions) {
+        for(var j = 0; j < dimensions; ++j) {
+            var currentPoint = Math.floor(i / dimensions);
+            coordinatesArray[j][currentPoint] = array[i + j];
+        }
+    }
+
+    return coordinatesArray;
+}
+
+/**
+ * Function that receives a coordinate matrix as follows:
+ * [[x1, x2, ..], [y1, y2, ..], [ .. ]]
+ *
+ * Returns an array of coordinates as follows:
+ * [x1, y1, .. , x2, y2, ..]
+ *
+ * @param coordMatrix
+ * @returns {Array}
+ */
+function coordMatrixToCoordArray(coordMatrix) {
+    var coodinatesArray = new Array(coordMatrix.length * coordMatrix[0].length);
+    var k = 0;
+    for(var i = 0; i < coordMatrix[0].length; ++i) {
+        for(var j = 0; j < coordMatrix.length; ++j) {
+            coodinatesArray[k] = coordMatrix[j][i];
+            ++k;
+        }
+    }
+
+    return coodinatesArray;
+}
+
+/**
+ * Tranpose a matrix, this method is for coordMatrixToPoints and
+ * pointsToCoordMatrix, that because only transposing the matrix
+ * you can change your representation.
+ *
+ * @param matrix
+ * @returns {Array}
+ */
+function transpose(matrix) {
+    var resultMatrix = new Array(matrix[0].length);
+    for(var i = 0; i < resultMatrix.length; ++i) {
+        resultMatrix[i] = new Array(matrix.length);
+    }
+
+    for (i = 0; i < matrix.length; ++i) {
+        for(var j = 0; j < matrix[0].length; ++j) {
+            resultMatrix[j][i] = matrix[i][j];
+        }
+    }
+
+    return resultMatrix;
+}
+
+/**
+ * Function that transform an array of points into a coordinates array
+ * as follows:
+ * [x1, y1, .. , x2, y2, ..]
+ *
+ * @param points
+ * @returns {Array}
+ */
+function pointsToCoordArray(points) {
+    var coodinatesArray = new Array(points.length * points[0].length);
+    var k = 0;
+    for(var i = 0; i < points.length; ++i) {
+        for(var j = 0; j < points[0].length; ++j) {
+            coodinatesArray[k] = points[i][j];
+            ++k;
+        }
+    }
+
+    return coodinatesArray;
+}
+
+/**
+ * Apply the dot product between the smaller vector and a subsets of the
+ * largest one.
+ *
+ * @param firstVector
+ * @param secondVector
+ * @returns {Array} each dot product of size of the difference between the
+ *                  larger and the smallest one.
+ */
+function applyDotProduct(firstVector, secondVector) {
+    var largestVector, smallestVector;
+    if(firstVector.length <= secondVector.length) {
+        smallestVector = firstVector;
+        largestVector = secondVector;
+    } else {
+        smallestVector = secondVector;
+        largestVector = firstVector;
+    }
+
+    var difference = largestVector.length - smallestVector.length + 1;
+    var dotProductApplied = new Array(difference);
+
+    for (var i = 0; i < difference; ++i) {
+        var sum = 0;
+        for (var j = 0; j < smallestVector.length; ++j) {
+            sum += smallestVector[j] * largestVector[i + j];
+        }
+        dotProductApplied[i] = sum;
+    }
+
+    return dotProductApplied;
+}
+
+module.exports = {
+    coordArrayToPoints: coordArrayToPoints,
+    coordArrayToCoordMatrix: coordArrayToCoordMatrix,
+    coordMatrixToCoordArray: coordMatrixToCoordArray,
+    coordMatrixToPoints: transpose,
+    pointsToCoordArray: pointsToCoordArray,
+    pointsToCoordMatrix: transpose,
+    applyDotProduct: applyDotProduct
+};
+
+
+},{}],3:[function(require,module,exports){
+'use strict';
+
+/**
+ * Function that returns a Number array of equally spaced numberOfPoints
+ * containing a representation of intensities of the spectra arguments x
+ * and y.
+ *
+ * The options parameter contains an object in the following form:
+ * from: starting point
+ * to: last point
+ * numberOfPoints: number of points between from and to
+ * variant: "slot" or "smooth"
+ *
+ * The slot variant consist that each point in the new array is calculated
+ * averaging the existing points between the slot that belongs to the current
+ * value. The smooth variant is the same but takes the integral of the range
+ * of the slot and divide by the step size between two points in the new
+ * array.
+ *
+ * @param x
+ * @param y
+ * @param options
+ * @returns {Array} new array with the equally spaced data.
+ */
+function getEquallySpacedData(x, y, options) {
+
+    var xLength = x.length;
+    if(x.length !== y.length)
+        throw new RangeError("the x and y vector doesn't have the same size.");
+
+    if (options === undefined) options = {};
+
+    var from = options.from === undefined ? x[0] : options.from;
+    var to = options.to === undefined ? x[x.length - 1] : options.to;
+    if(from > to)
+        throw new RangeError("from option must be less or equal that the to argument.");
+
+    var numberOfPoints = options.numberOfPoints === undefined ? 100 : options.numberOfPoints;
+    if(numberOfPoints < 1)
+        throw new RangeError("the number of point must be higher than 1");
+
+    var algorithm = options.variant === "slot" ? "slot" : "smooth"; // default value: smooth
+
+    var step = (to - from) / (numberOfPoints - 1);
+    var halfStep = step / 2;
+
+    var start = from - halfStep;
+    var output = new Array(numberOfPoints);
+
+    var initialOriginalStep = x[1] - x[0];
+    var lastOriginalStep = x[x.length - 1] - x[x.length - 2];
+
+    // Init main variables
+    var min = start;
+    var max = start + step;
+
+    var previousX = -Number.MAX_VALUE;
+    var previousY = 0;
+    var nextX = x[0] - initialOriginalStep;
+    var nextY = 0;
+
+    var currentValue = 0;
+    var slope = 0;
+    var intercept = 0;
+    var sumAtMin = 0;
+    var sumAtMax = 0;
+
+    // for slot algorithm
+    var currentPoints = 0;
+
+    var i = 0; // index of input
+    var j = 0; // index of output
+
+    function getValue() {
+        if(algorithm === "smooth")
+            return integral(previousX, nextX, slope, intercept);
+        else
+            return previousY;
+    }
+
+    function updateParameters() {
+        slope = getSlope(previousX, previousY, nextX, nextY);
+        intercept = -slope*previousX + previousY;
+    }
+
+    function getSlope(x0, y0, x1, y1) {
+        return (y1 - y0) / (x1 - x0);
+    }
+
+    main: while(true) {
+        while (nextX - max >= 0) {
+            // no overlap with original point, just consume current value
+            var add = algorithm === "smooth" ? integral(0, max - previousX, slope, previousY) : previousY;
+            sumAtMax = currentValue + add;
+
+            var divisor = algorithm === "smooth" ? step : currentPoints - 1;
+            output[j] = (sumAtMax - sumAtMin) / divisor;
+            j++;
+
+            if (j === numberOfPoints)
+                break main;
+
+            min = max;
+            max += step;
+            sumAtMin = sumAtMax;
+            if(algorithm === "slot")
+                currentPoints = 0;
+        }
+
+        if(previousX <= min && min <= nextX) {
+            add = algorithm === "smooth" ? integral(0, min - previousX, slope, previousY) : previousY;
+            sumAtMin = currentValue + add;
+            if(algorithm === "slot")
+                currentPoints++;
+        }
+
+        currentValue += getValue();
+        if(currentPoints !== 0)
+            currentPoints++;
+
+        previousX = nextX;
+        previousY = nextY;
+
+        if (i < xLength) {
+            nextX = x[i];
+            nextY = y[i];
+            i++;
+        } else if (i === xLength) {
+            nextX += lastOriginalStep;
+            nextY = 0;
+        }
+
+        updateParameters();
+    }
+
+    return output;
+}
+/**
+ * Function that calculates the integral of the line between two
+ * x-coordinates, given the slope and intercept of the line.
+ *
+ * @param x0
+ * @param x1
+ * @param slope
+ * @param intercept
+ * @returns {number} integral value.
+ */
+function integral(x0, x1, slope, intercept) {
+    return (0.5 * slope * x1 * x1 + intercept * x1) - (0.5 * slope * x0 * x0 + intercept * x0);
+}
+
+exports.getEquallySpacedData = getEquallySpacedData;
+exports.integral = integral;
+},{}],4:[function(require,module,exports){
+module.exports = exports = require('./ArrayUtils');
+exports.getEquallySpacedData = require('./getEquallySpaced').getEquallySpacedData;
+},{"./ArrayUtils":2,"./getEquallySpaced":3}],5:[function(require,module,exports){
 module.exports = function additiveSymmetric(a, b) {
     var i = 0,
         ii = a.length,
@@ -52,7 +395,7 @@ module.exports = function additiveSymmetric(a, b) {
     return 2 * d;
 };
 
-},{}],3:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 module.exports = function avg(a, b) {
     var ii = a.length,
         max = 0,
@@ -68,7 +411,7 @@ module.exports = function avg(a, b) {
     return (max + ans) / 2;
 };
 
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 module.exports = function bhattacharyya(a, b) {
     var ii = a.length,
         ans = 0;
@@ -78,7 +421,7 @@ module.exports = function bhattacharyya(a, b) {
     return - Math.log(ans);
 };
 
-},{}],5:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 module.exports = function canberra(a, b) {
     var ii = a.length,
         ans = 0;
@@ -88,7 +431,7 @@ module.exports = function canberra(a, b) {
     return ans;
 };
 
-},{}],6:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 module.exports = function chebyshev(a, b) {
     var ii = a.length,
         max = 0,
@@ -102,7 +445,7 @@ module.exports = function chebyshev(a, b) {
     return max;
 };
 
-},{}],7:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 module.exports = function clark(a, b) {
     var i = 0,
         ii = a.length,
@@ -113,7 +456,7 @@ module.exports = function clark(a, b) {
     return 2 * d;
 };
 
-},{}],8:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 module.exports = function cosine(a, b) {
     var ii = a.length,
         p = 0,
@@ -127,7 +470,7 @@ module.exports = function cosine(a, b) {
     return p / (Math.sqrt(p2) * Math.sqrt(q2));
 };
 
-},{}],9:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 module.exports = function czekanowski(a, b) {
     var ii = a.length,
         up = 0,
@@ -139,14 +482,14 @@ module.exports = function czekanowski(a, b) {
     return 1 - (2 * up / down);
 };
 
-},{}],10:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var czekanowski = require('./czekanowski');
 
 module.exports = function czekanowskiS(a, b) {
     return 1 - czekanowski(a,b);
 };
 
-},{"./czekanowski":9}],11:[function(require,module,exports){
+},{"./czekanowski":12}],14:[function(require,module,exports){
 module.exports = function dice(a, b) {
     var ii = a.length,
         p = 0,
@@ -160,14 +503,14 @@ module.exports = function dice(a, b) {
     return q2 / (p + q1);
 };
 
-},{}],12:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var dice = require('./dice');
 
 module.exports = function diceS(a, b) {
     return 1 - dice(a,b);
 };
 
-},{"./dice":11}],13:[function(require,module,exports){
+},{"./dice":14}],16:[function(require,module,exports){
 module.exports = function divergence(a, b) {
     var i = 0,
         ii = a.length,
@@ -178,13 +521,13 @@ module.exports = function divergence(a, b) {
     return 2 * d;
 };
 
-},{}],14:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var squaredEuclidean = require('./squared-euclidean');
 
 module.exports = function euclidean(a, b) {
     return Math.sqrt(squaredEuclidean(a, b));
 };
-},{"./squared-euclidean":44}],15:[function(require,module,exports){
+},{"./squared-euclidean":47}],18:[function(require,module,exports){
 module.exports = function fidelity(a, b) {
     var ii = a.length,
         ans = 0;
@@ -194,7 +537,7 @@ module.exports = function fidelity(a, b) {
     return ans;
 };
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 module.exports = function gower(a, b) {
     var ii = a.length,
         ans = 0;
@@ -204,7 +547,7 @@ module.exports = function gower(a, b) {
     return ans / ii;
 };
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 module.exports = function harmonicMean(a, b) {
     var ii = a.length,
         ans = 0;
@@ -214,7 +557,7 @@ module.exports = function harmonicMean(a, b) {
     return 2 * ans;
 };
 
-},{}],18:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 module.exports = function hellinger(a, b) {
     var ii = a.length,
         ans = 0;
@@ -224,7 +567,7 @@ module.exports = function hellinger(a, b) {
     return 2 * Math.sqrt(1 - ans);
 };
 
-},{}],19:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 module.exports = function innerProduct(a, b) {
     var ii = a.length,
         ans = 0;
@@ -234,7 +577,7 @@ module.exports = function innerProduct(a, b) {
     return ans;
 };
 
-},{}],20:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 module.exports = function intersection(a, b) {
     var ii = a.length,
         ans = 0;
@@ -244,14 +587,14 @@ module.exports = function intersection(a, b) {
     return 1 - ans;
 };
 
-},{}],21:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var intersection = require('./intersection');
 
 module.exports = function intersectionS(a, b) {
     return 1 - intersection(a,b);
 };
 
-},{"./intersection":20}],22:[function(require,module,exports){
+},{"./intersection":23}],25:[function(require,module,exports){
 module.exports = function jaccard(a, b) {
     var ii = a.length,
         p1 = 0,
@@ -267,14 +610,14 @@ module.exports = function jaccard(a, b) {
     return q2 / (p2 + q1 - p1);
 };
 
-},{}],23:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var jaccard = require('./jaccard');
 
 module.exports = function jaccardS(a, b) {
     return 1 - jaccard(a, b);
 };
 
-},{"./jaccard":22}],24:[function(require,module,exports){
+},{"./jaccard":25}],27:[function(require,module,exports){
 module.exports = function jeffreys(a, b) {
     var ii = a.length,
         ans = 0;
@@ -284,7 +627,7 @@ module.exports = function jeffreys(a, b) {
     return ans;
 };
 
-},{}],25:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 module.exports = function jensenDifference(a, b) {
     var ii = a.length,
         ans = 0;
@@ -294,7 +637,7 @@ module.exports = function jensenDifference(a, b) {
     return ans;
 };
 
-},{}],26:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 module.exports = function jensenShannon(a, b) {
     var ii = a.length,
         p = 0,
@@ -306,7 +649,7 @@ module.exports = function jensenShannon(a, b) {
     return (p + q) / 2;
 };
 
-},{}],27:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 module.exports = function kdivergence(a, b) {
     var ii = a.length,
         ans = 0;
@@ -316,7 +659,7 @@ module.exports = function kdivergence(a, b) {
     return ans;
 };
 
-},{}],28:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 module.exports = function kulczynski(a, b) {
     var ii = a.length,
         up = 0,
@@ -328,14 +671,14 @@ module.exports = function kulczynski(a, b) {
     return up / down;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var kulczynski = require('./kulczynski');
 
 module.exports = function kulczynskiS(a, b) {
     return 1 / kulczynski(a, b);
 };
 
-},{"./kulczynski":28}],30:[function(require,module,exports){
+},{"./kulczynski":31}],33:[function(require,module,exports){
 module.exports = function kullbackLeibler(a, b) {
     var ii = a.length,
         ans = 0;
@@ -345,7 +688,7 @@ module.exports = function kullbackLeibler(a, b) {
     return ans;
 };
 
-},{}],31:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 module.exports = function kumarHassebrook(a, b) {
     var ii = a.length,
         p = 0,
@@ -359,7 +702,7 @@ module.exports = function kumarHassebrook(a, b) {
     return p / (p2 + q2 - p);
 };
 
-},{}],32:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 module.exports = function kumarJohnson(a, b) {
     var ii = a.length,
         ans = 0;
@@ -369,7 +712,7 @@ module.exports = function kumarJohnson(a, b) {
     return ans;
 };
 
-},{}],33:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 module.exports = function lorentzian(a, b) {
     var ii = a.length,
         ans = 0;
@@ -379,7 +722,7 @@ module.exports = function lorentzian(a, b) {
     return ans;
 };
 
-},{}],34:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 module.exports = function manhattan(a, b) {
     var i = 0,
         ii = a.length,
@@ -390,7 +733,7 @@ module.exports = function manhattan(a, b) {
     return d;
 };
 
-},{}],35:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 module.exports = function matusita(a, b) {
     var ii = a.length,
         ans = 0;
@@ -400,7 +743,7 @@ module.exports = function matusita(a, b) {
     return Math.sqrt(2 - 2 * ans);
 };
 
-},{}],36:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 module.exports = function minkowski(a, b, p) {
     var i = 0,
         ii = a.length,
@@ -411,7 +754,7 @@ module.exports = function minkowski(a, b, p) {
     return Math.pow(d,(1/p));
 };
 
-},{}],37:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 module.exports = function motyka(a, b) {
     var ii = a.length,
         up = 0,
@@ -423,7 +766,7 @@ module.exports = function motyka(a, b) {
     return 1 - (up / down);
 };
 
-},{}],38:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 module.exports = function pearson(a, b) {
     var i = 0,
         ii = a.length,
@@ -434,7 +777,7 @@ module.exports = function pearson(a, b) {
     return d;
 };
 
-},{}],39:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 module.exports = function pearson(a, b) {
     var i = 0,
         ii = a.length,
@@ -445,7 +788,7 @@ module.exports = function pearson(a, b) {
     return d;
 };
 
-},{}],40:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 module.exports = function probabilisticSymmetric(a, b) {
     var i = 0,
         ii = a.length,
@@ -456,7 +799,7 @@ module.exports = function probabilisticSymmetric(a, b) {
     return 2 * d;
 };
 
-},{}],41:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 module.exports = function ruzicka(a, b) {
     var ii = a.length,
         up = 0,
@@ -468,7 +811,7 @@ module.exports = function ruzicka(a, b) {
     return up / down;
 };
 
-},{}],42:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 module.exports = function soergel(a, b) {
     var ii = a.length,
         up = 0,
@@ -480,7 +823,7 @@ module.exports = function soergel(a, b) {
     return up / down;
 };
 
-},{}],43:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 module.exports = function sorensen(a, b) {
     var ii = a.length,
         up = 0,
@@ -492,7 +835,7 @@ module.exports = function sorensen(a, b) {
     return up / down;
 };
 
-},{}],44:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 module.exports = function squaredEuclidean(a, b) {
     var i = 0,
         ii = a.length,
@@ -502,7 +845,7 @@ module.exports = function squaredEuclidean(a, b) {
     }
     return d;
 };
-},{}],45:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 module.exports = function squared(a, b) {
     var i = 0,
         ii = a.length,
@@ -513,7 +856,7 @@ module.exports = function squared(a, b) {
     return d;
 };
 
-},{}],46:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 module.exports = function squaredChord(a, b) {
     var ii = a.length,
         ans = 0;
@@ -523,14 +866,14 @@ module.exports = function squaredChord(a, b) {
     return ans;
 };
 
-},{}],47:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 var squaredChord = require('./squaredChord');
 
 module.exports = function squaredChordS(a, b) {
     return 1 - squaredChord(a, b);
 };
 
-},{"./squaredChord":46}],48:[function(require,module,exports){
+},{"./squaredChord":49}],51:[function(require,module,exports){
 module.exports = function taneja(a, b) {
     var ii = a.length,
         ans = 0;
@@ -540,7 +883,7 @@ module.exports = function taneja(a, b) {
     return ans;
 };
 
-},{}],49:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 var tanimotoS = require('./tanimotoS');
 
 module.exports = function tanimoto(a, b, bitvector) {
@@ -561,7 +904,7 @@ module.exports = function tanimoto(a, b, bitvector) {
     }
 };
 
-},{"./tanimotoS":50}],50:[function(require,module,exports){
+},{"./tanimotoS":53}],53:[function(require,module,exports){
 module.exports = function tanimotoS(a, b, bitvector) {
     bitvector = bitvector || false;
     if (bitvector) {
@@ -588,7 +931,7 @@ module.exports = function tanimotoS(a, b, bitvector) {
         return 1 - (p + q - 2 * m) / (p + q - m);
     }
 };
-},{}],51:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 module.exports = function topsoe(a, b) {
     var ii = a.length,
         ans = 0;
@@ -598,7 +941,7 @@ module.exports = function topsoe(a, b) {
     return ans;
 };
 
-},{}],52:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 "use strict";
 
 /**
@@ -718,7 +1061,7 @@ module.exports = {
 };
 
 
-},{}],53:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 module.exports = function waveHedges(a, b) {
     var ii = a.length,
         ans = 0;
@@ -728,7 +1071,7 @@ module.exports = function waveHedges(a, b) {
     return ans;
 };
 
-},{}],54:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 exports.euclidean = require('./dist/euclidean');
 exports.squaredEuclidean = require('./dist/squared-euclidean');
 exports.manhattan = require('./dist/manhattan');
@@ -783,9 +1126,9 @@ exports.kumarJohnson = require('./dist/kumarJohnson');
 exports.avg = require('./dist/avg');
 exports.tree = require('./dist/tree');
 
-},{"./dist/additiveSymmetric":2,"./dist/avg":3,"./dist/bhattacharyya":4,"./dist/canberra":5,"./dist/chebyshev":6,"./dist/clark":7,"./dist/cosine":8,"./dist/czekanowski":9,"./dist/czekanowskiS":10,"./dist/dice":11,"./dist/diceS":12,"./dist/divergence":13,"./dist/euclidean":14,"./dist/fidelity":15,"./dist/gower":16,"./dist/harmonicMean":17,"./dist/hellinger":18,"./dist/innerProduct":19,"./dist/intersection":20,"./dist/intersectionS":21,"./dist/jaccard":22,"./dist/jaccardS":23,"./dist/jeffreys":24,"./dist/jensenDifference":25,"./dist/jensenShannon":26,"./dist/kdivergence":27,"./dist/kulczynski":28,"./dist/kulczynskiS":29,"./dist/kullbackLeibler":30,"./dist/kumarHassebrook":31,"./dist/kumarJohnson":32,"./dist/lorentzian":33,"./dist/manhattan":34,"./dist/matusita":35,"./dist/minkowski":36,"./dist/motyka":37,"./dist/neyman":38,"./dist/pearson":39,"./dist/probabilisticSymmetric":40,"./dist/ruzicka":41,"./dist/soergel":42,"./dist/sorensen":43,"./dist/squared":45,"./dist/squared-euclidean":44,"./dist/squaredChord":46,"./dist/squaredChordS":47,"./dist/taneja":48,"./dist/tanimoto":49,"./dist/tanimotoS":50,"./dist/topsoe":51,"./dist/tree":52,"./dist/waveHedges":53}],55:[function(require,module,exports){
+},{"./dist/additiveSymmetric":5,"./dist/avg":6,"./dist/bhattacharyya":7,"./dist/canberra":8,"./dist/chebyshev":9,"./dist/clark":10,"./dist/cosine":11,"./dist/czekanowski":12,"./dist/czekanowskiS":13,"./dist/dice":14,"./dist/diceS":15,"./dist/divergence":16,"./dist/euclidean":17,"./dist/fidelity":18,"./dist/gower":19,"./dist/harmonicMean":20,"./dist/hellinger":21,"./dist/innerProduct":22,"./dist/intersection":23,"./dist/intersectionS":24,"./dist/jaccard":25,"./dist/jaccardS":26,"./dist/jeffreys":27,"./dist/jensenDifference":28,"./dist/jensenShannon":29,"./dist/kdivergence":30,"./dist/kulczynski":31,"./dist/kulczynskiS":32,"./dist/kullbackLeibler":33,"./dist/kumarHassebrook":34,"./dist/kumarJohnson":35,"./dist/lorentzian":36,"./dist/manhattan":37,"./dist/matusita":38,"./dist/minkowski":39,"./dist/motyka":40,"./dist/neyman":41,"./dist/pearson":42,"./dist/probabilisticSymmetric":43,"./dist/ruzicka":44,"./dist/soergel":45,"./dist/sorensen":46,"./dist/squared":48,"./dist/squared-euclidean":47,"./dist/squaredChord":49,"./dist/squaredChordS":50,"./dist/taneja":51,"./dist/tanimoto":52,"./dist/tanimotoS":53,"./dist/topsoe":54,"./dist/tree":55,"./dist/waveHedges":56}],58:[function(require,module,exports){
 module.exports = require('./kmeans');
-},{"./kmeans":56}],56:[function(require,module,exports){
+},{"./kmeans":59}],59:[function(require,module,exports){
 'use strict';
 
 /**
@@ -931,7 +1274,7 @@ function kmeans(data, centers, maxIter, tol) {
 }
 
 module.exports = kmeans;
-},{}],57:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -1022,7 +1365,7 @@ CholeskyDecomposition.prototype = {
 
 module.exports = CholeskyDecomposition;
 
-},{"../matrix":65}],58:[function(require,module,exports){
+},{"../matrix":68}],61:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -1790,7 +2133,7 @@ function cdiv(xr, xi, yr, yi) {
 
 module.exports = EigenvalueDecomposition;
 
-},{"../matrix":65,"./util":62}],59:[function(require,module,exports){
+},{"../matrix":68,"./util":65}],62:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -1961,7 +2304,7 @@ LuDecomposition.prototype = {
 
 module.exports = LuDecomposition;
 
-},{"../matrix":65}],60:[function(require,module,exports){
+},{"../matrix":68}],63:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -2113,7 +2456,7 @@ QrDecomposition.prototype = {
 
 module.exports = QrDecomposition;
 
-},{"../matrix":65,"./util":62}],61:[function(require,module,exports){
+},{"../matrix":68,"./util":65}],64:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -2612,7 +2955,7 @@ SingularValueDecomposition.prototype = {
 
 module.exports = SingularValueDecomposition;
 
-},{"../matrix":65,"./util":62}],62:[function(require,module,exports){
+},{"../matrix":68,"./util":65}],65:[function(require,module,exports){
 'use strict';
 
 exports.hypotenuse = function hypotenuse(a, b) {
@@ -2628,7 +2971,7 @@ exports.hypotenuse = function hypotenuse(a, b) {
     return 0;
 };
 
-},{}],63:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('./matrix');
@@ -2670,13 +3013,13 @@ module.exports = {
     solve: solve
 };
 
-},{"./dc/cholesky":57,"./dc/evd":58,"./dc/lu":59,"./dc/qr":60,"./dc/svd":61,"./matrix":65}],64:[function(require,module,exports){
+},{"./dc/cholesky":60,"./dc/evd":61,"./dc/lu":62,"./dc/qr":63,"./dc/svd":64,"./matrix":68}],67:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./matrix');
 module.exports.Decompositions = module.exports.DC = require('./decompositions');
 
-},{"./decompositions":63,"./matrix":65}],65:[function(require,module,exports){
+},{"./decompositions":66,"./matrix":68}],68:[function(require,module,exports){
 'use strict';
 
 var Asplice = Array.prototype.splice,
@@ -4139,7 +4482,7 @@ Matrix.MatrixError = MatrixError;
 
 module.exports = Matrix;
 
-},{}],66:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 
 var NodeSquare = require('./node-square'),
@@ -4561,7 +4904,7 @@ function getMaxDistance(distance, numWeights) {
 }
 
 module.exports = SOM;
-},{"./node-hexagonal":67,"./node-square":68}],67:[function(require,module,exports){
+},{"./node-hexagonal":70,"./node-square":71}],70:[function(require,module,exports){
 var NodeSquare = require('./node-square');
 
 function NodeHexagonal(x, y, weights, som) {
@@ -4592,7 +4935,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 };
 
 module.exports = NodeHexagonal;
-},{"./node-square":68}],68:[function(require,module,exports){
+},{"./node-square":71}],71:[function(require,module,exports){
 function NodeSquare(x, y, weights, som) {
     this.x = x;
     this.y = y;
@@ -4699,7 +5042,7 @@ NodeSquare.prototype.getPosition = function getPosition(element) {
 };
 
 module.exports = NodeSquare;
-},{}],69:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -5064,7 +5407,7 @@ module.exports = {
     cumulativeSum: cumulativeSum
 };
 
-},{}],70:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -5593,10 +5936,10 @@ module.exports = {
     weightedScatter: weightedScatter
 };
 
-},{}],71:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 exports.svm = require('./svm');
 exports.kernel = require('./kernel');
-},{"./kernel":72,"./svm":73}],72:[function(require,module,exports){
+},{"./kernel":75,"./svm":76}],75:[function(require,module,exports){
 'use strict';
 
 /**
@@ -5653,7 +5996,7 @@ function dot(p1, p2) {
 }
 
 module.exports = kernel;
-},{}],73:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 var kernel = require("./kernel");
 
@@ -5881,5 +6224,5 @@ SVM.prototype.predict = function (p) {
 };
 
 module.exports = SVM;
-},{"./kernel":72}]},{},[1])(1)
+},{"./kernel":75}]},{},[1])(1)
 });
