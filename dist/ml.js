@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.3.4
+ * @version v0.3.5
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -44,8 +44,7 @@ NN.SOM = require('ml-som');
 /*
 Array Utils
 */
-var AU = exports.AU = exports.ArrayUtils = {};
-AU.ArrayUtils = require('ml-array-utils');
+var ArrayUtils = exports.ArrayUtils = exports.AU = require('ml-array-utils');
 
 },{"ml-array-utils":4,"ml-distance":57,"ml-kmeans":58,"ml-matrix":67,"ml-som":69,"ml-stat/array":72,"ml-stat/matrix":73,"ml-svm":74}],2:[function(require,module,exports){
 'use strict';
@@ -231,6 +230,7 @@ module.exports = {
 'use strict';
 
 /**
+ *
  * Function that returns a Number array of equally spaced numberOfPoints
  * containing a representation of intensities of the spectra arguments x
  * and y.
@@ -239,18 +239,18 @@ module.exports = {
  * from: starting point
  * to: last point
  * numberOfPoints: number of points between from and to
- * variant: "slot" or "smooth"
+ * variant: "slot" or "smooth" - smooth is the default option
  *
  * The slot variant consist that each point in the new array is calculated
  * averaging the existing points between the slot that belongs to the current
  * value. The smooth variant is the same but takes the integral of the range
- * of the slot and divide by the step size between two points in the new
- * array.
+ * of the slot and divide by the step size between two points in the new array.
  *
  * @param x
  * @param y
  * @param options
  * @returns {Array} new array with the equally spaced data.
+ *
  */
 function getEquallySpacedData(x, y, options) {
 
@@ -262,8 +262,13 @@ function getEquallySpacedData(x, y, options) {
 
     var from = options.from === undefined ? x[0] : options.from;
     var to = options.to === undefined ? x[x.length - 1] : options.to;
-    if(from > to)
-        throw new RangeError("from option must be less or equal that the to argument.");
+
+    var reverse = from > to;
+    if(reverse) {
+        var temp = from;
+        from = to;
+        to = temp;
+    }
 
     var numberOfPoints = options.numberOfPoints === undefined ? 100 : options.numberOfPoints;
     if(numberOfPoints < 1)
@@ -363,7 +368,7 @@ function getEquallySpacedData(x, y, options) {
         updateParameters();
     }
 
-    return output;
+    return reverse ? output.reverse() : output;
 }
 /**
  * Function that calculates the integral of the line between two
