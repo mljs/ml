@@ -93,7 +93,7 @@ See [ml-som](https://github.com/mljs/som)
 
 #### Array Utils
 
-`ML.AU`
+`ML.ArrayUtils`
 See [ml-array-utils](https://github.com/mljs/ArrayUtils)
 
 ## License

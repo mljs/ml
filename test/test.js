@@ -10,7 +10,8 @@ describe('ML', function () {
             'Matrix',
             'Stat',
             'SL',
-            'NN'
+            'NN',
+            'ArrayUtils'
         ]);
     });
 
@@ -43,12 +44,6 @@ describe('ML', function () {
     it('check NN', function () {
         ML.NN.should.have.properties([
             'SOM'
-        ]);
-    });
-
-    it('check AU', function () {
-        ML.AU.should.have.properties([
-            'ArrayUtils'
         ]);
     });
 });

@@ -37,5 +37,4 @@ NN.SOM = require('ml-som');
 /*
 Array Utils
 */
-var AU = exports.AU = exports.ArrayUtils = {};
-AU.ArrayUtils = require('ml-array-utils');
+var ArrayUtils = exports.ArrayUtils = exports.AU = require('ml-array-utils');
