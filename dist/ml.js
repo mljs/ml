@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.3.5
+ * @version v0.3.6
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -33,6 +33,7 @@ SL.SVM = require('ml-svm');
 var Clust = exports.Clust = {};
 
 Clust.kmeans = require('ml-kmeans');
+Clust.hclust= require('ml-hclust');
 
 /*
 Neural networks
@@ -46,7 +47,7 @@ Array Utils
 */
 var ArrayUtils = exports.ArrayUtils = exports.AU = require('ml-array-utils');
 
-},{"ml-array-utils":4,"ml-distance":57,"ml-kmeans":58,"ml-matrix":67,"ml-som":69,"ml-stat/array":72,"ml-stat/matrix":73,"ml-svm":74}],2:[function(require,module,exports){
+},{"ml-array-utils":4,"ml-distance":57,"ml-hclust":60,"ml-kmeans":61,"ml-matrix":70,"ml-som":72,"ml-stat/array":75,"ml-stat/matrix":76,"ml-svm":77}],2:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1132,8 +1133,648 @@ exports.avg = require('./dist/avg');
 exports.tree = require('./dist/tree');
 
 },{"./dist/additiveSymmetric":5,"./dist/avg":6,"./dist/bhattacharyya":7,"./dist/canberra":8,"./dist/chebyshev":9,"./dist/clark":10,"./dist/cosine":11,"./dist/czekanowski":12,"./dist/czekanowskiS":13,"./dist/dice":14,"./dist/diceS":15,"./dist/divergence":16,"./dist/euclidean":17,"./dist/fidelity":18,"./dist/gower":19,"./dist/harmonicMean":20,"./dist/hellinger":21,"./dist/innerProduct":22,"./dist/intersection":23,"./dist/intersectionS":24,"./dist/jaccard":25,"./dist/jaccardS":26,"./dist/jeffreys":27,"./dist/jensenDifference":28,"./dist/jensenShannon":29,"./dist/kdivergence":30,"./dist/kulczynski":31,"./dist/kulczynskiS":32,"./dist/kullbackLeibler":33,"./dist/kumarHassebrook":34,"./dist/kumarJohnson":35,"./dist/lorentzian":36,"./dist/manhattan":37,"./dist/matusita":38,"./dist/minkowski":39,"./dist/motyka":40,"./dist/neyman":41,"./dist/pearson":42,"./dist/probabilisticSymmetric":43,"./dist/ruzicka":44,"./dist/soergel":45,"./dist/sorensen":46,"./dist/squared":48,"./dist/squared-euclidean":47,"./dist/squaredChord":49,"./dist/squaredChordS":50,"./dist/taneja":51,"./dist/tanimoto":52,"./dist/tanimotoS":53,"./dist/topsoe":54,"./dist/tree":55,"./dist/waveHedges":56}],58:[function(require,module,exports){
+'use strict';
+
+/**
+ * calculates the euclidean distance
+ * @param {Array <number>} a
+ * @param {Array <number>} b
+ * @returns {number}
+ */
+function euclidean(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += (a[i] - b[i]) * (a[i] - b[i]);
+    }
+    return Math.sqrt(d);
+}
+
+/**
+ * Removes repeated elements of an array
+ * @param {Array} array
+ * @returns {Array} same array but without repeated elements
+ */
+function arrayUnique(array) {
+    var a = array.concat();
+    for(var i=0; i<a.length; ++i) {
+        for(var j=i+1; j<a.length; ++j) {
+            if(a[i] === a[j])
+                a.splice(j--, 1);
+        }
+    }
+    return a;
+}
+
+/**
+ * @param cluster1
+ * @param cluster2
+ * @param disFun
+ * @returns {number}
+ */
+function simpleLink(cluster1, cluster2, disFun) {
+    var m = 10e100;
+    for (var i = 0; i < cluster1.length; i++)
+        for (var j = i; j < cluster2.length; j++) {
+            var d = disFun(cluster1[i], cluster2[j]);
+            m = Math.min(d,m);
+        }
+    return m;
+}
+
+/**
+ * @param cluster1
+ * @param cluster2
+ * @param disFun
+ * @returns {number}
+ */
+function completeLink(cluster1, cluster2, disFun) {
+    var m = -1;
+    for (var i = 0; i < cluster1.length; i++)
+        for (var j = i; j < cluster2.length; j++) {
+            var d = disFun(cluster1[i], cluster2[j]);
+            m = Math.max(d,m);
+        }
+    return m;
+}
+
+/**
+ * @param cluster1
+ * @param cluster2
+ * @param disFun
+ * @returns {number}
+ */
+function averageLink(cluster1, cluster2, disFun) {
+    var m = 0;
+    for (var i = 0; i < cluster1.length; i++)
+        for (var j = 0; j < cluster2.length; j++)
+            m += disFun(cluster1[i], cluster2[j]);
+    return m / (cluster1.length * cluster2.length);
+}
+
+/**
+ * @param cluster1
+ * @param cluster2
+ * @param disFun
+ * @returns {*}
+ */
+function centroidLink(cluster1, cluster2, disFun) {
+    var x1 = 0,
+        y1 = 0,
+        x2 = 0,
+        y2 = 0;
+    for (var i = 0; i < cluster1.length; i++) {
+        x1 += cluster1[i][0];
+        y1 += cluster1[i][1];
+    }
+    for (var j = 0; j < cluster2.length; j++) {
+        x2 += cluster2[j][0];
+        y2 += cluster2[j][1];
+    }
+    x1 /= cluster1.length;
+    y1 /= cluster1.length;
+    x2 /= cluster2.length;
+    y2 /= cluster2.length;
+    return disFun([x1,y1], [x2,y2]);
+}
+
+/**
+ * @param cluster1
+ * @param cluster2
+ * @param disFun
+ * @returns {number}
+ */
+function wardLink(cluster1, cluster2, disFun) {
+    var x1 = 0,
+        y1 = 0,
+        x2 = 0,
+        y2 = 0;
+    for (var i = 0; i < cluster1.length; i++) {
+        x1 += cluster1[i][0];
+        y1 += cluster1[i][1];
+    }
+    for (var j = 0; j < cluster2.length; j++) {
+        x2 += cluster2[j][0];
+        y2 += cluster2[j][1];
+    }
+    x1 /= cluster1.length;
+    y1 /= cluster1.length;
+    x2 /= cluster2.length;
+    y2 /= cluster2.length;
+    return disFun([x1,y1], [x2,y2])*cluster1.length*cluster2.length / (cluster1.length+cluster2.length);
+}
+
+var defaultOptions = {
+    sim: euclidean,
+    kind: 'single'
+};
+
+/**
+ * Continuously merge nodes that have the least dissimilarity
+ * @param {Array <Array <number>>} data - Array of points to be clustered
+ * @param {json} options
+ * @constructor
+ */
+function Agnes(data, options) {
+    options = options || {};
+    this.options = {};
+    for (var o in defaultOptions) {
+        if (options.hasOwnProperty(o)) {
+            this.options[o] = options[o];
+        } else {
+            this.options[o] = defaultOptions[o];
+        }
+    }
+    this.len = data.length;
+    var dataAux = new Array(this.len);
+    for (var b = 0; b < this.len; b++)
+        dataAux[b] = [data[b]];
+    data = dataAux.concat();
+    if (typeof this.options.kind === "string") {
+        switch (this.options.kind) {
+            case 'single':
+                this.options.kind = simpleLink;
+                break;
+            case 'complete':
+                this.options.kind = completeLink;
+                break;
+            case 'average':
+                this.options.kind = averageLink;
+                break;
+            case 'centroid':
+                this.options.kind = centroidLink;
+                break;
+            case 'ward':
+                this.options.kind = wardLink;
+                break;
+            default:
+                throw new RangeError('Unknown kind of similarity');
+        }
+    }
+    else if (typeof this.options.kind !== "function")
+        throw new TypeError('Undefined kind of similarity');
+
+    var list = new Array(data.length);
+    for (var i = 0; i < data.length; i++)
+        list[i] = {
+            index: i,
+            dis: undefined,
+            data: data[i].concat(),
+            children: []
+        };
+    var min  = 10e5,
+        d = {},
+        dis = 0;
+
+    while (list.length > 1) {
+        d = {};
+        min = 10e5;
+        for (var j = 0; j < list.length; j++)
+            for (var k = j + 1; k < list.length; k++) {
+                dis = this.options.kind(list[j].data, list[k].data, this.options.sim).toFixed(4);
+                if (dis in d) {
+                    d[dis].push([j, k]);
+                }
+                else {
+                    d[dis] = [[j, k]];
+                }
+                min = Math.min(dis, min);
+            }
+
+        var dmin = d[min.toFixed(4)];
+        var clustered = [];
+        var aux,
+            inter;
+        while (dmin.length > 0) {
+            aux = dmin.shift();
+            for (var q = dmin.length - 1; q >= 0; q--) {
+                inter = dmin[q].filter(function(n) {
+                    //noinspection JSReferencingMutableVariableFromClosure
+                    return aux.indexOf(n) != -1
+                });
+                if (inter.length > 0) {
+                    aux = arrayUnique(aux.concat(dmin[q]));
+                    q = dmin.length - 1;
+                    dmin.splice(q,1);
+                }
+            }
+            clustered.push(aux);
+        }
+
+        for (var ii = 0; ii < clustered.length; ii++) {
+            var obj = {
+                dis: undefined,
+                data: undefined,
+                children: []
+            };
+            var newData = [];
+            for (var jj = 0; jj < clustered[ii].length; jj++) {
+                var ind = clustered[ii][jj];
+                newData = newData.concat(list[ind].data);
+                list[ind].dis = min;
+                obj.children.push(list[ind]);
+                delete list[ind];
+            }
+            obj.data = newData.concat();
+            list.push(obj);
+        }
+        for (var l = 0; l < list.length; l++)
+            if (list[l] === undefined) {
+                list.splice(l,1);
+                l--;
+            }
+    }
+    list[0].dis = 0;
+    this.tree = list[0];
+}
+
+/**
+ * Returns a phylogram and change the leaves values for the values in input
+ * @param {Array <object>} input
+ * @returns {json}
+ */
+Agnes.prototype.getDendogram = function (input) {
+    input = input || {length:this.len, ND: true};
+    if (input.length !== this.len)
+        throw new Error('Invalid input size');
+    var ans = JSON.parse(JSON.stringify(this.tree));
+    var queue = [ans];
+    while (queue.length > 0) {
+        var pointer = queue.shift();
+        if (pointer.data.length === 1) {
+            if (input.ND)
+                pointer.data = pointer.data[0];
+            else
+                pointer.data = input[pointer.index];
+            delete pointer.index;
+        }
+        else {
+            delete pointer.data;
+            delete pointer.index;
+            for (var i = 0; i < pointer.children.length; i++)
+                queue.push(pointer.children[i]);
+        }
+    }
+    return ans;
+};
+
+/**
+ * Returns at least N clusters based in the clustering tree
+ * @param {number} N - number of clusters desired
+ * @returns {Array <Array <number>>}
+ */
+Agnes.prototype.nClusters = function (N) {
+    if (N >= this.len)
+        throw new RangeError('Too many clusters');
+    var queue = [this.tree];
+    while (queue.length  < N) {
+        var pointer = queue.shift();
+        for (var i = 0; i < pointer.children.length; i++)
+            queue.push(pointer.children[i]);
+    }
+    var ans = new Array(queue.length);
+    for (var j = 0; j < queue.length; j++) {
+        var obj = queue[j];
+        ans[j] = obj.data.concat();
+    }
+    return ans;
+};
+
+module.exports = Agnes;
+},{}],59:[function(require,module,exports){
+'use strict';
+
+/**
+ * calculates the euclidean distance
+ * @param {Array <number>} a
+ * @param {Array <number>} b
+ * @returns {number}
+ */
+function euclidean(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += (a[i] - b[i]) * (a[i] - b[i]);
+    }
+    return Math.sqrt(d);
+}
+
+/**
+ * @param cluster1
+ * @param cluster2
+ * @param disFun
+ * @returns {number}
+ */
+function simpleLink(cluster1, cluster2, disFun) {
+    var m = 10e100;
+    for (var i = 0; i < cluster1.length; i++)
+        for (var j = i; j < cluster2.length; j++) {
+            var d = disFun(cluster1[i], cluster2[j]);
+            m = Math.min(d,m);
+        }
+    return m;
+}
+
+/**
+ * @param cluster1
+ * @param cluster2
+ * @param disFun
+ * @returns {number}
+ */
+function completeLink(cluster1, cluster2, disFun) {
+    var m = -1;
+    for (var i = 0; i < cluster1.length; i++)
+        for (var j = i; j < cluster2.length; j++) {
+            var d = disFun(cluster1[i], cluster2[j]);
+            m = Math.max(d,m);
+        }
+    return m;
+}
+
+/**
+ * @param cluster1
+ * @param cluster2
+ * @param disFun
+ * @returns {number}
+ */
+function averageLink(cluster1, cluster2, disFun) {
+    var m = 0;
+    for (var i = 0; i < cluster1.length; i++)
+        for (var j = 0; j < cluster2.length; j++)
+            m += disFun(cluster1[i], cluster2[j]);
+    return m / (cluster1.length * cluster2.length);
+}
+
+/**
+ * @param cluster1
+ * @param cluster2
+ * @param disFun
+ * @returns {number}
+ */
+function centroidLink(cluster1, cluster2, disFun) {
+    var x1 = 0,
+        y1 = 0,
+        x2 = 0,
+        y2 = 0;
+    for (var i = 0; i < cluster1.length; i++) {
+        x1 += cluster1[i][0];
+        y1 += cluster1[i][1];
+    }
+    for (var j = 0; j < cluster2.length; j++) {
+        x2 += cluster2[j][0];
+        y2 += cluster2[j][1];
+    }
+    x1 /= cluster1.length;
+    y1 /= cluster1.length;
+    x2 /= cluster2.length;
+    y2 /= cluster2.length;
+    return disFun([x1,y1], [x2,y2]);
+}
+
+/**
+ * @param cluster1
+ * @param cluster2
+ * @param disFun
+ * @returns {number}
+ */
+function wardLink(cluster1, cluster2, disFun) {
+    var x1 = 0,
+        y1 = 0,
+        x2 = 0,
+        y2 = 0;
+    for (var i = 0; i < cluster1.length; i++) {
+        x1 += cluster1[i][0];
+        y1 += cluster1[i][1];
+    }
+    for (var j = 0; j < cluster2.length; j++) {
+        x2 += cluster2[j][0];
+        y2 += cluster2[j][1];
+    }
+    x1 /= cluster1.length;
+    y1 /= cluster1.length;
+    x2 /= cluster2.length;
+    y2 /= cluster2.length;
+    return disFun([x1,y1], [x2,y2])*cluster1.length*cluster2.length / (cluster1.length+cluster2.length);
+}
+
+var defaultOptions = {
+    sim: euclidean,
+    kind: 'single'
+};
+
+/**
+ * Returns the most distant point and his distance
+ * @param {Array <Array <number>>} Ci - Original cluster
+ * @param {Array <Array <number>>} Cj - Splinter cluster
+ * @param {function} disFun - Distance function
+ * @returns {{d: number, p: number}} - d: maximum difference between points, p: the point more distant
+ */
+function diff(Ci, Cj, disFun) {
+    var ans = {
+        d:0,
+        p:0
+    };
+    var dist, ndist;
+    for (var i = 0; i < Ci.length; i++) {
+        dist = 0;
+        for (var j = 0; j < Ci.length; j++)
+            if (i !== j)
+                dist += disFun(Ci[i], Ci[j]);
+        dist /= (Ci.length - 1);
+        ndist = 0;
+        for (var k = 0; k < Cj.length; k++)
+            ndist += disFun(Ci[i], Cj[k]);
+        ndist /= Cj.length;
+        if ((dist - ndist) > ans.d) {
+            ans.d = (dist - ndist);
+            ans.p = i;
+        }
+    }
+    return ans;
+}
+
+/**
+ * Splits the higher level clusters
+ * @param {Array <Array <number>>} data - Array of points to be clustered
+ * @param {json} options
+ * @constructor
+ */
+function Diana(data, options) {
+    options = options || {};
+    this.options = {};
+    for (var o in defaultOptions) {
+        if (options.hasOwnProperty(o)) {
+            this.options[o] = options[o];
+        } else {
+            this.options[o] = defaultOptions[o];
+        }
+    }
+    this.len = data.length;
+    if (typeof this.options.kind === "string") {
+        switch (this.options.kind) {
+            case 'single':
+                this.options.kind = simpleLink;
+                break;
+            case 'complete':
+                this.options.kind = completeLink;
+                break;
+            case 'average':
+                this.options.kind = averageLink;
+                break;
+            case 'centroid':
+                this.options.kind = centroidLink;
+                break;
+            case 'ward':
+                this.options.kind = wardLink;
+                break;
+            default:
+                throw new RangeError('Unknown kind of similarity');
+        }
+    }
+    else if (typeof this.options.kind !== "function")
+        throw new TypeError('Undefined kind of similarity');
+    var dict = {};
+    for (var dot = 0; dot < data.length; dot++) {
+        if (dict[data[dot][0]])
+            dict[data[dot][0]][data[dot][1]] = dot;
+        else {
+            dict[data[dot][0]] = {};
+            dict[data[dot][0]][data[dot][1]] = dot;
+        }
+    }
+
+    this.tree = {
+        dis: 0,
+        data: data,
+        children: []
+    };
+    var m, M, clId,
+        dist, rebel;
+    var list = [this.tree];
+    while (list.length !== 0) {
+        M = 0;
+        clId = 0;
+        for (var i = 0; i < list.length; i++) {
+            m = 0;
+            for (var j = 0; j < list[i].length; j++) {
+                for (var l = (j + 1); l < list[i].length; l++) {
+                    m = Math.max(this.options.sim(list[i].data[j], list[i].data[l]), m);
+                }
+            }
+            if (m > M) {
+                M = m;
+                clId = i;
+            }
+        }
+        M = 0;
+        var C = {
+            dis: undefined,
+            data: list[clId].data.concat(),
+            children: []
+        };
+        var sG = {
+            dis: undefined,
+            data: [],
+            children: []
+        };
+        list[clId].children = [C, sG];
+        list.splice(clId,1);
+        for (var ii = 0; ii < C.data.length; ii++) {
+            dist = 0;
+            for (var jj = 0; jj < C.data.length; jj++)
+                if (ii !== jj)
+                    dist += this.options.sim(C.data[jj], C.data[ii]);
+            dist /= (C.data.length - 1);
+            if (dist > M) {
+                M = dist;
+                rebel = ii;
+            }
+        }
+        sG.data = [C.data[rebel]];
+        C.data.splice(rebel,1);
+        dist = diff(C.data, sG.data, this.options.sim);
+        while (dist.d > 0) {
+            sG.data.push(C.data[dist.p]);
+            C.data.splice(dist.p, 1);
+            dist = diff(C.data, sG.data, this.options.sim);
+        }
+        C.dis = this.options.kind(C.data,sG.data,this.options.sim);
+        sG.dis = C.dis;
+        if (C.data.length === 1)
+            C.index = dict[C.data[0][0]][C.data[0][1]];
+        else
+            list.push(C);
+        if (sG.data.length === 1)
+            sG.index = dict[sG.data[0][0]][sG.data[0][1]];
+        else
+            list.push(sG);
+    }
+}
+
+/**
+ * Returns a phylogram and change the leaves values for the values in input
+ * @param {Array <object>} input
+ * @returns {json}
+ */
+Diana.prototype.getDendogram = function (input) {
+    input = input || {length:this.len, ND: true};
+    if (input.length !== this.len)
+        throw new Error('Invalid input size');
+    var ans = JSON.parse(JSON.stringify(this.tree));
+    var queue = [ans];
+    while (queue.length > 0) {
+        var pointer = queue.shift();
+        if (pointer.data.length === 1) {
+            if (input.ND)
+                pointer.data = pointer.data[0];
+            else
+                pointer.data = input[pointer.index];
+            delete pointer.index;
+        }
+        else {
+            delete pointer.data;
+            delete pointer.index;
+            for (var i = 0; i < pointer.children.length; i++)
+                queue.push(pointer.children[i]);
+        }
+    }
+    return ans;
+};
+
+/**
+ * Returns at least N clusters based in the clustering tree
+ * @param {number} N - number of clusters desired
+ * @returns {Array <Array <number>>}
+ */
+Diana.prototype.nClusters = function (N) {
+    if (N >= this.len)
+        throw new RangeError('Too many clusters');
+    var queue = [this.tree];
+    while (queue.length  < N) {
+        var pointer = queue.shift();
+        for (var i = 0; i < pointer.children.length; i++)
+            queue.push(pointer.children[i]);
+    }
+    var ans = new Array(queue.length);
+    for (var j = 0; j < queue.length; j++) {
+        var obj = queue[j];
+        ans[j] = obj.data.concat();
+    }
+    return ans;
+};
+
+module.exports = Diana;
+},{}],60:[function(require,module,exports){
+exports.agnes = require('./agnes');
+exports.diana = require('./diana');
+//exports.birch = require('./birch');
+//exports.cure = require('./cure');
+//exports.chameleon = require('./chameleon');
+},{"./agnes":58,"./diana":59}],61:[function(require,module,exports){
 module.exports = require('./kmeans');
-},{"./kmeans":59}],59:[function(require,module,exports){
+},{"./kmeans":62}],62:[function(require,module,exports){
 'use strict';
 
 /**
@@ -1279,7 +1920,7 @@ function kmeans(data, centers, maxIter, tol) {
 }
 
 module.exports = kmeans;
-},{}],60:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -1370,7 +2011,7 @@ CholeskyDecomposition.prototype = {
 
 module.exports = CholeskyDecomposition;
 
-},{"../matrix":68}],61:[function(require,module,exports){
+},{"../matrix":71}],64:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -2138,7 +2779,7 @@ function cdiv(xr, xi, yr, yi) {
 
 module.exports = EigenvalueDecomposition;
 
-},{"../matrix":68,"./util":65}],62:[function(require,module,exports){
+},{"../matrix":71,"./util":68}],65:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -2309,7 +2950,7 @@ LuDecomposition.prototype = {
 
 module.exports = LuDecomposition;
 
-},{"../matrix":68}],63:[function(require,module,exports){
+},{"../matrix":71}],66:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -2461,7 +3102,7 @@ QrDecomposition.prototype = {
 
 module.exports = QrDecomposition;
 
-},{"../matrix":68,"./util":65}],64:[function(require,module,exports){
+},{"../matrix":71,"./util":68}],67:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -2960,7 +3601,7 @@ SingularValueDecomposition.prototype = {
 
 module.exports = SingularValueDecomposition;
 
-},{"../matrix":68,"./util":65}],65:[function(require,module,exports){
+},{"../matrix":71,"./util":68}],68:[function(require,module,exports){
 'use strict';
 
 exports.hypotenuse = function hypotenuse(a, b) {
@@ -2976,7 +3617,7 @@ exports.hypotenuse = function hypotenuse(a, b) {
     return 0;
 };
 
-},{}],66:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('./matrix');
@@ -3018,13 +3659,13 @@ module.exports = {
     solve: solve
 };
 
-},{"./dc/cholesky":60,"./dc/evd":61,"./dc/lu":62,"./dc/qr":63,"./dc/svd":64,"./matrix":68}],67:[function(require,module,exports){
+},{"./dc/cholesky":63,"./dc/evd":64,"./dc/lu":65,"./dc/qr":66,"./dc/svd":67,"./matrix":71}],70:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./matrix');
 module.exports.Decompositions = module.exports.DC = require('./decompositions');
 
-},{"./decompositions":66,"./matrix":68}],68:[function(require,module,exports){
+},{"./decompositions":69,"./matrix":71}],71:[function(require,module,exports){
 'use strict';
 
 var Asplice = Array.prototype.splice,
@@ -4487,7 +5128,7 @@ Matrix.MatrixError = MatrixError;
 
 module.exports = Matrix;
 
-},{}],69:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 'use strict';
 
 var NodeSquare = require('./node-square'),
@@ -4909,7 +5550,7 @@ function getMaxDistance(distance, numWeights) {
 }
 
 module.exports = SOM;
-},{"./node-hexagonal":70,"./node-square":71}],70:[function(require,module,exports){
+},{"./node-hexagonal":73,"./node-square":74}],73:[function(require,module,exports){
 var NodeSquare = require('./node-square');
 
 function NodeHexagonal(x, y, weights, som) {
@@ -4940,7 +5581,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 };
 
 module.exports = NodeHexagonal;
-},{"./node-square":71}],71:[function(require,module,exports){
+},{"./node-square":74}],74:[function(require,module,exports){
 function NodeSquare(x, y, weights, som) {
     this.x = x;
     this.y = y;
@@ -5047,7 +5688,7 @@ NodeSquare.prototype.getPosition = function getPosition(element) {
 };
 
 module.exports = NodeSquare;
-},{}],72:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -5412,7 +6053,7 @@ module.exports = {
     cumulativeSum: cumulativeSum
 };
 
-},{}],73:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -5941,10 +6582,10 @@ module.exports = {
     weightedScatter: weightedScatter
 };
 
-},{}],74:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 exports.svm = require('./svm');
 exports.kernel = require('./kernel');
-},{"./kernel":75,"./svm":76}],75:[function(require,module,exports){
+},{"./kernel":78,"./svm":79}],78:[function(require,module,exports){
 'use strict';
 
 /**
@@ -6001,7 +6642,7 @@ function dot(p1, p2) {
 }
 
 module.exports = kernel;
-},{}],76:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 'use strict';
 var kernel = require("./kernel");
 
@@ -6229,5 +6870,5 @@ SVM.prototype.predict = function (p) {
 };
 
 module.exports = SVM;
-},{"./kernel":75}]},{},[1])(1)
+},{"./kernel":78}]},{},[1])(1)
 });
