@@ -26,6 +26,7 @@ SL.SVM = require('ml-svm');
 var Clust = exports.Clust = {};
 
 Clust.kmeans = require('ml-kmeans');
+Clust.hclust= require('ml-hclust');
 
 /*
 Neural networks

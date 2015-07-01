@@ -37,7 +37,8 @@ describe('ML', function () {
 
     it('check Clust', function () {
         ML.Clust.should.have.properties([
-            'kmeans'
+            'kmeans',
+            'hclust'
         ]);
     });
 
