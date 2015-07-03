@@ -18,7 +18,8 @@ describe('ML', function () {
     it('check Math', function () {
         ML.Math.should.have.properties([
             'Distance',
-            'Matrix'
+            'Matrix',
+            'SG'
         ]);
     });
 

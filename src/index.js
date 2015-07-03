@@ -8,6 +8,7 @@ Math
 var Math = exports.Math = {};
 Math.Matrix = exports.Matrix = require('ml-matrix');
 Math.Distance = require('ml-distance');
+Math.SG = require('ml-savitzky-golay');
 
 var Stat = exports.Stat = {};
 Stat.array = require('ml-stat/array');

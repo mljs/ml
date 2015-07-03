@@ -57,6 +57,11 @@ See [ml-matrix](https://github.com/mljs/matrix)
 `ML.Math.Distance`  
 See [ml-distance](https://github.com/mljs/distance)
 
+#### Savitzky-Golay filter
+
+`ML.Math.SG`  
+See [ml-savitzkyGolay](https://github.com/mljs/savitzkyGolay)
+
 ### Stat
 
 `ML.Stat`
@@ -96,7 +101,7 @@ See [ml-som](https://github.com/mljs/som)
 
 #### Array Utils
 
-`ML.ArrayUtils`
+`ML.ArrayUtils`  
 See [ml-array-utils](https://github.com/mljs/ArrayUtils)
 
 ## License
