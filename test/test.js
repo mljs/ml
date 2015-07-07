@@ -45,7 +45,8 @@ describe('ML', function () {
 
     it('check NN', function () {
         ML.NN.should.have.properties([
-            'SOM'
+            'SOM',
+            'FNN'
         ]);
     });
 

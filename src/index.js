@@ -35,6 +35,7 @@ Neural networks
 var NN = exports.NN = exports.nn = {};
 
 NN.SOM = require('ml-som');
+NN.FNN = require('ml-fnn');
 
 /*
 Array Utils
