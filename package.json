@@ -35,7 +35,7 @@
     "ml-som": "0.0.6",
     "ml-stat": "1.0.1",
     "ml-svm": "1.0.2",
-    "ml-array-utils": "0.0.3",
+    "ml-array-utils": "0.1.0",
     "ml-savitzky-golay": "0.0.1"
   },
   "devDependencies": {

@@ -48,4 +48,18 @@ describe('ML', function () {
             'SOM'
         ]);
     });
+
+    it('check ArrayUtils', function () {
+        ML.AU.should.have.properties([
+            'coordArrayToPoints',
+            'coordArrayToCoordMatrix',
+            'coordMatrixToCoordArray',
+            'coordMatrixToPoints',
+            'pointsToCoordArray',
+            'pointsToCoordMatrix',
+            'applyDotProduct',
+            'getEquallySpacedData',
+            'SNV'
+        ]);
+    });
 });
