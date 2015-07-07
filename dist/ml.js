@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.3.8
+ * @version v0.3.9
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -42,13 +42,14 @@ Neural networks
 var NN = exports.NN = exports.nn = {};
 
 NN.SOM = require('ml-som');
+NN.FNN = require('ml-fnn');
 
 /*
 Array Utils
 */
 var ArrayUtils = exports.ArrayUtils = exports.AU = require('ml-array-utils');
 
-},{"ml-array-utils":13,"ml-distance":67,"ml-hclust":70,"ml-kmeans":71,"ml-matrix":80,"ml-savitzky-golay":83,"ml-som":84,"ml-stat/array":87,"ml-stat/matrix":89,"ml-svm":90}],2:[function(require,module,exports){
+},{"ml-array-utils":13,"ml-distance":67,"ml-fnn":78,"ml-hclust":82,"ml-kmeans":83,"ml-matrix":92,"ml-savitzky-golay":95,"ml-som":96,"ml-stat/array":99,"ml-stat/matrix":101,"ml-svm":102}],2:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -3627,7 +3628,7 @@ function SNV(data) {
 
     return Y.sub(means.mmul(Matrix.ones(1, Y.columns))).divM(std.mmul(Matrix.ones(1, Y.columns)));
 }
-},{"ml-matrix":9,"ml-stat":88}],15:[function(require,module,exports){
+},{"ml-matrix":9,"ml-stat":100}],15:[function(require,module,exports){
 module.exports = function additiveSymmetric(a, b) {
     var i = 0,
         ii = a.length,
@@ -4370,6 +4371,292 @@ exports.avg = require('./dist/avg');
 exports.tree = require('./dist/tree');
 
 },{"./dist/additiveSymmetric":15,"./dist/avg":16,"./dist/bhattacharyya":17,"./dist/canberra":18,"./dist/chebyshev":19,"./dist/clark":20,"./dist/cosine":21,"./dist/czekanowski":22,"./dist/czekanowskiS":23,"./dist/dice":24,"./dist/diceS":25,"./dist/divergence":26,"./dist/euclidean":27,"./dist/fidelity":28,"./dist/gower":29,"./dist/harmonicMean":30,"./dist/hellinger":31,"./dist/innerProduct":32,"./dist/intersection":33,"./dist/intersectionS":34,"./dist/jaccard":35,"./dist/jaccardS":36,"./dist/jeffreys":37,"./dist/jensenDifference":38,"./dist/jensenShannon":39,"./dist/kdivergence":40,"./dist/kulczynski":41,"./dist/kulczynskiS":42,"./dist/kullbackLeibler":43,"./dist/kumarHassebrook":44,"./dist/kumarJohnson":45,"./dist/lorentzian":46,"./dist/manhattan":47,"./dist/matusita":48,"./dist/minkowski":49,"./dist/motyka":50,"./dist/neyman":51,"./dist/pearson":52,"./dist/probabilisticSymmetric":53,"./dist/ruzicka":54,"./dist/soergel":55,"./dist/sorensen":56,"./dist/squared":58,"./dist/squared-euclidean":57,"./dist/squaredChord":59,"./dist/squaredChordS":60,"./dist/taneja":61,"./dist/tanimoto":62,"./dist/tanimotoS":63,"./dist/topsoe":64,"./dist/tree":65,"./dist/waveHedges":66}],68:[function(require,module,exports){
+arguments[4][2][0].apply(exports,arguments)
+},{"../matrix":76,"dup":2}],69:[function(require,module,exports){
+arguments[4][3][0].apply(exports,arguments)
+},{"../matrix":76,"./util":73,"dup":3}],70:[function(require,module,exports){
+arguments[4][4][0].apply(exports,arguments)
+},{"../matrix":76,"dup":4}],71:[function(require,module,exports){
+arguments[4][5][0].apply(exports,arguments)
+},{"../matrix":76,"./util":73,"dup":5}],72:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"../matrix":76,"./util":73,"dup":6}],73:[function(require,module,exports){
+arguments[4][7][0].apply(exports,arguments)
+},{"dup":7}],74:[function(require,module,exports){
+arguments[4][8][0].apply(exports,arguments)
+},{"./dc/cholesky":68,"./dc/evd":69,"./dc/lu":70,"./dc/qr":71,"./dc/svd":72,"./matrix":76,"dup":8}],75:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"./decompositions":74,"./matrix":76,"dup":9}],76:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"dup":10}],77:[function(require,module,exports){
+"use strict";
+
+var Layer = require("./layer");
+var Matrix = require("ml-matrix");
+
+module.exports = FeedforwardNeuralNetwork;
+
+/**
+ * Function that returns a random number between two numbers (inclusive)
+ * @param {number} min - lower bound
+ * @param {number} max - upper bound.
+ * @returns {number} random number
+ */
+function randomIntegerFromInterval(min, max) {
+    return Math.floor(Math.random()*(max - min + 1) + min);
+}
+
+/**
+ * Constructor for the FNN (Feedforward Neural Networks) that takes an Array of Numbers,
+ * those numbers corresponds to the size of each layer in the FNN, the first and the last number of the array corresponds to the input and the
+ * output layer respectively.
+ *
+ * @param {Array} layersSize - Array of sizes of each layer.
+ * @param reload - for load purposes.
+ * @param model - for load purposes.
+ * @constructor
+ */
+function FeedforwardNeuralNetwork(layersSize, reload, model) {
+    if(reload) {
+        this.layers = model.layers;
+        this.inputSize = model.inputSize;
+        this.outputSize = model.outputSize;
+    } else {
+        this.inputSize = layersSize[0];
+        this.outputSize = layersSize[layersSize.length - 1];
+        layersSize.shift();
+
+        this.layers = new Array(layersSize.length);
+
+        for (var i = 0; i < layersSize.length; ++i) {
+            var inSize = (i == 0) ? this.inputSize : layersSize[i - 1];
+            this.layers[i] = new Layer(inSize, layersSize[i]);
+        }
+
+        this.layers[this.layers.length - 1].isSigmoid = false;
+    }
+}
+
+/**
+ * Function that applies a forward propagation over the Neural Network
+ * with one case of the dataset.
+ * @param {Array} input - case of the dataset.
+ * @returns {Array} result of the forward propagation.
+ */
+FeedforwardNeuralNetwork.prototype.forwardNN = function (input) {
+    var results = input.slice();
+
+    for(var i = 0; i < this.layers.length; ++i) {
+        results = this.layers[i].forward(results);
+    }
+
+    return results;
+};
+
+/**
+ * Function that makes one iteration (epoch) over the Neural Network with one element
+ * of the dataset with corresponding prediction; the other two arguments are the
+ * learning rate and the momentum that is the regularization term for the parameters
+ * of each perceptron in the Neural Network.
+ * @param {Array} data - Element of the dataset.
+ * @param {Array} prediction - Prediction over the data object.
+ * @param {Number} learningRate
+ * @param momentum - the regularization term.
+ */
+FeedforwardNeuralNetwork.prototype.iteration = function (data, prediction, learningRate, momentum) {
+    var forwardResult = this.forwardNN(data);
+    var error = new Array(forwardResult.length);
+
+    if(typeof(prediction) === 'number')
+        prediction = [prediction];
+
+    for (var i = 0; i < error.length; i++) {
+        error[i] = prediction[i] - forwardResult[i];
+    }
+
+    for (i = this.layers.length - 1; i >= 0; i--) {
+        error = this.layers[i].train(error, learningRate, momentum);
+    }
+};
+
+/**
+ * Method that train the neural network with a given training set with corresponding
+ * predictions, the number of iterations that we want to perform, the learning rate
+ * and the momentum that is the regularization term for the parameters of each
+ * perceptron in the Neural Network.
+ * @param {Matrix} trainingSet
+ * @param {Matrix} predictions
+ * @param {Number} iterations
+ * @param {Number} learningRate
+ * @param {Number} momentum
+ */
+FeedforwardNeuralNetwork.prototype.train = function (trainingSet, predictions, iterations, learningRate, momentum) {
+    if(trainingSet.length !== predictions.length)
+        throw new RangeError("the training and prediction set must have the same size.");
+    if(trainingSet[0].length !== this.inputSize)
+        throw new RangeError("The training set columns must have the same size of the " +
+                             "input layer");
+    if(predictions[0].length !== this.outputSize)
+        throw new RangeError("The prediction set columns must have the same size of the " +
+                             "output layer");
+
+    for(var i = 0; i < iterations; ++i) {
+        for(var j = 0; j < predictions.length; ++j) {
+            var index = randomIntegerFromInterval(0, predictions.length - 1);
+            this.iteration(trainingSet[index], predictions[index], learningRate, momentum);
+        }
+    }
+};
+
+/**
+ * Function that with a dataset, gives all the predictions for this dataset.
+ * @param {Matrix} dataset.
+ * @returns {Array} predictions
+ */
+FeedforwardNeuralNetwork.prototype.predict = function (dataset) {
+    if(dataset[0].length !== this.inputSize)
+        throw new RangeError("The dataset columns must have the same size of the " +
+                             "input layer");
+    var result = new Array(dataset.length);
+    for (var i = 0; i < dataset.length; i++) {
+        result[i] = this.forwardNN(dataset[i]);
+    }
+
+    result = Matrix(result);
+    return result.columns === 1 ? result.getColumn(0) : result;
+};
+
+/**
+ * function that loads a object model into the Neural Network.
+ * @param model
+ * @returns {FeedforwardNeuralNetwork} with the provided model.
+ */
+FeedforwardNeuralNetwork.load = function (model) {
+    if(model.modelName !== "FNN")
+        throw new RangeError("The given model is invalid!");
+
+    return new FeedforwardNeuralNetwork(null, true, model);
+};
+
+/**
+ * Function that exports the actual Neural Network to an object.
+ * @returns {{modelName: string, layers: *, inputSize: *, outputSize: *}}
+ */
+FeedforwardNeuralNetwork.prototype.export = function () {
+    return {
+        modelName: "FNN",
+        layers: this.layers,
+        inputSize: this.inputSize,
+        outputSize: this.outputSize
+    };
+};
+},{"./layer":79,"ml-matrix":75}],78:[function(require,module,exports){
+module.exports = require('./feedforwardNeuralNetwork');
+},{"./feedforwardNeuralNetwork":77}],79:[function(require,module,exports){
+"use strict";
+
+var Matrix = require("ml-matrix");
+
+module.exports = Layer;
+
+/**
+ * Function that create a random array of numbers between -2 to 2.
+ * @param numberOfWeights - size of the array.
+ * @returns {Array} random array of numbers.
+ */
+function randomInitialzeWeights(numberOfWeights) {
+    return Matrix.rand(1, numberOfWeights).sub(0.5).mul(4).getRow(0);
+}
+
+/**
+ * Function that calculates the sigmoid (logistic) function.
+ * @param value
+ * @returns {number}
+ */
+function sigmoid(value) {
+    return 1.0 / (1 + Math.exp(-value));
+}
+
+/**
+ * Function that calculates the derivate of the sigmoid function.
+ * @param value
+ * @returns {number}
+ */
+function sigmoidGradient(value) {
+    return value * (1 - value);
+}
+
+/**
+ * Constructor that creates a layer for the neural network given the number of inputs
+ * and outputs.
+ * @param inputSize
+ * @param outputSize
+ * @constructor
+ */
+function Layer(inputSize, outputSize) {
+    this.output = Matrix.zeros(1, outputSize).getRow(0);
+    this.input = Matrix.zeros(1, inputSize + 1).getRow(0); //+1 for bias term
+    this.deltaWeights = Matrix.zeros(1, (1 + inputSize) * outputSize).getRow(0);
+    this.weights = randomInitialzeWeights(this.deltaWeights.length);
+    this.isSigmoid = true;
+}
+
+/**
+ * Function that performs the forward propagation for the current layer
+ * @param {Array} input - output from the previous layer.
+ * @returns {Array} output - output for the next layer.
+ */
+Layer.prototype.forward = function (input) {
+    this.input = input.slice();
+    this.input.push(1); // bias
+    var offs = 0; // offset used to get the current weights in the current perceptron
+    this.output = Matrix.zeros(1, this.output.length).getRow(0);
+
+    for(var i = 0; i < this.output.length; ++i) {
+        for(var j = 0 ; j < this.input.length; ++j) {
+            this.output[i] += this.weights[offs + j] * this.input[j];
+        }
+        if(this.isSigmoid)
+            this.output[i] = sigmoid(this.output[i]);
+
+        offs += this.input.length;
+    }
+
+    return this.output.slice();
+};
+
+/**
+ * Function that performs the backpropagation algorithm for the current layer.
+ * @param {Array} error - errors from the previous layer.
+ * @param {Number} learningRate - Learning rate for the actual layer.
+ * @param {Number} momentum - The regularizarion term.
+ * @returns {Array} the error for the next layer.
+ */
+Layer.prototype.train = function (error, learningRate, momentum) {
+    var offs = 0;
+    var nextError = Matrix.zeros(1, this.input.length).getRow(0);//new Array(this.input.length);
+
+    for(var i = 0; i < this.output.length; ++i) {
+        var delta = error[i];
+
+        if(this.isSigmoid)
+            delta *= sigmoidGradient(this.output[i]);
+
+        for(var j = 0; j < this.input.length; ++j) {
+            var index = offs + j;
+            nextError[j] += this.weights[index] * delta;
+
+            var deltaWeight = this.input[j] * delta * learningRate;
+            this.weights[index] += this.deltaWeights[index] * momentum + deltaWeight;
+            this.deltaWeights[index] = deltaWeight;
+        }
+
+        offs += this.input.length;
+    }
+
+    return nextError;
+};
+},{"ml-matrix":75}],80:[function(require,module,exports){
 'use strict';
 
 /**
@@ -4679,7 +4966,7 @@ Agnes.prototype.nClusters = function (N) {
 };
 
 module.exports = Agnes;
-},{}],69:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 'use strict';
 
 /**
@@ -5003,15 +5290,15 @@ Diana.prototype.nClusters = function (N) {
 };
 
 module.exports = Diana;
-},{}],70:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 exports.agnes = require('./agnes');
 exports.diana = require('./diana');
 //exports.birch = require('./birch');
 //exports.cure = require('./cure');
 //exports.chameleon = require('./chameleon');
-},{"./agnes":68,"./diana":69}],71:[function(require,module,exports){
+},{"./agnes":80,"./diana":81}],83:[function(require,module,exports){
 module.exports = require('./kmeans');
-},{"./kmeans":72}],72:[function(require,module,exports){
+},{"./kmeans":84}],84:[function(require,module,exports){
 'use strict';
 
 /**
@@ -5157,23 +5444,23 @@ function kmeans(data, centers, maxIter, tol) {
 }
 
 module.exports = kmeans;
-},{}],73:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 arguments[4][2][0].apply(exports,arguments)
-},{"../matrix":81,"dup":2}],74:[function(require,module,exports){
+},{"../matrix":93,"dup":2}],86:[function(require,module,exports){
 arguments[4][3][0].apply(exports,arguments)
-},{"../matrix":81,"./util":78,"dup":3}],75:[function(require,module,exports){
+},{"../matrix":93,"./util":90,"dup":3}],87:[function(require,module,exports){
 arguments[4][4][0].apply(exports,arguments)
-},{"../matrix":81,"dup":4}],76:[function(require,module,exports){
+},{"../matrix":93,"dup":4}],88:[function(require,module,exports){
 arguments[4][5][0].apply(exports,arguments)
-},{"../matrix":81,"./util":78,"dup":5}],77:[function(require,module,exports){
+},{"../matrix":93,"./util":90,"dup":5}],89:[function(require,module,exports){
 arguments[4][6][0].apply(exports,arguments)
-},{"../matrix":81,"./util":78,"dup":6}],78:[function(require,module,exports){
+},{"../matrix":93,"./util":90,"dup":6}],90:[function(require,module,exports){
 arguments[4][7][0].apply(exports,arguments)
-},{"dup":7}],79:[function(require,module,exports){
+},{"dup":7}],91:[function(require,module,exports){
 arguments[4][8][0].apply(exports,arguments)
-},{"./dc/cholesky":73,"./dc/evd":74,"./dc/lu":75,"./dc/qr":76,"./dc/svd":77,"./matrix":81,"dup":8}],80:[function(require,module,exports){
+},{"./dc/cholesky":85,"./dc/evd":86,"./dc/lu":87,"./dc/qr":88,"./dc/svd":89,"./matrix":93,"dup":8}],92:[function(require,module,exports){
 arguments[4][9][0].apply(exports,arguments)
-},{"./decompositions":79,"./matrix":81,"dup":9}],81:[function(require,module,exports){
+},{"./decompositions":91,"./matrix":93,"dup":9}],93:[function(require,module,exports){
 'use strict';
 
 var Asplice = Array.prototype.splice,
@@ -6636,7 +6923,7 @@ Matrix.MatrixError = MatrixError;
 
 module.exports = Matrix;
 
-},{}],82:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -11064,7 +11351,7 @@ numeric.svd= function svd(A) {
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],83:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 "use strict";
 
 var numeric = require('numeric');
@@ -11147,7 +11434,7 @@ SavitzkyGolay.prototype.calc = function (options) {
 };
 
 module.exports = SavitzkyGolay;
-},{"numeric":82}],84:[function(require,module,exports){
+},{"numeric":94}],96:[function(require,module,exports){
 'use strict';
 
 var NodeSquare = require('./node-square'),
@@ -11569,7 +11856,7 @@ function getMaxDistance(distance, numWeights) {
 }
 
 module.exports = SOM;
-},{"./node-hexagonal":85,"./node-square":86}],85:[function(require,module,exports){
+},{"./node-hexagonal":97,"./node-square":98}],97:[function(require,module,exports){
 var NodeSquare = require('./node-square');
 
 function NodeHexagonal(x, y, weights, som) {
@@ -11600,7 +11887,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 };
 
 module.exports = NodeHexagonal;
-},{"./node-square":86}],86:[function(require,module,exports){
+},{"./node-square":98}],98:[function(require,module,exports){
 function NodeSquare(x, y, weights, som) {
     this.x = x;
     this.y = y;
@@ -11707,7 +11994,7 @@ NodeSquare.prototype.getPosition = function getPosition(element) {
 };
 
 module.exports = NodeSquare;
-},{}],87:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -12072,12 +12359,12 @@ module.exports = {
     cumulativeSum: cumulativeSum
 };
 
-},{}],88:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 
 exports.array = require('./array');
 exports.matrix = require('./matrix');
 
-},{"./array":87,"./matrix":89}],89:[function(require,module,exports){
+},{"./array":99,"./matrix":101}],101:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -12606,11 +12893,11 @@ module.exports = {
     weightedScatter: weightedScatter
 };
 
-},{}],90:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 module.exports = exports = require('./svm');
 exports.kernel = require('./kernel').kernel;
 
-},{"./kernel":91,"./svm":92}],91:[function(require,module,exports){
+},{"./kernel":103,"./svm":104}],103:[function(require,module,exports){
 'use strict';
 
 /**
@@ -12685,7 +12972,7 @@ module.exports = {
     radial : kernelRadial
 };
 
-},{}],92:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 'use strict';
 var kernel = require("./kernel").kernel;
 var getKernel = require("./kernel").getKernel;
@@ -12915,5 +13202,5 @@ SVM.prototype.predict = function (p) {
 };
 
 module.exports = SVM;
-},{"./kernel":91}]},{},[1])(1)
+},{"./kernel":103}]},{},[1])(1)
 });
