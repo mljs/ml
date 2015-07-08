@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v0.3.9
+ * @version v0.3.10
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -3475,7 +3475,7 @@ module.exports = {
 function getEquallySpacedData(x, y, options) {
 
     var xLength = x.length;
-    if(x.length !== y.length)
+    if(xLength !== y.length)
         throw new RangeError("the x and y vector doesn't have the same size.");
 
     if (options === undefined) options = {};
@@ -3495,6 +3495,24 @@ function getEquallySpacedData(x, y, options) {
         throw new RangeError("the number of point must be higher than 1");
 
     var algorithm = options.variant === "slot" ? "slot" : "smooth"; // default value: smooth
+
+    var output = algorithm === "slot" ? getEquallySpacedSlot(x, y, from, to, numberOfPoints) : getEquallySpacedSmooth(x, y, from, to, numberOfPoints);
+
+    return reverse ? output.reverse() : output;
+}
+
+/**
+ * function that retrieves the getEquallySpacedData with the variant "smooth"
+ *
+ * @param x
+ * @param y
+ * @param from - Initial point
+ * @param to - Final point
+ * @param numberOfPoints
+ * @returns {Array} - Array of y's equally spaced with the variant "smooth"
+ */
+function getEquallySpacedSmooth(x, y, from, to, numberOfPoints) {
+    var xLength = x.length;
 
     var step = (to - from) / (numberOfPoints - 1);
     var halfStep = step / 2;
@@ -3520,23 +3538,8 @@ function getEquallySpacedData(x, y, options) {
     var sumAtMin = 0;
     var sumAtMax = 0;
 
-    // for slot algorithm
-    var currentPoints = 0;
-
     var i = 0; // index of input
     var j = 0; // index of output
-
-    function getValue() {
-        if(algorithm === "smooth")
-            return integral(previousX, nextX, slope, intercept);
-        else
-            return previousY;
-    }
-
-    function updateParameters() {
-        slope = getSlope(previousX, previousY, nextX, nextY);
-        intercept = -slope*previousX + previousY;
-    }
 
     function getSlope(x0, y0, x1, y1) {
         return (y1 - y0) / (x1 - x0);
@@ -3545,11 +3548,10 @@ function getEquallySpacedData(x, y, options) {
     main: while(true) {
         while (nextX - max >= 0) {
             // no overlap with original point, just consume current value
-            var add = algorithm === "smooth" ? integral(0, max - previousX, slope, previousY) : previousY;
+            var add = integral(0, max - previousX, slope, previousY);
             sumAtMax = currentValue + add;
 
-            var divisor = algorithm === "smooth" ? step : currentPoints - 1;
-            output[j] = (sumAtMax - sumAtMin) / divisor;
+            output[j] = (sumAtMax - sumAtMin) / step;
             j++;
 
             if (j === numberOfPoints)
@@ -3558,20 +3560,14 @@ function getEquallySpacedData(x, y, options) {
             min = max;
             max += step;
             sumAtMin = sumAtMax;
-            if(algorithm === "slot")
-                currentPoints = 0;
         }
 
         if(previousX <= min && min <= nextX) {
-            add = algorithm === "smooth" ? integral(0, min - previousX, slope, previousY) : previousY;
+            add = integral(0, min - previousX, slope, previousY);
             sumAtMin = currentValue + add;
-            if(algorithm === "slot")
-                currentPoints++;
         }
 
-        currentValue += getValue();
-        if(currentPoints !== 0)
-            currentPoints++;
+        currentValue += integral(previousX, nextX, slope, intercept);
 
         previousX = nextX;
         previousY = nextY;
@@ -3584,11 +3580,96 @@ function getEquallySpacedData(x, y, options) {
             nextX += lastOriginalStep;
             nextY = 0;
         }
-
-        updateParameters();
+        // updating parameters
+        slope = getSlope(previousX, previousY, nextX, nextY);
+        intercept = -slope*previousX + previousY;
     }
 
-    return reverse ? output.reverse() : output;
+    return output;
+}
+
+/**
+ * function that retrieves the getEquallySpacedData with the variant "slot"
+ *
+ * @param x
+ * @param y
+ * @param from - Initial point
+ * @param to - Final point
+ * @param numberOfPoints
+ * @returns {Array} - Array of y's equally spaced with the variant "slot"
+ */
+function getEquallySpacedSlot(x, y, from, to, numberOfPoints) {
+    var xLength = x.length;
+
+    var step = (to - from) / (numberOfPoints - 1);
+    var halfStep = step / 2;
+    var lastStep = x[x.length - 1] - x[x.length - 2];
+
+    var start = from - halfStep;
+    var output = new Array(numberOfPoints);
+
+    // Init main variables
+    var min = start;
+    var max = start + step;
+
+    var previousX = -Number.MAX_VALUE;
+    var previousY = 0;
+    var nextX = x[0];
+    var nextY = y[0];
+    var frontOutsideSpectra = 0;
+    var backOutsideSpectra = true;
+
+    var currentValue = 0;
+
+    // for slot algorithm
+    var currentPoints = 0;
+
+    var i = 1; // index of input
+    var j = 0; // index of output
+
+    main: while(true) {
+        while (previousX - max > 0) {
+            // no overlap with original point, just consume current value
+            if(backOutsideSpectra) {
+                currentPoints++;
+                backOutsideSpectra = false;
+            }
+
+            output[j] = currentPoints <= 0 ? 0 : currentValue / currentPoints;
+            j++;
+
+            if (j === numberOfPoints)
+                break main;
+
+            min = max;
+            max += step;
+            currentValue = 0;
+            currentPoints = 0;
+        }
+
+        if(previousX > min) {
+            currentValue += previousY;
+            currentPoints++;
+        }
+
+        if(previousX === -Number.MAX_VALUE || frontOutsideSpectra > 1)
+            currentPoints--;
+
+        previousX = nextX;
+        previousY = nextY;
+
+        if (i < xLength) {
+            nextX = x[i];
+            nextY = y[i];
+            i++;
+        } else {
+            nextX += lastStep;
+            nextY = 0;
+            frontOutsideSpectra++;
+        }
+    }
+
+    return output;
 }
 /**
  * Function that calculates the integral of the line between two
@@ -3617,6 +3698,13 @@ exports.SNV = SNV;
 var Stat = require('ml-stat');
 var Matrix = require('ml-matrix');
 
+/**
+ * Function that applies the standard normal variate (SNV) to each row vector of y's
+ * values.
+ *
+ * @param data - Matrix of y vectors
+ * @returns {Matrix}
+ */
 function SNV(data) {
     var Y = data;
     if(!Matrix.isMatrix(data)) {
@@ -4474,8 +4562,10 @@ FeedforwardNeuralNetwork.prototype.iteration = function (data, prediction, learn
         error[i] = prediction[i] - forwardResult[i];
     }
 
-    for (i = this.layers.length - 1; i >= 0; i--) {
-        error = this.layers[i].train(error, learningRate, momentum);
+    var lengthLayers = this.layers.length;
+
+    for(i = 0; i < lengthLayers; ++i) {
+        error = this.layers[lengthLayers - 1 - i].train(error, learningRate, momentum);
     }
 };
 
