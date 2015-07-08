@@ -35,9 +35,9 @@
     "ml-som": "0.0.6",
     "ml-stat": "1.0.1",
     "ml-svm": "1.0.2",
-    "ml-array-utils": "0.1.0",
+    "ml-array-utils": "0.1.1",
     "ml-savitzky-golay": "0.0.1",
-    "ml-fnn": "0.0.1"
+    "ml-fnn": "0.0.3"
   },
   "devDependencies": {
     "browserify": "^8.1.3",
