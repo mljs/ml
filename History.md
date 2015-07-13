@@ -8,6 +8,8 @@
 
 * Add ml.NN.KNN
 
+:arrow_up: ml-knn v0.0.2
+
 0.3.11 / HEAD
 ==================
 

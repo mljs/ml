@@ -38,7 +38,7 @@
     "ml-array-utils": "0.1.2",
     "ml-savitzky-golay": "0.0.1",
     "ml-fnn": "0.0.3",
-    "ml-knn": "0.0.1",
+    "ml-knn": "0.0.2",
     "ml-naivebayes": "0.0.1"
   },
   "devDependencies": {
