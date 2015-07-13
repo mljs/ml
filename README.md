@@ -90,6 +90,16 @@ See [ml-hclust](https://github.com/mljs/hclust)
 `ML.SL.SVM`  
 See [ml-svm](https://github.com/mljs/svm)
 
+#### Naive Bayes
+
+`ML.SL.NaiveBayes`
+See [ml-naivebayes](https://github.com/mljs/naiveBayes)
+
+#### K-Nearest Neighboor
+
+`ML.SL.KNN`
+See [ml-knn](https://github.com/mljs/knn)
+
 ### Neural networks
 
 `ML.NN`

@@ -20,6 +20,8 @@ Supervised learning
 var SL = exports.SL = {};
 
 SL.SVM = require('ml-svm');
+SL.KNN = require('ml-knn');
+SL.NaiveBayes = require('ml-naivebayes');
 
 /*
  Clustering

@@ -1,9 +1,17 @@
-0.3.10 / 2015-07-08
+0.3.11 / HEAD
 ==================
 
-* Add ml.NN.FNN
+:arrow_up: ml-array-utils v0.1.2
 
-:arrow_up: ml-fnn v0.0.3
+0.3.11 / HEAD
+==================
+
+* Add ml.NN.KNN
+
+0.3.11 / HEAD
+==================
+
+* Add ml.NN.NaiveBayes
 
 0.3.10 / 2015-07-08
 ==================
@@ -11,6 +19,13 @@
 * Add ml.AU
 
 :arrow_up: ml-array-utils v0.1.1
+
+0.3.10 / 2015-07-08
+==================
+
+* Add ml.NN.FNN
+
+:arrow_up: ml-fnn v0.0.3
 
 0.3.7 / 2015-07-01
 ==================
