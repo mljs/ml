@@ -34,7 +34,8 @@ describe('ML', function () {
         ML.SL.should.have.properties([
             'SVM',
             'KNN',
-            'NaiveBayes'
+            'NaiveBayes',
+            'PLS'
         ]);
     });
 
