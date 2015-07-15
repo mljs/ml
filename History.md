@@ -6,7 +6,7 @@
 0.3.11 / HEAD
 ==================
 
-:arrow_up: ml-array-utils v0.1.2
+:arrow_up: ml-array-utils v0.1.3
 
 0.3.11 / HEAD
 ==================

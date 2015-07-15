@@ -100,6 +100,11 @@ See [ml-naivebayes](https://github.com/mljs/naiveBayes)
 `ML.SL.KNN`
 See [ml-knn](https://github.com/mljs/knn)
 
+#### Partial least squares (PLS)
+
+`ML.SL.PLS`
+See [ml-pls](https://github.com/mljs/pls)
+
 ### Neural networks
 
 `ML.NN`
