@@ -35,12 +35,13 @@
     "ml-som": "0.0.6",
     "ml-stat": "1.0.1",
     "ml-svm": "1.0.2",
-    "ml-array-utils": "0.1.3",
+    "ml-array-utils": "0.1.4",
     "ml-savitzky-golay": "0.0.1",
     "ml-fnn": "0.0.3",
     "ml-knn": "0.0.2",
     "ml-naivebayes": "0.0.1",
-    "ml-pls": "0.0.1"
+    "ml-pls": "0.0.1",
+    "ml-pca": "0.0.1"
   },
   "devDependencies": {
     "browserify": "^8.1.3",

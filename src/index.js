@@ -15,6 +15,12 @@ Stat.array = require('ml-stat/array');
 Stat.matrix = require('ml-stat/matrix');
 
 /*
+Decomposition
+*/
+var Decomposition = exports.Decomposition = {};
+Decomposition.PCA = require('ml-pca');
+
+/*
 Supervised learning
  */
 var SL = exports.SL = {};

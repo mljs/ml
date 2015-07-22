@@ -92,17 +92,17 @@ See [ml-svm](https://github.com/mljs/svm)
 
 #### Naive Bayes
 
-`ML.SL.NaiveBayes`
+`ML.SL.NaiveBayes`   
 See [ml-naivebayes](https://github.com/mljs/naiveBayes)
 
 #### K-Nearest Neighboor
 
-`ML.SL.KNN`
+`ML.SL.KNN`   
 See [ml-knn](https://github.com/mljs/knn)
 
 #### Partial least squares (PLS)
 
-`ML.SL.PLS`
+`ML.SL.PLS`   
 See [ml-pls](https://github.com/mljs/pls)
 
 ### Neural networks
@@ -116,13 +116,22 @@ See [ml-som](https://github.com/mljs/som)
 
 #### Feedforward Neural Networks
 
-`ML.NN.FNN`
+`ML.NN.FNN`   
 See [ml-fnn](https://github.com/mljs/feedforwardNeuralNetworks)
 
 ### Array Utils
 
-`ML.ArrayUtils`  
+`ML.ArrayUtils`   
 See [ml-array-utils](https://github.com/mljs/ArrayUtils)
+
+### Decomposition
+
+`ML.Decomposition`
+
+#### PCA
+
+`ML.Decomposition.PCA`   
+See [ml-pca](https://github.com/mljs/pca)
 
 ## License
 

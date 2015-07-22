@@ -11,7 +11,8 @@ describe('ML', function () {
             'Stat',
             'SL',
             'NN',
-            'ArrayUtils'
+            'ArrayUtils',
+            'Decomposition'
         ]);
     });
 
@@ -64,6 +65,12 @@ describe('ML', function () {
             'applyDotProduct',
             'getEquallySpacedData',
             'SNV'
+        ]);
+    });
+
+    it('check Decomposition', function () {
+        ML.Decomposition.should.have.properties([
+            'PCA'
         ]);
     });
 });
