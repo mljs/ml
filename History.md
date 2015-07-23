@@ -9,7 +9,7 @@
 :arrow_up: ml-pls v0.0.2
 :arrow_up: ml-array-utils v0.1.4
 :arrow_up: ml-knn v0.0.2
-:arrow_up: ml-pca v0.0.2
+:arrow_up: ml-pca v0.0.3
 
 0.3.10 / 2015-07-08
 ==================
@@ -21,7 +21,7 @@
 0.3.10 / 2015-07-08
 ==================
 
-* Add ml.NN.FNN
+* Add ML.NN.FNN
 
 :arrow_up: ml-fnn v0.0.3
 
