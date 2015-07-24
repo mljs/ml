@@ -4,6 +4,7 @@
   "description": "Machine learning tools",
   "main": "src/index.js",
   "scripts": {
+    "test": "node -p \"void(require('./'));console.log('OK')\"",
     "build": "gulp build"
   },
   "config": {
