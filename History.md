@@ -1,25 +1,24 @@
-0.3.11 / HEAD
+0.4.0 / HEAD
 ==================
 
 * Add ml.SL.PLS
 * Add ml.NN.KNN
 * Add ml.NN.NaiveBayes
-* Add ml.Decomposition.PCA
+* Add ml.Stat.PCA
+* Add ml.BitArray
+* Remove Matrix from Math namespace. Now only in root.
 
-:arrow_up: ml-pls v0.0.2
 :arrow_up: ml-array-utils v0.1.4
-:arrow_up: ml-knn v0.0.2
-:arrow_up: ml-pca v0.0.3
 
 0.3.10 / 2015-07-08
-==================
+===================
 
 * Add ml.AU
 
 :arrow_up: ml-array-utils v0.1.1
 
 0.3.10 / 2015-07-08
-==================
+===================
 
 * Add ML.NN.FNN
 
@@ -68,6 +67,6 @@
 :arrow_up: ml-stat v1.0.1
 
 0.1.0 / 2014-11-18
-===================
+==================
 
 * add ml.Math.Distance

@@ -1,11 +1,17 @@
 # ml
 
   [![NPM version][npm-image]][npm-url]
-  [![build status][travis-image]][travis-url]
   [![David deps][david-image]][david-url]
   [![npm download][download-image]][download-url]
 
 Machine learning tools
+
+## Introduction
+
+This library is a compilation of the tools developed in the [mljs](https://github.com/mljs) organization.  
+It is mainly maintained for use in the browser. If you are working with Node.js, you might prefer to add
+to your dependencies only the libraries that you need, as they are usually published to npm more often.  
+We prefix all our npm package names with `ml-` (eg. ml-matrix) so they are easy to find.
 
 ## Installation
 
@@ -17,6 +23,11 @@ $ npm install ml
 Bower
 ```
 $ bower install ml
+```
+
+Using our CDN in a web page
+```html
+<script src="https://www.lactame.com/lib/ml/0.3.10/ml.min.js"></script>
 ```
 
 ## Usage
@@ -43,14 +54,26 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
 
 ## Tools
 
-### Math
-
-`ML.Math`
+### Root packages
 
 #### Matrix
 
-`ML.Math.Matrix` or `ML.Matrix`  
+`ML.Matrix`  
 See [ml-matrix](https://github.com/mljs/matrix)
+
+### Array Utils
+
+`ML.ArrayUtils`   
+See [ml-array-utils](https://github.com/mljs/array-utils)
+
+### Bit array operations
+
+`ML.BitArray`   
+See [ml-bit-array](https://github.com/mljs/bit-array)
+
+### Math
+
+`ML.Math`
 
 #### Distance
 
@@ -60,7 +83,7 @@ See [ml-distance](https://github.com/mljs/distance)
 #### Savitzky-Golay filter
 
 `ML.Math.SG`  
-See [ml-savitzkyGolay](https://github.com/mljs/savitzkyGolay)
+See [ml-savitzkyGolay](https://github.com/mljs/savitzky-golay)
 
 ### Stat
 
@@ -73,17 +96,28 @@ See [ml-savitzkyGolay](https://github.com/mljs/savitzkyGolay)
 
 See [ml-stat](https://github.com/mljs/stat)
 
-### Supervised learning
+#### PCA
 
-`ML.SL`
+`ML.Stat.PCA`   
+See [ml-pca](https://github.com/mljs/pca)
 
 ### Clustering
+
+`ML.Clust`
+
+#### Hierarchical clustering
+
+`ML.Clust.hclust`  
+See [ml-hclust](https://github.com/mljs/hclust)
+
+#### K-means
 
 `ML.Clust.kmeans`  
 See [ml-kmeans](https://github.com/mljs/kmeans)
 
-`ML.Clust.hclust`  
-See [ml-hclust](https://github.com/mljs/hclust)
+### Supervised learning
+
+`ML.SL`
 
 #### Support vector machines
 
@@ -93,7 +127,7 @@ See [ml-svm](https://github.com/mljs/svm)
 #### Naive Bayes
 
 `ML.SL.NaiveBayes`   
-See [ml-naivebayes](https://github.com/mljs/naiveBayes)
+See [ml-naivebayes](https://github.com/mljs/naive-bayes)
 
 #### K-Nearest Neighboor
 
@@ -109,7 +143,7 @@ See [ml-pls](https://github.com/mljs/pls)
 
 `ML.NN`
 
-#### Self-organizing map
+#### Self-organizing map / Kohonen networks
 
 `ML.NN.SOM`  
 See [ml-som](https://github.com/mljs/som)
@@ -117,21 +151,7 @@ See [ml-som](https://github.com/mljs/som)
 #### Feedforward Neural Networks
 
 `ML.NN.FNN`   
-See [ml-fnn](https://github.com/mljs/feedforwardNeuralNetworks)
-
-### Array Utils
-
-`ML.ArrayUtils`   
-See [ml-array-utils](https://github.com/mljs/ArrayUtils)
-
-### Decomposition
-
-`ML.Decomposition`
-
-#### PCA
-
-`ML.Decomposition.PCA`   
-See [ml-pca](https://github.com/mljs/pca)
+See [ml-fnn](https://github.com/mljs/feedforward-neural-networks)
 
 ## License
 
@@ -139,8 +159,6 @@ See [ml-pca](https://github.com/mljs/pca)
 
 [npm-image]: https://img.shields.io/npm/v/ml.svg?style=flat-square
 [npm-url]: https://www.npmjs.com/package/ml
-[travis-image]: https://img.shields.io/travis/mljs/ml/master.svg?style=flat-square
-[travis-url]: https://travis-ci.org/mljs/ml
 [david-image]: https://img.shields.io/david/mljs/ml.svg?style=flat-square
 [david-url]: https://david-dm.org/mljs/ml
 [download-image]: https://img.shields.io/npm/dm/ml.svg?style=flat-square
