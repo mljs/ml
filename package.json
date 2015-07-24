@@ -41,7 +41,8 @@
     "ml-savitzky-golay": "0.0.1",
     "ml-som": "0.0.6",
     "ml-stat": "1.0.1",
-    "ml-svm": "1.0.2"
+    "ml-svm": "1.0.2",
+    "ml-xsadd": "1.0.0"
   },
   "devDependencies": {
     "browserify": "^8.1.3",

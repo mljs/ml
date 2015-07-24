@@ -6,6 +6,7 @@
 * Add ml.NN.NaiveBayes
 * Add ml.Stat.PCA
 * Add ml.BitArray
+* Add ml.RNG.XSadd
 * Remove Matrix from Math namespace. Now only in root.
 
 :arrow_up: ml-array-utils v0.1.4

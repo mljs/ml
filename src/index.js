@@ -11,11 +11,17 @@ var Math = exports.Math = {};
 Math.Distance = require('ml-distance');
 Math.SG = require('ml-savitzky-golay');
 
+
 var Stat = exports.Stat = {};
 
 Stat.array = require('ml-stat/array');
 Stat.matrix = require('ml-stat/matrix');
 Stat.PCA = require('ml-pca');
+
+
+// Random number generation
+var RNG = exports.RNG = {};
+RNG.XSadd = require('ml-xsadd');
 
 
 // Supervised learning

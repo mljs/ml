@@ -101,6 +101,15 @@ See [ml-stat](https://github.com/mljs/stat)
 `ML.Stat.PCA`   
 See [ml-pca](https://github.com/mljs/pca)
 
+### Random number generation
+
+`ML.RNG`
+
+#### XORShift-add
+
+`ML.RNG.XSadd`
+See [ml-xsadd](https://github.com/mljs/xsadd)
+
 ### Clustering
 
 `ML.Clust`
