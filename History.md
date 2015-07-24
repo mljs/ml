@@ -13,6 +13,7 @@
 :arrow_up: ml-hclust v1.0.0
 :arrow_up: ml-kmeans v0.1.0
 :arrow_up: ml-distance v2.0.1
+:arrow_up: ml-savitzky-golay v1.0.0
 
 0.3.10 / 2015-07-08
 ===================
