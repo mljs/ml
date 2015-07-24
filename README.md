@@ -54,113 +54,30 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
 
 ## Tools
 
-### Root packages
-
-#### Matrix
-
-`ML.Matrix`  
-See [ml-matrix](https://github.com/mljs/matrix)
-
-### Array Utils
-
-`ML.ArrayUtils`   
-See [ml-array-utils](https://github.com/mljs/array-utils)
-
-### Bit array operations
-
-`ML.BitArray`   
-See [ml-bit-array](https://github.com/mljs/bit-array)
-
-### Math
-
-`ML.Math`
-
-#### Distance
-
-`ML.Math.Distance`  
-See [ml-distance](https://github.com/mljs/distance)
-
-#### Savitzky-Golay filter
-
-`ML.Math.SG`  
-See [ml-savitzkyGolay](https://github.com/mljs/savitzky-golay)
-
-### Stat
-
-`ML.Stat`
-
-#### Utilities
-
-* Array: `ML.Stat.array`
-* Matrix: `ML.Stat.matrix`
-
-See [ml-stat](https://github.com/mljs/stat)
-
-#### PCA
-
-`ML.Stat.PCA`   
-See [ml-pca](https://github.com/mljs/pca)
-
-### Random number generation
-
-`ML.RNG`
-
-#### XORShift-add
-
-`ML.RNG.XSadd`
-See [ml-xsadd](https://github.com/mljs/xsadd)
-
-### Clustering
-
-`ML.Clust`
-
-#### Hierarchical clustering
-
-`ML.Clust.hclust`  
-See [ml-hclust](https://github.com/mljs/hclust)
-
-#### K-means
-
-`ML.Clust.kmeans`  
-See [ml-kmeans](https://github.com/mljs/kmeans)
-
-### Supervised learning
-
-`ML.SL`
-
-#### Support vector machines
-
-`ML.SL.SVM`  
-See [ml-svm](https://github.com/mljs/svm)
-
-#### Naive Bayes
-
-`ML.SL.NaiveBayes`   
-See [ml-naivebayes](https://github.com/mljs/naive-bayes)
-
-#### K-Nearest Neighboor
-
-`ML.SL.KNN`   
-See [ml-knn](https://github.com/mljs/knn)
-
-#### Partial least squares (PLS)
-
-`ML.SL.PLS`   
-See [ml-pls](https://github.com/mljs/pls)
-
-### Neural networks
-
-`ML.NN`
-
-#### Self-organizing map / Kohonen networks
-
-`ML.NN.SOM`  
-See [ml-som](https://github.com/mljs/som)
-
-#### Feedforward Neural Networks
-
-`ML.NN.FNN`   
-See [ml-fnn](https://github.com/mljs/feedforward-neural-networks)
+* Root packages
+    * Matrix: [ML.Matrix](https://github.com/mljs/matrix)
+    * Array Utils: [ML.ArrayUtils](https://github.com/mljs/array-utils)
+    * Bit array operations: [ML.BitArray](https://github.com/mljs/bit-array)
+* Math: `ML.Math`
+    * Distance: [ML.Math.Distance](https://github.com/mljs/distance)
+    * Savitzky-Golay filter: [ML.Math.SG](https://github.com/mljs/savitzky-golay)
+* Stat: [ML.Stat](https://github.com/mljs/stat)
+    * Array: `ML.Stat.array`
+    * Matrix: `ML.Stat.matrix`
+    * Principal component analysis (PCA): [ML.Stat.PCA](https://github.com/mljs/pca)
+* Random number generation: `ML.RNG`
+    * XORShift-add: [ML.RNG.XSadd](https://github.com/mljs/xsadd)
+* Clustering: `ML.Clust`
+    * Hierarchical clustering: [ML.Clust.hclust](https://github.com/mljs/hclust)
+    * K-means: [ML.Clust.kmeans](https://github.com/mljs/kmeans)
+* Supervised learning: `ML.SL`
+    * Support vector machines: [ML.SL.SVM](https://github.com/mljs/svm)
+    * Naive Bayes: [ML.SL.NaiveBayes](https://github.com/mljs/naive-bayes)
+    * K-Nearest Neighbor: [ML.SL.KNN](https://github.com/mljs/knn)
+    * Partial least squares (PLS): [ML.SL.PLS](https://github.com/mljs/pls)
+* Neural networks: `ML.NN`
+    * Self-organizing map / Kohonen networks: [ML.NN.SOM](https://github.com/mljs/som)
+    * Feedforward Neural Networks: [ML.NN.FNN](https://github.com/mljs/feedforward-neural-networks)
 
 ## License
 

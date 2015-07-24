@@ -21,6 +21,10 @@
     "datamining"
   ],
   "author": "Michaël Zasso",
+  "contributors": [
+    "Miguel Asencio",
+    "Jefferson Hernández"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/mljs/ml/issues"
@@ -29,10 +33,10 @@
   "dependencies": {
     "ml-array-utils": "0.1.4",
     "ml-bit-array": "1.0.0-0",
-    "ml-distance": "1.0.2",
+    "ml-distance": "2.0.1",
     "ml-fnn": "0.0.3",
-    "ml-hclust": "0.1.0",
-    "ml-kmeans": "0.0.0",
+    "ml-hclust": "1.0.0",
+    "ml-kmeans": "0.1.0",
     "ml-knn": "0.0.2",
     "ml-matrix": "0.0.4",
     "ml-naivebayes": "0.0.1",
