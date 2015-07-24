@@ -1,55 +1,741 @@
 /**
  * ml - Machine learning tools
- * @version v0.3.10
+ * @version v0.4.0
  * @link https://github.com/mljs/ml
  * @license MIT
  */
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.ML=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-/*
-Core utilities
- */
+'use strict';
 
-/*
-Math
- */
+// Root packages
+exports.ArrayUtils = exports.AU = require('ml-array-utils');
+exports.BitArray = require('ml-bit-array');
+exports.Matrix = require('ml-matrix');
+
+
 var Math = exports.Math = {};
-Math.Matrix = exports.Matrix = require('ml-matrix');
+
 Math.Distance = require('ml-distance');
 Math.SG = require('ml-savitzky-golay');
 
+
 var Stat = exports.Stat = {};
+
 Stat.array = require('ml-stat/array');
 Stat.matrix = require('ml-stat/matrix');
+Stat.PCA = require('ml-pca');
 
-/*
-Supervised learning
- */
+
+// Random number generation
+var RNG = exports.RNG = {};
+RNG.XSadd = require('ml-xsadd');
+
+
+// Supervised learning
 var SL = exports.SL = {};
 
 SL.SVM = require('ml-svm');
+SL.KNN = require('ml-knn');
+SL.NaiveBayes = require('ml-naivebayes');
+SL.PLS = require('ml-pls');
 
-/*
- Clustering
- */
+
+// Clustering
 var Clust = exports.Clust = {};
 
 Clust.kmeans = require('ml-kmeans');
-Clust.hclust= require('ml-hclust');
+Clust.hclust = require('ml-hclust');
 
-/*
-Neural networks
- */
+
+// Neural networks
 var NN = exports.NN = exports.nn = {};
 
 NN.SOM = require('ml-som');
 NN.FNN = require('ml-fnn');
 
-/*
-Array Utils
-*/
-var ArrayUtils = exports.ArrayUtils = exports.AU = require('ml-array-utils');
+},{"ml-array-utils":17,"ml-bit-array":20,"ml-distance":66,"ml-fnn":86,"ml-hclust":93,"ml-kmeans":94,"ml-knn":96,"ml-matrix":106,"ml-naivebayes":117,"ml-pca":128,"ml-pls":139,"ml-savitzky-golay":144,"ml-som":145,"ml-stat/array":148,"ml-stat/matrix":150,"ml-svm":151,"ml-xsadd":154}],2:[function(require,module,exports){
+if (typeof Object.create === 'function') {
+  // implementation from standard node.js 'util' module
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    ctor.prototype = Object.create(superCtor.prototype, {
+      constructor: {
+        value: ctor,
+        enumerable: false,
+        writable: true,
+        configurable: true
+      }
+    });
+  };
+} else {
+  // old school shim for old browsers
+  module.exports = function inherits(ctor, superCtor) {
+    ctor.super_ = superCtor
+    var TempCtor = function () {}
+    TempCtor.prototype = superCtor.prototype
+    ctor.prototype = new TempCtor()
+    ctor.prototype.constructor = ctor
+  }
+}
 
-},{"ml-array-utils":13,"ml-distance":67,"ml-fnn":78,"ml-hclust":82,"ml-kmeans":83,"ml-matrix":92,"ml-savitzky-golay":95,"ml-som":96,"ml-stat/array":99,"ml-stat/matrix":101,"ml-svm":102}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
+// shim for using process in browser
+
+var process = module.exports = {};
+var queue = [];
+var draining = false;
+
+function drainQueue() {
+    if (draining) {
+        return;
+    }
+    draining = true;
+    var currentQueue;
+    var len = queue.length;
+    while(len) {
+        currentQueue = queue;
+        queue = [];
+        var i = -1;
+        while (++i < len) {
+            currentQueue[i]();
+        }
+        len = queue.length;
+    }
+    draining = false;
+}
+process.nextTick = function (fun) {
+    queue.push(fun);
+    if (!draining) {
+        setTimeout(drainQueue, 0);
+    }
+};
+
+process.title = 'browser';
+process.browser = true;
+process.env = {};
+process.argv = [];
+process.version = ''; // empty string to avoid regexp issues
+process.versions = {};
+
+function noop() {}
+
+process.on = noop;
+process.addListener = noop;
+process.once = noop;
+process.off = noop;
+process.removeListener = noop;
+process.removeAllListeners = noop;
+process.emit = noop;
+
+process.binding = function (name) {
+    throw new Error('process.binding is not supported');
+};
+
+// TODO(shtylman)
+process.cwd = function () { return '/' };
+process.chdir = function (dir) {
+    throw new Error('process.chdir is not supported');
+};
+process.umask = function() { return 0; };
+
+},{}],4:[function(require,module,exports){
+module.exports = function isBuffer(arg) {
+  return arg && typeof arg === 'object'
+    && typeof arg.copy === 'function'
+    && typeof arg.fill === 'function'
+    && typeof arg.readUInt8 === 'function';
+}
+},{}],5:[function(require,module,exports){
+(function (process,global){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var formatRegExp = /%[sdj%]/g;
+exports.format = function(f) {
+  if (!isString(f)) {
+    var objects = [];
+    for (var i = 0; i < arguments.length; i++) {
+      objects.push(inspect(arguments[i]));
+    }
+    return objects.join(' ');
+  }
+
+  var i = 1;
+  var args = arguments;
+  var len = args.length;
+  var str = String(f).replace(formatRegExp, function(x) {
+    if (x === '%%') return '%';
+    if (i >= len) return x;
+    switch (x) {
+      case '%s': return String(args[i++]);
+      case '%d': return Number(args[i++]);
+      case '%j':
+        try {
+          return JSON.stringify(args[i++]);
+        } catch (_) {
+          return '[Circular]';
+        }
+      default:
+        return x;
+    }
+  });
+  for (var x = args[i]; i < len; x = args[++i]) {
+    if (isNull(x) || !isObject(x)) {
+      str += ' ' + x;
+    } else {
+      str += ' ' + inspect(x);
+    }
+  }
+  return str;
+};
+
+
+// Mark that a method should not be used.
+// Returns a modified function which warns once by default.
+// If --no-deprecation is set, then it is a no-op.
+exports.deprecate = function(fn, msg) {
+  // Allow for deprecating things in the process of starting up.
+  if (isUndefined(global.process)) {
+    return function() {
+      return exports.deprecate(fn, msg).apply(this, arguments);
+    };
+  }
+
+  if (process.noDeprecation === true) {
+    return fn;
+  }
+
+  var warned = false;
+  function deprecated() {
+    if (!warned) {
+      if (process.throwDeprecation) {
+        throw new Error(msg);
+      } else if (process.traceDeprecation) {
+        console.trace(msg);
+      } else {
+        console.error(msg);
+      }
+      warned = true;
+    }
+    return fn.apply(this, arguments);
+  }
+
+  return deprecated;
+};
+
+
+var debugs = {};
+var debugEnviron;
+exports.debuglog = function(set) {
+  if (isUndefined(debugEnviron))
+    debugEnviron = process.env.NODE_DEBUG || '';
+  set = set.toUpperCase();
+  if (!debugs[set]) {
+    if (new RegExp('\\b' + set + '\\b', 'i').test(debugEnviron)) {
+      var pid = process.pid;
+      debugs[set] = function() {
+        var msg = exports.format.apply(exports, arguments);
+        console.error('%s %d: %s', set, pid, msg);
+      };
+    } else {
+      debugs[set] = function() {};
+    }
+  }
+  return debugs[set];
+};
+
+
+/**
+ * Echos the value of a value. Trys to print the value out
+ * in the best way possible given the different types.
+ *
+ * @param {Object} obj The object to print out.
+ * @param {Object} opts Optional options object that alters the output.
+ */
+/* legacy: obj, showHidden, depth, colors*/
+function inspect(obj, opts) {
+  // default options
+  var ctx = {
+    seen: [],
+    stylize: stylizeNoColor
+  };
+  // legacy...
+  if (arguments.length >= 3) ctx.depth = arguments[2];
+  if (arguments.length >= 4) ctx.colors = arguments[3];
+  if (isBoolean(opts)) {
+    // legacy...
+    ctx.showHidden = opts;
+  } else if (opts) {
+    // got an "options" object
+    exports._extend(ctx, opts);
+  }
+  // set default options
+  if (isUndefined(ctx.showHidden)) ctx.showHidden = false;
+  if (isUndefined(ctx.depth)) ctx.depth = 2;
+  if (isUndefined(ctx.colors)) ctx.colors = false;
+  if (isUndefined(ctx.customInspect)) ctx.customInspect = true;
+  if (ctx.colors) ctx.stylize = stylizeWithColor;
+  return formatValue(ctx, obj, ctx.depth);
+}
+exports.inspect = inspect;
+
+
+// http://en.wikipedia.org/wiki/ANSI_escape_code#graphics
+inspect.colors = {
+  'bold' : [1, 22],
+  'italic' : [3, 23],
+  'underline' : [4, 24],
+  'inverse' : [7, 27],
+  'white' : [37, 39],
+  'grey' : [90, 39],
+  'black' : [30, 39],
+  'blue' : [34, 39],
+  'cyan' : [36, 39],
+  'green' : [32, 39],
+  'magenta' : [35, 39],
+  'red' : [31, 39],
+  'yellow' : [33, 39]
+};
+
+// Don't use 'blue' not visible on cmd.exe
+inspect.styles = {
+  'special': 'cyan',
+  'number': 'yellow',
+  'boolean': 'yellow',
+  'undefined': 'grey',
+  'null': 'bold',
+  'string': 'green',
+  'date': 'magenta',
+  // "name": intentionally not styling
+  'regexp': 'red'
+};
+
+
+function stylizeWithColor(str, styleType) {
+  var style = inspect.styles[styleType];
+
+  if (style) {
+    return '\u001b[' + inspect.colors[style][0] + 'm' + str +
+           '\u001b[' + inspect.colors[style][1] + 'm';
+  } else {
+    return str;
+  }
+}
+
+
+function stylizeNoColor(str, styleType) {
+  return str;
+}
+
+
+function arrayToHash(array) {
+  var hash = {};
+
+  array.forEach(function(val, idx) {
+    hash[val] = true;
+  });
+
+  return hash;
+}
+
+
+function formatValue(ctx, value, recurseTimes) {
+  // Provide a hook for user-specified inspect functions.
+  // Check that value is an object with an inspect function on it
+  if (ctx.customInspect &&
+      value &&
+      isFunction(value.inspect) &&
+      // Filter out the util module, it's inspect function is special
+      value.inspect !== exports.inspect &&
+      // Also filter out any prototype objects using the circular check.
+      !(value.constructor && value.constructor.prototype === value)) {
+    var ret = value.inspect(recurseTimes, ctx);
+    if (!isString(ret)) {
+      ret = formatValue(ctx, ret, recurseTimes);
+    }
+    return ret;
+  }
+
+  // Primitive types cannot have properties
+  var primitive = formatPrimitive(ctx, value);
+  if (primitive) {
+    return primitive;
+  }
+
+  // Look up the keys of the object.
+  var keys = Object.keys(value);
+  var visibleKeys = arrayToHash(keys);
+
+  if (ctx.showHidden) {
+    keys = Object.getOwnPropertyNames(value);
+  }
+
+  // IE doesn't make error fields non-enumerable
+  // http://msdn.microsoft.com/en-us/library/ie/dww52sbt(v=vs.94).aspx
+  if (isError(value)
+      && (keys.indexOf('message') >= 0 || keys.indexOf('description') >= 0)) {
+    return formatError(value);
+  }
+
+  // Some type of object without properties can be shortcutted.
+  if (keys.length === 0) {
+    if (isFunction(value)) {
+      var name = value.name ? ': ' + value.name : '';
+      return ctx.stylize('[Function' + name + ']', 'special');
+    }
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    }
+    if (isDate(value)) {
+      return ctx.stylize(Date.prototype.toString.call(value), 'date');
+    }
+    if (isError(value)) {
+      return formatError(value);
+    }
+  }
+
+  var base = '', array = false, braces = ['{', '}'];
+
+  // Make Array say that they are Array
+  if (isArray(value)) {
+    array = true;
+    braces = ['[', ']'];
+  }
+
+  // Make functions say that they are functions
+  if (isFunction(value)) {
+    var n = value.name ? ': ' + value.name : '';
+    base = ' [Function' + n + ']';
+  }
+
+  // Make RegExps say that they are RegExps
+  if (isRegExp(value)) {
+    base = ' ' + RegExp.prototype.toString.call(value);
+  }
+
+  // Make dates with properties first say the date
+  if (isDate(value)) {
+    base = ' ' + Date.prototype.toUTCString.call(value);
+  }
+
+  // Make error with message first say the error
+  if (isError(value)) {
+    base = ' ' + formatError(value);
+  }
+
+  if (keys.length === 0 && (!array || value.length == 0)) {
+    return braces[0] + base + braces[1];
+  }
+
+  if (recurseTimes < 0) {
+    if (isRegExp(value)) {
+      return ctx.stylize(RegExp.prototype.toString.call(value), 'regexp');
+    } else {
+      return ctx.stylize('[Object]', 'special');
+    }
+  }
+
+  ctx.seen.push(value);
+
+  var output;
+  if (array) {
+    output = formatArray(ctx, value, recurseTimes, visibleKeys, keys);
+  } else {
+    output = keys.map(function(key) {
+      return formatProperty(ctx, value, recurseTimes, visibleKeys, key, array);
+    });
+  }
+
+  ctx.seen.pop();
+
+  return reduceToSingleString(output, base, braces);
+}
+
+
+function formatPrimitive(ctx, value) {
+  if (isUndefined(value))
+    return ctx.stylize('undefined', 'undefined');
+  if (isString(value)) {
+    var simple = '\'' + JSON.stringify(value).replace(/^"|"$/g, '')
+                                             .replace(/'/g, "\\'")
+                                             .replace(/\\"/g, '"') + '\'';
+    return ctx.stylize(simple, 'string');
+  }
+  if (isNumber(value))
+    return ctx.stylize('' + value, 'number');
+  if (isBoolean(value))
+    return ctx.stylize('' + value, 'boolean');
+  // For some reason typeof null is "object", so special case here.
+  if (isNull(value))
+    return ctx.stylize('null', 'null');
+}
+
+
+function formatError(value) {
+  return '[' + Error.prototype.toString.call(value) + ']';
+}
+
+
+function formatArray(ctx, value, recurseTimes, visibleKeys, keys) {
+  var output = [];
+  for (var i = 0, l = value.length; i < l; ++i) {
+    if (hasOwnProperty(value, String(i))) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          String(i), true));
+    } else {
+      output.push('');
+    }
+  }
+  keys.forEach(function(key) {
+    if (!key.match(/^\d+$/)) {
+      output.push(formatProperty(ctx, value, recurseTimes, visibleKeys,
+          key, true));
+    }
+  });
+  return output;
+}
+
+
+function formatProperty(ctx, value, recurseTimes, visibleKeys, key, array) {
+  var name, str, desc;
+  desc = Object.getOwnPropertyDescriptor(value, key) || { value: value[key] };
+  if (desc.get) {
+    if (desc.set) {
+      str = ctx.stylize('[Getter/Setter]', 'special');
+    } else {
+      str = ctx.stylize('[Getter]', 'special');
+    }
+  } else {
+    if (desc.set) {
+      str = ctx.stylize('[Setter]', 'special');
+    }
+  }
+  if (!hasOwnProperty(visibleKeys, key)) {
+    name = '[' + key + ']';
+  }
+  if (!str) {
+    if (ctx.seen.indexOf(desc.value) < 0) {
+      if (isNull(recurseTimes)) {
+        str = formatValue(ctx, desc.value, null);
+      } else {
+        str = formatValue(ctx, desc.value, recurseTimes - 1);
+      }
+      if (str.indexOf('\n') > -1) {
+        if (array) {
+          str = str.split('\n').map(function(line) {
+            return '  ' + line;
+          }).join('\n').substr(2);
+        } else {
+          str = '\n' + str.split('\n').map(function(line) {
+            return '   ' + line;
+          }).join('\n');
+        }
+      }
+    } else {
+      str = ctx.stylize('[Circular]', 'special');
+    }
+  }
+  if (isUndefined(name)) {
+    if (array && key.match(/^\d+$/)) {
+      return str;
+    }
+    name = JSON.stringify('' + key);
+    if (name.match(/^"([a-zA-Z_][a-zA-Z_0-9]*)"$/)) {
+      name = name.substr(1, name.length - 2);
+      name = ctx.stylize(name, 'name');
+    } else {
+      name = name.replace(/'/g, "\\'")
+                 .replace(/\\"/g, '"')
+                 .replace(/(^"|"$)/g, "'");
+      name = ctx.stylize(name, 'string');
+    }
+  }
+
+  return name + ': ' + str;
+}
+
+
+function reduceToSingleString(output, base, braces) {
+  var numLinesEst = 0;
+  var length = output.reduce(function(prev, cur) {
+    numLinesEst++;
+    if (cur.indexOf('\n') >= 0) numLinesEst++;
+    return prev + cur.replace(/\u001b\[\d\d?m/g, '').length + 1;
+  }, 0);
+
+  if (length > 60) {
+    return braces[0] +
+           (base === '' ? '' : base + '\n ') +
+           ' ' +
+           output.join(',\n  ') +
+           ' ' +
+           braces[1];
+  }
+
+  return braces[0] + base + ' ' + output.join(', ') + ' ' + braces[1];
+}
+
+
+// NOTE: These type checking functions intentionally don't use `instanceof`
+// because it is fragile and can be easily faked with `Object.create()`.
+function isArray(ar) {
+  return Array.isArray(ar);
+}
+exports.isArray = isArray;
+
+function isBoolean(arg) {
+  return typeof arg === 'boolean';
+}
+exports.isBoolean = isBoolean;
+
+function isNull(arg) {
+  return arg === null;
+}
+exports.isNull = isNull;
+
+function isNullOrUndefined(arg) {
+  return arg == null;
+}
+exports.isNullOrUndefined = isNullOrUndefined;
+
+function isNumber(arg) {
+  return typeof arg === 'number';
+}
+exports.isNumber = isNumber;
+
+function isString(arg) {
+  return typeof arg === 'string';
+}
+exports.isString = isString;
+
+function isSymbol(arg) {
+  return typeof arg === 'symbol';
+}
+exports.isSymbol = isSymbol;
+
+function isUndefined(arg) {
+  return arg === void 0;
+}
+exports.isUndefined = isUndefined;
+
+function isRegExp(re) {
+  return isObject(re) && objectToString(re) === '[object RegExp]';
+}
+exports.isRegExp = isRegExp;
+
+function isObject(arg) {
+  return typeof arg === 'object' && arg !== null;
+}
+exports.isObject = isObject;
+
+function isDate(d) {
+  return isObject(d) && objectToString(d) === '[object Date]';
+}
+exports.isDate = isDate;
+
+function isError(e) {
+  return isObject(e) &&
+      (objectToString(e) === '[object Error]' || e instanceof Error);
+}
+exports.isError = isError;
+
+function isFunction(arg) {
+  return typeof arg === 'function';
+}
+exports.isFunction = isFunction;
+
+function isPrimitive(arg) {
+  return arg === null ||
+         typeof arg === 'boolean' ||
+         typeof arg === 'number' ||
+         typeof arg === 'string' ||
+         typeof arg === 'symbol' ||  // ES6 symbol
+         typeof arg === 'undefined';
+}
+exports.isPrimitive = isPrimitive;
+
+exports.isBuffer = require('./support/isBuffer');
+
+function objectToString(o) {
+  return Object.prototype.toString.call(o);
+}
+
+
+function pad(n) {
+  return n < 10 ? '0' + n.toString(10) : n.toString(10);
+}
+
+
+var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep',
+              'Oct', 'Nov', 'Dec'];
+
+// 26 Feb 16:19:34
+function timestamp() {
+  var d = new Date();
+  var time = [pad(d.getHours()),
+              pad(d.getMinutes()),
+              pad(d.getSeconds())].join(':');
+  return [d.getDate(), months[d.getMonth()], time].join(' ');
+}
+
+
+// log is just a thin wrapper to console.log that prepends a timestamp
+exports.log = function() {
+  console.log('%s - %s', timestamp(), exports.format.apply(exports, arguments));
+};
+
+
+/**
+ * Inherit the prototype methods from one constructor into another.
+ *
+ * The Function.prototype.inherits from lang.js rewritten as a standalone
+ * function (not on Function.prototype). NOTE: If this file is to be loaded
+ * during bootstrapping this function needs to be rewritten using some native
+ * functions as prototype setup using normal JavaScript does not work as
+ * expected during bootstrapping (see mirror.js in r114903).
+ *
+ * @param {function} ctor Constructor function which needs to inherit the
+ *     prototype.
+ * @param {function} superCtor Constructor function to inherit prototype from.
+ */
+exports.inherits = require('inherits');
+
+exports._extend = function(origin, add) {
+  // Don't do anything if add isn't an object
+  if (!add || !isObject(add)) return origin;
+
+  var keys = Object.keys(add);
+  var i = keys.length;
+  while (i--) {
+    origin[keys[i]] = add[keys[i]];
+  }
+  return origin;
+};
+
+function hasOwnProperty(obj, prop) {
+  return Object.prototype.hasOwnProperty.call(obj, prop);
+}
+
+}).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
+},{"./support/isBuffer":4,"_process":3,"inherits":2}],6:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -140,7 +826,7 @@ CholeskyDecomposition.prototype = {
 
 module.exports = CholeskyDecomposition;
 
-},{"../matrix":10}],3:[function(require,module,exports){
+},{"../matrix":14}],7:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -908,7 +1594,7 @@ function cdiv(xr, xi, yr, yi) {
 
 module.exports = EigenvalueDecomposition;
 
-},{"../matrix":10,"./util":7}],4:[function(require,module,exports){
+},{"../matrix":14,"./util":11}],8:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -1079,7 +1765,7 @@ LuDecomposition.prototype = {
 
 module.exports = LuDecomposition;
 
-},{"../matrix":10}],5:[function(require,module,exports){
+},{"../matrix":14}],9:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -1231,7 +1917,7 @@ QrDecomposition.prototype = {
 
 module.exports = QrDecomposition;
 
-},{"../matrix":10,"./util":7}],6:[function(require,module,exports){
+},{"../matrix":14,"./util":11}],10:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('../matrix');
@@ -1730,7 +2416,7 @@ SingularValueDecomposition.prototype = {
 
 module.exports = SingularValueDecomposition;
 
-},{"../matrix":10,"./util":7}],7:[function(require,module,exports){
+},{"../matrix":14,"./util":11}],11:[function(require,module,exports){
 'use strict';
 
 exports.hypotenuse = function hypotenuse(a, b) {
@@ -1746,7 +2432,7 @@ exports.hypotenuse = function hypotenuse(a, b) {
     return 0;
 };
 
-},{}],8:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 'use strict';
 
 var Matrix = require('./matrix');
@@ -1788,13 +2474,13 @@ module.exports = {
     solve: solve
 };
 
-},{"./dc/cholesky":2,"./dc/evd":3,"./dc/lu":4,"./dc/qr":5,"./dc/svd":6,"./matrix":10}],9:[function(require,module,exports){
+},{"./dc/cholesky":6,"./dc/evd":7,"./dc/lu":8,"./dc/qr":9,"./dc/svd":10,"./matrix":14}],13:[function(require,module,exports){
 'use strict';
 
 module.exports = require('./matrix');
 module.exports.Decompositions = module.exports.DC = require('./decompositions');
 
-},{"./decompositions":8,"./matrix":10}],10:[function(require,module,exports){
+},{"./decompositions":12,"./matrix":14}],14:[function(require,module,exports){
 'use strict';
 
 var Asplice = Array.prototype.splice,
@@ -3266,7 +3952,7 @@ Matrix.prototype.abs = function abs() {
 
 module.exports = Matrix;
 
-},{}],11:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3446,7 +4132,7 @@ module.exports = {
 };
 
 
-},{}],12:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 'use strict';
 
 /**
@@ -3480,8 +4166,14 @@ function getEquallySpacedData(x, y, options) {
 
     if (options === undefined) options = {};
 
-    var from = options.from === undefined ? x[0] : options.from;
+    var from = options.from === undefined ? x[0] : options.from
+    if (isNaN(from) || !isFinite(from)) {
+        throw new RangeError("'From' value must be a number");
+    }
     var to = options.to === undefined ? x[x.length - 1] : options.to;
+    if (isNaN(to) || !isFinite(to)) {
+        throw new RangeError("'To' value must be a number");
+    }
 
     var reverse = from > to;
     if(reverse) {
@@ -3491,6 +4183,9 @@ function getEquallySpacedData(x, y, options) {
     }
 
     var numberOfPoints = options.numberOfPoints === undefined ? 100 : options.numberOfPoints;
+    if (isNaN(numberOfPoints) || !isFinite(numberOfPoints)) {
+        throw new RangeError("'Number of points' value must be a number");
+    }
     if(numberOfPoints < 1)
         throw new RangeError("the number of point must be higher than 1");
 
@@ -3687,11 +4382,11 @@ function integral(x0, x1, slope, intercept) {
 
 exports.getEquallySpacedData = getEquallySpacedData;
 exports.integral = integral;
-},{}],13:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = exports = require('./ArrayUtils');
 exports.getEquallySpacedData = require('./getEquallySpaced').getEquallySpacedData;
 exports.SNV = require('./snv').SNV;
-},{"./ArrayUtils":11,"./getEquallySpaced":12,"./snv":14}],14:[function(require,module,exports){
+},{"./ArrayUtils":15,"./getEquallySpaced":16,"./snv":18}],18:[function(require,module,exports){
 'use strict';
 
 exports.SNV = SNV;
@@ -3699,581 +4394,238 @@ var Stat = require('ml-stat');
 var Matrix = require('ml-matrix');
 
 /**
- * Function that applies the standard normal variate (SNV) to each row vector of y's
- * values.
+ * Function that applies the standard normal variate (SNV) to an array of values.
  *
- * @param data - Matrix of y vectors
- * @returns {Matrix}
+ * @param data - Array of values.
+ * @returns {Array} - applied the SNV.
  */
 function SNV(data) {
-    var Y = data;
-    if(!Matrix.isMatrix(data)) {
-        Y = new Matrix(data).clone();
-    }
+    var mean = Stat.array.mean(data);
+    var std = Stat.array.standardDeviation(data);
 
-    var means = Matrix.columnVector(Stat.matrix.mean(data, 1));
-    var std = Matrix.columnVector(Stat.matrix.standardDeviation(data.transpose(), means));
-
-    return Y.sub(means.mmul(Matrix.ones(1, Y.columns))).divM(std.mmul(Matrix.ones(1, Y.columns)));
+    return new Matrix([data]).clone().sub(mean).div(std).getRow(0);
 }
-},{"ml-matrix":9,"ml-stat":100}],15:[function(require,module,exports){
-module.exports = function additiveSymmetric(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += ((a[i] - b[i]) * (a[i] - b[i]) * (a[i] + b[i])) / (a[i] * b[i]);
-    }
-    return 2 * d;
-};
+},{"ml-matrix":13,"ml-stat":149}],19:[function(require,module,exports){
+// auxiliary file to create the 256 look at table elements
 
-},{}],16:[function(require,module,exports){
-module.exports = function avg(a, b) {
-    var ii = a.length,
-        max = 0,
-        ans = 0,
-        aux = 0;
-    for (var i = 0; i < ii ; i++) {
-        aux = Math.abs(a[i] - b[i]);
-        ans += aux;
-        if (max < aux) {
-            max = aux;
-        }
+var ans = new Array(256);
+for (var i = 0; i < 256; i++) {
+    var num = i;
+    var c = 0;
+    while (num) {
+        num = num & (num - 1);
+        c++;
     }
-    return (max + ans) / 2;
-};
+    ans[i] = c;
+}
 
-},{}],17:[function(require,module,exports){
-module.exports = function bhattacharyya(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += Math.sqrt(a[i] * b[i]);
+module.exports = ans;
+},{}],20:[function(require,module,exports){
+'use strict';
+
+var eightBits = require('./creator');
+
+/**
+ * Count the number of true values in an array
+ * @param {Array} arr
+ * @return {number}
+ */
+function count(arr) {
+    var c = 0;
+    for (var i = 0; i < arr.length; i++) {
+        c += eightBits[arr[i] & 0xff] + eightBits[(arr[i] >> 8) & 0xff] + eightBits[(arr[i] >> 16) & 0xff] + eightBits[(arr[i] >> 24) & 0xff];
     }
-    return - Math.log(ans);
-};
+    return c;
+}
 
-},{}],18:[function(require,module,exports){
-module.exports = function canberra(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += Math.abs(a[i] - b[i]) / (a[i] + b[i]);
+/**
+ * Logical AND operation
+ * @param {Array} arr1
+ * @param {Array} arr2
+ * @return {Array}
+ */
+function and(arr1, arr2) {
+    var ans = new Array(arr1.length);
+    for (var i = 0; i < arr1.length; i++)
+        ans[i] = arr1[i] & arr2[i];
+    return ans;
+}
+
+/**
+ * Logical OR operation
+ * @param {Array} arr1
+ * @param {Array} arr2
+ * @return {Array}
+ */
+function or(arr1, arr2) {
+    var ans = new Array(arr1.length);
+    for (var i = 0; i < arr1.length; i++)
+        ans[i] = arr1[i] | arr2[i];
+    return ans;
+}
+
+/**
+ * Logical XOR operation
+ * @param {Array} arr1
+ * @param {Array} arr2
+ * @return {Array}
+ */
+function xor(arr1, arr2) {
+    var ans = new Array(arr1.length);
+    for (var i = 0; i < arr1.length; i++)
+        ans[i] = arr1[i] ^ arr2[i];
+    return ans;
+}
+
+/**
+ * Logical NOT operation
+ * @param {Array} arr
+ * @return {Array}
+ */
+function not(arr) {
+    var ans = new Array(arr.length);
+    for (var i = 0; i < ans.length; i++)
+        ans[i] = ~arr[i];
+    return ans;
+}
+
+/**
+ * Gets the n value of array arr
+ * @param {Array} arr
+ * @param {number} n
+ * @return {boolean}
+ */
+function getBit(arr, n) {
+    var index = n >> 5; // Same as Math.floor(n/32)
+    var mask = 1 << (31 - n % 32);
+    return Boolean(arr[index] & mask);
+}
+
+/**
+ * Sets the n value of array arr to the value val
+ * @param {Array} arr
+ * @param {number} n
+ * @param {boolean} val
+ * @return {Array}
+ */
+function setBit(arr, n, val) {
+    var index = n >> 5; // Same as Math.floor(n/32)
+    var mask = 1 << (31 - n % 32);
+    if (val)
+        arr[index] = mask | arr[index];
+    else
+        arr[index] = ~mask & arr[index];
+    return arr;
+}
+
+/**
+ * Translates an array of numbers to a string of bits
+ * @param {Array} arr
+ * @returns {string}
+ */
+function toBinaryString(arr) {
+    var str = '';
+    for (var i = 0; i < arr.length; i++) {
+        var obj = (arr[i] >>> 0).toString(2);
+        str += '00000000000000000000000000000000'.substr(obj.length) + obj;
+    }
+    return str;
+}
+
+/**
+ * Creates an array of numbers based on a string of bits
+ * @param {string} str
+ * @returns {Array}
+ */
+function parseBinaryString(str) {
+    var len = str.length / 32;
+    var ans = new Array(len);
+    for (var i = 0; i < len; i++) {
+        ans[i] = parseInt(str.substr(i*32, 32), 2) | 0;
     }
     return ans;
-};
+}
 
-},{}],19:[function(require,module,exports){
-module.exports = function chebyshev(a, b) {
-    var ii = a.length,
-        max = 0,
-        aux = 0;
-    for (var i = 0; i < ii ; i++) {
-        aux = Math.abs(a[i] - b[i]);
-        if (max < aux) {
-            max = aux;
+/**
+ * Translates an array of numbers to a hex string
+ * @param {Array} arr
+ * @returns {string}
+ */
+function toHexString(arr) {
+    var str = '';
+    for (var i = 0; i < arr.length; i++) {
+        var obj = (arr[i] >>> 0).toString(16);
+        str += '00000000'.substr(obj.length) + obj;
+    }
+    return str;
+}
+
+/**
+ * Creates an array of numbers based on a hex string
+ * @param {string} str
+ * @returns {Array}
+ */
+function parseHexString(str) {
+    var len = str.length / 8;
+    var ans = new Array(len);
+    for (var i = 0; i < len; i++) {
+        ans[i] = parseInt(str.substr(i*8, 8), 16) | 0;
+    }
+    return ans;
+}
+
+/**
+ * Creates a human readable string of the array
+ * @param {Array} arr
+ * @returns {string}
+ */
+function toDebug(arr) {
+    var binary = toBinaryString(arr);
+    var str = '';
+    for (var i = 0; i < arr.length; i++) {
+        str += '0000'.substr((i * 32).toString(16).length) + (i * 32).toString(16) + ':';
+        for (var j = 0; j < 32; j += 4) {
+            str += ' ' + binary.substr(i * 32 + j, 4);
         }
+        if (i < arr.length - 1) str += '\n';
     }
-    return max;
+    return str
+}
+
+module.exports = {
+    count: count,
+    and: and,
+    or: or,
+    xor: xor,
+    not: not,
+    getBit: getBit,
+    setBit: setBit,
+    toBinaryString: toBinaryString,
+    parseBinaryString: parseBinaryString,
+    toHexString: toHexString,
+    parseHexString: parseHexString,
+    toDebug: toDebug
 };
 
-},{}],20:[function(require,module,exports){
-module.exports = function clark(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += Math.sqrt(((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i])));
-    }
-    return 2 * d;
-};
+},{"./creator":19}],21:[function(require,module,exports){
+'use strict';
 
-},{}],21:[function(require,module,exports){
-module.exports = function cosine(a, b) {
-    var ii = a.length,
-        p = 0,
-        p2 = 0,
-        q2 = 0;
-    for (var i = 0; i < ii ; i++) {
-        p += a[i] * b[i];
-        p2 += a[i] * a[i];
-        q2 += b[i] * b[i];
+function squaredEuclidean(p, q) {
+    var d = 0;
+    for (var i = 0; i < p.length; i++) {
+        d += (p[i] - q[i]) * (p[i] - q[i]);
     }
-    return p / (Math.sqrt(p2) * Math.sqrt(q2));
-};
+    return d;
+}
+
+function euclidean(p, q) {
+    return Math.sqrt(squaredEuclidean(p, q));
+}
+
+module.exports = euclidean;
+euclidean.squared = squaredEuclidean;
 
 },{}],22:[function(require,module,exports){
-module.exports = function czekanowski(a, b) {
-    var ii = a.length,
-        up = 0,
-        down = 0;
-    for (var i = 0; i < ii ; i++) {
-        up += Math.min(a[i], b[i]);
-        down += a[i] + b[i];
-    }
-    return 1 - (2 * up / down);
-};
-
-},{}],23:[function(require,module,exports){
-var czekanowski = require('./czekanowski');
-
-module.exports = function czekanowskiS(a, b) {
-    return 1 - czekanowski(a,b);
-};
-
-},{"./czekanowski":22}],24:[function(require,module,exports){
-module.exports = function dice(a, b) {
-    var ii = a.length,
-        p = 0,
-        q1 = 0,
-        q2 = 0;
-    for (var i = 0; i < ii ; i++) {
-        p += a[i] * a[i];
-        q1 += b[i] * b[i];
-        q2 += (a[i] - b[i]) * (a[i] - b[i]);
-    }
-    return q2 / (p + q1);
-};
-
-},{}],25:[function(require,module,exports){
-var dice = require('./dice');
-
-module.exports = function diceS(a, b) {
-    return 1 - dice(a,b);
-};
-
-},{"./dice":24}],26:[function(require,module,exports){
-module.exports = function divergence(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += ((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i]));
-    }
-    return 2 * d;
-};
-
-},{}],27:[function(require,module,exports){
-var squaredEuclidean = require('./squared-euclidean');
-
-module.exports = function euclidean(a, b) {
-    return Math.sqrt(squaredEuclidean(a, b));
-};
-},{"./squared-euclidean":57}],28:[function(require,module,exports){
-module.exports = function fidelity(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += Math.sqrt(a[i] * b[i]);
-    }
-    return ans;
-};
-
-},{}],29:[function(require,module,exports){
-module.exports = function gower(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += Math.abs(a[i] - b[i]);
-    }
-    return ans / ii;
-};
-
-},{}],30:[function(require,module,exports){
-module.exports = function harmonicMean(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += (a[i] * b[i]) / (a[i] + b[i]);
-    }
-    return 2 * ans;
-};
-
-},{}],31:[function(require,module,exports){
-module.exports = function hellinger(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += Math.sqrt(a[i] * b[i]);
-    }
-    return 2 * Math.sqrt(1 - ans);
-};
-
-},{}],32:[function(require,module,exports){
-module.exports = function innerProduct(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += a[i] * b[i];
-    }
-    return ans;
-};
-
-},{}],33:[function(require,module,exports){
-module.exports = function intersection(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += Math.min(a[i], b[i]);
-    }
-    return 1 - ans;
-};
-
-},{}],34:[function(require,module,exports){
-var intersection = require('./intersection');
-
-module.exports = function intersectionS(a, b) {
-    return 1 - intersection(a,b);
-};
-
-},{"./intersection":33}],35:[function(require,module,exports){
-module.exports = function jaccard(a, b) {
-    var ii = a.length,
-        p1 = 0,
-        p2 = 0,
-        q1 = 0,
-        q2 = 0;
-    for (var i = 0; i < ii ; i++) {
-        p1 += a[i] * b[i];
-        p2 += a[i] * a[i];
-        q1 += b[i] * b[i];
-        q2 += (a[i] - b[i]) * (a[i] - b[i]);
-    }
-    return q2 / (p2 + q1 - p1);
-};
-
-},{}],36:[function(require,module,exports){
-var jaccard = require('./jaccard');
-
-module.exports = function jaccardS(a, b) {
-    return 1 - jaccard(a, b);
-};
-
-},{"./jaccard":35}],37:[function(require,module,exports){
-module.exports = function jeffreys(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += (a[i] - b[i]) * Math.log(a[i] / b[i]);
-    }
-    return ans;
-};
-
-},{}],38:[function(require,module,exports){
-module.exports = function jensenDifference(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += ((a[i] * Math.log(a[i]) + b[i] * Math.log(b[i])) / 2) - ((a[i] + b[i]) / 2) * Math.log((a[i] + b[i]) / 2);
-    }
-    return ans;
-};
-
-},{}],39:[function(require,module,exports){
-module.exports = function jensenShannon(a, b) {
-    var ii = a.length,
-        p = 0,
-        q = 0;
-    for (var i = 0; i < ii ; i++) {
-        p += a[i] * Math.log(2 * a[i] / (a[i] + b[i]));
-        q += b[i] * Math.log(2 * b[i] / (a[i] + b[i]));
-    }
-    return (p + q) / 2;
-};
-
-},{}],40:[function(require,module,exports){
-module.exports = function kdivergence(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += a[i] * Math.log(2 * a[i] / (a[i] + b[i]));
-    }
-    return ans;
-};
-
-},{}],41:[function(require,module,exports){
-module.exports = function kulczynski(a, b) {
-    var ii = a.length,
-        up = 0,
-        down = 0;
-    for (var i = 0; i < ii ; i++) {
-        up += Math.abs(a[i] - b[i]);
-        down += Math.min(a[i],b[i]);
-    }
-    return up / down;
-};
-
-},{}],42:[function(require,module,exports){
-var kulczynski = require('./kulczynski');
-
-module.exports = function kulczynskiS(a, b) {
-    return 1 / kulczynski(a, b);
-};
-
-},{"./kulczynski":41}],43:[function(require,module,exports){
-module.exports = function kullbackLeibler(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += a[i] * Math.log(a[i] / b[i]);
-    }
-    return ans;
-};
-
-},{}],44:[function(require,module,exports){
-module.exports = function kumarHassebrook(a, b) {
-    var ii = a.length,
-        p = 0,
-        p2 = 0,
-        q2 = 0;
-    for (var i = 0; i < ii ; i++) {
-        p += a[i] * b[i];
-        p2 += a[i] * a[i];
-        q2 += b[i] * b[i];
-    }
-    return p / (p2 + q2 - p);
-};
-
-},{}],45:[function(require,module,exports){
-module.exports = function kumarJohnson(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += Math.pow(a[i] * a[i] - b[i] * b[i],2) / (2 * Math.pow(a[i] * b[i],1.5));
-    }
-    return ans;
-};
-
-},{}],46:[function(require,module,exports){
-module.exports = function lorentzian(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += Math.log(Math.abs(a[i] - b[i]) + 1);
-    }
-    return ans;
-};
-
-},{}],47:[function(require,module,exports){
-module.exports = function manhattan(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += Math.abs(a[i] - b[i]);
-    }
-    return d;
-};
-
-},{}],48:[function(require,module,exports){
-module.exports = function matusita(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += Math.sqrt(a[i] * b[i]);
-    }
-    return Math.sqrt(2 - 2 * ans);
-};
-
-},{}],49:[function(require,module,exports){
-module.exports = function minkowski(a, b, p) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += Math.pow(Math.abs(a[i] - b[i]),p);
-    }
-    return Math.pow(d,(1/p));
-};
-
-},{}],50:[function(require,module,exports){
-module.exports = function motyka(a, b) {
-    var ii = a.length,
-        up = 0,
-        down = 0;
-    for (var i = 0; i < ii ; i++) {
-        up += Math.min(a[i], b[i]);
-        down += a[i] + b[i];
-    }
-    return 1 - (up / down);
-};
-
-},{}],51:[function(require,module,exports){
-module.exports = function pearson(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += ((a[i] - b[i]) * (a[i] - b[i])) / a[i];
-    }
-    return d;
-};
-
-},{}],52:[function(require,module,exports){
-module.exports = function pearson(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += ((a[i] - b[i]) * (a[i] - b[i])) / b[i];
-    }
-    return d;
-};
-
-},{}],53:[function(require,module,exports){
-module.exports = function probabilisticSymmetric(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += ((a[i] - b[i]) * (a[i] - b[i])) / (a[i] + b[i]);
-    }
-    return 2 * d;
-};
-
-},{}],54:[function(require,module,exports){
-module.exports = function ruzicka(a, b) {
-    var ii = a.length,
-        up = 0,
-        down = 0;
-    for (var i = 0; i < ii ; i++) {
-        up += Math.min(a[i],b[i]);
-        down += Math.max(a[i],b[i]);
-    }
-    return up / down;
-};
-
-},{}],55:[function(require,module,exports){
-module.exports = function soergel(a, b) {
-    var ii = a.length,
-        up = 0,
-        down = 0;
-    for (var i = 0; i < ii ; i++) {
-        up += Math.abs(a[i] - b[i]);
-        down += Math.max(a[i],b[i]);
-    }
-    return up / down;
-};
-
-},{}],56:[function(require,module,exports){
-module.exports = function sorensen(a, b) {
-    var ii = a.length,
-        up = 0,
-        down = 0;
-    for (var i = 0; i < ii ; i++) {
-        up += Math.abs(a[i] - b[i]);
-        down += a[i] + b[i];
-    }
-    return up / down;
-};
-
-},{}],57:[function(require,module,exports){
-module.exports = function squaredEuclidean(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += (a[i] - b[i]) * (a[i] - b[i]);
-    }
-    return d;
-};
-},{}],58:[function(require,module,exports){
-module.exports = function squared(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += ((a[i] - b[i]) * (a[i] - b[i])) / (a[i] + b[i]);
-    }
-    return d;
-};
-
-},{}],59:[function(require,module,exports){
-module.exports = function squaredChord(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += (Math.sqrt(a[i]) - Math.sqrt(b[i])) * (Math.sqrt(a[i]) - Math.sqrt(b[i]));
-    }
-    return ans;
-};
-
-},{}],60:[function(require,module,exports){
-var squaredChord = require('./squaredChord');
-
-module.exports = function squaredChordS(a, b) {
-    return 1 - squaredChord(a, b);
-};
-
-},{"./squaredChord":59}],61:[function(require,module,exports){
-module.exports = function taneja(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += (a[i] + b[i]) / 2 * Math.log((a[i] + b[i]) / (2 * Math.sqrt(a[i] * b[i])));
-    }
-    return ans;
-};
-
-},{}],62:[function(require,module,exports){
-var tanimotoS = require('./tanimotoS');
-
-module.exports = function tanimoto(a, b, bitvector) {
-    bitvector = bitvector || false;
-    if (bitvector)
-        return 1 - tanimotoS(a, b, bitvector);
-    else {
-        var ii = a.length,
-            p = 0,
-            q = 0,
-            m = 0;
-        for (var i = 0; i < ii ; i++) {
-            p += a[i];
-            q += b[i];
-            m += Math.min(a[i],b[i]);
-        }
-        return (p + q - 2 * m) / (p + q - m);
-    }
-};
-
-},{"./tanimotoS":63}],63:[function(require,module,exports){
-module.exports = function tanimotoS(a, b, bitvector) {
-    bitvector = bitvector || false;
-    if (bitvector) {
-        var inter = 0,
-            union = 0;
-        for (var j = 0; j < a.length; j++) {
-            inter += a[j] && b[j];
-            union += a[j] || b[j];
-        }
-        if (union === 0)
-            return 1;
-        return inter / union;
-    }
-    else {
-        var ii = a.length,
-            p = 0,
-            q = 0,
-            m = 0;
-        for (var i = 0; i < ii ; i++) {
-            p += a[i];
-            q += b[i];
-            m += Math.min(a[i],b[i]);
-        }
-        return 1 - (p + q - 2 * m) / (p + q - m);
-    }
-};
-},{}],64:[function(require,module,exports){
-module.exports = function topsoe(a, b) {
-    var ii = a.length,
-        ans = 0;
-    for (var i = 0; i < ii ; i++) {
-        ans += a[i] * Math.log(2 * a[i] / (a[i] + b[i])) + b[i] * Math.log(2 * b[i] / (a[i] + b[i]));
-    }
-    return ans;
-};
-
-},{}],65:[function(require,module,exports){
 "use strict";
 
 /**
@@ -4391,9 +4743,526 @@ module.exports = {
     calc: tree,
     createTree: createTree
 };
+},{}],23:[function(require,module,exports){
+"use strict";
 
+exports.euclidean = require('ml-euclidean-distance');
+exports.squaredEuclidean = require('ml-euclidean-distance').squared;
+exports.manhattan = require('./distances/manhattan');
+exports.minkowski = require('./distances/minkowski');
+exports.chebyshev = require('./distances/chebyshev');
+exports.sorensen = require('./distances/sorensen');
+exports.gower = require('./distances/gower');
+exports.soergel = require('./distances/soergel');
+exports.kulczynski = require('./distances/kulczynski');
+exports.canberra = require('./distances/canberra');
+exports.lorentzian = require('./distances/lorentzian');
+exports.intersection = require('./distances/intersection');
+exports.waveHedges = require('./distances/waveHedges');
+exports.czekanowski = require('./distances/czekanowski');
+exports.motyka = require('./distances/motyka');
+exports.ruzicka = require('./distances/ruzicka');
+exports.tanimoto = require('./distances/tanimoto');
+exports.innerProduct = require('./distances/innerProduct');
+exports.harmonicMean = require('./distances/harmonicMean');
+exports.cosine = require('./distances/cosine');
+exports.kumarHassebrook = require('./distances/kumarHassebrook');
+exports.jaccard = require('./distances/jaccard');
+exports.dice = require('./distances/dice');
+exports.fidelity = require('./distances/fidelity');
+exports.bhattacharyya = require('./distances/bhattacharyya');
+exports.hellinger = require('./distances/hellinger');
+exports.matusita = require('./distances/matusita');
+exports.squaredChord = require('./distances/squaredChord');
+exports.pearson = require('./distances/pearson');
+exports.neyman = require('./distances/neyman');
+exports.squared = require('./distances/squared');
+exports.probabilisticSymmetric = require('./distances/probabilisticSymmetric');
+exports.divergence = require('./distances/divergence');
+exports.clark = require('./distances/clark');
+exports.kullbackLeibler = require('./distances/kullbackLeibler');
+exports.jeffreys = require('./distances/jeffreys');
+exports.kdivergence = require('./distances/kdivergence');
+exports.topsoe = require('./distances/topsoe');
+exports.jensenDifference = require('./distances/jensenDifference');
+exports.taneja = require('./distances/taneja');
+exports.kumarJohnson = require('./distances/kumarJohnson');
+exports.avg = require('./distances/avg');
+exports.tree = require('ml-tree-similarity');
+exports.additiveSymmetric = require('./distances/additiveSymmetric');
+exports.jensenShannon = require('./distances/jensenShannon');
+},{"./distances/additiveSymmetric":24,"./distances/avg":25,"./distances/bhattacharyya":26,"./distances/canberra":27,"./distances/chebyshev":28,"./distances/clark":29,"./distances/cosine":30,"./distances/czekanowski":31,"./distances/dice":32,"./distances/divergence":33,"./distances/fidelity":34,"./distances/gower":35,"./distances/harmonicMean":36,"./distances/hellinger":37,"./distances/innerProduct":38,"./distances/intersection":39,"./distances/jaccard":40,"./distances/jeffreys":41,"./distances/jensenDifference":42,"./distances/jensenShannon":43,"./distances/kdivergence":44,"./distances/kulczynski":45,"./distances/kullbackLeibler":46,"./distances/kumarHassebrook":47,"./distances/kumarJohnson":48,"./distances/lorentzian":49,"./distances/manhattan":50,"./distances/matusita":51,"./distances/minkowski":52,"./distances/motyka":53,"./distances/neyman":54,"./distances/pearson":55,"./distances/probabilisticSymmetric":56,"./distances/ruzicka":57,"./distances/soergel":58,"./distances/sorensen":59,"./distances/squared":60,"./distances/squaredChord":61,"./distances/taneja":62,"./distances/tanimoto":63,"./distances/topsoe":64,"./distances/waveHedges":65,"ml-euclidean-distance":21,"ml-tree-similarity":22}],24:[function(require,module,exports){
+module.exports = function additiveSymmetric(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i]) * (a[i] + b[i])) / (a[i] * b[i]);
+    }
+    return 2 * d;
+};
 
-},{}],66:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
+module.exports = function avg(a, b) {
+    var ii = a.length,
+        max = 0,
+        ans = 0,
+        aux = 0;
+    for (var i = 0; i < ii ; i++) {
+        aux = Math.abs(a[i] - b[i]);
+        ans += aux;
+        if (max < aux) {
+            max = aux;
+        }
+    }
+    return (max + ans) / 2;
+};
+
+},{}],26:[function(require,module,exports){
+module.exports = function bhattacharyya(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.sqrt(a[i] * b[i]);
+    }
+    return - Math.log(ans);
+};
+
+},{}],27:[function(require,module,exports){
+module.exports = function canberra(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.abs(a[i] - b[i]) / (a[i] + b[i]);
+    }
+    return ans;
+};
+
+},{}],28:[function(require,module,exports){
+module.exports = function chebyshev(a, b) {
+    var ii = a.length,
+        max = 0,
+        aux = 0;
+    for (var i = 0; i < ii ; i++) {
+        aux = Math.abs(a[i] - b[i]);
+        if (max < aux) {
+            max = aux;
+        }
+    }
+    return max;
+};
+
+},{}],29:[function(require,module,exports){
+module.exports = function clark(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += Math.sqrt(((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i])));
+    }
+    return 2 * d;
+};
+
+},{}],30:[function(require,module,exports){
+module.exports = function cosine(a, b) {
+    var ii = a.length,
+        p = 0,
+        p2 = 0,
+        q2 = 0;
+    for (var i = 0; i < ii ; i++) {
+        p += a[i] * b[i];
+        p2 += a[i] * a[i];
+        q2 += b[i] * b[i];
+    }
+    return p / (Math.sqrt(p2) * Math.sqrt(q2));
+};
+
+},{}],31:[function(require,module,exports){
+module.exports = function czekanowski(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.min(a[i], b[i]);
+        down += a[i] + b[i];
+    }
+    return 1 - (2 * up / down);
+};
+
+},{}],32:[function(require,module,exports){
+module.exports = function dice(a, b) {
+    var ii = a.length,
+        p = 0,
+        q1 = 0,
+        q2 = 0;
+    for (var i = 0; i < ii ; i++) {
+        p += a[i] * a[i];
+        q1 += b[i] * b[i];
+        q2 += (a[i] - b[i]) * (a[i] - b[i]);
+    }
+    return q2 / (p + q1);
+};
+
+},{}],33:[function(require,module,exports){
+module.exports = function divergence(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i]));
+    }
+    return 2 * d;
+};
+
+},{}],34:[function(require,module,exports){
+module.exports = function fidelity(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.sqrt(a[i] * b[i]);
+    }
+    return ans;
+};
+
+},{}],35:[function(require,module,exports){
+module.exports = function gower(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.abs(a[i] - b[i]);
+    }
+    return ans / ii;
+};
+
+},{}],36:[function(require,module,exports){
+module.exports = function harmonicMean(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += (a[i] * b[i]) / (a[i] + b[i]);
+    }
+    return 2 * ans;
+};
+
+},{}],37:[function(require,module,exports){
+module.exports = function hellinger(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.sqrt(a[i] * b[i]);
+    }
+    return 2 * Math.sqrt(1 - ans);
+};
+
+},{}],38:[function(require,module,exports){
+module.exports = function innerProduct(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += a[i] * b[i];
+    }
+    return ans;
+};
+
+},{}],39:[function(require,module,exports){
+module.exports = function intersection(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.min(a[i], b[i]);
+    }
+    return 1 - ans;
+};
+
+},{}],40:[function(require,module,exports){
+module.exports = function jaccard(a, b) {
+    var ii = a.length,
+        p1 = 0,
+        p2 = 0,
+        q1 = 0,
+        q2 = 0;
+    for (var i = 0; i < ii ; i++) {
+        p1 += a[i] * b[i];
+        p2 += a[i] * a[i];
+        q1 += b[i] * b[i];
+        q2 += (a[i] - b[i]) * (a[i] - b[i]);
+    }
+    return q2 / (p2 + q1 - p1);
+};
+
+},{}],41:[function(require,module,exports){
+module.exports = function jeffreys(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += (a[i] - b[i]) * Math.log(a[i] / b[i]);
+    }
+    return ans;
+};
+
+},{}],42:[function(require,module,exports){
+module.exports = function jensenDifference(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += ((a[i] * Math.log(a[i]) + b[i] * Math.log(b[i])) / 2) - ((a[i] + b[i]) / 2) * Math.log((a[i] + b[i]) / 2);
+    }
+    return ans;
+};
+
+},{}],43:[function(require,module,exports){
+module.exports = function jensenShannon(a, b) {
+    var ii = a.length,
+        p = 0,
+        q = 0;
+    for (var i = 0; i < ii ; i++) {
+        p += a[i] * Math.log(2 * a[i] / (a[i] + b[i]));
+        q += b[i] * Math.log(2 * b[i] / (a[i] + b[i]));
+    }
+    return (p + q) / 2;
+};
+
+},{}],44:[function(require,module,exports){
+module.exports = function kdivergence(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += a[i] * Math.log(2 * a[i] / (a[i] + b[i]));
+    }
+    return ans;
+};
+
+},{}],45:[function(require,module,exports){
+module.exports = function kulczynski(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.abs(a[i] - b[i]);
+        down += Math.min(a[i],b[i]);
+    }
+    return up / down;
+};
+
+},{}],46:[function(require,module,exports){
+module.exports = function kullbackLeibler(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += a[i] * Math.log(a[i] / b[i]);
+    }
+    return ans;
+};
+
+},{}],47:[function(require,module,exports){
+module.exports = function kumarHassebrook(a, b) {
+    var ii = a.length,
+        p = 0,
+        p2 = 0,
+        q2 = 0;
+    for (var i = 0; i < ii ; i++) {
+        p += a[i] * b[i];
+        p2 += a[i] * a[i];
+        q2 += b[i] * b[i];
+    }
+    return p / (p2 + q2 - p);
+};
+
+},{}],48:[function(require,module,exports){
+module.exports = function kumarJohnson(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.pow(a[i] * a[i] - b[i] * b[i],2) / (2 * Math.pow(a[i] * b[i],1.5));
+    }
+    return ans;
+};
+
+},{}],49:[function(require,module,exports){
+module.exports = function lorentzian(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.log(Math.abs(a[i] - b[i]) + 1);
+    }
+    return ans;
+};
+
+},{}],50:[function(require,module,exports){
+module.exports = function manhattan(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += Math.abs(a[i] - b[i]);
+    }
+    return d;
+};
+
+},{}],51:[function(require,module,exports){
+module.exports = function matusita(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += Math.sqrt(a[i] * b[i]);
+    }
+    return Math.sqrt(2 - 2 * ans);
+};
+
+},{}],52:[function(require,module,exports){
+module.exports = function minkowski(a, b, p) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += Math.pow(Math.abs(a[i] - b[i]),p);
+    }
+    return Math.pow(d,(1/p));
+};
+
+},{}],53:[function(require,module,exports){
+module.exports = function motyka(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.min(a[i], b[i]);
+        down += a[i] + b[i];
+    }
+    return 1 - (up / down);
+};
+
+},{}],54:[function(require,module,exports){
+module.exports = function pearson(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i])) / a[i];
+    }
+    return d;
+};
+
+},{}],55:[function(require,module,exports){
+module.exports = function pearson(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i])) / b[i];
+    }
+    return d;
+};
+
+},{}],56:[function(require,module,exports){
+module.exports = function probabilisticSymmetric(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i])) / (a[i] + b[i]);
+    }
+    return 2 * d;
+};
+
+},{}],57:[function(require,module,exports){
+module.exports = function ruzicka(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.min(a[i],b[i]);
+        down += Math.max(a[i],b[i]);
+    }
+    return up / down;
+};
+
+},{}],58:[function(require,module,exports){
+module.exports = function soergel(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.abs(a[i] - b[i]);
+        down += Math.max(a[i],b[i]);
+    }
+    return up / down;
+};
+
+},{}],59:[function(require,module,exports){
+module.exports = function sorensen(a, b) {
+    var ii = a.length,
+        up = 0,
+        down = 0;
+    for (var i = 0; i < ii ; i++) {
+        up += Math.abs(a[i] - b[i]);
+        down += a[i] + b[i];
+    }
+    return up / down;
+};
+
+},{}],60:[function(require,module,exports){
+module.exports = function squared(a, b) {
+    var i = 0,
+        ii = a.length,
+        d = 0;
+    for (; i < ii; i++) {
+        d += ((a[i] - b[i]) * (a[i] - b[i])) / (a[i] + b[i]);
+    }
+    return d;
+};
+
+},{}],61:[function(require,module,exports){
+module.exports = function squaredChord(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += (Math.sqrt(a[i]) - Math.sqrt(b[i])) * (Math.sqrt(a[i]) - Math.sqrt(b[i]));
+    }
+    return ans;
+};
+
+},{}],62:[function(require,module,exports){
+module.exports = function taneja(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += (a[i] + b[i]) / 2 * Math.log((a[i] + b[i]) / (2 * Math.sqrt(a[i] * b[i])));
+    }
+    return ans;
+};
+
+},{}],63:[function(require,module,exports){
+var tanimotoS = require('./../similarities/tanimoto');
+
+module.exports = function tanimoto(a, b, bitvector) {
+    if (bitvector)
+        return 1 - tanimotoS(a, b, bitvector);
+    else {
+        var ii = a.length,
+            p = 0,
+            q = 0,
+            m = 0;
+        for (var i = 0; i < ii ; i++) {
+            p += a[i];
+            q += b[i];
+            m += Math.min(a[i],b[i]);
+        }
+        return (p + q - 2 * m) / (p + q - m);
+    }
+};
+
+},{"./../similarities/tanimoto":75}],64:[function(require,module,exports){
+module.exports = function topsoe(a, b) {
+    var ii = a.length,
+        ans = 0;
+    for (var i = 0; i < ii ; i++) {
+        ans += a[i] * Math.log(2 * a[i] / (a[i] + b[i])) + b[i] * Math.log(2 * b[i] / (a[i] + b[i]));
+    }
+    return ans;
+};
+
+},{}],65:[function(require,module,exports){
 module.exports = function waveHedges(a, b) {
     var ii = a.length,
         ans = 0;
@@ -4403,80 +5272,118 @@ module.exports = function waveHedges(a, b) {
     return ans;
 };
 
-},{}],67:[function(require,module,exports){
-exports.euclidean = require('./dist/euclidean');
-exports.squaredEuclidean = require('./dist/squared-euclidean');
-exports.manhattan = require('./dist/manhattan');
-exports.minkowski = require('./dist/minkowski');
-exports.chebyshev = require('./dist/chebyshev');
-exports.sorensen = require('./dist/sorensen');
-exports.gower = require('./dist/gower');
-exports.soergel = require('./dist/soergel');
-exports.kulczynski = require('./dist/kulczynski');
-exports.kulczynskiS = require('./dist/kulczynskiS');
-exports.canberra = require('./dist/canberra');
-exports.lorentzian = require('./dist/lorentzian');
-exports.intersection = require('./dist/intersection');
-exports.intersectionS = require('./dist/intersectionS');
-exports.waveHedges = require('./dist/waveHedges');
-exports.czekanowski = require('./dist/czekanowski');
-exports.czekanowskiS = require('./dist/czekanowskiS');
-exports.motyka = require('./dist/motyka');
-exports.kulczynskiS = require('./dist/kulczynskiS');
-exports.ruzicka = require('./dist/ruzicka');
-exports.tanimoto = require('./dist/tanimoto');
-exports.tanimotoS = require('./dist/tanimotoS');
-exports.innerProduct = require('./dist/innerProduct');
-exports.harmonicMean = require('./dist/harmonicMean');
-exports.cosine = require('./dist/cosine');
-exports.kumarHassebrook = require('./dist/kumarHassebrook');
-exports.jaccard = require('./dist/jaccard');
-exports.jaccardS = require('./dist/jaccardS');
-exports.dice = require('./dist/dice');
-exports.diceS = require('./dist/diceS');
-exports.fidelity = require('./dist/fidelity');
-exports.bhattacharyya = require('./dist/bhattacharyya');
-exports.hellinger = require('./dist/hellinger');
-exports.matusita = require('./dist/matusita');
-exports.squaredChord = require('./dist/squaredChord');
-exports.squaredChordS = require('./dist/squaredChordS');
-exports.pearson = require('./dist/pearson');
-exports.neyman = require('./dist/neyman');
-exports.squared = require('./dist/squared');
-exports.probabilisticSymmetric = require('./dist/probabilisticSymmetric');
-exports.divergence = require('./dist/divergence');
-exports.clark = require('./dist/clark');
-exports.additiveSymmetric = require('./dist/additiveSymmetric');
-exports.kullbackLeibler = require('./dist/kullbackLeibler');
-exports.jeffreys = require('./dist/jeffreys');
-exports.kdivergence = require('./dist/kdivergence');
-exports.topsoe = require('./dist/topsoe');
-exports.jensenShannon = require('./dist/jensenShannon');
-exports.jensenDifference = require('./dist/jensenDifference');
-exports.taneja = require('./dist/taneja');
-exports.kumarJohnson = require('./dist/kumarJohnson');
-exports.avg = require('./dist/avg');
-exports.tree = require('./dist/tree');
+},{}],66:[function(require,module,exports){
+'use strict';
 
-},{"./dist/additiveSymmetric":15,"./dist/avg":16,"./dist/bhattacharyya":17,"./dist/canberra":18,"./dist/chebyshev":19,"./dist/clark":20,"./dist/cosine":21,"./dist/czekanowski":22,"./dist/czekanowskiS":23,"./dist/dice":24,"./dist/diceS":25,"./dist/divergence":26,"./dist/euclidean":27,"./dist/fidelity":28,"./dist/gower":29,"./dist/harmonicMean":30,"./dist/hellinger":31,"./dist/innerProduct":32,"./dist/intersection":33,"./dist/intersectionS":34,"./dist/jaccard":35,"./dist/jaccardS":36,"./dist/jeffreys":37,"./dist/jensenDifference":38,"./dist/jensenShannon":39,"./dist/kdivergence":40,"./dist/kulczynski":41,"./dist/kulczynskiS":42,"./dist/kullbackLeibler":43,"./dist/kumarHassebrook":44,"./dist/kumarJohnson":45,"./dist/lorentzian":46,"./dist/manhattan":47,"./dist/matusita":48,"./dist/minkowski":49,"./dist/motyka":50,"./dist/neyman":51,"./dist/pearson":52,"./dist/probabilisticSymmetric":53,"./dist/ruzicka":54,"./dist/soergel":55,"./dist/sorensen":56,"./dist/squared":58,"./dist/squared-euclidean":57,"./dist/squaredChord":59,"./dist/squaredChordS":60,"./dist/taneja":61,"./dist/tanimoto":62,"./dist/tanimotoS":63,"./dist/topsoe":64,"./dist/tree":65,"./dist/waveHedges":66}],68:[function(require,module,exports){
-arguments[4][2][0].apply(exports,arguments)
-},{"../matrix":76,"dup":2}],69:[function(require,module,exports){
-arguments[4][3][0].apply(exports,arguments)
-},{"../matrix":76,"./util":73,"dup":3}],70:[function(require,module,exports){
-arguments[4][4][0].apply(exports,arguments)
-},{"../matrix":76,"dup":4}],71:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"../matrix":76,"./util":73,"dup":5}],72:[function(require,module,exports){
+exports.distance = require('./distances');
+exports.similarity = require('./similarities');
+},{"./distances":23,"./similarities":67}],67:[function(require,module,exports){
+"use strict";
+
+exports.motyka = require('./similarities/motyka');
+exports.squaredChord = require('./similarities/squaredChord');
+exports.dice = require('./similarities/dice');
+exports.jaccard = require('./similarities/jaccard');
+exports.tanimoto = require('./similarities/tanimoto');
+exports.kulczynski = require('./similarities/kulczynski');
+exports.czekanowski = require('./similarities/czekanowski');
+exports.intersection = require('./similarities/intersection');
+
+},{"./similarities/czekanowski":68,"./similarities/dice":69,"./similarities/intersection":70,"./similarities/jaccard":71,"./similarities/kulczynski":72,"./similarities/motyka":73,"./similarities/squaredChord":74,"./similarities/tanimoto":75}],68:[function(require,module,exports){
+var czekanowskiD = require('./../distances/czekanowski');
+
+module.exports = function czekanowski(a, b) {
+    return 1 - czekanowskiD(a,b);
+};
+
+},{"./../distances/czekanowski":31}],69:[function(require,module,exports){
+var diceD = require('./../distances/dice');
+
+module.exports = function dice(a, b) {
+    return 1 - diceD(a,b);
+};
+
+},{"./../distances/dice":32}],70:[function(require,module,exports){
+var intersectionD = require('./../distances/intersection');
+
+module.exports = function intersection(a, b) {
+    return 1 - intersectionD(a,b);
+};
+
+},{"./../distances/intersection":39}],71:[function(require,module,exports){
+var jaccardD = require('./../distances/jaccard');
+
+module.exports = function jaccard(a, b) {
+    return 1 - jaccardD(a, b);
+};
+
+},{"./../distances/jaccard":40}],72:[function(require,module,exports){
+var kulczynskiD = require('./../distances/kulczynski');
+
+module.exports = function kulczynski(a, b) {
+    return 1 / kulczynskiD(a, b);
+};
+
+},{"./../distances/kulczynski":45}],73:[function(require,module,exports){
+var motykaD = require('./../distances/motyka');
+
+module.exports = function motyka(a, b) {
+    return 1 - motykaD(a,b);
+};
+
+},{"./../distances/motyka":53}],74:[function(require,module,exports){
+var squaredChordD = require('./../distances/squaredChord');
+
+module.exports = function squaredChord(a, b) {
+    return 1 - squaredChordD(a, b);
+};
+
+},{"./../distances/squaredChord":61}],75:[function(require,module,exports){
+module.exports = function tanimoto(a, b, bitvector) {
+    if (bitvector) {
+        var inter = 0,
+            union = 0;
+        for (var j = 0; j < a.length; j++) {
+            inter += a[j] && b[j];
+            union += a[j] || b[j];
+        }
+        if (union === 0)
+            return 1;
+        return inter / union;
+    }
+    else {
+        var ii = a.length,
+            p = 0,
+            q = 0,
+            m = 0;
+        for (var i = 0; i < ii ; i++) {
+            p += a[i];
+            q += b[i];
+            m += Math.min(a[i],b[i]);
+        }
+        return 1 - (p + q - 2 * m) / (p + q - m);
+    }
+};
+
+},{}],76:[function(require,module,exports){
 arguments[4][6][0].apply(exports,arguments)
-},{"../matrix":76,"./util":73,"dup":6}],73:[function(require,module,exports){
+},{"../matrix":84,"dup":6}],77:[function(require,module,exports){
 arguments[4][7][0].apply(exports,arguments)
-},{"dup":7}],74:[function(require,module,exports){
+},{"../matrix":84,"./util":81,"dup":7}],78:[function(require,module,exports){
 arguments[4][8][0].apply(exports,arguments)
-},{"./dc/cholesky":68,"./dc/evd":69,"./dc/lu":70,"./dc/qr":71,"./dc/svd":72,"./matrix":76,"dup":8}],75:[function(require,module,exports){
+},{"../matrix":84,"dup":8}],79:[function(require,module,exports){
 arguments[4][9][0].apply(exports,arguments)
-},{"./decompositions":74,"./matrix":76,"dup":9}],76:[function(require,module,exports){
+},{"../matrix":84,"./util":81,"dup":9}],80:[function(require,module,exports){
 arguments[4][10][0].apply(exports,arguments)
-},{"dup":10}],77:[function(require,module,exports){
+},{"../matrix":84,"./util":81,"dup":10}],81:[function(require,module,exports){
+arguments[4][11][0].apply(exports,arguments)
+},{"dup":11}],82:[function(require,module,exports){
+arguments[4][12][0].apply(exports,arguments)
+},{"./dc/cholesky":76,"./dc/evd":77,"./dc/lu":78,"./dc/qr":79,"./dc/svd":80,"./matrix":84,"dup":12}],83:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"./decompositions":82,"./matrix":84,"dup":13}],84:[function(require,module,exports){
+arguments[4][14][0].apply(exports,arguments)
+},{"dup":14}],85:[function(require,module,exports){
 "use strict";
 
 var Layer = require("./layer");
@@ -4640,9 +5547,9 @@ FeedforwardNeuralNetwork.prototype.export = function () {
         outputSize: this.outputSize
     };
 };
-},{"./layer":79,"ml-matrix":75}],78:[function(require,module,exports){
+},{"./layer":87,"ml-matrix":83}],86:[function(require,module,exports){
 module.exports = require('./feedforwardNeuralNetwork');
-},{"./feedforwardNeuralNetwork":77}],79:[function(require,module,exports){
+},{"./feedforwardNeuralNetwork":85}],87:[function(require,module,exports){
 "use strict";
 
 var Matrix = require("ml-matrix");
@@ -4746,40 +5653,98 @@ Layer.prototype.train = function (error, learningRate, momentum) {
 
     return nextError;
 };
-},{"ml-matrix":75}],80:[function(require,module,exports){
+},{"ml-matrix":83}],88:[function(require,module,exports){
+arguments[4][21][0].apply(exports,arguments)
+},{"dup":21}],89:[function(require,module,exports){
 'use strict';
 
-/**
- * calculates the euclidean distance
- * @param {Array <number>} a
- * @param {Array <number>} b
- * @returns {number}
- */
-function euclidean(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += (a[i] - b[i]) * (a[i] - b[i]);
-    }
-    return Math.sqrt(d);
+function Cluster () {
+    this.children = [];
+    this.distance = -1;
+    this.index = [];
 }
 
 /**
- * Removes repeated elements of an array
- * @param {Array} array
- * @returns {Array} same array but without repeated elements
+ * Creates an array of values where maximum distance smaller than the threshold
+ * @param {number} threshold
+ * @return {Array <Cluster>}
  */
-function arrayUnique(array) {
-    var a = array.concat();
-    for(var i=0; i<a.length; ++i) {
-        for(var j=i+1; j<a.length; ++j) {
-            if(a[i] === a[j])
-                a.splice(j--, 1);
-        }
+Cluster.prototype.cut = function (threshold) {
+    if (threshold < 0) throw new RangeError('Threshold too small');
+    var root = new Cluster();
+    root.children = this.children;
+    root.distance = this.distance;
+    root.index = this.index;
+    var list = [root];
+    var ans = [];
+    while (list.length > 0) {
+        var aux = list.shift();
+        if (threshold >= aux.distance)
+            ans.push(aux);
+        else
+            list = list.concat(aux.children);
     }
-    return a;
+    return ans;
+};
+
+/**
+ * Merge the leaves in the minimum way to have 'minGroups' number of clusters
+ * @param {number} minGroups
+ * @return {Cluster}
+ */
+Cluster.prototype.group = function (minGroups) {
+    if (minGroups < 1) throw new RangeError('Number of groups too small');
+    var root = new Cluster();
+    root.children = this.children;
+    root.distance = this.distance;
+    root.index = this.index;
+    if (minGroups === 1)
+        return root;
+    var list = [root];
+    var aux;
+    while (list.length < minGroups && list.length !== 0) {
+        aux = list.shift();
+        list = list.concat(aux.children);
+    }
+    if (list.length === 0) throw new RangeError('Number of groups too big');
+    for (var i = 0; i < list.length; i++)
+        if (list[i].distance === aux.distance) {
+            list.concat(list[i].children.slice(1));
+            list[i] = list[i].children[0];
+        }
+    for (var j = 0; j < list.length; j++)
+        if (list[j].distance !== 0) {
+            var obj = list[j];
+            obj.children = obj.index;
+        }
+    return root;
+};
+
+module.exports = Cluster;
+
+},{}],90:[function(require,module,exports){
+'use strict';
+
+var Cluster = require('./Cluster');
+var util = require('util');
+
+function ClusterLeaf (index) {
+    Cluster.call(this);
+    this.index = index;
+    this.distance = 0;
+    this.children = undefined;
 }
+
+util.inherits(ClusterLeaf, Cluster);
+
+module.exports = ClusterLeaf;
+
+},{"./Cluster":89,"util":5}],91:[function(require,module,exports){
+'use strict';
+
+var euclidean = require('ml-euclidean-distance');
+var ClusterLeaf = require('./ClusterLeaf');
+var Cluster = require('./Cluster');
 
 /**
  * @param cluster1
@@ -4880,7 +5845,7 @@ function wardLink(cluster1, cluster2, disFun) {
 }
 
 var defaultOptions = {
-    sim: euclidean,
+    disFunc: euclidean,
     kind: 'single'
 };
 
@@ -4890,195 +5855,136 @@ var defaultOptions = {
  * @param {json} options
  * @constructor
  */
-function Agnes(data, options) {
+function agnes(data, options) {
     options = options || {};
-    this.options = {};
-    for (var o in defaultOptions) {
-        if (options.hasOwnProperty(o)) {
-            this.options[o] = options[o];
-        } else {
-            this.options[o] = defaultOptions[o];
-        }
-    }
-    this.len = data.length;
-    var dataAux = new Array(this.len);
-    for (var b = 0; b < this.len; b++)
-        dataAux[b] = [data[b]];
-    data = dataAux.concat();
-    if (typeof this.options.kind === "string") {
-        switch (this.options.kind) {
+    for (var o in defaultOptions)
+        if (!(options.hasOwnProperty(o)))
+            options[o] = defaultOptions[o];
+    var len = data.length;
+
+    // allows to use a string or a given function
+    if (typeof options.kind === "string") {
+        switch (options.kind) {
             case 'single':
-                this.options.kind = simpleLink;
+                options.kind = simpleLink;
                 break;
             case 'complete':
-                this.options.kind = completeLink;
+                options.kind = completeLink;
                 break;
             case 'average':
-                this.options.kind = averageLink;
+                options.kind = averageLink;
                 break;
             case 'centroid':
-                this.options.kind = centroidLink;
+                options.kind = centroidLink;
                 break;
             case 'ward':
-                this.options.kind = wardLink;
+                options.kind = wardLink;
                 break;
             default:
                 throw new RangeError('Unknown kind of similarity');
         }
     }
-    else if (typeof this.options.kind !== "function")
+    else if (typeof options.kind !== "function")
         throw new TypeError('Undefined kind of similarity');
 
-    var list = new Array(data.length);
+    var list = new Array(len);
     for (var i = 0; i < data.length; i++)
-        list[i] = {
-            index: i,
-            dis: undefined,
-            data: data[i].concat(),
-            children: []
-        };
+        list[i] = new ClusterLeaf(i);
     var min  = 10e5,
         d = {},
         dis = 0;
 
     while (list.length > 1) {
+
+        // calculates the minimum distance
         d = {};
         min = 10e5;
         for (var j = 0; j < list.length; j++)
             for (var k = j + 1; k < list.length; k++) {
-                dis = this.options.kind(list[j].data, list[k].data, this.options.sim).toFixed(4);
+                var fData, sData;
+                if (list[j] instanceof ClusterLeaf)
+                    fData = [data[list[j].index]];
+                else {
+                    fData = new Array(list[j].index.length);
+                    for (var e = 0; e < fData.length; e++)
+                        fData[e] = data[list[j].index[e].index];
+                }
+                if (list[k] instanceof ClusterLeaf)
+                    sData = [data[list[k].index]];
+                else {
+                    sData = new Array(list[k].index.length);
+                    for (var f = 0; f < sData.length; f++)
+                        sData[f] = data[list[k].index[f].index];
+                }
+                dis = options.kind(fData, sData, options.disFunc).toFixed(4);
                 if (dis in d) {
-                    d[dis].push([j, k]);
+                    d[dis].push([list[j], list[k]]);
                 }
                 else {
-                    d[dis] = [[j, k]];
+                    d[dis] = [[list[j], list[k]]];
                 }
                 min = Math.min(dis, min);
             }
 
+        // cluster dots
         var dmin = d[min.toFixed(4)];
-        var clustered = [];
+        var clustered = new Array(dmin.length);
         var aux,
-            inter;
+            count = 0;
         while (dmin.length > 0) {
             aux = dmin.shift();
-            for (var q = dmin.length - 1; q >= 0; q--) {
-                inter = dmin[q].filter(function(n) {
+            for (var q = 0; q < dmin.length; q++) {
+                var int = dmin[q].filter(function(n) {
                     //noinspection JSReferencingMutableVariableFromClosure
-                    return aux.indexOf(n) != -1
+                    return aux.indexOf(n) !== -1
                 });
-                if (inter.length > 0) {
-                    aux = arrayUnique(aux.concat(dmin[q]));
-                    q = dmin.length - 1;
-                    dmin.splice(q,1);
+                if (int.length > 0) {
+                    var diff = dmin[q].filter(function(n) {
+                        //noinspection JSReferencingMutableVariableFromClosure
+                        return aux.indexOf(n) === -1
+                    });
+                    aux = aux.concat(diff);
+                    dmin.splice(q-- ,1);
                 }
             }
-            clustered.push(aux);
+            clustered[count++] = aux;
         }
+        clustered.length = count;
 
         for (var ii = 0; ii < clustered.length; ii++) {
-            var obj = {
-                dis: undefined,
-                data: undefined,
-                children: []
-            };
-            var newData = [];
+            var obj = new Cluster();
+            obj.children = clustered[ii].concat();
+            obj.distance = min;
+            obj.index = new Array(len);
+            var indCount = 0;
             for (var jj = 0; jj < clustered[ii].length; jj++) {
-                var ind = clustered[ii][jj];
-                newData = newData.concat(list[ind].data);
-                list[ind].dis = min;
-                obj.children.push(list[ind]);
-                delete list[ind];
+                if (clustered[ii][jj] instanceof ClusterLeaf)
+                    obj.index[indCount++] = clustered[ii][jj];
+                else {
+                    indCount += clustered[ii][jj].index.length;
+                    obj.index = clustered[ii][jj].index.concat(obj.index);
+                }
+                list.splice((list.indexOf(clustered[ii][jj])), 1);
             }
-            obj.data = newData.concat();
+            obj.index.length = indCount;
             list.push(obj);
         }
-        for (var l = 0; l < list.length; l++)
-            if (list[l] === undefined) {
-                list.splice(l,1);
-                l--;
-            }
     }
-    list[0].dis = 0;
-    this.tree = list[0];
+    return list[0];
 }
 
-/**
- * Returns a phylogram and change the leaves values for the values in input
- * @param {Array <object>} input
- * @returns {json}
- */
-Agnes.prototype.getDendogram = function (input) {
-    input = input || {length:this.len, ND: true};
-    if (input.length !== this.len)
-        throw new Error('Invalid input size');
-    var ans = JSON.parse(JSON.stringify(this.tree));
-    var queue = [ans];
-    while (queue.length > 0) {
-        var pointer = queue.shift();
-        if (pointer.data.length === 1) {
-            if (input.ND)
-                pointer.data = pointer.data[0];
-            else
-                pointer.data = input[pointer.index];
-            delete pointer.index;
-        }
-        else {
-            delete pointer.data;
-            delete pointer.index;
-            for (var i = 0; i < pointer.children.length; i++)
-                queue.push(pointer.children[i]);
-        }
-    }
-    return ans;
-};
-
-/**
- * Returns at least N clusters based in the clustering tree
- * @param {number} N - number of clusters desired
- * @returns {Array <Array <number>>}
- */
-Agnes.prototype.nClusters = function (N) {
-    if (N >= this.len)
-        throw new RangeError('Too many clusters');
-    var queue = [this.tree];
-    while (queue.length  < N) {
-        var pointer = queue.shift();
-        for (var i = 0; i < pointer.children.length; i++)
-            queue.push(pointer.children[i]);
-    }
-    var ans = new Array(queue.length);
-    for (var j = 0; j < queue.length; j++) {
-        var obj = queue[j];
-        ans[j] = obj.data.concat();
-    }
-    return ans;
-};
-
-module.exports = Agnes;
-},{}],81:[function(require,module,exports){
+module.exports = agnes;
+},{"./Cluster":89,"./ClusterLeaf":90,"ml-euclidean-distance":88}],92:[function(require,module,exports){
 'use strict';
 
-/**
- * calculates the euclidean distance
- * @param {Array <number>} a
- * @param {Array <number>} b
- * @returns {number}
- */
-function euclidean(a, b) {
-    var i = 0,
-        ii = a.length,
-        d = 0;
-    for (; i < ii; i++) {
-        d += (a[i] - b[i]) * (a[i] - b[i]);
-    }
-    return Math.sqrt(d);
-}
+var euclidean = require('ml-euclidean-distance');
+var ClusterLeaf = require('./ClusterLeaf');
+var Cluster = require('./Cluster');
 
 /**
- * @param cluster1
- * @param cluster2
- * @param disFun
+ * @param {Array <Array <number>>} cluster1
+ * @param {Array <Array <number>>} cluster2
+ * @param {function} disFun
  * @returns {number}
  */
 function simpleLink(cluster1, cluster2, disFun) {
@@ -5092,9 +5998,9 @@ function simpleLink(cluster1, cluster2, disFun) {
 }
 
 /**
- * @param cluster1
- * @param cluster2
- * @param disFun
+ * @param {Array <Array <number>>} cluster1
+ * @param {Array <Array <number>>} cluster2
+ * @param {function} disFun
  * @returns {number}
  */
 function completeLink(cluster1, cluster2, disFun) {
@@ -5108,9 +6014,9 @@ function completeLink(cluster1, cluster2, disFun) {
 }
 
 /**
- * @param cluster1
- * @param cluster2
- * @param disFun
+ * @param {Array <Array <number>>} cluster1
+ * @param {Array <Array <number>>} cluster2
+ * @param {function} disFun
  * @returns {number}
  */
 function averageLink(cluster1, cluster2, disFun) {
@@ -5122,9 +6028,9 @@ function averageLink(cluster1, cluster2, disFun) {
 }
 
 /**
- * @param cluster1
- * @param cluster2
- * @param disFun
+ * @param {Array <Array <number>>} cluster1
+ * @param {Array <Array <number>>} cluster2
+ * @param {function} disFun
  * @returns {number}
  */
 function centroidLink(cluster1, cluster2, disFun) {
@@ -5148,9 +6054,9 @@ function centroidLink(cluster1, cluster2, disFun) {
 }
 
 /**
- * @param cluster1
- * @param cluster2
- * @param disFun
+ * @param {Array <Array <number>>} cluster1
+ * @param {Array <Array <number>>} cluster2
+ * @param {function} disFun
  * @returns {number}
  */
 function wardLink(cluster1, cluster2, disFun) {
@@ -5173,23 +6079,26 @@ function wardLink(cluster1, cluster2, disFun) {
     return disFun([x1,y1], [x2,y2])*cluster1.length*cluster2.length / (cluster1.length+cluster2.length);
 }
 
-var defaultOptions = {
-    sim: euclidean,
-    kind: 'single'
-};
-
 /**
  * Returns the most distant point and his distance
- * @param {Array <Array <number>>} Ci - Original cluster
- * @param {Array <Array <number>>} Cj - Splinter cluster
+ * @param {Array <Array <number>>} splitting - Clusters to split
+ * @param {Array <Array <number>>} data - Original data
  * @param {function} disFun - Distance function
  * @returns {{d: number, p: number}} - d: maximum difference between points, p: the point more distant
  */
-function diff(Ci, Cj, disFun) {
+function diff(splitting, data, disFun) {
     var ans = {
         d:0,
         p:0
     };
+
+    var Ci = new Array(splitting[0].length);
+    for (var e = 0; e < splitting[0].length; e++)
+        Ci[e] = data[splitting[0][e]];
+    var Cj = new Array(splitting[1].length);
+    for (var f = 0; f < splitting[1].length; f++)
+        Cj[f] = data[splitting[1][f]];
+
     var dist, ndist;
     for (var i = 0; i < Ci.length; i++) {
         dist = 0;
@@ -5209,72 +6118,83 @@ function diff(Ci, Cj, disFun) {
     return ans;
 }
 
+var defaultOptions = {
+    dist: euclidean,
+    kind: 'single'
+};
+
+/**
+ * Intra-cluster distance
+ * @param {Array} index
+ * @param {Array} data
+ * @param {function} disFun
+ * @returns {number}
+ */
+function intrDist(index, data, disFun) {
+    var dist = 0,
+        count = 0;
+    for (var i = 0; i < index.length; i++)
+        for (var j = i; j < index.length; j++) {
+            dist += disFun(data[index[i].index], data[index[j].index]);
+            count++
+        }
+    return dist / count;
+}
+
 /**
  * Splits the higher level clusters
  * @param {Array <Array <number>>} data - Array of points to be clustered
  * @param {json} options
  * @constructor
  */
-function Diana(data, options) {
+function diana(data, options) {
     options = options || {};
-    this.options = {};
-    for (var o in defaultOptions) {
-        if (options.hasOwnProperty(o)) {
-            this.options[o] = options[o];
-        } else {
-            this.options[o] = defaultOptions[o];
-        }
-    }
-    this.len = data.length;
-    if (typeof this.options.kind === "string") {
-        switch (this.options.kind) {
+    for (var o in defaultOptions)
+        if (!(options.hasOwnProperty(o)))
+            options[o] = defaultOptions[o];
+    if (typeof options.kind === "string") {
+        switch (options.kind) {
             case 'single':
-                this.options.kind = simpleLink;
+                options.kind = simpleLink;
                 break;
             case 'complete':
-                this.options.kind = completeLink;
+                options.kind = completeLink;
                 break;
             case 'average':
-                this.options.kind = averageLink;
+                options.kind = averageLink;
                 break;
             case 'centroid':
-                this.options.kind = centroidLink;
+                options.kind = centroidLink;
                 break;
             case 'ward':
-                this.options.kind = wardLink;
+                options.kind = wardLink;
                 break;
             default:
                 throw new RangeError('Unknown kind of similarity');
         }
     }
-    else if (typeof this.options.kind !== "function")
+    else if (typeof options.kind !== "function")
         throw new TypeError('Undefined kind of similarity');
-    var dict = {};
-    for (var dot = 0; dot < data.length; dot++) {
-        if (dict[data[dot][0]])
-            dict[data[dot][0]][data[dot][1]] = dot;
-        else {
-            dict[data[dot][0]] = {};
-            dict[data[dot][0]][data[dot][1]] = dot;
-        }
+    var tree = new Cluster();
+    tree.children = new Array(data.length);
+    tree.index = new Array(data.length);
+    for (var ind = 0; ind < data.length; ind++) {
+        tree.children[ind] = new ClusterLeaf(ind);
+        tree.index[ind] = new ClusterLeaf(ind);
     }
 
-    this.tree = {
-        dis: 0,
-        data: data,
-        children: []
-    };
+    tree.distance = intrDist(tree.index, data, options.dist);
     var m, M, clId,
         dist, rebel;
-    var list = [this.tree];
-    while (list.length !== 0) {
+    var list = [tree];
+    while (list.length > 0) {
         M = 0;
         clId = 0;
         for (var i = 0; i < list.length; i++) {
             m = 0;
             for (var j = 0; j < list[i].length; j++) {
                 for (var l = (j + 1); l < list[i].length; l++) {
-                    m = Math.max(this.options.sim(list[i].data[j], list[i].data[l]), m);
+                    m = Math.max(options.dist(data[list[i].index[j].index], data[list[i].index[l].index]), m);
                 }
             }
             if (m > M) {
@@ -5283,112 +6203,78 @@ function Diana(data, options) {
             }
         }
         M = 0;
-        var C = {
-            dis: undefined,
-            data: list[clId].data.concat(),
-            children: []
-        };
-        var sG = {
-            dis: undefined,
-            data: [],
-            children: []
-        };
-        list[clId].children = [C, sG];
-        list.splice(clId,1);
-        for (var ii = 0; ii < C.data.length; ii++) {
-            dist = 0;
-            for (var jj = 0; jj < C.data.length; jj++)
-                if (ii !== jj)
-                    dist += this.options.sim(C.data[jj], C.data[ii]);
-            dist /= (C.data.length - 1);
-            if (dist > M) {
-                M = dist;
-                rebel = ii;
-            }
+        if (list[clId].index.length === 2) {
+            list[clId].children = [list[clId].index[0], list[clId].index[1]];
+            list[clId].distance = options.dist(data[list[clId].index[0].index], data[list[clId].index[1].index]);
         }
-        sG.data = [C.data[rebel]];
-        C.data.splice(rebel,1);
-        dist = diff(C.data, sG.data, this.options.sim);
-        while (dist.d > 0) {
-            sG.data.push(C.data[dist.p]);
-            C.data.splice(dist.p, 1);
-            dist = diff(C.data, sG.data, this.options.sim);
-        }
-        C.dis = this.options.kind(C.data,sG.data,this.options.sim);
-        sG.dis = C.dis;
-        if (C.data.length === 1)
-            C.index = dict[C.data[0][0]][C.data[0][1]];
-        else
-            list.push(C);
-        if (sG.data.length === 1)
-            sG.index = dict[sG.data[0][0]][sG.data[0][1]];
-        else
-            list.push(sG);
-    }
-}
-
-/**
- * Returns a phylogram and change the leaves values for the values in input
- * @param {Array <object>} input
- * @returns {json}
- */
-Diana.prototype.getDendogram = function (input) {
-    input = input || {length:this.len, ND: true};
-    if (input.length !== this.len)
-        throw new Error('Invalid input size');
-    var ans = JSON.parse(JSON.stringify(this.tree));
-    var queue = [ans];
-    while (queue.length > 0) {
-        var pointer = queue.shift();
-        if (pointer.data.length === 1) {
-            if (input.ND)
-                pointer.data = pointer.data[0];
-            else
-                pointer.data = input[pointer.index];
-            delete pointer.index;
+        else if (list[clId].index.length === 3) {
+            list[clId].children = [list[clId].index[0], list[clId].index[1], list[clId].index[2]];
+            var d = [
+                options.dist(data[list[clId].index[0].index], data[list[clId].index[1].index]),
+                options.dist(data[list[clId].index[1].index], data[list[clId].index[2].index])
+            ];
+            list[clId].distance = (d[0] + d[1]) / 2;
         }
         else {
-            delete pointer.data;
-            delete pointer.index;
-            for (var i = 0; i < pointer.children.length; i++)
-                queue.push(pointer.children[i]);
+            var C = new Cluster();
+            var sG = new Cluster();
+            var splitting = [new Array(list[clId].index.length), []];
+            for (var spl = 0; spl < splitting[0].length; spl++)
+                splitting[0][spl] = spl;
+            for (var ii = 0; ii < splitting[0].length; ii++) {
+                dist = 0;
+                for (var jj = 0; jj < splitting[0].length; jj++)
+                    if (ii !== jj)
+                        dist += options.dist(data[list[clId].index[splitting[0][jj]].index], data[list[clId].index[splitting[0][ii]].index]);
+                dist /= (splitting[0].length - 1);
+                if (dist > M) {
+                    M = dist;
+                    rebel = ii;
+                }
+            }
+            splitting[1] = [rebel];
+            splitting[0].splice(rebel, 1);
+            dist = diff(splitting, data, options.dist);
+            while (dist.d > 0) {
+                splitting[1].push(splitting[0][dist.p]);
+                splitting[0].splice(dist.p, 1);
+                dist = diff(splitting, data, options.dist);
+            }
+            var fData = new Array(splitting[0].length);
+            C.index = new Array(splitting[0].length);
+            for (var e = 0; e < fData.length; e++) {
+                fData[e] = data[list[clId].index[splitting[0][e]].index];
+                C.index[e] = list[clId].index[splitting[0][e]];
+                C.children[e] = list[clId].index[splitting[0][e]];
+            }
+            var sData = new Array(splitting[1].length);
+            sG.index = new Array(splitting[1].length);
+            for (var f = 0; f < sData.length; f++) {
+                sData[f] = data[list[clId].index[splitting[1][f]].index];
+                sG.index[f] = list[clId].index[splitting[1][f]];
+                sG.children[f] = list[clId].index[splitting[1][f]];
+            }
+            C.distance = intrDist(C.index, data, options.dist);
+            sG.distance = intrDist(sG.index, data, options.dist);
+            list.push(C);
+            list.push(sG);
+            list[clId].children = [C, sG];
         }
+        list.splice(clId, 1);
     }
-    return ans;
-};
+    return tree;
+}
 
-/**
- * Returns at least N clusters based in the clustering tree
- * @param {number} N - number of clusters desired
- * @returns {Array <Array <number>>}
- */
-Diana.prototype.nClusters = function (N) {
-    if (N >= this.len)
-        throw new RangeError('Too many clusters');
-    var queue = [this.tree];
-    while (queue.length  < N) {
-        var pointer = queue.shift();
-        for (var i = 0; i < pointer.children.length; i++)
-            queue.push(pointer.children[i]);
-    }
-    var ans = new Array(queue.length);
-    for (var j = 0; j < queue.length; j++) {
-        var obj = queue[j];
-        ans[j] = obj.data.concat();
-    }
-    return ans;
-};
-
-module.exports = Diana;
-},{}],82:[function(require,module,exports){
+module.exports = diana;
+},{"./Cluster":89,"./ClusterLeaf":90,"ml-euclidean-distance":88}],93:[function(require,module,exports){
 exports.agnes = require('./agnes');
 exports.diana = require('./diana');
 //exports.birch = require('./birch');
 //exports.cure = require('./cure');
 //exports.chameleon = require('./chameleon');
-},{"./agnes":80,"./diana":81}],83:[function(require,module,exports){
+},{"./agnes":91,"./diana":92}],94:[function(require,module,exports){
 module.exports = require('./kmeans');
-},{"./kmeans":84}],84:[function(require,module,exports){
+},{"./kmeans":95}],95:[function(require,module,exports){
 'use strict';
 
 /**
@@ -5498,13 +6384,23 @@ function updateCenters(data, clusterID, K) {
  * K-means algorithm
  * @param {Array <Array <number>>} data - the (x,y) points to cluster
  * @param {Array <Array <number>>} centers - the K centers in format (x,y)
+ * @param {Object} props - properties
  * @param {number} maxIter - maximum of iterations allowed
  * @param {number} tol - the error tolerance
- * @returns {Array <number>} the cluster identifier for each data dot
+ * @param {boolean} withIter - store clusters and centroids for each iteration
+ * @returns {Object} the cluster identifier for each data dot and centroids
  */
-function kmeans(data, centers, maxIter, tol) {
-    maxIter = (typeof maxIter === "undefined") ? 100 : maxIter;
-    tol = (typeof tol === "undefined") ? 1e-6 : tol;
+function kmeans(data, centers, props) {
+    var maxIter, tol, withIter;
+    if (typeof props === "undefined") {
+        maxIter = 100;
+        tol = 1e-6;
+        withIter = false;
+    } else {
+        maxIter = (typeof props.maxIter === "undefined") ? 100 : props.maxIter;
+        tol = (typeof props.tol === "undefined") ? 1e-6 : props.tol;
+        withIter = (typeof props.withIter === "undefined") ? false : props.withIter;
+    }
 
     var nData = data.length;
     if (nData == 0) {
@@ -5522,35 +6418,669 @@ function kmeans(data, centers, maxIter, tol) {
     var lastDistance;
     lastDistance = 1e100;
     var curDistance = 0;
+    var iterations = [];
     for (var iter = 0; iter < maxIter; iter++) {
         clusterID = updateClusterID(data, centers);
         centers = updateCenters(data, clusterID, K);
         curDistance = computeSSE(data, centers, clusterID);
-        if ((lastDistance - curDistance < tol) || ((lastDistance - curDistance)/lastDistance < tol))
-            return clusterID;
+        if (withIter) {
+            iterations.push({
+                "clusters": clusterID,
+                "centroids": centers
+            });
+        }
+
+        if ((lastDistance - curDistance < tol) || ((lastDistance - curDistance)/lastDistance < tol)) {
+            if (withIter) {
+                return {
+                    "clusters": clusterID,
+                    "centroids": centers,
+                    "iterations": iterations
+                };
+            } else {
+                return {
+                    "clusters": clusterID,
+                    "centroids": centers
+                };
+            }
+        }
         lastDistance = curDistance;
     }
-    return clusterID;
+    if (withIter) {
+        return {
+            "clusters": clusterID,
+            "centroids": centers,
+            "iterations": iterations
+        };
+    } else {
+        return {
+            "clusters": clusterID,
+            "centroids": centers
+        };
+    }
 }
 
 module.exports = kmeans;
-},{}],85:[function(require,module,exports){
-arguments[4][2][0].apply(exports,arguments)
-},{"../matrix":93,"dup":2}],86:[function(require,module,exports){
-arguments[4][3][0].apply(exports,arguments)
-},{"../matrix":93,"./util":90,"dup":3}],87:[function(require,module,exports){
-arguments[4][4][0].apply(exports,arguments)
-},{"../matrix":93,"dup":4}],88:[function(require,module,exports){
-arguments[4][5][0].apply(exports,arguments)
-},{"../matrix":93,"./util":90,"dup":5}],89:[function(require,module,exports){
+
+},{}],96:[function(require,module,exports){
+'use strict';
+
+module.exports = require('./knn');
+},{"./knn":98}],97:[function(require,module,exports){
+'use strict';
+
+/**
+* k-d Tree JavaScript - V 1.01
+*
+* https://github.com/ubilabs/kd-tree-javascript
+*
+* @author Mircea Pricop <pricop@ubilabs.net>, 2012
+* @author Martin Kleppe <kleppe@ubilabs.net>, 2012
+* @author Ubilabs http://ubilabs.net, 2012
+* @license MIT License <http://www.opensource.org/licenses/mit-license.php>
+*/
+
+
+function Node(obj, dimension, parent) {
+    this.obj = obj;
+    this.left = null;
+    this.right = null;
+    this.parent = parent;
+    this.dimension = dimension;
+}
+
+function kdTree(points, metric, dimensions) {
+
+    var self = this;
+
+    function buildTree(points, depth, parent) {
+        var dim = depth % dimensions.length,
+            median,
+            node;
+
+        if (points.length === 0) {
+            return null;
+        }
+        if (points.length === 1) {
+            return new Node(points[0], dim, parent);
+        }
+
+        points.sort(function (a, b) {
+            return a[dimensions[dim]] - b[dimensions[dim]];
+        });
+
+        median = Math.floor(points.length / 2);
+        node = new Node(points[median], dim, parent);
+        node.left = buildTree(points.slice(0, median), depth + 1, node);
+        node.right = buildTree(points.slice(median + 1), depth + 1, node);
+
+        return node;
+    }
+
+    // Reloads a serialied tree
+    function loadTree (data) {
+        // Just need to restore the `parent` parameter
+        self.root = data;
+
+        function restoreParent (root) {
+            if (root.left) {
+                root.left.parent = root;
+                restoreParent(root.left);
+            }
+
+            if (root.right) {
+                root.right.parent = root;
+                restoreParent(root.right);
+            }
+        }
+
+        restoreParent(self.root);
+    }
+
+    // If points is not an array, assume we're loading a pre-built tree
+    if (!Array.isArray(points)) loadTree(points, metric, dimensions);
+    else this.root = buildTree(points, 0, null);
+
+    // Convert to a JSON serializable structure; this just requires removing
+    // the `parent` property
+    this.toJSON = function (src) {
+        if (!src) src = this.root;
+        var dest = new Node(src.obj, src.dimension, null);
+        if (src.left) dest.left = self.toJSON(src.left);
+        if (src.right) dest.right = self.toJSON(src.right);
+        return dest;
+    };
+
+    this.insert = function (point) {
+        function innerSearch(node, parent) {
+
+            if (node === null) {
+                return parent;
+            }
+
+            var dimension = dimensions[node.dimension];
+            if (point[dimension] < node.obj[dimension]) {
+                return innerSearch(node.left, node);
+            } else {
+                return innerSearch(node.right, node);
+            }
+        }
+
+        var insertPosition = innerSearch(this.root, null),
+            newNode,
+            dimension;
+
+        if (insertPosition === null) {
+            this.root = new Node(point, 0, null);
+            return;
+        }
+
+        newNode = new Node(point, (insertPosition.dimension + 1) % dimensions.length, insertPosition);
+        dimension = dimensions[insertPosition.dimension];
+
+        if (point[dimension] < insertPosition.obj[dimension]) {
+            insertPosition.left = newNode;
+        } else {
+            insertPosition.right = newNode;
+        }
+    };
+
+    this.remove = function (point) {
+        var node;
+
+        function nodeSearch(node) {
+            if (node === null) {
+                return null;
+            }
+
+            if (node.obj === point) {
+                return node;
+            }
+
+            var dimension = dimensions[node.dimension];
+
+            if (point[dimension] < node.obj[dimension]) {
+                return nodeSearch(node.left, node);
+            } else {
+                return nodeSearch(node.right, node);
+            }
+        }
+
+        function removeNode(node) {
+            var nextNode,
+                nextObj,
+                pDimension;
+
+            function findMin(node, dim) {
+                var dimension,
+                    own,
+                    left,
+                    right,
+                    min;
+
+                if (node === null) {
+                    return null;
+                }
+
+                dimension = dimensions[dim];
+
+                if (node.dimension === dim) {
+                    if (node.left !== null) {
+                        return findMin(node.left, dim);
+                    }
+                    return node;
+                }
+
+                own = node.obj[dimension];
+                left = findMin(node.left, dim);
+                right = findMin(node.right, dim);
+                min = node;
+
+                if (left !== null && left.obj[dimension] < own) {
+                    min = left;
+                }
+                if (right !== null && right.obj[dimension] < min.obj[dimension]) {
+                    min = right;
+                }
+                return min;
+            }
+
+            if (node.left === null && node.right === null) {
+                if (node.parent === null) {
+                    self.root = null;
+                    return;
+                }
+
+                pDimension = dimensions[node.parent.dimension];
+
+                if (node.obj[pDimension] < node.parent.obj[pDimension]) {
+                    node.parent.left = null;
+                } else {
+                    node.parent.right = null;
+                }
+                return;
+            }
+
+            // If the right subtree is not empty, swap with the minimum element on the
+            // node's dimension. If it is empty, we swap the left and right subtrees and
+            // do the same.
+            if (node.right !== null) {
+                nextNode = findMin(node.right, node.dimension);
+                nextObj = nextNode.obj;
+                removeNode(nextNode);
+                node.obj = nextObj;
+            } else {
+                nextNode = findMin(node.left, node.dimension);
+                nextObj = nextNode.obj;
+                removeNode(nextNode);
+                node.right = node.left;
+                node.left = null;
+                node.obj = nextObj;
+            }
+
+        }
+
+        node = nodeSearch(self.root);
+
+        if (node === null) { return; }
+
+        removeNode(node);
+    };
+
+    this.nearest = function (point, maxNodes, maxDistance) {
+        var i,
+            result,
+            bestNodes;
+
+        bestNodes = new BinaryHeap(
+            function (e) { return -e[1]; }
+        );
+
+        function nearestSearch(node) {
+            var bestChild,
+                dimension = dimensions[node.dimension],
+                ownDistance = metric(point, node.obj),
+                linearPoint = {},
+                linearDistance,
+                otherChild,
+                i;
+
+            function saveNode(node, distance) {
+                bestNodes.push([node, distance]);
+                if (bestNodes.size() > maxNodes) {
+                    bestNodes.pop();
+                }
+            }
+
+            for (i = 0; i < dimensions.length; i += 1) {
+                if (i === node.dimension) {
+                    linearPoint[dimensions[i]] = point[dimensions[i]];
+                } else {
+                    linearPoint[dimensions[i]] = node.obj[dimensions[i]];
+                }
+            }
+
+            linearDistance = metric(linearPoint, node.obj);
+
+            if (node.right === null && node.left === null) {
+                if (bestNodes.size() < maxNodes || ownDistance < bestNodes.peek()[1]) {
+                    saveNode(node, ownDistance);
+                }
+                return;
+            }
+
+            if (node.right === null) {
+                bestChild = node.left;
+            } else if (node.left === null) {
+                bestChild = node.right;
+            } else {
+                if (point[dimension] < node.obj[dimension]) {
+                    bestChild = node.left;
+                } else {
+                    bestChild = node.right;
+                }
+            }
+
+            nearestSearch(bestChild);
+
+            if (bestNodes.size() < maxNodes || ownDistance < bestNodes.peek()[1]) {
+                saveNode(node, ownDistance);
+            }
+
+            if (bestNodes.size() < maxNodes || Math.abs(linearDistance) < bestNodes.peek()[1]) {
+                if (bestChild === node.left) {
+                    otherChild = node.right;
+                } else {
+                    otherChild = node.left;
+                }
+                if (otherChild !== null) {
+                    nearestSearch(otherChild);
+                }
+            }
+        }
+
+        if (maxDistance) {
+            for (i = 0; i < maxNodes; i += 1) {
+                bestNodes.push([null, maxDistance]);
+            }
+        }
+
+        if(self.root)
+            nearestSearch(self.root);
+
+        result = [];
+
+        for (i = 0; i < Math.min(maxNodes, bestNodes.content.length); i += 1) {
+            if (bestNodes.content[i][0]) {
+                result.push([bestNodes.content[i][0].obj, bestNodes.content[i][1]]);
+            }
+        }
+        return result;
+    };
+
+    this.balanceFactor = function () {
+        function height(node) {
+            if (node === null) {
+                return 0;
+            }
+            return Math.max(height(node.left), height(node.right)) + 1;
+        }
+
+        function count(node) {
+            if (node === null) {
+                return 0;
+            }
+            return count(node.left) + count(node.right) + 1;
+        }
+
+        return height(self.root) / (Math.log(count(self.root)) / Math.log(2));
+    };
+}
+
+// Binary heap implementation from:
+// http://eloquentjavascript.net/appendix2.html
+
+function BinaryHeap(scoreFunction){
+    this.content = [];
+    this.scoreFunction = scoreFunction;
+}
+
+BinaryHeap.prototype = {
+    push: function(element) {
+        // Add the new element to the end of the array.
+        this.content.push(element);
+        // Allow it to bubble up.
+        this.bubbleUp(this.content.length - 1);
+    },
+
+    pop: function() {
+        // Store the first element so we can return it later.
+        var result = this.content[0];
+        // Get the element at the end of the array.
+        var end = this.content.pop();
+        // If there are any elements left, put the end element at the
+        // start, and let it sink down.
+        if (this.content.length > 0) {
+            this.content[0] = end;
+            this.sinkDown(0);
+        }
+        return result;
+    },
+
+    peek: function() {
+        return this.content[0];
+    },
+
+    remove: function(node) {
+        var len = this.content.length;
+        // To remove a value, we must search through the array to find
+        // it.
+        for (var i = 0; i < len; i++) {
+            if (this.content[i] == node) {
+                // When it is found, the process seen in 'pop' is repeated
+                // to fill up the hole.
+                var end = this.content.pop();
+                if (i != len - 1) {
+                    this.content[i] = end;
+                    if (this.scoreFunction(end) < this.scoreFunction(node))
+                        this.bubbleUp(i);
+                    else
+                        this.sinkDown(i);
+                }
+                return;
+            }
+        }
+        throw new Error("Node not found.");
+    },
+
+    size: function() {
+        return this.content.length;
+    },
+
+    bubbleUp: function(n) {
+        // Fetch the element that has to be moved.
+        var element = this.content[n];
+        // When at 0, an element can not go up any further.
+        while (n > 0) {
+            // Compute the parent element's index, and fetch it.
+            var parentN = Math.floor((n + 1) / 2) - 1,
+                parent = this.content[parentN];
+            // Swap the elements if the parent is greater.
+            if (this.scoreFunction(element) < this.scoreFunction(parent)) {
+                this.content[parentN] = element;
+                this.content[n] = parent;
+                // Update 'n' to continue at the new position.
+                n = parentN;
+            }
+            // Found a parent that is less, no need to move it further.
+            else {
+                break;
+            }
+        }
+    },
+
+    sinkDown: function(n) {
+        // Look up the target element and its score.
+        var length = this.content.length,
+            element = this.content[n],
+            elemScore = this.scoreFunction(element);
+
+        while(true) {
+            // Compute the indices of the child elements.
+            var child2N = (n + 1) * 2, child1N = child2N - 1;
+            // This is used to store the new position of the element,
+            // if any.
+            var swap = null;
+            // If the first child exists (is inside the array)...
+            if (child1N < length) {
+                // Look it up and compute its score.
+                var child1 = this.content[child1N],
+                    child1Score = this.scoreFunction(child1);
+                // If the score is less than our element's, we need to swap.
+                if (child1Score < elemScore)
+                    swap = child1N;
+            }
+            // Do the same checks for the other child.
+            if (child2N < length) {
+                var child2 = this.content[child2N],
+                    child2Score = this.scoreFunction(child2);
+                if (child2Score < (swap == null ? elemScore : child1Score)){
+                    swap = child2N;
+                }
+            }
+
+            // If the element needs to be moved, swap it, and continue.
+            if (swap != null) {
+                this.content[n] = this.content[swap];
+                this.content[swap] = element;
+                n = swap;
+            }
+            // Otherwise, we are done.
+            else {
+                break;
+            }
+        }
+    }
+};
+
+this.kdTree = kdTree;
+
+exports.kdTree = kdTree;
+exports.BinaryHeap = BinaryHeap;
+
+},{}],98:[function(require,module,exports){
+'use strict';
+
+module.exports = KNN;
+
+var KDTree = require('./kdtree').kdTree;
+var Distances = require('ml-distance');
+
+/**
+ * K-Nearest neighboor constructor.
+ *
+ * @param reload - loading purposes.
+ * @param model - loading purposes
+ * @constructor
+ */
+function KNN(reload, model) {
+    if(reload) {
+        this.kdtree = model.kdtree;
+        this.k = model.k;
+        this.classes = model.classes;
+    }
+}
+
+/**
+ * Function that trains the KNN with the given trainingSet and trainingLabels.
+ * The third argument is an object with the following options.
+ *  * distance: that represent the distance function applied (default: euclidean)
+ *  * k: the number of neighboors to take in count for classify (default: number of features + 1)
+ *
+ * @param trainingSet
+ * @param trainingLabels
+ * @param options
+ */
+KNN.prototype.train = function (trainingSet, trainingLabels, options) {
+    if(options === undefined) options = {};
+    if(options.distance === undefined) options.distance = Distances.euclidean;
+    if(options.k === undefined) options.k = trainingSet[0].length + 1;
+
+    var classes = 0;
+    var exist = new Array(1000);
+    var j = 0;
+    for(var i = 0; i < trainingLabels.length; ++i) {
+        if(exist.indexOf(trainingLabels[i]) === -1) {
+            classes++;
+            exist[j] = trainingLabels[i];
+            j++;
+        }
+    }
+
+    // copy dataset
+    var points = new Array(trainingSet.length);
+    for(i = 0; i < points.length; ++i) {
+        points[i] = trainingSet[i].slice();
+    }
+
+    this.features = trainingSet[0].length;
+    for(i = 0; i < trainingLabels.length; ++i) {
+        points[i].push(trainingLabels[i]);
+    }
+
+    var dimensions = new Array(trainingSet[0].length);
+    for(i = 0; i < dimensions.length; ++i) {
+        dimensions[i] = i;
+    }
+
+    this.kdtree = new KDTree(points, options.distance, dimensions);
+    this.k = options.k;
+    this.classes = classes;
+};
+
+/**
+ * Function that returns the predictions given the dataset.
+ * 
+ * @param dataset
+ * @returns {Array}
+ */
+KNN.prototype.predict = function (dataset) {
+    var predictions = new Array(dataset.length);
+    for(var i = 0; i < dataset.length; ++i) {
+        predictions[i] = this.getSinglePrediction(dataset[i]);
+    }
+
+    return predictions;
+};
+
+/**
+ * function that returns a prediction for a single case.
+ * @param currentCase
+ * @returns {number}
+ */
+KNN.prototype.getSinglePrediction = function (currentCase) {
+    var nearestPoints = this.kdtree.nearest(currentCase, this.k);
+    var pointsPerClass = new Array(this.classes);
+    var predictedClass = -1;
+    var maxPoints = -1;
+    var lastElement = nearestPoints[0][0].length - 1;
+
+    for(var i = 0; i < pointsPerClass.length; ++i) {
+        pointsPerClass[i] = 0;
+    }
+
+    for(i = 0; i < nearestPoints.length; ++i) {
+        var currentClass = nearestPoints[i][0][lastElement];
+        var currentPoints = ++pointsPerClass[currentClass];
+        if(currentPoints > maxPoints) {
+            predictedClass = currentClass;
+            maxPoints = currentPoints;
+        }
+    }
+
+    return predictedClass;
+};
+
+/**
+ * function that returns a KNN classifier with the given model.
+ *
+ * @param model
+ */
+KNN.load = function (model) {
+    if(model.modelName !== "KNN")
+        throw new RangeError("The given model is invalid!");
+
+    return new KNN(true, model);
+};
+
+/**
+ * function that exports the current KNN classifier.
+ */
+KNN.prototype.export = function () {
+    return {
+        modelName: "KNN",
+        kdtree: this.kdtree,
+        k: this.k,
+        classes: this.classes
+    };
+};
+},{"./kdtree":97,"ml-distance":66}],99:[function(require,module,exports){
 arguments[4][6][0].apply(exports,arguments)
-},{"../matrix":93,"./util":90,"dup":6}],90:[function(require,module,exports){
+},{"../matrix":107,"dup":6}],100:[function(require,module,exports){
 arguments[4][7][0].apply(exports,arguments)
-},{"dup":7}],91:[function(require,module,exports){
+},{"../matrix":107,"./util":104,"dup":7}],101:[function(require,module,exports){
 arguments[4][8][0].apply(exports,arguments)
-},{"./dc/cholesky":85,"./dc/evd":86,"./dc/lu":87,"./dc/qr":88,"./dc/svd":89,"./matrix":93,"dup":8}],92:[function(require,module,exports){
+},{"../matrix":107,"dup":8}],102:[function(require,module,exports){
 arguments[4][9][0].apply(exports,arguments)
-},{"./decompositions":91,"./matrix":93,"dup":9}],93:[function(require,module,exports){
+},{"../matrix":107,"./util":104,"dup":9}],103:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"../matrix":107,"./util":104,"dup":10}],104:[function(require,module,exports){
+arguments[4][11][0].apply(exports,arguments)
+},{"dup":11}],105:[function(require,module,exports){
+arguments[4][12][0].apply(exports,arguments)
+},{"./dc/cholesky":99,"./dc/evd":100,"./dc/lu":101,"./dc/qr":102,"./dc/svd":103,"./matrix":107,"dup":12}],106:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"./decompositions":105,"./matrix":107,"dup":13}],107:[function(require,module,exports){
 'use strict';
 
 var Asplice = Array.prototype.splice,
@@ -7013,7 +8543,737 @@ Matrix.MatrixError = MatrixError;
 
 module.exports = Matrix;
 
-},{}],94:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"../matrix":116,"dup":6}],109:[function(require,module,exports){
+arguments[4][7][0].apply(exports,arguments)
+},{"../matrix":116,"./util":113,"dup":7}],110:[function(require,module,exports){
+arguments[4][8][0].apply(exports,arguments)
+},{"../matrix":116,"dup":8}],111:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"../matrix":116,"./util":113,"dup":9}],112:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"../matrix":116,"./util":113,"dup":10}],113:[function(require,module,exports){
+arguments[4][11][0].apply(exports,arguments)
+},{"dup":11}],114:[function(require,module,exports){
+arguments[4][12][0].apply(exports,arguments)
+},{"./dc/cholesky":108,"./dc/evd":109,"./dc/lu":110,"./dc/qr":111,"./dc/svd":112,"./matrix":116,"dup":12}],115:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"./decompositions":114,"./matrix":116,"dup":13}],116:[function(require,module,exports){
+arguments[4][14][0].apply(exports,arguments)
+},{"dup":14}],117:[function(require,module,exports){
+module.exports = exports = require('./naiveBayes').NaiveBayes;
+exports.separateClasses = require('./naiveBayes').separateClasses;
+},{"./naiveBayes":118}],118:[function(require,module,exports){
+'use strict';
+
+var Matrix = require('ml-matrix');
+var Stat = require('ml-stat');
+
+module.exports.NaiveBayes = NaiveBayes;
+module.exports.separateClasses = separateClasses;
+
+/**
+ * Constructor for the Naive Bayes classifier, the parameters here is just for loading purposes.
+ *
+ * @param reload
+ * @param model
+ * @constructor
+ */
+function NaiveBayes(reload, model) {
+    if(reload) {
+        this.means = model.means;
+        this.calculateProbabilities = model.calculateProbabilities;
+    }
+}
+
+/**
+ * Function that trains the classifier with a matrix that represents the training set and an array that
+ * represents the label of each row in the training set. the labels must be numbers between 0 to n-1 where
+ * n represents the number of classes.
+ *
+ * WARNING: in the case that one class, all the cases in one or more features have the same value, the
+ * Naive Bayes classifier will not work well.
+ * @param trainingSet
+ * @param trainingLabels
+ */
+NaiveBayes.prototype.train = function (trainingSet, trainingLabels) {
+    var C1 = Math.sqrt(2*Math.PI); // constant to precalculate the squared root
+    if(!Matrix.isMatrix(trainingSet)) var X = Matrix(trainingSet);
+    else X = trainingSet.clone();
+
+    if(X.rows !== trainingLabels.length)
+        throw new RangeError("the size of the training set and the training labels must be the same.");
+
+    var separatedClasses = separateClasses(trainingSet, trainingLabels);
+    var calculateProbabilities = new Array(separatedClasses.length);
+    this.means = new Array(separatedClasses.length);
+    for(var i = 0; i < separatedClasses.length; ++i) {
+        var means = Stat.matrix.mean(separatedClasses[i]);
+        var std = Stat.matrix.standardDeviation(separatedClasses[i], means);
+
+        var logPriorProbability = Math.log(separatedClasses[i].rows / X.rows);
+        calculateProbabilities[i] = new Array(means.length + 1);
+
+        calculateProbabilities[i][0] = logPriorProbability;
+        for(var j = 1; j < means.length + 1; ++j) {
+            var currentStd = std[j - 1];
+            calculateProbabilities[i][j] = [(1 / (C1 * currentStd)), -2*currentStd*currentStd];
+        }
+
+        this.means[i] = means;
+    }
+
+    this.calculateProbabilities = calculateProbabilities;
+};
+
+/**
+ * function that predicts each row of the dataset (must be a matrix).
+ *
+ * @param dataset
+ * @returns {Array}
+ */
+NaiveBayes.prototype.predict = function (dataset) {
+    if(dataset[0].length === this.calculateProbabilities[0].length)
+        throw new RangeError('the dataset must have the same features as the training set');
+
+    var predictions = new Array(dataset.length);
+
+    for(var i = 0; i < predictions.length; ++i) {
+        predictions[i] = getCurrentClass(dataset[i], this.means, this.calculateProbabilities);
+    }
+
+    return predictions;
+};
+
+/**
+ * Function the retrieves a prediction with one case.
+ *
+ * @param currentCase
+ * @param mean - Precalculated means of each class trained
+ * @param classes - Precalculated value of each class (Prior probability and probability function of each feature)
+ * @returns {number}
+ */
+function getCurrentClass(currentCase, mean, classes) {
+    var maxProbability = 0;
+    var predictedClass = -1;
+
+    // going through all precalculated values for the classes
+    for(var i = 0; i < classes.length; ++i) {
+        var currentProbability = classes[i][0]; // initialize with the prior probability
+        for(var j = 1; j < classes[0][1].length + 1; ++j) {
+            currentProbability += calculateLogProbability(currentCase[j - 1], mean[i][j - 1], classes[i][j][0], classes[i][j][1]);
+        }
+
+        currentProbability = Math.exp(currentProbability);
+        if(currentProbability > maxProbability) {
+            maxProbability = currentProbability;
+            predictedClass = i;
+        }
+    }
+
+    return predictedClass;
+}
+
+/**
+ * Function that export the NaiveBayes model.
+ * @returns {{modelName: string, means: *, calculateProbabilities: *}}
+ */
+NaiveBayes.prototype.export = function () {
+    return {
+        modelName: "NaiveBayes",
+        means: this.means,
+        calculateProbabilities: this.calculateProbabilities
+    };
+};
+
+/**
+ * Function that create a Naive Bayes classifier with the given model.
+ * @param model
+ * @returns {NaiveBayes}
+ */
+NaiveBayes.load = function (model) {
+    if(model.modelName !== 'NaiveBayes')
+        throw new RangeError("The given model is invalid!");
+
+    return new NaiveBayes(true, model);
+};
+
+/**
+ * function that retrieves the probability of the feature given the class.
+ * @param value - value of the feature.
+ * @param mean - mean of the feature for the given class.
+ * @param C1 - precalculated value of (1 / (sqrt(2*pi) * std)).
+ * @param C2 - precalculated value of (2 * std^2) for the denominator of the exponential.
+ * @returns {number}
+ */
+function calculateLogProbability(value, mean, C1, C2) {
+    var value = value - mean;
+    return Math.log(C1 * Math.exp((value * value) / C2))
+}
+
+/**
+ * Function that retuns an array of matrices of the cases that belong to each class.
+ * @param X - dataset
+ * @param y - predictions
+ * @returns {Array}
+ */
+function separateClasses(X, y) {
+    var features = X.columns;
+
+    var classes = 0;
+    var totalPerClasses = new Array(100); // max upperbound of classes
+    for (var i = 0; i < y.length; i++) {
+        if(totalPerClasses[y[i]] === undefined) {
+            totalPerClasses[y[i]] = 0;
+            classes++;
+        }
+        totalPerClasses[y[i]]++;
+    }
+    var separatedClasses = new Array(classes);
+    var currentIndex = new Array(classes);
+    for(i = 0; i < classes; ++i) {
+        separatedClasses[i] = new Matrix(totalPerClasses[i], features);
+        currentIndex[i] = 0;
+    }
+    for(i = 0; i < X.rows; ++i) {
+        separatedClasses[y[i]].setRow(currentIndex[y[i]], X.getRow(i));
+        currentIndex[y[i]]++;
+    }
+    return separatedClasses;
+}
+},{"ml-matrix":115,"ml-stat":149}],119:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"../matrix":127,"dup":6}],120:[function(require,module,exports){
+arguments[4][7][0].apply(exports,arguments)
+},{"../matrix":127,"./util":124,"dup":7}],121:[function(require,module,exports){
+arguments[4][8][0].apply(exports,arguments)
+},{"../matrix":127,"dup":8}],122:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"../matrix":127,"./util":124,"dup":9}],123:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"../matrix":127,"./util":124,"dup":10}],124:[function(require,module,exports){
+arguments[4][11][0].apply(exports,arguments)
+},{"dup":11}],125:[function(require,module,exports){
+arguments[4][12][0].apply(exports,arguments)
+},{"./dc/cholesky":119,"./dc/evd":120,"./dc/lu":121,"./dc/qr":122,"./dc/svd":123,"./matrix":127,"dup":12}],126:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"./decompositions":125,"./matrix":127,"dup":13}],127:[function(require,module,exports){
+arguments[4][14][0].apply(exports,arguments)
+},{"dup":14}],128:[function(require,module,exports){
+module.exports = require('./pca');
+
+},{"./pca":129}],129:[function(require,module,exports){
+'use strict';
+var Matrix = require('ml-matrix');
+var Stat = require('ml-stat');
+var SVD = Matrix.DC.SVD;
+
+module.exports = PCA;
+
+/**
+* Creates new PCA (Principal Component Analysis) from the dataset
+* @param {Matrix} dataset
+* @param {boolean} reload - for load purposes
+* @param {Object} model - for load purposes
+* @constructor
+* */
+function PCA(dataset, reload, model) {
+
+    if (reload) {
+        this.U = model.U;
+        this.S = model.S;
+        this.means = model.means;
+        this.std = model.std;
+    } else {
+        if (!Matrix.isMatrix(dataset)) {
+            dataset = new Matrix(dataset, true);
+        } else {
+            dataset = dataset.clone();
+        }
+
+        var normalization = featureNormalize(dataset);
+        var normalizedDataset = normalization.result;
+
+        var covarianceMatrix = normalizedDataset.transpose().mmul(normalizedDataset).divS(dataset.rows);
+
+        var target = new SVD(covarianceMatrix, {
+            computeLeftSingularVectors: true,
+            computeRightSingularVectors: true,
+            autoTranspose: false
+        });
+
+        this.U = target.leftSingularVectors;
+        this.S = target.diagonal;
+        this.means = normalization.means;
+        this.std = normalization.std;
+    }
+}
+
+/**
+* Load a PCA model from JSON
+* @oaram {Object} model
+* @return {PCA}
+* */
+PCA.load = function (model) {
+    if(model.modelName !== 'PCA')
+        throw new RangeError("The current model is invalid!");
+
+    return new PCA(null, true, model);
+};
+
+/**
+* Exports the current model to an Object
+* @return {Object} model
+* */
+PCA.prototype.export = function () {
+    return {
+        modelName: "PCA",
+        U: this.U,
+        S: this.S,
+        means: this.means,
+        std: this.std
+    };
+};
+
+/**
+* Function that project the dataset into new space of k dimensions,
+* this method doesn't modify your dataset.
+* @param {Matrix} dataset.
+* @param {Number} k - dimensions to project.
+* @return {Matrix} dataset projected in k dimensions.
+* @throws {RangeError} if k is larger than the number of eigenvector
+*                      of the model.
+* */
+PCA.prototype.project = function (dataset, k) {
+    var dimensions = k - 1;
+    if(k > this.U.columns)
+        throw new RangeError("the number of dimensions must not be larger than " + this.U.columns);
+
+    var X = featureNormalize(Matrix(dataset).clone()).result;
+    return X.mmul(this.U.subMatrix(0, this.U.rows - 1, 0, dimensions));
+};
+
+/**
+* This method returns the percentage variance of each eigenvector.
+* @return {Number} percentage variance of each eigenvector.
+* */
+PCA.prototype.getExplainedVariance = function () {
+    var sum = this.S.reduce(function (previous, value) {
+        return previous + value;
+    });
+    return this.S.map(function (value) {
+        return value / sum;
+    });
+};
+
+/**
+ * Function that returns the Eigenvectors of the covariance matrix.
+ * @returns {Matrix}
+ */
+PCA.prototype.getEigenvectors = function () {
+    return this.U;
+};
+
+/**
+ * Function that returns the Eigenvalues (on the diagonal).
+ * @returns {*}
+ */
+PCA.prototype.getEigenvalues = function () {
+    return this.S;
+};
+
+/**
+* This method returns a dataset normalized in the following form:
+* X = (X - mean) / std
+* @param dataset.
+* @return A dataset normalized.
+* */
+function featureNormalize(dataset) {
+    var means = Stat.matrix.mean(dataset);
+    var std = Matrix.rowVector(Stat.matrix.standardDeviation(dataset, means, true));
+    means = Matrix.rowVector(means);
+
+    var result = dataset.subRowVector(means);
+    return {
+        result: result.divRowVector(std),
+        means: means,
+        std: std
+    }
+}
+
+},{"ml-matrix":126,"ml-stat":149}],130:[function(require,module,exports){
+arguments[4][6][0].apply(exports,arguments)
+},{"../matrix":138,"dup":6}],131:[function(require,module,exports){
+arguments[4][7][0].apply(exports,arguments)
+},{"../matrix":138,"./util":135,"dup":7}],132:[function(require,module,exports){
+arguments[4][8][0].apply(exports,arguments)
+},{"../matrix":138,"dup":8}],133:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"../matrix":138,"./util":135,"dup":9}],134:[function(require,module,exports){
+arguments[4][10][0].apply(exports,arguments)
+},{"../matrix":138,"./util":135,"dup":10}],135:[function(require,module,exports){
+arguments[4][11][0].apply(exports,arguments)
+},{"dup":11}],136:[function(require,module,exports){
+arguments[4][12][0].apply(exports,arguments)
+},{"./dc/cholesky":130,"./dc/evd":131,"./dc/lu":132,"./dc/qr":133,"./dc/svd":134,"./matrix":138,"dup":12}],137:[function(require,module,exports){
+arguments[4][13][0].apply(exports,arguments)
+},{"./decompositions":136,"./matrix":138,"dup":13}],138:[function(require,module,exports){
+arguments[4][14][0].apply(exports,arguments)
+},{"dup":14}],139:[function(require,module,exports){
+module.exports = exports = require("./pls");
+exports.Utils = require('./utils');
+exports.OPLS = require('./opls');
+},{"./opls":140,"./pls":141,"./utils":142}],140:[function(require,module,exports){
+'use strict';
+
+var Matrix = require('ml-matrix');
+var Utils = require('./utils');
+
+module.exports = OPLS;
+
+function OPLS(dataset, predictions, numberOSC) {
+    var X = Matrix(dataset).clone();
+    var y = Matrix(predictions).clone();
+
+    X = Utils.featureNormalize(X).result;
+    y = Utils.featureNormalize(y).result;
+
+    var rows = X.rows;
+    var columns = X.columns;
+
+    var sumOfSquaresX = X.clone().mul(X).sum();
+    var w = X.transpose().mmul(y);
+    w.div(Utils.norm(w));
+
+    var orthoW = new Array(numberOSC);
+    var orthoT = new Array(numberOSC);
+    var orthoP = new Array(numberOSC);
+    for (var i = 0; i < numberOSC; i++) {
+        var t = X.mmul(w);
+
+        var numerator = X.transpose().mmul(t);
+        var denominator = t.transpose().mmul(t)[0][0];
+        var p =  numerator.div(denominator);
+
+        numerator = w.transpose().mmul(p)[0][0];
+        denominator = w.transpose().mmul(w)[0][0];
+        var wOsc = p.sub(w.clone().mul(numerator / denominator));
+        wOsc.div(Utils.norm(wOsc));
+
+        var tOsc = X.mmul(wOsc);
+
+        numerator = X.transpose().mmul(tOsc);
+        denominator = tOsc.transpose().mmul(tOsc)[0][0];
+        var pOsc = numerator.div(denominator);
+
+        X.sub(tOsc.mmul(pOsc.transpose()));
+        orthoW[i] = wOsc.getColumn(0);
+        orthoT[i] = tOsc.getColumn(0);
+        orthoP[i] = pOsc.getColumn(0);
+    }
+
+    this.Xosc = X;
+
+    var sumOfSquaresXosx = this.Xosc.clone().mul(this.Xosc).sum();
+    this.R2X = 1 - sumOfSquaresXosx/sumOfSquaresX;
+
+    this.W = orthoW;
+    this.T = orthoT;
+    this.P = orthoP;
+    this.numberOSC = numberOSC;
+}
+
+OPLS.prototype.correctDataset = function (dataset) {
+    var X = Matrix(dataset).clone();
+    //X = Utils.featureNormalize(dataset).result;
+
+    var sumOfSquaresX = X.clone().mul(X).sum();
+    for (var i = 0; i < this.numberOSC; i++) {
+        var currentW = this.W.getColumnVector(i);
+        var currentP = this.P.getColumnVector(i);
+
+        var t = X.mmul(currentW);
+        X.sub(t.mmul(currentP));
+    }
+    var sumOfSquaresXosx = X.clone().mul(X).sum();
+
+    var R2X = 1 - sumOfSquaresXosx / sumOfSquaresX;
+
+    return {
+        datasetOsc: X,
+        R2Dataset: R2X
+    };
+};
+},{"./utils":142,"ml-matrix":137}],141:[function(require,module,exports){
+'use strict';
+
+module.exports = PLS;
+var Matrix = require('ml-matrix');
+var Utils = require('./utils');
+
+/**
+ * Function that returns the index where the sum of each
+ * column vector is maximum.
+ * @param {Matrix} X
+ * @returns {number} index of the maximum
+ */
+function maxSumColIndex(X) {
+    var maxIndex = 0;
+    var maxSum = -Infinity;
+    for(var i = 0; i < X.columns; ++i) {
+        var currentSum = X.getColumnVector(i).sum();
+        if(currentSum > maxSum) {
+            maxSum = currentSum;
+            maxIndex = i;
+        }
+    }
+    return maxIndex;
+}
+
+/**
+ * Constructor of the PLS model.
+ * @param reload - used for load purposes.
+ * @param model - used for load purposes.
+ * @constructor
+ */
+function PLS(reload, model) {
+    if(reload) {
+        this.E = model.E;
+        this.F = model.F;
+        this.ymean = model.ymean;
+        this.ystd = model.ystd;
+        this.PBQ = model.PBQ;
+        this.T = model.T;
+        this.P = model.P;
+        this.U = model.U;
+        this.Q = model.Q;
+        this.W = model.W;
+        this.B = model.B;
+    }
+}
+
+/**
+ * Function that fit the model with the given data and predictions, in this function is calculated the
+ * following outputs:
+ *
+ * T - Score matrix of X
+ * P - Loading matrix of X
+ * U - Score matrix of Y
+ * Q - Loading matrix of Y
+ * B - Matrix of regression coefficient
+ * W - Weight matrix of X
+ *
+ * @param {Matrix} trainingSet - Dataset to be apply the model
+ * @param {Matrix} predictions - Predictions over each case of the dataset
+ * @param {Number} latentVectors - Number of latent variables
+ * @param {Number} tolerance - tolerance of the model
+ */
+PLS.prototype.fit = function (trainingSet, predictions, latentVectors, tolerance) {
+    if(trainingSet.length !== predictions.length)
+        throw new RangeError("The number of predictions and elements in the dataset must be the same");
+
+    //var tolerance = 1e-9;
+    var X = Utils.featureNormalize(Matrix(trainingSet).clone()).result;
+    var resultY = Utils.featureNormalize(Matrix(predictions).clone());
+    this.ymean = resultY.means;
+    this.ystd = resultY.std;
+    var Y = resultY.result;
+
+    var rx = X.rows;
+    var cx = X.columns;
+    var ry = Y.rows;
+    var cy = Y.columns;
+
+    var ssqXcal = X.clone().mul(X).sum(); // for the r²
+
+    if(rx != ry) {
+        throw new RangeError("dataset cases is not the same as the predictions");
+    }
+
+    var n = latentVectors; //Math.max(cx, cy); // components of the pls
+    var T = Matrix.zeros(rx, n);
+    var P = Matrix.zeros(cx, n);
+    var U = Matrix.zeros(ry, n);
+    var Q = Matrix.zeros(cy, n);
+    var B = Matrix.zeros(n, n);
+    var W = P.clone();
+    var k = 0;
+
+    while(Utils.norm(Y) > tolerance && k < n) {
+        var transposeX = X.transpose();
+        var transposeY = Y.transpose();
+
+        var tIndex = maxSumColIndex(X.clone().mulM(X));
+        var uIndex = maxSumColIndex(Y.clone().mulM(Y));
+
+        var t1 = X.getColumnVector(tIndex);
+        var u = Y.getColumnVector(uIndex);
+        var t = Matrix.zeros(rx, 1);
+
+        while(Utils.norm(t1.clone().sub(t)) > tolerance) {
+            var w = transposeX.mmul(u);
+            w.div(Utils.norm(w));
+            t = t1;
+            t1 = X.mmul(w);
+            var q = transposeY.mmul(t1);
+            q.div(Utils.norm(q));
+            u = Y.mmul(q);
+        }
+
+        t = t1;
+        var num = transposeX.mmul(t);
+        var den = (t.transpose().mmul(t))[0][0];
+        var p = num.div(den);
+        var pnorm = Utils.norm(p);
+        p.div(pnorm);
+        t.mul(pnorm);
+        w.mul(pnorm);
+
+        num = u.transpose().mmul(t);
+        den = (t.transpose().mmul(t))[0][0];
+        var b = (num.div(den))[0][0];
+        X.sub(t.mmul(p.transpose()));
+        Y.sub(t.clone().mul(b).mmul(q.transpose()));
+
+        T.setColumn(k, t);
+        P.setColumn(k, p);
+        U.setColumn(k, u);
+        Q.setColumn(k, q);
+        W.setColumn(k, w);
+        B[k][k] = b;
+        k++;
+    }
+
+    k--;
+    T = T.subMatrix(0, T.rows - 1, 0, k);
+    P = P.subMatrix(0, P.rows - 1, 0, k);
+    U = U.subMatrix(0, U.rows - 1, 0, k);
+    Q = Q.subMatrix(0, Q.rows - 1, 0, k);
+    W = W.subMatrix(0, W.rows - 1, 0, k);
+    B = B.subMatrix(0, k, 0, k);
+
+    this.r2cal = (1 - X.clone().mul(X).sum()) / ssqXcal;
+    this.E = X;
+    this.F = Y;
+    this.T = T;
+    this.P = P;
+    this.U = U;
+    this.Q = Q;
+    this.W = W;
+    this.B = B;
+    this.PBQ = P.mmul(B).mmul(Q.transpose());
+};
+
+/**
+ * Function that predict the behavior of the given dataset.
+ * @param dataset - data to be predicted.
+ * @returns {Matrix} - predictions of each element of the dataset.
+ */
+PLS.prototype.predict = function (dataset) {
+    var X = Matrix(dataset).clone();
+    var normalization = Utils.featureNormalize(X);
+    X = normalization.result;
+    var Y = X.mmul(this.PBQ).add(this.F);
+    Y.mulRowVector(this.ystd);
+    // be careful because its supposed to be a sumRowVector but the mean
+    // is negative here
+    Y.subRowVector(this.ymean);
+    return Y;
+};
+
+/**
+ * Function that returns the explained variance on training of the PLS model.
+ * @returns {number}
+ */
+PLS.prototype.getExplainedVariance = function () {
+    return this.r2cal;
+};
+
+/**
+ * Load a PLS model from an Object
+ * @param model
+ * @returns {PLS} - PLS object from the given model
+ */
+PLS.load = function (model) {
+    if(model.modelName !== 'PLS')
+        throw new RangeError("The current model is invalid!");
+
+    return new PLS(true, model);
+};
+
+/**
+ * Function that exports a PLS model to an Object.
+ * @returns {{modelName: string, ymean: *, ystd: *, PBQ: *}} model.
+ */
+PLS.prototype.export = function () {
+    return {
+        modelName: "PLS",
+        E: this.E,
+        F: this.F,
+        ymean: this.ymean,
+        ystd: this.ystd,
+        PBQ: this.PBQ,
+        T: this.T,
+        P: this.P,
+        U: this.U,
+        Q: this.Q,
+        W: this.W,
+        B: this.B
+    };
+};
+
+},{"./utils":142,"ml-matrix":137}],142:[function(require,module,exports){
+'use strict';
+
+var Matrix = require('ml-matrix');
+var Stat = require('ml-stat');
+
+/**
+ * Function that given vector, returns his norm
+ * @param {Vector} X
+ * @returns {number} Norm of the vector
+ */
+function norm(X) {
+    return Math.sqrt(X.clone().apply(pow2array).sum());
+}
+
+/**
+ * Function that pow 2 each element of a Matrix or a Vector,
+ * used in the apply method of the Matrix object
+ * @param i - index i.
+ * @param j - index j.
+ * @return The Matrix object modified at the index i, j.
+ * */
+function pow2array(i, j) {
+    this[i][j] = this[i][j] * this[i][j];
+    return this;
+}
+
+/**
+ * Function that normalize the dataset and return the means and
+ * standard deviation of each feature.
+ * @param dataset
+ * @returns {{result: Matrix, means: (*|number), std: Matrix}} dataset normalized, means
+ *                                                             and standard deviations
+ */
+function featureNormalize(dataset) {
+    var means = Stat.matrix.mean(dataset);
+    var std = Matrix.rowVector(Stat.matrix.standardDeviation(dataset, means, true));
+    means = Matrix.rowVector(means);
+
+    var result = dataset.addRowVector(means.neg());
+    return {result: result.divRowVector(std), means: means, std: std};
+}
+
+module.exports = {
+    norm: norm,
+    pow2array: pow2array,
+    featureNormalize: featureNormalize
+};
+
+
+},{"ml-matrix":137,"ml-stat":149}],143:[function(require,module,exports){
 (function (global){
 "use strict";
 
@@ -11441,7 +13701,7 @@ numeric.svd= function svd(A) {
 
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],95:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 "use strict";
 
 var numeric = require('numeric');
@@ -11520,11 +13780,15 @@ SavitzkyGolay.prototype.calc = function (options) {
         }
         ans[k] = d;
     }
+    for (var a = 0; a < Math.ceil(this.options.windSize / 2); a++)
+        ans[a] = ans[Math.ceil(this.options.windSize / 2)];
+    for (var b = (ans.length - Math.floor(this.options.windSize / 2)); b < ans.length; b++)
+        ans[b] = ans[(ans.length - Math.floor(this.options.windSize / 2)) - 1];
     return ans;
 };
 
 module.exports = SavitzkyGolay;
-},{"numeric":94}],96:[function(require,module,exports){
+},{"numeric":143}],145:[function(require,module,exports){
 'use strict';
 
 var NodeSquare = require('./node-square'),
@@ -11946,7 +14210,7 @@ function getMaxDistance(distance, numWeights) {
 }
 
 module.exports = SOM;
-},{"./node-hexagonal":97,"./node-square":98}],97:[function(require,module,exports){
+},{"./node-hexagonal":146,"./node-square":147}],146:[function(require,module,exports){
 var NodeSquare = require('./node-square');
 
 function NodeHexagonal(x, y, weights, som) {
@@ -11977,7 +14241,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 };
 
 module.exports = NodeHexagonal;
-},{"./node-square":98}],98:[function(require,module,exports){
+},{"./node-square":147}],147:[function(require,module,exports){
 function NodeSquare(x, y, weights, som) {
     this.x = x;
     this.y = y;
@@ -12084,7 +14348,7 @@ NodeSquare.prototype.getPosition = function getPosition(element) {
 };
 
 module.exports = NodeSquare;
-},{}],99:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -12449,12 +14713,12 @@ module.exports = {
     cumulativeSum: cumulativeSum
 };
 
-},{}],100:[function(require,module,exports){
+},{}],149:[function(require,module,exports){
 
 exports.array = require('./array');
 exports.matrix = require('./matrix');
 
-},{"./array":99,"./matrix":101}],101:[function(require,module,exports){
+},{"./array":148,"./matrix":150}],150:[function(require,module,exports){
 'use strict';
 // https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -12983,11 +15247,11 @@ module.exports = {
     weightedScatter: weightedScatter
 };
 
-},{}],102:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 module.exports = exports = require('./svm');
 exports.kernel = require('./kernel').kernel;
 
-},{"./kernel":103,"./svm":104}],103:[function(require,module,exports){
+},{"./kernel":152,"./svm":153}],152:[function(require,module,exports){
 'use strict';
 
 /**
@@ -13062,7 +15326,7 @@ module.exports = {
     radial : kernelRadial
 };
 
-},{}],104:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 'use strict';
 var kernel = require("./kernel").kernel;
 var getKernel = require("./kernel").getKernel;
@@ -13292,5 +15556,110 @@ SVM.prototype.predict = function (p) {
 };
 
 module.exports = SVM;
-},{"./kernel":103}]},{},[1])(1)
+},{"./kernel":152}],154:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var LOOP = 8;
+var FLOAT_MUL = 1 / 16777216;
+
+function multiply_uint32(n, m) {
+    n >>>= 0;
+    m >>>= 0;
+    var nlo = n & 0xffff;
+    var nhi = n - nlo;
+    return (nhi * m >>> 0) + nlo * m >>> 0;
+}
+
+var XSadd = (function () {
+    function XSadd() {
+        var seed = arguments.length <= 0 || arguments[0] === undefined ? Date.now() : arguments[0];
+
+        _classCallCheck(this, XSadd);
+
+        this.state = new Uint32Array(4);
+        this.init(seed);
+    }
+
+    _createClass(XSadd, [{
+        key: "init",
+        value: function init(seed) {
+            this.state[0] = seed;
+            this.state[1] = 0;
+            this.state[2] = 0;
+            this.state[3] = 0;
+            for (var i = 1; i < LOOP; i++) {
+                this.state[i & 3] ^= i + multiply_uint32(1812433253, this.state[i - 1 & 3] ^ this.state[i - 1 & 3] >>> 30 >>> 0) >>> 0;
+            }
+            period_certification(this);
+            for (var i = 0; i < LOOP; i++) {
+                next_state(this);
+            }
+        }
+
+        /**
+         * Returns a 32-bit integer r (0 <= r < 2^32)
+         */
+    }, {
+        key: "getUint32",
+        value: function getUint32() {
+            next_state(this);
+            return this.state[3] + this.state[2] >>> 0;
+        }
+
+        /**
+         * Returns a floating point number r (0.0 <= r < 1.0)
+         */
+    }, {
+        key: "getFloat",
+        value: function getFloat() {
+            return (this.getUint32() >>> 8) * FLOAT_MUL;
+        }
+    }, {
+        key: "random",
+        get: function get() {
+            if (!this._random) {
+                this._random = this.getFloat.bind(this);
+            }
+            return this._random;
+        }
+    }]);
+
+    return XSadd;
+})();
+
+exports["default"] = XSadd;
+
+function period_certification(xsadd) {
+    if (xsadd.state[0] === 0 && xsadd.state[1] === 0 && xsadd.state[2] === 0 && xsadd.state[3] === 0) {
+        xsadd.state[0] = 88; // X
+        xsadd.state[1] = 83; // S
+        xsadd.state[2] = 65; // A
+        xsadd.state[3] = 68; // D
+    }
+}
+
+var sh1 = 15;
+var sh2 = 18;
+var sh3 = 11;
+function next_state(xsadd) {
+    var t = xsadd.state[0];
+    t ^= t << sh1;
+    t ^= t >>> sh2;
+    t ^= xsadd.state[3] << sh3;
+    xsadd.state[0] = xsadd.state[1];
+    xsadd.state[1] = xsadd.state[2];
+    xsadd.state[2] = xsadd.state[3];
+    xsadd.state[3] = t;
+}
+module.exports = exports["default"];
+
+},{}]},{},[1])(1)
 });
