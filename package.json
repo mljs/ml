@@ -42,7 +42,7 @@
     "ml-matrix": "0.0.4",
     "ml-naivebayes": "1.0.0",
     "ml-pca": "0.0.3",
-    "ml-pls": "0.0.2",
+    "ml-pls": "0.0.4",
     "ml-savitzky-golay": "1.0.0",
     "ml-som": "0.0.6",
     "ml-stat": "1.0.1",
