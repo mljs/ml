@@ -1,10 +1,10 @@
 0.4.1 / HEAD
 ==================
 
-:arrow_up: ml-naivebayes v1.0.0
-:arrow_up: ml-fnn v1.0.0
-:arrow_up: ml-knn v1.0.0
-:arrow_up: ml-pls v0.0.6
+:arrow_up: ml-naivebayes v1.0.0  
+:arrow_up: ml-fnn v1.0.0  
+:arrow_up: ml-knn v1.0.0  
+:arrow_up: ml-pls v0.0.6  
 :arrow_up: ml-matrix v0.1.0
 
 0.4.0 / 2015-07-24
@@ -18,17 +18,17 @@
 * Add ml.RNG.XSadd
 * Remove Matrix from Math namespace. Now only in root.
 
-:arrow_up: ml-array-utils v0.1.4
-:arrow_up: ml-hclust v1.0.0
-:arrow_up: ml-kmeans v0.1.0
-:arrow_up: ml-distance v2.0.1
+:arrow_up: ml-array-utils v0.1.4  
+:arrow_up: ml-hclust v1.0.0  
+:arrow_up: ml-kmeans v0.1.0  
+:arrow_up: ml-distance v2.0.1  
 :arrow_up: ml-savitzky-golay v1.0.0
 
 0.3.10 / 2015-07-08
 ===================
 
-:arrow_up: ml-fnn v0.0.3 
-:arrow_up: ml-array-utils v0.1.1
+:arrow_up: ml-fnn v0.0.3  
+:arrow_up: ml-array-utils v0.1.1  
 
 0.3.9 / 2015-07-08
 ===================
