@@ -36,7 +36,7 @@
     "ml-hclust": "1.0.0",
     "ml-kmeans": "0.1.0",
     "ml-knn": "1.0.0",
-    "ml-matrix": "0.0.4",
+    "ml-matrix": "0.1.0",
     "ml-naivebayes": "1.0.0",
     "ml-pca": "0.0.3",
     "ml-pls": "0.0.6",

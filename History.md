@@ -5,6 +5,7 @@
 :arrow_up: ml-fnn v1.0.0
 :arrow_up: ml-knn v1.0.0
 :arrow_up: ml-pls v0.0.6
+:arrow_up: ml-matrix v0.1.0
 
 0.4.0 / 2015-07-24
 ==================
