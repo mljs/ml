@@ -64,7 +64,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Math = exports.Math = {};
 
-	Math.Distance = __webpack_require__(28);
+	var distance = __webpack_require__(28)
+	Math.Distance = distance.distance;
+	Math.Similarity = distance.similarity;
 	Math.SG = __webpack_require__(84);
 
 
