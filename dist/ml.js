@@ -65,42 +65,42 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Math = exports.Math = {};
 
 	Math.Distance = __webpack_require__(28);
-	Math.SG = __webpack_require__(83);
+	Math.SG = __webpack_require__(84);
 
 
 	var Stat = exports.Stat = {};
 
 	Stat.array = __webpack_require__(6);
 	Stat.matrix = __webpack_require__(7);
-	Stat.PCA = __webpack_require__(85);
+	Stat.PCA = __webpack_require__(86);
 
 
 	// Random number generation
 	var RNG = exports.RNG = {};
-	RNG.XSadd = __webpack_require__(96);
+	RNG.XSadd = __webpack_require__(97);
 
 
 	// Supervised learning
 	var SL = exports.SL = {};
 
-	SL.SVM = __webpack_require__(97);
-	SL.KNN = __webpack_require__(100);
-	SL.NaiveBayes = __webpack_require__(103);
-	SL.PLS = __webpack_require__(114);
+	SL.SVM = __webpack_require__(98);
+	SL.KNN = __webpack_require__(101);
+	SL.NaiveBayes = __webpack_require__(104);
+	SL.PLS = __webpack_require__(115);
 
 
 	// Clustering
 	var Clust = exports.Clust = {};
 
-	Clust.kmeans = __webpack_require__(127);
-	Clust.hclust = __webpack_require__(129);
+	Clust.kmeans = __webpack_require__(128);
+	Clust.hclust = __webpack_require__(130);
 
 
 	// Neural networks
 	var NN = exports.NN = exports.nn = {};
 
-	NN.SOM = __webpack_require__(139);
-	NN.FNN = __webpack_require__(142);
+	NN.SOM = __webpack_require__(140);
+	NN.FNN = __webpack_require__(143);
 
 
 /***/ },
@@ -2977,9 +2977,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Matrix = __webpack_require__(9);
 
-	var SingularValueDecomposition = __webpack_require__(12);
-	var EigenvalueDecomposition = __webpack_require__(14);
-	var LuDecomposition = __webpack_require__(11);
+	var SingularValueDecomposition = __webpack_require__(11);
+	var EigenvalueDecomposition = __webpack_require__(13);
+	var LuDecomposition = __webpack_require__(14);
 	var QrDecomposition = __webpack_require__(15);
 	var CholeskyDecomposition = __webpack_require__(16);
 
@@ -3022,182 +3022,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var Matrix = __webpack_require__(9);
-
-	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
-	function LuDecomposition(matrix) {
-	    if (!(this instanceof LuDecomposition)) {
-	        return new LuDecomposition(matrix);
-	    }
-	    matrix = Matrix.checkMatrix(matrix);
-
-	    var lu = matrix.clone(),
-	        rows = lu.rows,
-	        columns = lu.columns,
-	        pivotVector = new Array(rows),
-	        pivotSign = 1,
-	        i, j, k, p, s, t, v,
-	        LUrowi, LUcolj, kmax;
-
-	    for (i = 0; i < rows; i++) {
-	        pivotVector[i] = i;
-	    }
-
-	    LUcolj = new Array(rows);
-
-	    for (j = 0; j < columns; j++) {
-
-	        for (i = 0; i < rows; i++) {
-	            LUcolj[i] = lu[i][j];
-	        }
-
-	        for (i = 0; i < rows; i++) {
-	            LUrowi = lu[i];
-	            kmax = Math.min(i, j);
-	            s = 0;
-	            for (k = 0; k < kmax; k++) {
-	                s += LUrowi[k] * LUcolj[k];
-	            }
-	            LUrowi[j] = LUcolj[i] -= s;
-	        }
-
-	        p = j;
-	        for (i = j + 1; i < rows; i++) {
-	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
-	                p = i;
-	            }
-	        }
-
-	        if (p !== j) {
-	            for (k = 0; k < columns; k++) {
-	                t = lu[p][k];
-	                lu[p][k] = lu[j][k];
-	                lu[j][k] = t;
-	            }
-
-	            v = pivotVector[p];
-	            pivotVector[p] = pivotVector[j];
-	            pivotVector[j] = v;
-
-	            pivotSign = -pivotSign;
-	        }
-
-	        if (j < rows && lu[j][j] !== 0) {
-	            for (i = j + 1; i < rows; i++) {
-	                lu[i][j] /= lu[j][j];
-	            }
-	        }
-	    }
-
-	    this.LU = lu;
-	    this.pivotVector = pivotVector;
-	    this.pivotSign = pivotSign;
-	}
-
-	LuDecomposition.prototype = {
-	    isSingular: function () {
-	        var data = this.LU,
-	            col = data.columns;
-	        for (var j = 0; j < col; j++) {
-	            if (data[j][j] === 0) {
-	                return true;
-	            }
-	        }
-	        return false;
-	    },
-	    get determinant() {
-	        var data = this.LU;
-	        if (!data.isSquare())
-	            throw new Error('Matrix must be square');
-	        var determinant = this.pivotSign, col = data.columns;
-	        for (var j = 0; j < col; j++)
-	            determinant *= data[j][j];
-	        return determinant;
-	    },
-	    get lowerTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i > j) {
-	                    X[i][j] = data[i][j];
-	                } else if (i === j) {
-	                    X[i][j] = 1;
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get upperTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i <= j) {
-	                    X[i][j] = data[i][j];
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get pivotPermutationVector() {
-	        return this.pivotVector.slice();
-	    },
-	    solve: function (value) {
-	        value = Matrix.checkMatrix(value);
-
-	        var lu = this.LU,
-	            rows = lu.rows;
-
-	        if (rows !== value.rows)
-	            throw new Error('Invalid matrix dimensions');
-	        if (this.isSingular())
-	            throw new Error('LU matrix is singular');
-
-	        var count = value.columns,
-	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
-	            columns = lu.columns,
-	            i, j, k;
-
-	        for (k = 0; k < columns; k++) {
-	            for (i = k + 1; i < columns; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        for (k = columns - 1; k >= 0; k--) {
-	            for (j = 0; j < count; j++) {
-	                X[k][j] /= lu[k][k];
-	            }
-	            for (i = 0; i < k; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        return X;
-	    }
-	};
-
-	module.exports = LuDecomposition;
-
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Matrix = __webpack_require__(9);
-	var hypotenuse = __webpack_require__(13).hypotenuse;
+	var hypotenuse = __webpack_require__(12).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
 	function SingularValueDecomposition(value, options) {
@@ -3694,7 +3519,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 13 */
+/* 12 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -3714,13 +3539,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 14 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(9);
-	var hypotenuse = __webpack_require__(13).hypotenuse;
+	var hypotenuse = __webpack_require__(12).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
 	function EigenvalueDecomposition(matrix) {
@@ -4486,13 +4311,188 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Matrix = __webpack_require__(9);
+
+	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
+	function LuDecomposition(matrix) {
+	    if (!(this instanceof LuDecomposition)) {
+	        return new LuDecomposition(matrix);
+	    }
+	    matrix = Matrix.checkMatrix(matrix);
+
+	    var lu = matrix.clone(),
+	        rows = lu.rows,
+	        columns = lu.columns,
+	        pivotVector = new Array(rows),
+	        pivotSign = 1,
+	        i, j, k, p, s, t, v,
+	        LUrowi, LUcolj, kmax;
+
+	    for (i = 0; i < rows; i++) {
+	        pivotVector[i] = i;
+	    }
+
+	    LUcolj = new Array(rows);
+
+	    for (j = 0; j < columns; j++) {
+
+	        for (i = 0; i < rows; i++) {
+	            LUcolj[i] = lu[i][j];
+	        }
+
+	        for (i = 0; i < rows; i++) {
+	            LUrowi = lu[i];
+	            kmax = Math.min(i, j);
+	            s = 0;
+	            for (k = 0; k < kmax; k++) {
+	                s += LUrowi[k] * LUcolj[k];
+	            }
+	            LUrowi[j] = LUcolj[i] -= s;
+	        }
+
+	        p = j;
+	        for (i = j + 1; i < rows; i++) {
+	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
+	                p = i;
+	            }
+	        }
+
+	        if (p !== j) {
+	            for (k = 0; k < columns; k++) {
+	                t = lu[p][k];
+	                lu[p][k] = lu[j][k];
+	                lu[j][k] = t;
+	            }
+
+	            v = pivotVector[p];
+	            pivotVector[p] = pivotVector[j];
+	            pivotVector[j] = v;
+
+	            pivotSign = -pivotSign;
+	        }
+
+	        if (j < rows && lu[j][j] !== 0) {
+	            for (i = j + 1; i < rows; i++) {
+	                lu[i][j] /= lu[j][j];
+	            }
+	        }
+	    }
+
+	    this.LU = lu;
+	    this.pivotVector = pivotVector;
+	    this.pivotSign = pivotSign;
+	}
+
+	LuDecomposition.prototype = {
+	    isSingular: function () {
+	        var data = this.LU,
+	            col = data.columns;
+	        for (var j = 0; j < col; j++) {
+	            if (data[j][j] === 0) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    },
+	    get determinant() {
+	        var data = this.LU;
+	        if (!data.isSquare())
+	            throw new Error('Matrix must be square');
+	        var determinant = this.pivotSign, col = data.columns;
+	        for (var j = 0; j < col; j++)
+	            determinant *= data[j][j];
+	        return determinant;
+	    },
+	    get lowerTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i > j) {
+	                    X[i][j] = data[i][j];
+	                } else if (i === j) {
+	                    X[i][j] = 1;
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get upperTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i <= j) {
+	                    X[i][j] = data[i][j];
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get pivotPermutationVector() {
+	        return this.pivotVector.slice();
+	    },
+	    solve: function (value) {
+	        value = Matrix.checkMatrix(value);
+
+	        var lu = this.LU,
+	            rows = lu.rows;
+
+	        if (rows !== value.rows)
+	            throw new Error('Invalid matrix dimensions');
+	        if (this.isSingular())
+	            throw new Error('LU matrix is singular');
+
+	        var count = value.columns,
+	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
+	            columns = lu.columns,
+	            i, j, k;
+
+	        for (k = 0; k < columns; k++) {
+	            for (i = k + 1; i < columns; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        for (k = columns - 1; k >= 0; k--) {
+	            for (j = 0; j < count; j++) {
+	                X[k][j] /= lu[k][k];
+	            }
+	            for (i = 0; i < k; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        return X;
+	    }
+	};
+
+	module.exports = LuDecomposition;
+
+
+/***/ },
 /* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(9);
-	var hypotenuse = __webpack_require__(13).hypotenuse;
+	var hypotenuse = __webpack_require__(12).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 	function QrDecomposition(value) {
@@ -6440,9 +6440,9 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	var Matrix = __webpack_require__(20);
 
-	var SingularValueDecomposition = __webpack_require__(23);
-	var EigenvalueDecomposition = __webpack_require__(25);
-	var LuDecomposition = __webpack_require__(22);
+	var SingularValueDecomposition = __webpack_require__(22);
+	var EigenvalueDecomposition = __webpack_require__(24);
+	var LuDecomposition = __webpack_require__(25);
 	var QrDecomposition = __webpack_require__(26);
 	var CholeskyDecomposition = __webpack_require__(27);
 
@@ -6485,182 +6485,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var Matrix = __webpack_require__(20);
-
-	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
-	function LuDecomposition(matrix) {
-	    if (!(this instanceof LuDecomposition)) {
-	        return new LuDecomposition(matrix);
-	    }
-	    matrix = Matrix.checkMatrix(matrix);
-
-	    var lu = matrix.clone(),
-	        rows = lu.rows,
-	        columns = lu.columns,
-	        pivotVector = new Array(rows),
-	        pivotSign = 1,
-	        i, j, k, p, s, t, v,
-	        LUrowi, LUcolj, kmax;
-
-	    for (i = 0; i < rows; i++) {
-	        pivotVector[i] = i;
-	    }
-
-	    LUcolj = new Array(rows);
-
-	    for (j = 0; j < columns; j++) {
-
-	        for (i = 0; i < rows; i++) {
-	            LUcolj[i] = lu[i][j];
-	        }
-
-	        for (i = 0; i < rows; i++) {
-	            LUrowi = lu[i];
-	            kmax = Math.min(i, j);
-	            s = 0;
-	            for (k = 0; k < kmax; k++) {
-	                s += LUrowi[k] * LUcolj[k];
-	            }
-	            LUrowi[j] = LUcolj[i] -= s;
-	        }
-
-	        p = j;
-	        for (i = j + 1; i < rows; i++) {
-	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
-	                p = i;
-	            }
-	        }
-
-	        if (p !== j) {
-	            for (k = 0; k < columns; k++) {
-	                t = lu[p][k];
-	                lu[p][k] = lu[j][k];
-	                lu[j][k] = t;
-	            }
-
-	            v = pivotVector[p];
-	            pivotVector[p] = pivotVector[j];
-	            pivotVector[j] = v;
-
-	            pivotSign = -pivotSign;
-	        }
-
-	        if (j < rows && lu[j][j] !== 0) {
-	            for (i = j + 1; i < rows; i++) {
-	                lu[i][j] /= lu[j][j];
-	            }
-	        }
-	    }
-
-	    this.LU = lu;
-	    this.pivotVector = pivotVector;
-	    this.pivotSign = pivotSign;
-	}
-
-	LuDecomposition.prototype = {
-	    isSingular: function () {
-	        var data = this.LU,
-	            col = data.columns;
-	        for (var j = 0; j < col; j++) {
-	            if (data[j][j] === 0) {
-	                return true;
-	            }
-	        }
-	        return false;
-	    },
-	    get determinant() {
-	        var data = this.LU;
-	        if (!data.isSquare())
-	            throw new Error('Matrix must be square');
-	        var determinant = this.pivotSign, col = data.columns;
-	        for (var j = 0; j < col; j++)
-	            determinant *= data[j][j];
-	        return determinant;
-	    },
-	    get lowerTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i > j) {
-	                    X[i][j] = data[i][j];
-	                } else if (i === j) {
-	                    X[i][j] = 1;
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get upperTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i <= j) {
-	                    X[i][j] = data[i][j];
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get pivotPermutationVector() {
-	        return this.pivotVector.slice();
-	    },
-	    solve: function (value) {
-	        value = Matrix.checkMatrix(value);
-
-	        var lu = this.LU,
-	            rows = lu.rows;
-
-	        if (rows !== value.rows)
-	            throw new Error('Invalid matrix dimensions');
-	        if (this.isSingular())
-	            throw new Error('LU matrix is singular');
-
-	        var count = value.columns,
-	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
-	            columns = lu.columns,
-	            i, j, k;
-
-	        for (k = 0; k < columns; k++) {
-	            for (i = k + 1; i < columns; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        for (k = columns - 1; k >= 0; k--) {
-	            for (j = 0; j < count; j++) {
-	                X[k][j] /= lu[k][k];
-	            }
-	            for (i = 0; i < k; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        return X;
-	    }
-	};
-
-	module.exports = LuDecomposition;
-
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Matrix = __webpack_require__(20);
-	var hypotenuse = __webpack_require__(24).hypotenuse;
+	var hypotenuse = __webpack_require__(23).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
 	function SingularValueDecomposition(value, options) {
@@ -7157,7 +6982,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 24 */
+/* 23 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -7177,13 +7002,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 25 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(20);
-	var hypotenuse = __webpack_require__(24).hypotenuse;
+	var hypotenuse = __webpack_require__(23).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
 	function EigenvalueDecomposition(matrix) {
@@ -7949,13 +7774,188 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Matrix = __webpack_require__(20);
+
+	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
+	function LuDecomposition(matrix) {
+	    if (!(this instanceof LuDecomposition)) {
+	        return new LuDecomposition(matrix);
+	    }
+	    matrix = Matrix.checkMatrix(matrix);
+
+	    var lu = matrix.clone(),
+	        rows = lu.rows,
+	        columns = lu.columns,
+	        pivotVector = new Array(rows),
+	        pivotSign = 1,
+	        i, j, k, p, s, t, v,
+	        LUrowi, LUcolj, kmax;
+
+	    for (i = 0; i < rows; i++) {
+	        pivotVector[i] = i;
+	    }
+
+	    LUcolj = new Array(rows);
+
+	    for (j = 0; j < columns; j++) {
+
+	        for (i = 0; i < rows; i++) {
+	            LUcolj[i] = lu[i][j];
+	        }
+
+	        for (i = 0; i < rows; i++) {
+	            LUrowi = lu[i];
+	            kmax = Math.min(i, j);
+	            s = 0;
+	            for (k = 0; k < kmax; k++) {
+	                s += LUrowi[k] * LUcolj[k];
+	            }
+	            LUrowi[j] = LUcolj[i] -= s;
+	        }
+
+	        p = j;
+	        for (i = j + 1; i < rows; i++) {
+	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
+	                p = i;
+	            }
+	        }
+
+	        if (p !== j) {
+	            for (k = 0; k < columns; k++) {
+	                t = lu[p][k];
+	                lu[p][k] = lu[j][k];
+	                lu[j][k] = t;
+	            }
+
+	            v = pivotVector[p];
+	            pivotVector[p] = pivotVector[j];
+	            pivotVector[j] = v;
+
+	            pivotSign = -pivotSign;
+	        }
+
+	        if (j < rows && lu[j][j] !== 0) {
+	            for (i = j + 1; i < rows; i++) {
+	                lu[i][j] /= lu[j][j];
+	            }
+	        }
+	    }
+
+	    this.LU = lu;
+	    this.pivotVector = pivotVector;
+	    this.pivotSign = pivotSign;
+	}
+
+	LuDecomposition.prototype = {
+	    isSingular: function () {
+	        var data = this.LU,
+	            col = data.columns;
+	        for (var j = 0; j < col; j++) {
+	            if (data[j][j] === 0) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    },
+	    get determinant() {
+	        var data = this.LU;
+	        if (!data.isSquare())
+	            throw new Error('Matrix must be square');
+	        var determinant = this.pivotSign, col = data.columns;
+	        for (var j = 0; j < col; j++)
+	            determinant *= data[j][j];
+	        return determinant;
+	    },
+	    get lowerTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i > j) {
+	                    X[i][j] = data[i][j];
+	                } else if (i === j) {
+	                    X[i][j] = 1;
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get upperTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i <= j) {
+	                    X[i][j] = data[i][j];
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get pivotPermutationVector() {
+	        return this.pivotVector.slice();
+	    },
+	    solve: function (value) {
+	        value = Matrix.checkMatrix(value);
+
+	        var lu = this.LU,
+	            rows = lu.rows;
+
+	        if (rows !== value.rows)
+	            throw new Error('Invalid matrix dimensions');
+	        if (this.isSingular())
+	            throw new Error('LU matrix is singular');
+
+	        var count = value.columns,
+	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
+	            columns = lu.columns,
+	            i, j, k;
+
+	        for (k = 0; k < columns; k++) {
+	            for (i = k + 1; i < columns; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        for (k = columns - 1; k >= 0; k--) {
+	            for (j = 0; j < count; j++) {
+	                X[k][j] /= lu[k][k];
+	            }
+	            for (i = 0; i < k; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        return X;
+	    }
+	};
+
+	module.exports = LuDecomposition;
+
+
+/***/ },
 /* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(20);
-	var hypotenuse = __webpack_require__(24).hypotenuse;
+	var hypotenuse = __webpack_require__(23).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 	function QrDecomposition(value) {
@@ -8206,7 +8206,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	exports.distance = __webpack_require__(29);
-	exports.similarity = __webpack_require__(75);
+	exports.similarity = __webpack_require__(74);
 
 /***/ },
 /* 29 */
@@ -8214,54 +8214,199 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 
-	exports.euclidean = __webpack_require__(30);
-	exports.squaredEuclidean = __webpack_require__(30).squared;
-	exports.manhattan = __webpack_require__(31);
-	exports.minkowski = __webpack_require__(32);
-	exports.chebyshev = __webpack_require__(33);
-	exports.sorensen = __webpack_require__(34);
-	exports.gower = __webpack_require__(35);
-	exports.soergel = __webpack_require__(36);
-	exports.kulczynski = __webpack_require__(37);
-	exports.canberra = __webpack_require__(38);
-	exports.lorentzian = __webpack_require__(39);
-	exports.intersection = __webpack_require__(40);
-	exports.waveHedges = __webpack_require__(41);
-	exports.czekanowski = __webpack_require__(42);
-	exports.motyka = __webpack_require__(43);
-	exports.ruzicka = __webpack_require__(44);
-	exports.tanimoto = __webpack_require__(45);
-	exports.innerProduct = __webpack_require__(47);
-	exports.harmonicMean = __webpack_require__(48);
-	exports.cosine = __webpack_require__(49);
-	exports.kumarHassebrook = __webpack_require__(50);
-	exports.jaccard = __webpack_require__(51);
-	exports.dice = __webpack_require__(52);
-	exports.fidelity = __webpack_require__(53);
-	exports.bhattacharyya = __webpack_require__(54);
-	exports.hellinger = __webpack_require__(55);
-	exports.matusita = __webpack_require__(56);
-	exports.squaredChord = __webpack_require__(57);
-	exports.pearson = __webpack_require__(58);
-	exports.neyman = __webpack_require__(59);
-	exports.squared = __webpack_require__(60);
-	exports.probabilisticSymmetric = __webpack_require__(61);
-	exports.divergence = __webpack_require__(62);
-	exports.clark = __webpack_require__(63);
-	exports.kullbackLeibler = __webpack_require__(64);
-	exports.jeffreys = __webpack_require__(65);
-	exports.kdivergence = __webpack_require__(66);
-	exports.topsoe = __webpack_require__(67);
-	exports.jensenDifference = __webpack_require__(68);
-	exports.taneja = __webpack_require__(69);
-	exports.kumarJohnson = __webpack_require__(70);
-	exports.avg = __webpack_require__(71);
+	exports.additiveSymmetric = __webpack_require__(30);
+	exports.avg = __webpack_require__(31);
+	exports.bhattacharyya = __webpack_require__(32);
+	exports.canberra = __webpack_require__(33);
+	exports.chebyshev = __webpack_require__(34);
+	exports.clark = __webpack_require__(35);
+	exports.czekanowski = __webpack_require__(36);
+	exports.dice = __webpack_require__(37);
+	exports.divergence = __webpack_require__(38);
+	exports.euclidean = __webpack_require__(39);
+	exports.fidelity = __webpack_require__(40);
+	exports.gower = __webpack_require__(41);
+	exports.harmonicMean = __webpack_require__(42);
+	exports.hellinger = __webpack_require__(43);
+	exports.innerProduct = __webpack_require__(44);
+	exports.intersection = __webpack_require__(45);
+	exports.jaccard = __webpack_require__(46);
+	exports.jeffreys = __webpack_require__(47);
+	exports.jensenDifference = __webpack_require__(48);
+	exports.jensenShannon = __webpack_require__(49);
+	exports.kdivergence = __webpack_require__(50);
+	exports.kulczynski = __webpack_require__(51);
+	exports.kullbackLeibler = __webpack_require__(52);
+	exports.kumarHassebrook = __webpack_require__(53);
+	exports.kumarJohnson = __webpack_require__(54);
+	exports.lorentzian = __webpack_require__(55);
+	exports.manhattan = __webpack_require__(56);
+	exports.matusita = __webpack_require__(57);
+	exports.minkowski = __webpack_require__(58);
+	exports.motyka = __webpack_require__(59);
+	exports.neyman = __webpack_require__(60);
+	exports.pearson = __webpack_require__(61);
+	exports.probabilisticSymmetric = __webpack_require__(62);
+	exports.ruzicka = __webpack_require__(63);
+	exports.soergel = __webpack_require__(64);
+	exports.sorensen = __webpack_require__(65);
+	exports.squared = __webpack_require__(66);
+	exports.squaredChord = __webpack_require__(67);
+	exports.squaredEuclidean = __webpack_require__(39).squared;
+	exports.taneja = __webpack_require__(68);
+	exports.tanimoto = __webpack_require__(69);
+	exports.topsoe = __webpack_require__(71);
 	exports.tree = __webpack_require__(72);
-	exports.additiveSymmetric = __webpack_require__(73);
-	exports.jensenShannon = __webpack_require__(74);
+	exports.waveHedges = __webpack_require__(73);
+
 
 /***/ },
 /* 30 */
+/***/ function(module, exports) {
+
+	module.exports = function additiveSymmetric(a, b) {
+	    var i = 0,
+	        ii = a.length,
+	        d = 0;
+	    for (; i < ii; i++) {
+	        d += ((a[i] - b[i]) * (a[i] - b[i]) * (a[i] + b[i])) / (a[i] * b[i]);
+	    }
+	    return 2 * d;
+	};
+
+
+/***/ },
+/* 31 */
+/***/ function(module, exports) {
+
+	module.exports = function avg(a, b) {
+	    var ii = a.length,
+	        max = 0,
+	        ans = 0,
+	        aux = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        aux = Math.abs(a[i] - b[i]);
+	        ans += aux;
+	        if (max < aux) {
+	            max = aux;
+	        }
+	    }
+	    return (max + ans) / 2;
+	};
+
+
+/***/ },
+/* 32 */
+/***/ function(module, exports) {
+
+	module.exports = function bhattacharyya(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += Math.sqrt(a[i] * b[i]);
+	    }
+	    return - Math.log(ans);
+	};
+
+
+/***/ },
+/* 33 */
+/***/ function(module, exports) {
+
+	module.exports = function canberra(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += Math.abs(a[i] - b[i]) / (a[i] + b[i]);
+	    }
+	    return ans;
+	};
+
+
+/***/ },
+/* 34 */
+/***/ function(module, exports) {
+
+	module.exports = function chebyshev(a, b) {
+	    var ii = a.length,
+	        max = 0,
+	        aux = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        aux = Math.abs(a[i] - b[i]);
+	        if (max < aux) {
+	            max = aux;
+	        }
+	    }
+	    return max;
+	};
+
+
+/***/ },
+/* 35 */
+/***/ function(module, exports) {
+
+	module.exports = function clark(a, b) {
+	    var i = 0,
+	        ii = a.length,
+	        d = 0;
+	    for (; i < ii; i++) {
+	        d += Math.sqrt(((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i])));
+	    }
+	    return 2 * d;
+	};
+
+
+/***/ },
+/* 36 */
+/***/ function(module, exports) {
+
+	module.exports = function czekanowski(a, b) {
+	    var ii = a.length,
+	        up = 0,
+	        down = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        up += Math.min(a[i], b[i]);
+	        down += a[i] + b[i];
+	    }
+	    return 1 - (2 * up / down);
+	};
+
+
+/***/ },
+/* 37 */
+/***/ function(module, exports) {
+
+	module.exports = function dice(a, b) {
+	    var ii = a.length,
+	        p = 0,
+	        q1 = 0,
+	        q2 = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        p += a[i] * a[i];
+	        q1 += b[i] * b[i];
+	        q2 += (a[i] - b[i]) * (a[i] - b[i]);
+	    }
+	    return q2 / (p + q1);
+	};
+
+
+/***/ },
+/* 38 */
+/***/ function(module, exports) {
+
+	module.exports = function divergence(a, b) {
+	    var i = 0,
+	        ii = a.length,
+	        d = 0;
+	    for (; i < ii; i++) {
+	        d += ((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i]));
+	    }
+	    return 2 * d;
+	};
+
+
+/***/ },
+/* 39 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -8283,71 +8428,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 31 */
+/* 40 */
 /***/ function(module, exports) {
 
-	module.exports = function manhattan(a, b) {
-	    var i = 0,
-	        ii = a.length,
-	        d = 0;
-	    for (; i < ii; i++) {
-	        d += Math.abs(a[i] - b[i]);
-	    }
-	    return d;
-	};
-
-
-/***/ },
-/* 32 */
-/***/ function(module, exports) {
-
-	module.exports = function minkowski(a, b, p) {
-	    var i = 0,
-	        ii = a.length,
-	        d = 0;
-	    for (; i < ii; i++) {
-	        d += Math.pow(Math.abs(a[i] - b[i]),p);
-	    }
-	    return Math.pow(d,(1/p));
-	};
-
-
-/***/ },
-/* 33 */
-/***/ function(module, exports) {
-
-	module.exports = function chebyshev(a, b) {
+	module.exports = function fidelity(a, b) {
 	    var ii = a.length,
-	        max = 0,
-	        aux = 0;
+	        ans = 0;
 	    for (var i = 0; i < ii ; i++) {
-	        aux = Math.abs(a[i] - b[i]);
-	        if (max < aux) {
-	            max = aux;
-	        }
+	        ans += Math.sqrt(a[i] * b[i]);
 	    }
-	    return max;
+	    return ans;
 	};
 
 
 /***/ },
-/* 34 */
-/***/ function(module, exports) {
-
-	module.exports = function sorensen(a, b) {
-	    var ii = a.length,
-	        up = 0,
-	        down = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        up += Math.abs(a[i] - b[i]);
-	        down += a[i] + b[i];
-	    }
-	    return up / down;
-	};
-
-
-/***/ },
-/* 35 */
+/* 41 */
 /***/ function(module, exports) {
 
 	module.exports = function gower(a, b) {
@@ -8361,23 +8456,141 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 36 */
+/* 42 */
 /***/ function(module, exports) {
 
-	module.exports = function soergel(a, b) {
+	module.exports = function harmonicMean(a, b) {
 	    var ii = a.length,
-	        up = 0,
-	        down = 0;
+	        ans = 0;
 	    for (var i = 0; i < ii ; i++) {
-	        up += Math.abs(a[i] - b[i]);
-	        down += Math.max(a[i],b[i]);
+	        ans += (a[i] * b[i]) / (a[i] + b[i]);
 	    }
-	    return up / down;
+	    return 2 * ans;
 	};
 
 
 /***/ },
-/* 37 */
+/* 43 */
+/***/ function(module, exports) {
+
+	module.exports = function hellinger(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += Math.sqrt(a[i] * b[i]);
+	    }
+	    return 2 * Math.sqrt(1 - ans);
+	};
+
+
+/***/ },
+/* 44 */
+/***/ function(module, exports) {
+
+	module.exports = function innerProduct(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += a[i] * b[i];
+	    }
+	    return ans;
+	};
+
+
+/***/ },
+/* 45 */
+/***/ function(module, exports) {
+
+	module.exports = function intersection(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += Math.min(a[i], b[i]);
+	    }
+	    return 1 - ans;
+	};
+
+
+/***/ },
+/* 46 */
+/***/ function(module, exports) {
+
+	module.exports = function jaccard(a, b) {
+	    var ii = a.length,
+	        p1 = 0,
+	        p2 = 0,
+	        q1 = 0,
+	        q2 = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        p1 += a[i] * b[i];
+	        p2 += a[i] * a[i];
+	        q1 += b[i] * b[i];
+	        q2 += (a[i] - b[i]) * (a[i] - b[i]);
+	    }
+	    return q2 / (p2 + q1 - p1);
+	};
+
+
+/***/ },
+/* 47 */
+/***/ function(module, exports) {
+
+	module.exports = function jeffreys(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += (a[i] - b[i]) * Math.log(a[i] / b[i]);
+	    }
+	    return ans;
+	};
+
+
+/***/ },
+/* 48 */
+/***/ function(module, exports) {
+
+	module.exports = function jensenDifference(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += ((a[i] * Math.log(a[i]) + b[i] * Math.log(b[i])) / 2) - ((a[i] + b[i]) / 2) * Math.log((a[i] + b[i]) / 2);
+	    }
+	    return ans;
+	};
+
+
+/***/ },
+/* 49 */
+/***/ function(module, exports) {
+
+	module.exports = function jensenShannon(a, b) {
+	    var ii = a.length,
+	        p = 0,
+	        q = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        p += a[i] * Math.log(2 * a[i] / (a[i] + b[i]));
+	        q += b[i] * Math.log(2 * b[i] / (a[i] + b[i]));
+	    }
+	    return (p + q) / 2;
+	};
+
+
+/***/ },
+/* 50 */
+/***/ function(module, exports) {
+
+	module.exports = function kdivergence(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += a[i] * Math.log(2 * a[i] / (a[i] + b[i]));
+	    }
+	    return ans;
+	};
+
+
+/***/ },
+/* 51 */
 /***/ function(module, exports) {
 
 	module.exports = function kulczynski(a, b) {
@@ -8393,21 +8606,53 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 38 */
+/* 52 */
 /***/ function(module, exports) {
 
-	module.exports = function canberra(a, b) {
+	module.exports = function kullbackLeibler(a, b) {
 	    var ii = a.length,
 	        ans = 0;
 	    for (var i = 0; i < ii ; i++) {
-	        ans += Math.abs(a[i] - b[i]) / (a[i] + b[i]);
+	        ans += a[i] * Math.log(a[i] / b[i]);
 	    }
 	    return ans;
 	};
 
 
 /***/ },
-/* 39 */
+/* 53 */
+/***/ function(module, exports) {
+
+	module.exports = function kumarHassebrook(a, b) {
+	    var ii = a.length,
+	        p = 0,
+	        p2 = 0,
+	        q2 = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        p += a[i] * b[i];
+	        p2 += a[i] * a[i];
+	        q2 += b[i] * b[i];
+	    }
+	    return p / (p2 + q2 - p);
+	};
+
+
+/***/ },
+/* 54 */
+/***/ function(module, exports) {
+
+	module.exports = function kumarJohnson(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += Math.pow(a[i] * a[i] - b[i] * b[i],2) / (2 * Math.pow(a[i] * b[i],1.5));
+	    }
+	    return ans;
+	};
+
+
+/***/ },
+/* 55 */
 /***/ function(module, exports) {
 
 	module.exports = function lorentzian(a, b) {
@@ -8421,51 +8666,51 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 40 */
+/* 56 */
 /***/ function(module, exports) {
 
-	module.exports = function intersection(a, b) {
+	module.exports = function manhattan(a, b) {
+	    var i = 0,
+	        ii = a.length,
+	        d = 0;
+	    for (; i < ii; i++) {
+	        d += Math.abs(a[i] - b[i]);
+	    }
+	    return d;
+	};
+
+
+/***/ },
+/* 57 */
+/***/ function(module, exports) {
+
+	module.exports = function matusita(a, b) {
 	    var ii = a.length,
 	        ans = 0;
 	    for (var i = 0; i < ii ; i++) {
-	        ans += Math.min(a[i], b[i]);
+	        ans += Math.sqrt(a[i] * b[i]);
 	    }
-	    return 1 - ans;
+	    return Math.sqrt(2 - 2 * ans);
 	};
 
 
 /***/ },
-/* 41 */
+/* 58 */
 /***/ function(module, exports) {
 
-	module.exports = function waveHedges(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += 1 - (Math.min(a[i], b[i]) / Math.max(a[i], b[i]));
+	module.exports = function minkowski(a, b, p) {
+	    var i = 0,
+	        ii = a.length,
+	        d = 0;
+	    for (; i < ii; i++) {
+	        d += Math.pow(Math.abs(a[i] - b[i]),p);
 	    }
-	    return ans;
+	    return Math.pow(d,(1/p));
 	};
 
 
 /***/ },
-/* 42 */
-/***/ function(module, exports) {
-
-	module.exports = function czekanowski(a, b) {
-	    var ii = a.length,
-	        up = 0,
-	        down = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        up += Math.min(a[i], b[i]);
-	        down += a[i] + b[i];
-	    }
-	    return 1 - (2 * up / down);
-	};
-
-
-/***/ },
-/* 43 */
+/* 59 */
 /***/ function(module, exports) {
 
 	module.exports = function motyka(a, b) {
@@ -8481,7 +8726,52 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 44 */
+/* 60 */
+/***/ function(module, exports) {
+
+	module.exports = function pearson(a, b) {
+	    var i = 0,
+	        ii = a.length,
+	        d = 0;
+	    for (; i < ii; i++) {
+	        d += ((a[i] - b[i]) * (a[i] - b[i])) / a[i];
+	    }
+	    return d;
+	};
+
+
+/***/ },
+/* 61 */
+/***/ function(module, exports) {
+
+	module.exports = function pearson(a, b) {
+	    var i = 0,
+	        ii = a.length,
+	        d = 0;
+	    for (; i < ii; i++) {
+	        d += ((a[i] - b[i]) * (a[i] - b[i])) / b[i];
+	    }
+	    return d;
+	};
+
+
+/***/ },
+/* 62 */
+/***/ function(module, exports) {
+
+	module.exports = function probabilisticSymmetric(a, b) {
+	    var i = 0,
+	        ii = a.length,
+	        d = 0;
+	    for (; i < ii; i++) {
+	        d += ((a[i] - b[i]) * (a[i] - b[i])) / (a[i] + b[i]);
+	    }
+	    return 2 * d;
+	};
+
+
+/***/ },
+/* 63 */
 /***/ function(module, exports) {
 
 	module.exports = function ruzicka(a, b) {
@@ -8497,10 +8787,85 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 45 */
+/* 64 */
+/***/ function(module, exports) {
+
+	module.exports = function soergel(a, b) {
+	    var ii = a.length,
+	        up = 0,
+	        down = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        up += Math.abs(a[i] - b[i]);
+	        down += Math.max(a[i],b[i]);
+	    }
+	    return up / down;
+	};
+
+
+/***/ },
+/* 65 */
+/***/ function(module, exports) {
+
+	module.exports = function sorensen(a, b) {
+	    var ii = a.length,
+	        up = 0,
+	        down = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        up += Math.abs(a[i] - b[i]);
+	        down += a[i] + b[i];
+	    }
+	    return up / down;
+	};
+
+
+/***/ },
+/* 66 */
+/***/ function(module, exports) {
+
+	module.exports = function squared(a, b) {
+	    var i = 0,
+	        ii = a.length,
+	        d = 0;
+	    for (; i < ii; i++) {
+	        d += ((a[i] - b[i]) * (a[i] - b[i])) / (a[i] + b[i]);
+	    }
+	    return d;
+	};
+
+
+/***/ },
+/* 67 */
+/***/ function(module, exports) {
+
+	module.exports = function squaredChord(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += (Math.sqrt(a[i]) - Math.sqrt(b[i])) * (Math.sqrt(a[i]) - Math.sqrt(b[i]));
+	    }
+	    return ans;
+	};
+
+
+/***/ },
+/* 68 */
+/***/ function(module, exports) {
+
+	module.exports = function taneja(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += (a[i] + b[i]) / 2 * Math.log((a[i] + b[i]) / (2 * Math.sqrt(a[i] * b[i])));
+	    }
+	    return ans;
+	};
+
+
+/***/ },
+/* 69 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var tanimotoS = __webpack_require__(46);
+	var tanimotoS = __webpack_require__(70);
 
 	module.exports = function tanimoto(a, b, bitvector) {
 	    if (bitvector)
@@ -8521,7 +8886,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 46 */
+/* 70 */
 /***/ function(module, exports) {
 
 	module.exports = function tanimoto(a, b, bitvector) {
@@ -8552,311 +8917,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 47 */
-/***/ function(module, exports) {
-
-	module.exports = function innerProduct(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += a[i] * b[i];
-	    }
-	    return ans;
-	};
-
-
-/***/ },
-/* 48 */
-/***/ function(module, exports) {
-
-	module.exports = function harmonicMean(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += (a[i] * b[i]) / (a[i] + b[i]);
-	    }
-	    return 2 * ans;
-	};
-
-
-/***/ },
-/* 49 */
-/***/ function(module, exports) {
-
-	module.exports = function cosine(a, b) {
-	    var ii = a.length,
-	        p = 0,
-	        p2 = 0,
-	        q2 = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        p += a[i] * b[i];
-	        p2 += a[i] * a[i];
-	        q2 += b[i] * b[i];
-	    }
-	    return p / (Math.sqrt(p2) * Math.sqrt(q2));
-	};
-
-
-/***/ },
-/* 50 */
-/***/ function(module, exports) {
-
-	module.exports = function kumarHassebrook(a, b) {
-	    var ii = a.length,
-	        p = 0,
-	        p2 = 0,
-	        q2 = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        p += a[i] * b[i];
-	        p2 += a[i] * a[i];
-	        q2 += b[i] * b[i];
-	    }
-	    return p / (p2 + q2 - p);
-	};
-
-
-/***/ },
-/* 51 */
-/***/ function(module, exports) {
-
-	module.exports = function jaccard(a, b) {
-	    var ii = a.length,
-	        p1 = 0,
-	        p2 = 0,
-	        q1 = 0,
-	        q2 = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        p1 += a[i] * b[i];
-	        p2 += a[i] * a[i];
-	        q1 += b[i] * b[i];
-	        q2 += (a[i] - b[i]) * (a[i] - b[i]);
-	    }
-	    return q2 / (p2 + q1 - p1);
-	};
-
-
-/***/ },
-/* 52 */
-/***/ function(module, exports) {
-
-	module.exports = function dice(a, b) {
-	    var ii = a.length,
-	        p = 0,
-	        q1 = 0,
-	        q2 = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        p += a[i] * a[i];
-	        q1 += b[i] * b[i];
-	        q2 += (a[i] - b[i]) * (a[i] - b[i]);
-	    }
-	    return q2 / (p + q1);
-	};
-
-
-/***/ },
-/* 53 */
-/***/ function(module, exports) {
-
-	module.exports = function fidelity(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += Math.sqrt(a[i] * b[i]);
-	    }
-	    return ans;
-	};
-
-
-/***/ },
-/* 54 */
-/***/ function(module, exports) {
-
-	module.exports = function bhattacharyya(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += Math.sqrt(a[i] * b[i]);
-	    }
-	    return - Math.log(ans);
-	};
-
-
-/***/ },
-/* 55 */
-/***/ function(module, exports) {
-
-	module.exports = function hellinger(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += Math.sqrt(a[i] * b[i]);
-	    }
-	    return 2 * Math.sqrt(1 - ans);
-	};
-
-
-/***/ },
-/* 56 */
-/***/ function(module, exports) {
-
-	module.exports = function matusita(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += Math.sqrt(a[i] * b[i]);
-	    }
-	    return Math.sqrt(2 - 2 * ans);
-	};
-
-
-/***/ },
-/* 57 */
-/***/ function(module, exports) {
-
-	module.exports = function squaredChord(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += (Math.sqrt(a[i]) - Math.sqrt(b[i])) * (Math.sqrt(a[i]) - Math.sqrt(b[i]));
-	    }
-	    return ans;
-	};
-
-
-/***/ },
-/* 58 */
-/***/ function(module, exports) {
-
-	module.exports = function pearson(a, b) {
-	    var i = 0,
-	        ii = a.length,
-	        d = 0;
-	    for (; i < ii; i++) {
-	        d += ((a[i] - b[i]) * (a[i] - b[i])) / b[i];
-	    }
-	    return d;
-	};
-
-
-/***/ },
-/* 59 */
-/***/ function(module, exports) {
-
-	module.exports = function pearson(a, b) {
-	    var i = 0,
-	        ii = a.length,
-	        d = 0;
-	    for (; i < ii; i++) {
-	        d += ((a[i] - b[i]) * (a[i] - b[i])) / a[i];
-	    }
-	    return d;
-	};
-
-
-/***/ },
-/* 60 */
-/***/ function(module, exports) {
-
-	module.exports = function squared(a, b) {
-	    var i = 0,
-	        ii = a.length,
-	        d = 0;
-	    for (; i < ii; i++) {
-	        d += ((a[i] - b[i]) * (a[i] - b[i])) / (a[i] + b[i]);
-	    }
-	    return d;
-	};
-
-
-/***/ },
-/* 61 */
-/***/ function(module, exports) {
-
-	module.exports = function probabilisticSymmetric(a, b) {
-	    var i = 0,
-	        ii = a.length,
-	        d = 0;
-	    for (; i < ii; i++) {
-	        d += ((a[i] - b[i]) * (a[i] - b[i])) / (a[i] + b[i]);
-	    }
-	    return 2 * d;
-	};
-
-
-/***/ },
-/* 62 */
-/***/ function(module, exports) {
-
-	module.exports = function divergence(a, b) {
-	    var i = 0,
-	        ii = a.length,
-	        d = 0;
-	    for (; i < ii; i++) {
-	        d += ((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i]));
-	    }
-	    return 2 * d;
-	};
-
-
-/***/ },
-/* 63 */
-/***/ function(module, exports) {
-
-	module.exports = function clark(a, b) {
-	    var i = 0,
-	        ii = a.length,
-	        d = 0;
-	    for (; i < ii; i++) {
-	        d += Math.sqrt(((a[i] - b[i]) * (a[i] - b[i])) / ((a[i] + b[i]) * (a[i] + b[i])));
-	    }
-	    return 2 * d;
-	};
-
-
-/***/ },
-/* 64 */
-/***/ function(module, exports) {
-
-	module.exports = function kullbackLeibler(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += a[i] * Math.log(a[i] / b[i]);
-	    }
-	    return ans;
-	};
-
-
-/***/ },
-/* 65 */
-/***/ function(module, exports) {
-
-	module.exports = function jeffreys(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += (a[i] - b[i]) * Math.log(a[i] / b[i]);
-	    }
-	    return ans;
-	};
-
-
-/***/ },
-/* 66 */
-/***/ function(module, exports) {
-
-	module.exports = function kdivergence(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += a[i] * Math.log(2 * a[i] / (a[i] + b[i]));
-	    }
-	    return ans;
-	};
-
-
-/***/ },
-/* 67 */
+/* 71 */
 /***/ function(module, exports) {
 
 	module.exports = function topsoe(a, b) {
@@ -8866,68 +8927,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	        ans += a[i] * Math.log(2 * a[i] / (a[i] + b[i])) + b[i] * Math.log(2 * b[i] / (a[i] + b[i]));
 	    }
 	    return ans;
-	};
-
-
-/***/ },
-/* 68 */
-/***/ function(module, exports) {
-
-	module.exports = function jensenDifference(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += ((a[i] * Math.log(a[i]) + b[i] * Math.log(b[i])) / 2) - ((a[i] + b[i]) / 2) * Math.log((a[i] + b[i]) / 2);
-	    }
-	    return ans;
-	};
-
-
-/***/ },
-/* 69 */
-/***/ function(module, exports) {
-
-	module.exports = function taneja(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += (a[i] + b[i]) / 2 * Math.log((a[i] + b[i]) / (2 * Math.sqrt(a[i] * b[i])));
-	    }
-	    return ans;
-	};
-
-
-/***/ },
-/* 70 */
-/***/ function(module, exports) {
-
-	module.exports = function kumarJohnson(a, b) {
-	    var ii = a.length,
-	        ans = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        ans += Math.pow(a[i] * a[i] - b[i] * b[i],2) / (2 * Math.pow(a[i] * b[i],1.5));
-	    }
-	    return ans;
-	};
-
-
-/***/ },
-/* 71 */
-/***/ function(module, exports) {
-
-	module.exports = function avg(a, b) {
-	    var ii = a.length,
-	        max = 0,
-	        ans = 0,
-	        aux = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        aux = Math.abs(a[i] - b[i]);
-	        ans += aux;
-	        if (max < aux) {
-	            max = aux;
-	        }
-	    }
-	    return (max + ans) / 2;
 	};
 
 
@@ -9057,57 +9056,60 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 73 */
 /***/ function(module, exports) {
 
-	module.exports = function additiveSymmetric(a, b) {
-	    var i = 0,
-	        ii = a.length,
-	        d = 0;
-	    for (; i < ii; i++) {
-	        d += ((a[i] - b[i]) * (a[i] - b[i]) * (a[i] + b[i])) / (a[i] * b[i]);
+	module.exports = function waveHedges(a, b) {
+	    var ii = a.length,
+	        ans = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        ans += 1 - (Math.min(a[i], b[i]) / Math.max(a[i], b[i]));
 	    }
-	    return 2 * d;
+	    return ans;
 	};
 
 
 /***/ },
 /* 74 */
-/***/ function(module, exports) {
-
-	module.exports = function jensenShannon(a, b) {
-	    var ii = a.length,
-	        p = 0,
-	        q = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        p += a[i] * Math.log(2 * a[i] / (a[i] + b[i]));
-	        q += b[i] * Math.log(2 * b[i] / (a[i] + b[i]));
-	    }
-	    return (p + q) / 2;
-	};
-
-
-/***/ },
-/* 75 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	exports.motyka = __webpack_require__(76);
-	exports.squaredChord = __webpack_require__(77);
-	exports.dice = __webpack_require__(78);
+	exports.cosine = __webpack_require__(75);
+	exports.czekanowski = __webpack_require__(76);
+	exports.dice = __webpack_require__(77);
+	exports.intersection = __webpack_require__(78);
 	exports.jaccard = __webpack_require__(79);
-	exports.tanimoto = __webpack_require__(46);
 	exports.kulczynski = __webpack_require__(80);
-	exports.czekanowski = __webpack_require__(81);
-	exports.intersection = __webpack_require__(82);
+	exports.motyka = __webpack_require__(81);
+	exports.pearson = __webpack_require__(82);
+	exports.squaredChord = __webpack_require__(83);
+	exports.tanimoto = __webpack_require__(70);
+
+
+/***/ },
+/* 75 */
+/***/ function(module, exports) {
+
+	module.exports = function cosine(a, b) {
+	    var ii = a.length,
+	        p = 0,
+	        p2 = 0,
+	        q2 = 0;
+	    for (var i = 0; i < ii ; i++) {
+	        p += a[i] * b[i];
+	        p2 += a[i] * a[i];
+	        q2 += b[i] * b[i];
+	    }
+	    return p / (Math.sqrt(p2) * Math.sqrt(q2));
+	};
 
 
 /***/ },
 /* 76 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var motykaD = __webpack_require__(43);
+	var czekanowskiD = __webpack_require__(36);
 
-	module.exports = function motyka(a, b) {
-	    return 1 - motykaD(a,b);
+	module.exports = function czekanowski(a, b) {
+	    return 1 - czekanowskiD(a,b);
 	};
 
 
@@ -9115,18 +9117,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 77 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var squaredChordD = __webpack_require__(57);
-
-	module.exports = function squaredChord(a, b) {
-	    return 1 - squaredChordD(a, b);
-	};
-
-
-/***/ },
-/* 78 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var diceD = __webpack_require__(52);
+	var diceD = __webpack_require__(37);
 
 	module.exports = function dice(a, b) {
 	    return 1 - diceD(a,b);
@@ -9134,10 +9125,21 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
+/* 78 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var intersectionD = __webpack_require__(45);
+
+	module.exports = function intersection(a, b) {
+	    return 1 - intersectionD(a,b);
+	};
+
+
+/***/ },
 /* 79 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var jaccardD = __webpack_require__(51);
+	var jaccardD = __webpack_require__(46);
 
 	module.exports = function jaccard(a, b) {
 	    return 1 - jaccardD(a, b);
@@ -9148,7 +9150,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 80 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var kulczynskiD = __webpack_require__(37);
+	var kulczynskiD = __webpack_require__(51);
 
 	module.exports = function kulczynski(a, b) {
 	    return 1 / kulczynskiD(a, b);
@@ -9159,10 +9161,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 81 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var czekanowskiD = __webpack_require__(42);
+	var motykaD = __webpack_require__(59);
 
-	module.exports = function czekanowski(a, b) {
-	    return 1 - czekanowskiD(a,b);
+	module.exports = function motyka(a, b) {
+	    return 1 - motykaD(a,b);
 	};
 
 
@@ -9170,10 +9172,23 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 82 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var intersectionD = __webpack_require__(40);
+	'use strict';
 
-	module.exports = function intersection(a, b) {
-	    return 1 - intersectionD(a,b);
+	var stat=__webpack_require__(5).array;
+	var cosine=__webpack_require__(75);
+
+	module.exports = function pearson(a, b) {
+	    var avgA=stat.mean(a);
+	    var avgB=stat.mean(b);
+
+	    var newA=new Array(a.length);
+	    var newB=new Array(b.length);
+	    for (var i=0; i<newA.length; i++) {
+	        newA[i]=a[i]-avgA;
+	        newB[i]=b[i]-avgB;
+	    }
+
+	    return cosine(newA, newB);
 	};
 
 
@@ -9181,9 +9196,20 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
+	var squaredChordD = __webpack_require__(67);
+
+	module.exports = function squaredChord(a, b) {
+	    return 1 - squaredChordD(a, b);
+	};
+
+
+/***/ },
+/* 84 */
+/***/ function(module, exports, __webpack_require__) {
+
 	"use strict";
 
-	var numeric = __webpack_require__(84);
+	var numeric = __webpack_require__(85);
 
 	/**
 	 * Savitzky-Golay filter
@@ -9269,7 +9295,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SavitzkyGolay;
 
 /***/ },
-/* 84 */
+/* 85 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global) {"use strict";
@@ -13700,18 +13726,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 85 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(86);
-
-
-/***/ },
 /* 86 */
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = __webpack_require__(87);
+
+
+/***/ },
+/* 87 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
-	var Matrix = __webpack_require__(87);
+	var Matrix = __webpack_require__(88);
 	var Stat = __webpack_require__(5);
 	var SVD = Matrix.DC.SVD;
 
@@ -13850,17 +13876,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 87 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(88);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(89);
+	module.exports = __webpack_require__(89);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(90);
 
 
 /***/ },
-/* 88 */
+/* 89 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -15336,18 +15362,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 89 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(88);
+	var Matrix = __webpack_require__(89);
 
 	var SingularValueDecomposition = __webpack_require__(91);
 	var EigenvalueDecomposition = __webpack_require__(93);
-	var LuDecomposition = __webpack_require__(90);
-	var QrDecomposition = __webpack_require__(94);
-	var CholeskyDecomposition = __webpack_require__(95);
+	var LuDecomposition = __webpack_require__(94);
+	var QrDecomposition = __webpack_require__(95);
+	var CholeskyDecomposition = __webpack_require__(96);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -15382,187 +15408,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 90 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Matrix = __webpack_require__(88);
-
-	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
-	function LuDecomposition(matrix) {
-	    if (!(this instanceof LuDecomposition)) {
-	        return new LuDecomposition(matrix);
-	    }
-	    matrix = Matrix.checkMatrix(matrix);
-
-	    var lu = matrix.clone(),
-	        rows = lu.rows,
-	        columns = lu.columns,
-	        pivotVector = new Array(rows),
-	        pivotSign = 1,
-	        i, j, k, p, s, t, v,
-	        LUrowi, LUcolj, kmax;
-
-	    for (i = 0; i < rows; i++) {
-	        pivotVector[i] = i;
-	    }
-
-	    LUcolj = new Array(rows);
-
-	    for (j = 0; j < columns; j++) {
-
-	        for (i = 0; i < rows; i++) {
-	            LUcolj[i] = lu[i][j];
-	        }
-
-	        for (i = 0; i < rows; i++) {
-	            LUrowi = lu[i];
-	            kmax = Math.min(i, j);
-	            s = 0;
-	            for (k = 0; k < kmax; k++) {
-	                s += LUrowi[k] * LUcolj[k];
-	            }
-	            LUrowi[j] = LUcolj[i] -= s;
-	        }
-
-	        p = j;
-	        for (i = j + 1; i < rows; i++) {
-	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
-	                p = i;
-	            }
-	        }
-
-	        if (p !== j) {
-	            for (k = 0; k < columns; k++) {
-	                t = lu[p][k];
-	                lu[p][k] = lu[j][k];
-	                lu[j][k] = t;
-	            }
-
-	            v = pivotVector[p];
-	            pivotVector[p] = pivotVector[j];
-	            pivotVector[j] = v;
-
-	            pivotSign = -pivotSign;
-	        }
-
-	        if (j < rows && lu[j][j] !== 0) {
-	            for (i = j + 1; i < rows; i++) {
-	                lu[i][j] /= lu[j][j];
-	            }
-	        }
-	    }
-
-	    this.LU = lu;
-	    this.pivotVector = pivotVector;
-	    this.pivotSign = pivotSign;
-	}
-
-	LuDecomposition.prototype = {
-	    isSingular: function () {
-	        var data = this.LU,
-	            col = data.columns;
-	        for (var j = 0; j < col; j++) {
-	            if (data[j][j] === 0) {
-	                return true;
-	            }
-	        }
-	        return false;
-	    },
-	    get determinant() {
-	        var data = this.LU;
-	        if (!data.isSquare())
-	            throw new Error('Matrix must be square');
-	        var determinant = this.pivotSign, col = data.columns;
-	        for (var j = 0; j < col; j++)
-	            determinant *= data[j][j];
-	        return determinant;
-	    },
-	    get lowerTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i > j) {
-	                    X[i][j] = data[i][j];
-	                } else if (i === j) {
-	                    X[i][j] = 1;
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get upperTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i <= j) {
-	                    X[i][j] = data[i][j];
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get pivotPermutationVector() {
-	        return this.pivotVector.slice();
-	    },
-	    solve: function (value) {
-	        value = Matrix.checkMatrix(value);
-
-	        var lu = this.LU,
-	            rows = lu.rows;
-
-	        if (rows !== value.rows)
-	            throw new Error('Invalid matrix dimensions');
-	        if (this.isSingular())
-	            throw new Error('LU matrix is singular');
-
-	        var count = value.columns,
-	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
-	            columns = lu.columns,
-	            i, j, k;
-
-	        for (k = 0; k < columns; k++) {
-	            for (i = k + 1; i < columns; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        for (k = columns - 1; k >= 0; k--) {
-	            for (j = 0; j < count; j++) {
-	                X[k][j] /= lu[k][k];
-	            }
-	            for (i = 0; i < k; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        return X;
-	    }
-	};
-
-	module.exports = LuDecomposition;
-
-
-/***/ },
 /* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(88);
+	var Matrix = __webpack_require__(89);
 	var hypotenuse = __webpack_require__(92).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
@@ -16085,7 +15936,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(88);
+	var Matrix = __webpack_require__(89);
 	var hypotenuse = __webpack_require__(92).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
@@ -16857,7 +16708,182 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(88);
+	var Matrix = __webpack_require__(89);
+
+	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
+	function LuDecomposition(matrix) {
+	    if (!(this instanceof LuDecomposition)) {
+	        return new LuDecomposition(matrix);
+	    }
+	    matrix = Matrix.checkMatrix(matrix);
+
+	    var lu = matrix.clone(),
+	        rows = lu.rows,
+	        columns = lu.columns,
+	        pivotVector = new Array(rows),
+	        pivotSign = 1,
+	        i, j, k, p, s, t, v,
+	        LUrowi, LUcolj, kmax;
+
+	    for (i = 0; i < rows; i++) {
+	        pivotVector[i] = i;
+	    }
+
+	    LUcolj = new Array(rows);
+
+	    for (j = 0; j < columns; j++) {
+
+	        for (i = 0; i < rows; i++) {
+	            LUcolj[i] = lu[i][j];
+	        }
+
+	        for (i = 0; i < rows; i++) {
+	            LUrowi = lu[i];
+	            kmax = Math.min(i, j);
+	            s = 0;
+	            for (k = 0; k < kmax; k++) {
+	                s += LUrowi[k] * LUcolj[k];
+	            }
+	            LUrowi[j] = LUcolj[i] -= s;
+	        }
+
+	        p = j;
+	        for (i = j + 1; i < rows; i++) {
+	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
+	                p = i;
+	            }
+	        }
+
+	        if (p !== j) {
+	            for (k = 0; k < columns; k++) {
+	                t = lu[p][k];
+	                lu[p][k] = lu[j][k];
+	                lu[j][k] = t;
+	            }
+
+	            v = pivotVector[p];
+	            pivotVector[p] = pivotVector[j];
+	            pivotVector[j] = v;
+
+	            pivotSign = -pivotSign;
+	        }
+
+	        if (j < rows && lu[j][j] !== 0) {
+	            for (i = j + 1; i < rows; i++) {
+	                lu[i][j] /= lu[j][j];
+	            }
+	        }
+	    }
+
+	    this.LU = lu;
+	    this.pivotVector = pivotVector;
+	    this.pivotSign = pivotSign;
+	}
+
+	LuDecomposition.prototype = {
+	    isSingular: function () {
+	        var data = this.LU,
+	            col = data.columns;
+	        for (var j = 0; j < col; j++) {
+	            if (data[j][j] === 0) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    },
+	    get determinant() {
+	        var data = this.LU;
+	        if (!data.isSquare())
+	            throw new Error('Matrix must be square');
+	        var determinant = this.pivotSign, col = data.columns;
+	        for (var j = 0; j < col; j++)
+	            determinant *= data[j][j];
+	        return determinant;
+	    },
+	    get lowerTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i > j) {
+	                    X[i][j] = data[i][j];
+	                } else if (i === j) {
+	                    X[i][j] = 1;
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get upperTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i <= j) {
+	                    X[i][j] = data[i][j];
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get pivotPermutationVector() {
+	        return this.pivotVector.slice();
+	    },
+	    solve: function (value) {
+	        value = Matrix.checkMatrix(value);
+
+	        var lu = this.LU,
+	            rows = lu.rows;
+
+	        if (rows !== value.rows)
+	            throw new Error('Invalid matrix dimensions');
+	        if (this.isSingular())
+	            throw new Error('LU matrix is singular');
+
+	        var count = value.columns,
+	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
+	            columns = lu.columns,
+	            i, j, k;
+
+	        for (k = 0; k < columns; k++) {
+	            for (i = k + 1; i < columns; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        for (k = columns - 1; k >= 0; k--) {
+	            for (j = 0; j < count; j++) {
+	                X[k][j] /= lu[k][k];
+	            }
+	            for (i = 0; i < k; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        return X;
+	    }
+	};
+
+	module.exports = LuDecomposition;
+
+
+/***/ },
+/* 95 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Matrix = __webpack_require__(89);
 	var hypotenuse = __webpack_require__(92).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
@@ -17008,12 +17034,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 95 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(88);
+	var Matrix = __webpack_require__(89);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
@@ -17103,7 +17129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 96 */
+/* 97 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -17212,20 +17238,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 97 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = exports = __webpack_require__(98);
-	exports.kernel = __webpack_require__(99).kernel;
-
-
-/***/ },
 /* 98 */
 /***/ function(module, exports, __webpack_require__) {
 
+	module.exports = exports = __webpack_require__(99);
+	exports.kernel = __webpack_require__(100).kernel;
+
+
+/***/ },
+/* 99 */
+/***/ function(module, exports, __webpack_require__) {
+
 	'use strict';
-	var kernel = __webpack_require__(99).kernel;
-	var getKernel = __webpack_require__(99).getKernel;
+	var kernel = __webpack_require__(100).kernel;
+	var getKernel = __webpack_require__(100).getKernel;
 
 	/**
 	 * Parameters to implement function
@@ -17454,7 +17480,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SVM;
 
 /***/ },
-/* 99 */
+/* 100 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17533,22 +17559,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 100 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(101);
+	module.exports = __webpack_require__(102);
 
 /***/ },
-/* 101 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	module.exports = KNN;
 
-	var KDTree = __webpack_require__(102).kdTree;
+	var KDTree = __webpack_require__(103).kdTree;
 	var Distances = __webpack_require__(28);
 
 	/**
@@ -17681,7 +17707,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 102 */
+/* 103 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18147,19 +18173,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 103 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = exports = __webpack_require__(104).NaiveBayes;
-	exports.separateClasses = __webpack_require__(104).separateClasses;
+	module.exports = exports = __webpack_require__(105).NaiveBayes;
+	exports.separateClasses = __webpack_require__(105).separateClasses;
 
 /***/ },
-/* 104 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(105);
+	var Matrix = __webpack_require__(106);
 	var Stat = __webpack_require__(5);
 
 	module.exports.NaiveBayes = NaiveBayes;
@@ -18336,17 +18362,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 105 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(106);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(107);
+	module.exports = __webpack_require__(107);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(108);
 
 
 /***/ },
-/* 106 */
+/* 107 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19822,18 +19848,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 107 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(106);
+	var Matrix = __webpack_require__(107);
 
 	var SingularValueDecomposition = __webpack_require__(109);
 	var EigenvalueDecomposition = __webpack_require__(111);
-	var LuDecomposition = __webpack_require__(108);
-	var QrDecomposition = __webpack_require__(112);
-	var CholeskyDecomposition = __webpack_require__(113);
+	var LuDecomposition = __webpack_require__(112);
+	var QrDecomposition = __webpack_require__(113);
+	var CholeskyDecomposition = __webpack_require__(114);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -19868,187 +19894,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 108 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Matrix = __webpack_require__(106);
-
-	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
-	function LuDecomposition(matrix) {
-	    if (!(this instanceof LuDecomposition)) {
-	        return new LuDecomposition(matrix);
-	    }
-	    matrix = Matrix.checkMatrix(matrix);
-
-	    var lu = matrix.clone(),
-	        rows = lu.rows,
-	        columns = lu.columns,
-	        pivotVector = new Array(rows),
-	        pivotSign = 1,
-	        i, j, k, p, s, t, v,
-	        LUrowi, LUcolj, kmax;
-
-	    for (i = 0; i < rows; i++) {
-	        pivotVector[i] = i;
-	    }
-
-	    LUcolj = new Array(rows);
-
-	    for (j = 0; j < columns; j++) {
-
-	        for (i = 0; i < rows; i++) {
-	            LUcolj[i] = lu[i][j];
-	        }
-
-	        for (i = 0; i < rows; i++) {
-	            LUrowi = lu[i];
-	            kmax = Math.min(i, j);
-	            s = 0;
-	            for (k = 0; k < kmax; k++) {
-	                s += LUrowi[k] * LUcolj[k];
-	            }
-	            LUrowi[j] = LUcolj[i] -= s;
-	        }
-
-	        p = j;
-	        for (i = j + 1; i < rows; i++) {
-	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
-	                p = i;
-	            }
-	        }
-
-	        if (p !== j) {
-	            for (k = 0; k < columns; k++) {
-	                t = lu[p][k];
-	                lu[p][k] = lu[j][k];
-	                lu[j][k] = t;
-	            }
-
-	            v = pivotVector[p];
-	            pivotVector[p] = pivotVector[j];
-	            pivotVector[j] = v;
-
-	            pivotSign = -pivotSign;
-	        }
-
-	        if (j < rows && lu[j][j] !== 0) {
-	            for (i = j + 1; i < rows; i++) {
-	                lu[i][j] /= lu[j][j];
-	            }
-	        }
-	    }
-
-	    this.LU = lu;
-	    this.pivotVector = pivotVector;
-	    this.pivotSign = pivotSign;
-	}
-
-	LuDecomposition.prototype = {
-	    isSingular: function () {
-	        var data = this.LU,
-	            col = data.columns;
-	        for (var j = 0; j < col; j++) {
-	            if (data[j][j] === 0) {
-	                return true;
-	            }
-	        }
-	        return false;
-	    },
-	    get determinant() {
-	        var data = this.LU;
-	        if (!data.isSquare())
-	            throw new Error('Matrix must be square');
-	        var determinant = this.pivotSign, col = data.columns;
-	        for (var j = 0; j < col; j++)
-	            determinant *= data[j][j];
-	        return determinant;
-	    },
-	    get lowerTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i > j) {
-	                    X[i][j] = data[i][j];
-	                } else if (i === j) {
-	                    X[i][j] = 1;
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get upperTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i <= j) {
-	                    X[i][j] = data[i][j];
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get pivotPermutationVector() {
-	        return this.pivotVector.slice();
-	    },
-	    solve: function (value) {
-	        value = Matrix.checkMatrix(value);
-
-	        var lu = this.LU,
-	            rows = lu.rows;
-
-	        if (rows !== value.rows)
-	            throw new Error('Invalid matrix dimensions');
-	        if (this.isSingular())
-	            throw new Error('LU matrix is singular');
-
-	        var count = value.columns,
-	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
-	            columns = lu.columns,
-	            i, j, k;
-
-	        for (k = 0; k < columns; k++) {
-	            for (i = k + 1; i < columns; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        for (k = columns - 1; k >= 0; k--) {
-	            for (j = 0; j < count; j++) {
-	                X[k][j] /= lu[k][k];
-	            }
-	            for (i = 0; i < k; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        return X;
-	    }
-	};
-
-	module.exports = LuDecomposition;
-
-
-/***/ },
 /* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(106);
+	var Matrix = __webpack_require__(107);
 	var hypotenuse = __webpack_require__(110).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
@@ -20571,7 +20422,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(106);
+	var Matrix = __webpack_require__(107);
 	var hypotenuse = __webpack_require__(110).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
@@ -21343,7 +21194,182 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(106);
+	var Matrix = __webpack_require__(107);
+
+	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
+	function LuDecomposition(matrix) {
+	    if (!(this instanceof LuDecomposition)) {
+	        return new LuDecomposition(matrix);
+	    }
+	    matrix = Matrix.checkMatrix(matrix);
+
+	    var lu = matrix.clone(),
+	        rows = lu.rows,
+	        columns = lu.columns,
+	        pivotVector = new Array(rows),
+	        pivotSign = 1,
+	        i, j, k, p, s, t, v,
+	        LUrowi, LUcolj, kmax;
+
+	    for (i = 0; i < rows; i++) {
+	        pivotVector[i] = i;
+	    }
+
+	    LUcolj = new Array(rows);
+
+	    for (j = 0; j < columns; j++) {
+
+	        for (i = 0; i < rows; i++) {
+	            LUcolj[i] = lu[i][j];
+	        }
+
+	        for (i = 0; i < rows; i++) {
+	            LUrowi = lu[i];
+	            kmax = Math.min(i, j);
+	            s = 0;
+	            for (k = 0; k < kmax; k++) {
+	                s += LUrowi[k] * LUcolj[k];
+	            }
+	            LUrowi[j] = LUcolj[i] -= s;
+	        }
+
+	        p = j;
+	        for (i = j + 1; i < rows; i++) {
+	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
+	                p = i;
+	            }
+	        }
+
+	        if (p !== j) {
+	            for (k = 0; k < columns; k++) {
+	                t = lu[p][k];
+	                lu[p][k] = lu[j][k];
+	                lu[j][k] = t;
+	            }
+
+	            v = pivotVector[p];
+	            pivotVector[p] = pivotVector[j];
+	            pivotVector[j] = v;
+
+	            pivotSign = -pivotSign;
+	        }
+
+	        if (j < rows && lu[j][j] !== 0) {
+	            for (i = j + 1; i < rows; i++) {
+	                lu[i][j] /= lu[j][j];
+	            }
+	        }
+	    }
+
+	    this.LU = lu;
+	    this.pivotVector = pivotVector;
+	    this.pivotSign = pivotSign;
+	}
+
+	LuDecomposition.prototype = {
+	    isSingular: function () {
+	        var data = this.LU,
+	            col = data.columns;
+	        for (var j = 0; j < col; j++) {
+	            if (data[j][j] === 0) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    },
+	    get determinant() {
+	        var data = this.LU;
+	        if (!data.isSquare())
+	            throw new Error('Matrix must be square');
+	        var determinant = this.pivotSign, col = data.columns;
+	        for (var j = 0; j < col; j++)
+	            determinant *= data[j][j];
+	        return determinant;
+	    },
+	    get lowerTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i > j) {
+	                    X[i][j] = data[i][j];
+	                } else if (i === j) {
+	                    X[i][j] = 1;
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get upperTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i <= j) {
+	                    X[i][j] = data[i][j];
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get pivotPermutationVector() {
+	        return this.pivotVector.slice();
+	    },
+	    solve: function (value) {
+	        value = Matrix.checkMatrix(value);
+
+	        var lu = this.LU,
+	            rows = lu.rows;
+
+	        if (rows !== value.rows)
+	            throw new Error('Invalid matrix dimensions');
+	        if (this.isSingular())
+	            throw new Error('LU matrix is singular');
+
+	        var count = value.columns,
+	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
+	            columns = lu.columns,
+	            i, j, k;
+
+	        for (k = 0; k < columns; k++) {
+	            for (i = k + 1; i < columns; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        for (k = columns - 1; k >= 0; k--) {
+	            for (j = 0; j < count; j++) {
+	                X[k][j] /= lu[k][k];
+	            }
+	            for (i = 0; i < k; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        return X;
+	    }
+	};
+
+	module.exports = LuDecomposition;
+
+
+/***/ },
+/* 113 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Matrix = __webpack_require__(107);
 	var hypotenuse = __webpack_require__(110).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
@@ -21494,12 +21520,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 113 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(106);
+	var Matrix = __webpack_require__(107);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
@@ -21589,22 +21615,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 114 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = exports = __webpack_require__(115);
-	exports.Utils = __webpack_require__(125);
-	exports.OPLS = __webpack_require__(126);
+	module.exports = exports = __webpack_require__(116);
+	exports.Utils = __webpack_require__(126);
+	exports.OPLS = __webpack_require__(127);
 
 /***/ },
-/* 115 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	module.exports = PLS;
-	var Matrix = __webpack_require__(116);
-	var Utils = __webpack_require__(125);
+	var Matrix = __webpack_require__(117);
+	var Utils = __webpack_require__(126);
 
 	/**
 	 * Retrieves the sum at the column of the given matrix.
@@ -21855,17 +21881,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 116 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(117);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(118);
+	module.exports = __webpack_require__(118);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(119);
 
 
 /***/ },
-/* 117 */
+/* 118 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23341,18 +23367,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 118 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(117);
+	var Matrix = __webpack_require__(118);
 
 	var SingularValueDecomposition = __webpack_require__(120);
 	var EigenvalueDecomposition = __webpack_require__(122);
-	var LuDecomposition = __webpack_require__(119);
-	var QrDecomposition = __webpack_require__(123);
-	var CholeskyDecomposition = __webpack_require__(124);
+	var LuDecomposition = __webpack_require__(123);
+	var QrDecomposition = __webpack_require__(124);
+	var CholeskyDecomposition = __webpack_require__(125);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -23387,187 +23413,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 119 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Matrix = __webpack_require__(117);
-
-	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
-	function LuDecomposition(matrix) {
-	    if (!(this instanceof LuDecomposition)) {
-	        return new LuDecomposition(matrix);
-	    }
-	    matrix = Matrix.checkMatrix(matrix);
-
-	    var lu = matrix.clone(),
-	        rows = lu.rows,
-	        columns = lu.columns,
-	        pivotVector = new Array(rows),
-	        pivotSign = 1,
-	        i, j, k, p, s, t, v,
-	        LUrowi, LUcolj, kmax;
-
-	    for (i = 0; i < rows; i++) {
-	        pivotVector[i] = i;
-	    }
-
-	    LUcolj = new Array(rows);
-
-	    for (j = 0; j < columns; j++) {
-
-	        for (i = 0; i < rows; i++) {
-	            LUcolj[i] = lu[i][j];
-	        }
-
-	        for (i = 0; i < rows; i++) {
-	            LUrowi = lu[i];
-	            kmax = Math.min(i, j);
-	            s = 0;
-	            for (k = 0; k < kmax; k++) {
-	                s += LUrowi[k] * LUcolj[k];
-	            }
-	            LUrowi[j] = LUcolj[i] -= s;
-	        }
-
-	        p = j;
-	        for (i = j + 1; i < rows; i++) {
-	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
-	                p = i;
-	            }
-	        }
-
-	        if (p !== j) {
-	            for (k = 0; k < columns; k++) {
-	                t = lu[p][k];
-	                lu[p][k] = lu[j][k];
-	                lu[j][k] = t;
-	            }
-
-	            v = pivotVector[p];
-	            pivotVector[p] = pivotVector[j];
-	            pivotVector[j] = v;
-
-	            pivotSign = -pivotSign;
-	        }
-
-	        if (j < rows && lu[j][j] !== 0) {
-	            for (i = j + 1; i < rows; i++) {
-	                lu[i][j] /= lu[j][j];
-	            }
-	        }
-	    }
-
-	    this.LU = lu;
-	    this.pivotVector = pivotVector;
-	    this.pivotSign = pivotSign;
-	}
-
-	LuDecomposition.prototype = {
-	    isSingular: function () {
-	        var data = this.LU,
-	            col = data.columns;
-	        for (var j = 0; j < col; j++) {
-	            if (data[j][j] === 0) {
-	                return true;
-	            }
-	        }
-	        return false;
-	    },
-	    get determinant() {
-	        var data = this.LU;
-	        if (!data.isSquare())
-	            throw new Error('Matrix must be square');
-	        var determinant = this.pivotSign, col = data.columns;
-	        for (var j = 0; j < col; j++)
-	            determinant *= data[j][j];
-	        return determinant;
-	    },
-	    get lowerTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i > j) {
-	                    X[i][j] = data[i][j];
-	                } else if (i === j) {
-	                    X[i][j] = 1;
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get upperTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i <= j) {
-	                    X[i][j] = data[i][j];
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get pivotPermutationVector() {
-	        return this.pivotVector.slice();
-	    },
-	    solve: function (value) {
-	        value = Matrix.checkMatrix(value);
-
-	        var lu = this.LU,
-	            rows = lu.rows;
-
-	        if (rows !== value.rows)
-	            throw new Error('Invalid matrix dimensions');
-	        if (this.isSingular())
-	            throw new Error('LU matrix is singular');
-
-	        var count = value.columns,
-	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
-	            columns = lu.columns,
-	            i, j, k;
-
-	        for (k = 0; k < columns; k++) {
-	            for (i = k + 1; i < columns; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        for (k = columns - 1; k >= 0; k--) {
-	            for (j = 0; j < count; j++) {
-	                X[k][j] /= lu[k][k];
-	            }
-	            for (i = 0; i < k; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        return X;
-	    }
-	};
-
-	module.exports = LuDecomposition;
-
-
-/***/ },
 /* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(117);
+	var Matrix = __webpack_require__(118);
 	var hypotenuse = __webpack_require__(121).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
@@ -24090,7 +23941,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(117);
+	var Matrix = __webpack_require__(118);
 	var hypotenuse = __webpack_require__(121).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
@@ -24862,7 +24713,182 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(117);
+	var Matrix = __webpack_require__(118);
+
+	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
+	function LuDecomposition(matrix) {
+	    if (!(this instanceof LuDecomposition)) {
+	        return new LuDecomposition(matrix);
+	    }
+	    matrix = Matrix.checkMatrix(matrix);
+
+	    var lu = matrix.clone(),
+	        rows = lu.rows,
+	        columns = lu.columns,
+	        pivotVector = new Array(rows),
+	        pivotSign = 1,
+	        i, j, k, p, s, t, v,
+	        LUrowi, LUcolj, kmax;
+
+	    for (i = 0; i < rows; i++) {
+	        pivotVector[i] = i;
+	    }
+
+	    LUcolj = new Array(rows);
+
+	    for (j = 0; j < columns; j++) {
+
+	        for (i = 0; i < rows; i++) {
+	            LUcolj[i] = lu[i][j];
+	        }
+
+	        for (i = 0; i < rows; i++) {
+	            LUrowi = lu[i];
+	            kmax = Math.min(i, j);
+	            s = 0;
+	            for (k = 0; k < kmax; k++) {
+	                s += LUrowi[k] * LUcolj[k];
+	            }
+	            LUrowi[j] = LUcolj[i] -= s;
+	        }
+
+	        p = j;
+	        for (i = j + 1; i < rows; i++) {
+	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
+	                p = i;
+	            }
+	        }
+
+	        if (p !== j) {
+	            for (k = 0; k < columns; k++) {
+	                t = lu[p][k];
+	                lu[p][k] = lu[j][k];
+	                lu[j][k] = t;
+	            }
+
+	            v = pivotVector[p];
+	            pivotVector[p] = pivotVector[j];
+	            pivotVector[j] = v;
+
+	            pivotSign = -pivotSign;
+	        }
+
+	        if (j < rows && lu[j][j] !== 0) {
+	            for (i = j + 1; i < rows; i++) {
+	                lu[i][j] /= lu[j][j];
+	            }
+	        }
+	    }
+
+	    this.LU = lu;
+	    this.pivotVector = pivotVector;
+	    this.pivotSign = pivotSign;
+	}
+
+	LuDecomposition.prototype = {
+	    isSingular: function () {
+	        var data = this.LU,
+	            col = data.columns;
+	        for (var j = 0; j < col; j++) {
+	            if (data[j][j] === 0) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    },
+	    get determinant() {
+	        var data = this.LU;
+	        if (!data.isSquare())
+	            throw new Error('Matrix must be square');
+	        var determinant = this.pivotSign, col = data.columns;
+	        for (var j = 0; j < col; j++)
+	            determinant *= data[j][j];
+	        return determinant;
+	    },
+	    get lowerTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i > j) {
+	                    X[i][j] = data[i][j];
+	                } else if (i === j) {
+	                    X[i][j] = 1;
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get upperTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i <= j) {
+	                    X[i][j] = data[i][j];
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get pivotPermutationVector() {
+	        return this.pivotVector.slice();
+	    },
+	    solve: function (value) {
+	        value = Matrix.checkMatrix(value);
+
+	        var lu = this.LU,
+	            rows = lu.rows;
+
+	        if (rows !== value.rows)
+	            throw new Error('Invalid matrix dimensions');
+	        if (this.isSingular())
+	            throw new Error('LU matrix is singular');
+
+	        var count = value.columns,
+	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
+	            columns = lu.columns,
+	            i, j, k;
+
+	        for (k = 0; k < columns; k++) {
+	            for (i = k + 1; i < columns; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        for (k = columns - 1; k >= 0; k--) {
+	            for (j = 0; j < count; j++) {
+	                X[k][j] /= lu[k][k];
+	            }
+	            for (i = 0; i < k; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        return X;
+	    }
+	};
+
+	module.exports = LuDecomposition;
+
+
+/***/ },
+/* 124 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Matrix = __webpack_require__(118);
 	var hypotenuse = __webpack_require__(121).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
@@ -25013,12 +25039,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 124 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(117);
+	var Matrix = __webpack_require__(118);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
@@ -25108,12 +25134,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 125 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(116);
+	var Matrix = __webpack_require__(117);
 	var Stat = __webpack_require__(5);
 
 	/**
@@ -25162,13 +25188,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 126 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(116);
-	var Utils = __webpack_require__(125);
+	var Matrix = __webpack_require__(117);
+	var Utils = __webpack_require__(126);
 
 	module.exports = OPLS;
 
@@ -25247,13 +25273,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 127 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(128);
+	module.exports = __webpack_require__(129);
 
 /***/ },
-/* 128 */
+/* 129 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25445,24 +25471,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 129 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports.agnes = __webpack_require__(130);
-	exports.diana = __webpack_require__(138);
+	exports.agnes = __webpack_require__(131);
+	exports.diana = __webpack_require__(139);
 	//exports.birch = require('./birch');
 	//exports.cure = require('./cure');
 	//exports.chameleon = require('./chameleon');
 
 /***/ },
-/* 130 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var euclidean = __webpack_require__(131);
-	var ClusterLeaf = __webpack_require__(132);
-	var Cluster = __webpack_require__(133);
+	var euclidean = __webpack_require__(132);
+	var ClusterLeaf = __webpack_require__(133);
+	var Cluster = __webpack_require__(134);
 
 	/**
 	 * @param cluster1
@@ -25694,7 +25720,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = agnes;
 
 /***/ },
-/* 131 */
+/* 132 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25716,13 +25742,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 132 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Cluster = __webpack_require__(133);
-	var util = __webpack_require__(134);
+	var Cluster = __webpack_require__(134);
+	var util = __webpack_require__(135);
 
 	function ClusterLeaf (index) {
 	    Cluster.call(this);
@@ -25737,7 +25763,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 133 */
+/* 134 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25808,7 +25834,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 134 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -26336,7 +26362,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(136);
+	exports.isBuffer = __webpack_require__(137);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -26380,7 +26406,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(137);
+	exports.inherits = __webpack_require__(138);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -26398,10 +26424,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return Object.prototype.hasOwnProperty.call(obj, prop);
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(135)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(136)))
 
 /***/ },
-/* 135 */
+/* 136 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -26497,7 +26523,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 136 */
+/* 137 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -26508,7 +26534,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 137 */
+/* 138 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -26537,14 +26563,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 138 */
+/* 139 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var euclidean = __webpack_require__(131);
-	var ClusterLeaf = __webpack_require__(132);
-	var Cluster = __webpack_require__(133);
+	var euclidean = __webpack_require__(132);
+	var ClusterLeaf = __webpack_require__(133);
+	var Cluster = __webpack_require__(134);
 
 	/**
 	 * @param {Array <Array <number>>} cluster1
@@ -26833,13 +26859,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = diana;
 
 /***/ },
-/* 139 */
+/* 140 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var NodeSquare = __webpack_require__(140),
-	    NodeHexagonal = __webpack_require__(141);
+	var NodeSquare = __webpack_require__(141),
+	    NodeHexagonal = __webpack_require__(142);
 
 	var defaultOptions = {
 	    fields: 3,
@@ -27259,7 +27285,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SOM;
 
 /***/ },
-/* 140 */
+/* 141 */
 /***/ function(module, exports) {
 
 	function NodeSquare(x, y, weights, som) {
@@ -27370,10 +27396,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = NodeSquare;
 
 /***/ },
-/* 141 */
+/* 142 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var NodeSquare = __webpack_require__(140);
+	var NodeSquare = __webpack_require__(141);
 
 	function NodeHexagonal(x, y, weights, som) {
 
@@ -27405,19 +27431,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = NodeHexagonal;
 
 /***/ },
-/* 142 */
+/* 143 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(143);
+	module.exports = __webpack_require__(144);
 
 /***/ },
-/* 143 */
+/* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var Layer = __webpack_require__(144);
-	var Matrix = __webpack_require__(145);
+	var Layer = __webpack_require__(145);
+	var Matrix = __webpack_require__(146);
 
 	module.exports = FeedforwardNeuralNetwork;
 
@@ -27594,12 +27620,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 144 */
+/* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var Matrix = __webpack_require__(145);
+	var Matrix = __webpack_require__(146);
 
 	module.exports = Layer;
 
@@ -27712,17 +27738,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 145 */
+/* 146 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(146);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(147);
+	module.exports = __webpack_require__(147);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(148);
 
 
 /***/ },
-/* 146 */
+/* 147 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29198,18 +29224,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 147 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(146);
+	var Matrix = __webpack_require__(147);
 
 	var SingularValueDecomposition = __webpack_require__(149);
 	var EigenvalueDecomposition = __webpack_require__(151);
-	var LuDecomposition = __webpack_require__(148);
-	var QrDecomposition = __webpack_require__(152);
-	var CholeskyDecomposition = __webpack_require__(153);
+	var LuDecomposition = __webpack_require__(152);
+	var QrDecomposition = __webpack_require__(153);
+	var CholeskyDecomposition = __webpack_require__(154);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -29244,187 +29270,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 148 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var Matrix = __webpack_require__(146);
-
-	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
-	function LuDecomposition(matrix) {
-	    if (!(this instanceof LuDecomposition)) {
-	        return new LuDecomposition(matrix);
-	    }
-	    matrix = Matrix.checkMatrix(matrix);
-
-	    var lu = matrix.clone(),
-	        rows = lu.rows,
-	        columns = lu.columns,
-	        pivotVector = new Array(rows),
-	        pivotSign = 1,
-	        i, j, k, p, s, t, v,
-	        LUrowi, LUcolj, kmax;
-
-	    for (i = 0; i < rows; i++) {
-	        pivotVector[i] = i;
-	    }
-
-	    LUcolj = new Array(rows);
-
-	    for (j = 0; j < columns; j++) {
-
-	        for (i = 0; i < rows; i++) {
-	            LUcolj[i] = lu[i][j];
-	        }
-
-	        for (i = 0; i < rows; i++) {
-	            LUrowi = lu[i];
-	            kmax = Math.min(i, j);
-	            s = 0;
-	            for (k = 0; k < kmax; k++) {
-	                s += LUrowi[k] * LUcolj[k];
-	            }
-	            LUrowi[j] = LUcolj[i] -= s;
-	        }
-
-	        p = j;
-	        for (i = j + 1; i < rows; i++) {
-	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
-	                p = i;
-	            }
-	        }
-
-	        if (p !== j) {
-	            for (k = 0; k < columns; k++) {
-	                t = lu[p][k];
-	                lu[p][k] = lu[j][k];
-	                lu[j][k] = t;
-	            }
-
-	            v = pivotVector[p];
-	            pivotVector[p] = pivotVector[j];
-	            pivotVector[j] = v;
-
-	            pivotSign = -pivotSign;
-	        }
-
-	        if (j < rows && lu[j][j] !== 0) {
-	            for (i = j + 1; i < rows; i++) {
-	                lu[i][j] /= lu[j][j];
-	            }
-	        }
-	    }
-
-	    this.LU = lu;
-	    this.pivotVector = pivotVector;
-	    this.pivotSign = pivotSign;
-	}
-
-	LuDecomposition.prototype = {
-	    isSingular: function () {
-	        var data = this.LU,
-	            col = data.columns;
-	        for (var j = 0; j < col; j++) {
-	            if (data[j][j] === 0) {
-	                return true;
-	            }
-	        }
-	        return false;
-	    },
-	    get determinant() {
-	        var data = this.LU;
-	        if (!data.isSquare())
-	            throw new Error('Matrix must be square');
-	        var determinant = this.pivotSign, col = data.columns;
-	        for (var j = 0; j < col; j++)
-	            determinant *= data[j][j];
-	        return determinant;
-	    },
-	    get lowerTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i > j) {
-	                    X[i][j] = data[i][j];
-	                } else if (i === j) {
-	                    X[i][j] = 1;
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get upperTriangularFactor() {
-	        var data = this.LU,
-	            rows = data.rows,
-	            columns = data.columns,
-	            X = new Matrix(rows, columns);
-	        for (var i = 0; i < rows; i++) {
-	            for (var j = 0; j < columns; j++) {
-	                if (i <= j) {
-	                    X[i][j] = data[i][j];
-	                } else {
-	                    X[i][j] = 0;
-	                }
-	            }
-	        }
-	        return X;
-	    },
-	    get pivotPermutationVector() {
-	        return this.pivotVector.slice();
-	    },
-	    solve: function (value) {
-	        value = Matrix.checkMatrix(value);
-
-	        var lu = this.LU,
-	            rows = lu.rows;
-
-	        if (rows !== value.rows)
-	            throw new Error('Invalid matrix dimensions');
-	        if (this.isSingular())
-	            throw new Error('LU matrix is singular');
-
-	        var count = value.columns,
-	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
-	            columns = lu.columns,
-	            i, j, k;
-
-	        for (k = 0; k < columns; k++) {
-	            for (i = k + 1; i < columns; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        for (k = columns - 1; k >= 0; k--) {
-	            for (j = 0; j < count; j++) {
-	                X[k][j] /= lu[k][k];
-	            }
-	            for (i = 0; i < k; i++) {
-	                for (j = 0; j < count; j++) {
-	                    X[i][j] -= X[k][j] * lu[i][k];
-	                }
-	            }
-	        }
-	        return X;
-	    }
-	};
-
-	module.exports = LuDecomposition;
-
-
-/***/ },
 /* 149 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(146);
+	var Matrix = __webpack_require__(147);
 	var hypotenuse = __webpack_require__(150).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
@@ -29947,7 +29798,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(146);
+	var Matrix = __webpack_require__(147);
 	var hypotenuse = __webpack_require__(150).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
@@ -30719,7 +30570,182 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(146);
+	var Matrix = __webpack_require__(147);
+
+	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
+	function LuDecomposition(matrix) {
+	    if (!(this instanceof LuDecomposition)) {
+	        return new LuDecomposition(matrix);
+	    }
+	    matrix = Matrix.checkMatrix(matrix);
+
+	    var lu = matrix.clone(),
+	        rows = lu.rows,
+	        columns = lu.columns,
+	        pivotVector = new Array(rows),
+	        pivotSign = 1,
+	        i, j, k, p, s, t, v,
+	        LUrowi, LUcolj, kmax;
+
+	    for (i = 0; i < rows; i++) {
+	        pivotVector[i] = i;
+	    }
+
+	    LUcolj = new Array(rows);
+
+	    for (j = 0; j < columns; j++) {
+
+	        for (i = 0; i < rows; i++) {
+	            LUcolj[i] = lu[i][j];
+	        }
+
+	        for (i = 0; i < rows; i++) {
+	            LUrowi = lu[i];
+	            kmax = Math.min(i, j);
+	            s = 0;
+	            for (k = 0; k < kmax; k++) {
+	                s += LUrowi[k] * LUcolj[k];
+	            }
+	            LUrowi[j] = LUcolj[i] -= s;
+	        }
+
+	        p = j;
+	        for (i = j + 1; i < rows; i++) {
+	            if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
+	                p = i;
+	            }
+	        }
+
+	        if (p !== j) {
+	            for (k = 0; k < columns; k++) {
+	                t = lu[p][k];
+	                lu[p][k] = lu[j][k];
+	                lu[j][k] = t;
+	            }
+
+	            v = pivotVector[p];
+	            pivotVector[p] = pivotVector[j];
+	            pivotVector[j] = v;
+
+	            pivotSign = -pivotSign;
+	        }
+
+	        if (j < rows && lu[j][j] !== 0) {
+	            for (i = j + 1; i < rows; i++) {
+	                lu[i][j] /= lu[j][j];
+	            }
+	        }
+	    }
+
+	    this.LU = lu;
+	    this.pivotVector = pivotVector;
+	    this.pivotSign = pivotSign;
+	}
+
+	LuDecomposition.prototype = {
+	    isSingular: function () {
+	        var data = this.LU,
+	            col = data.columns;
+	        for (var j = 0; j < col; j++) {
+	            if (data[j][j] === 0) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    },
+	    get determinant() {
+	        var data = this.LU;
+	        if (!data.isSquare())
+	            throw new Error('Matrix must be square');
+	        var determinant = this.pivotSign, col = data.columns;
+	        for (var j = 0; j < col; j++)
+	            determinant *= data[j][j];
+	        return determinant;
+	    },
+	    get lowerTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i > j) {
+	                    X[i][j] = data[i][j];
+	                } else if (i === j) {
+	                    X[i][j] = 1;
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get upperTriangularFactor() {
+	        var data = this.LU,
+	            rows = data.rows,
+	            columns = data.columns,
+	            X = new Matrix(rows, columns);
+	        for (var i = 0; i < rows; i++) {
+	            for (var j = 0; j < columns; j++) {
+	                if (i <= j) {
+	                    X[i][j] = data[i][j];
+	                } else {
+	                    X[i][j] = 0;
+	                }
+	            }
+	        }
+	        return X;
+	    },
+	    get pivotPermutationVector() {
+	        return this.pivotVector.slice();
+	    },
+	    solve: function (value) {
+	        value = Matrix.checkMatrix(value);
+
+	        var lu = this.LU,
+	            rows = lu.rows;
+
+	        if (rows !== value.rows)
+	            throw new Error('Invalid matrix dimensions');
+	        if (this.isSingular())
+	            throw new Error('LU matrix is singular');
+
+	        var count = value.columns,
+	            X = value.subMatrixRow(this.pivotVector, 0, count - 1),
+	            columns = lu.columns,
+	            i, j, k;
+
+	        for (k = 0; k < columns; k++) {
+	            for (i = k + 1; i < columns; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        for (k = columns - 1; k >= 0; k--) {
+	            for (j = 0; j < count; j++) {
+	                X[k][j] /= lu[k][k];
+	            }
+	            for (i = 0; i < k; i++) {
+	                for (j = 0; j < count; j++) {
+	                    X[i][j] -= X[k][j] * lu[i][k];
+	                }
+	            }
+	        }
+	        return X;
+	    }
+	};
+
+	module.exports = LuDecomposition;
+
+
+/***/ },
+/* 153 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var Matrix = __webpack_require__(147);
 	var hypotenuse = __webpack_require__(150).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
@@ -30870,12 +30896,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 153 */
+/* 154 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(146);
+	var Matrix = __webpack_require__(147);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
