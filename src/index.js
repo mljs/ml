@@ -8,7 +8,9 @@ exports.Matrix = require('ml-matrix');
 
 var Math = exports.Math = {};
 
-Math.Distance = require('ml-distance');
+var distance = require('ml-distance')
+Math.Distance = distance.distance;
+Math.Similarity = distance.similarity;
 Math.SG = require('ml-savitzky-golay');
 
 
