@@ -1,3 +1,13 @@
+0.6.0 / 2015-08-20
+==================
+
+* Breaking change: Math.Distance.distance moved to Math.Distance and Math.Distance.similarity moved to Math.Similarity
+
+0.5.1 / 2015-08-20
+==================
+
+* Updated dependencies
+
 0.4.1 / 2015-08-05
 ==================
 
