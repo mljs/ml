@@ -578,7 +578,8 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
-	
+	'use strict';
+
 	exports.array = __webpack_require__(6);
 	exports.matrix = __webpack_require__(7);
 
@@ -588,28 +589,61 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports) {
 
 	'use strict';
-	// https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
-	function max(values) {
-	    var max = -Infinity, l = values.length;
+	function compareNumbers(a, b) {
+	    return a - b;
+	}
+
+	/**
+	 * Computes the sum of the given values
+	 * @param {Array} values
+	 * @returns {number}
+	 */
+	exports.sum = function sum(values) {
+	    var sum = 0;
+	    for (var i = 0; i < values.length; i++) {
+	        sum += values[i];
+	    }
+	    return sum;
+	};
+
+	/**
+	 * Computes the maximum of the given values
+	 * @param {Array} values
+	 * @returns {number}
+	 */
+	exports.max = function max(values) {
+	    var max = -Infinity;
+	    var l = values.length;
 	    for (var i = 0; i < l; i++) {
 	        if (values[i] > max) max = values[i];
 	    }
 	    return max;
-	}
+	};
 
-	function min(values) {
-	    var min = Infinity, l = values.length;
+	/**
+	 * Computes the minimum of the given values
+	 * @param {Array} values
+	 * @returns {number}
+	 */
+	exports.min = function min(values) {
+	    var min = Infinity;
+	    var l = values.length;
 	    for (var i = 0; i < l; i++) {
 	        if (values[i] < min) min = values[i];
 	    }
 	    return min;
-	}
+	};
 
-	function minMax(values) {
-	    var min = Infinity,
-	        max = -Infinity,
-	        l = values.length;
+	/**
+	 * Computes the min and max of the given values
+	 * @param {Array} values
+	 * @returns {{min: number, max: number}}
+	 */
+	exports.minMax = function minMax(values) {
+	    var min = Infinity;
+	    var max = -Infinity;
+	    var l = values.length;
 	    for (var i = 0; i < l; i++) {
 	        if (values[i] < min) min = values[i];
 	        if (values[i] > max) max = values[i];
@@ -618,128 +652,215 @@ return /******/ (function(modules) { // webpackBootstrap
 	        min: min,
 	        max: max
 	    };
-	}
+	};
 
-	function mean(values) {
-	    var sum = 0, l = values.length;
-	    for (var i = 0; i < l; i++)
+	/**
+	 * Computes the arithmetic mean of the given values
+	 * @param {Array} values
+	 * @returns {number}
+	 */
+	exports.arithmeticMean = function arithmeticMean(values) {
+	    var sum = 0;
+	    var l = values.length;
+	    for (var i = 0; i < l; i++) {
 	        sum += values[i];
+	    }
 	    return sum / l;
-	}
+	};
 
-	function geometricMean(values) {
-	    var sum = 0, l = values.length;
-	    for (var i = 0; i < l; i++)
-	        sum *= values[i];
-	    return Math.pow(sum, 1 / l);
-	}
+	/**
+	 * {@link arithmeticMean}
+	 */
+	exports.mean = exports.arithmeticMean;
 
-	function logGeometricMean(values) {
-	    var lnsum = 0, l = values.length;
-	    for (var i = 0; i < l; i++)
+	/**
+	 * Computes the geometric mean of the given values
+	 * @param {Array} values
+	 * @returns {number}
+	 */
+	exports.geometricMean = function geometricMean(values) {
+	    var mul = 1;
+	    var l = values.length;
+	    for (var i = 0; i < l; i++) {
+	        mul *= values[i];
+	    }
+	    return Math.pow(mul, 1 / l);
+	};
+
+	/**
+	 * Computes the mean of the log of the given values
+	 * If the return value is exponentiated, it gives the same result as the
+	 * geometric mean.
+	 * @param {Array} values
+	 * @returns {number}
+	 */
+	exports.logMean = function logMean(values) {
+	    var lnsum = 0;
+	    var l = values.length;
+	    for (var i = 0; i < l; i++) {
 	        lnsum += Math.log(values[i]);
+	    }
 	    return lnsum / l;
-	}
+	};
 
-	function grandMean(means, samples) {
-	    var sum = 0, n = 0, l = means.length;
+	/**
+	 * Computes the weighted grand mean for a list of means and sample sizes
+	 * @param {Array} means - Mean values for each set of samples
+	 * @param {Array} samples - Number of original values for each set of samples
+	 * @returns {number}
+	 */
+	exports.grandMean = function grandMean(means, samples) {
+	    var sum = 0;
+	    var n = 0;
+	    var l = means.length;
 	    for (var i = 0; i < l; i++) {
 	        sum += samples[i] * means[i];
 	        n += samples[i];
 	    }
 	    return sum / n;
-	}
+	};
 
-	function truncatedMean(values, percent, inPlace) {
-	    if (typeof(inPlace) === 'undefined') inPlace = false;
-
-	    values = inPlace ? values : values.slice();
-	    values.sort();
-
+	/**
+	 * Computes the truncated mean of the given values using a given percentage
+	 * @param {Array} values
+	 * @param {number} percent - The percentage of values to keep (range: [0,1])
+	 * @param {boolean} [alreadySorted=false]
+	 * @returns {number}
+	 */
+	exports.truncatedMean = function truncatedMean(values, percent, alreadySorted) {
+	    if (alreadySorted === undefined) alreadySorted = false;
+	    if (!alreadySorted) {
+	        values = values.slice().sort(compareNumbers);
+	    }
 	    var l = values.length;
 	    var k = Math.floor(l * percent);
-
 	    var sum = 0;
-	    for (var i = k; i < l - k; i++)
+	    for (var i = k; i < (l - k); i++) {
 	        sum += values[i];
-
+	    }
 	    return sum / (l - 2 * k);
-	}
+	};
 
-	function contraHarmonicMean(values, order) {
-	    if (typeof(order) === 'undefined') order = 1;
-	    var r1 = 0, r2 = 0, l = values.length;
+	/**
+	 * Computes the harmonic mean of the given values
+	 * @param {Array} values
+	 * @returns {number}
+	 */
+	exports.harmonicMean = function harmonicMean(values) {
+	    var sum = 0;
+	    var l = values.length;
 	    for (var i = 0; i < l; i++) {
-	        r1 += Math.pow(values[i], order + 1);
-	        r2 += Math.pow(values[i], order);
+	        if (values[i] === 0) {
+	            throw new RangeError('value at index ' + i + 'is zero');
+	        }
+	        sum += 1 / values[i];
+	    }
+	    return l / sum;
+	};
+
+	/**
+	 * Computes the contraharmonic mean of the given values
+	 * @param {Array} values
+	 * @returns {number}
+	 */
+	exports.contraHarmonicMean = function contraHarmonicMean(values) {
+	    var r1 = 0;
+	    var r2 = 0;
+	    var l = values.length;
+	    for (var i = 0; i < l; i++) {
+	        r1 += values[i] * values[i];
+	        r2 += values[i];
+	    }
+	    if (r2 < 0) {
+	        throw new RangeError('sum of values is negative');
 	    }
 	    return r1 / r2;
-	}
+	};
 
-	function standardDeviation(values, unbiased) {
-	    return Math.sqrt(variance(values, unbiased));
-	}
-
-	function standardError(values) {
-	    return standardDeviation(values) / Math.sqrt(values.length);
-	}
-
-	function median(values, alreadySorted) {
-	    if (typeof(alreadySorted) === 'undefined') alreadySorted = false;
+	/**
+	 * Computes the median of the given values
+	 * @param {Array} values
+	 * @param {boolean} [alreadySorted=false]
+	 * @returns {number}
+	 */
+	exports.median = function median(values, alreadySorted) {
+	    if (alreadySorted === undefined) alreadySorted = false;
 	    if (!alreadySorted) {
-	        values = values.slice();
-	        values.sort();
+	        values = values.slice().sort(compareNumbers);
 	    }
-
 	    var l = values.length;
 	    var half = Math.floor(l / 2);
-	    if (l % 2 === 0)
+	    if (l % 2 === 0) {
 	        return (values[half - 1] + values[half]) * 0.5;
-	    return values[half];
-	}
-
-	function quartiles(values, alreadySorted) {
-	    if (typeof(alreadySorted) === 'undefined') alreadySorted = false;
-	    if (!alreadySorted) {
-	        values = values.slice();
-	        values.sort();
+	    } else {
+	        return values[half];
 	    }
+	};
 
-	    var quart = values.length / 4;
-	    var q1 = values[Math.ceil(quart) - 1];
-	    var q2 = median(values, true);
-	    var q3 = values[Math.ceil(quart * 3) - 1];
-
-	    return {q1: q1, q2: q2, q3: q3};
-	}
-
-	function variance(values, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var theMean = mean(values);
-	    var theVariance = 0, l = values.length;
+	/**
+	 * Computes the variance of the given values
+	 * @param {Array} values
+	 * @param {boolean} [unbiased=true] - if true, divide by (n-1); if false, divide by n.
+	 * @returns {number}
+	 */
+	exports.variance = function variance(values, unbiased) {
+	    if (unbiased === undefined) unbiased = true;
+	    var theMean = exports.mean(values);
+	    var theVariance = 0;
+	    var l = values.length;
 
 	    for (var i = 0; i < l; i++) {
 	        var x = values[i] - theMean;
 	        theVariance += x * x;
 	    }
 
-	    if (unbiased)
+	    if (unbiased) {
 	        return theVariance / (l - 1);
-	    else
+	    } else {
 	        return theVariance / l;
-	}
+	    }
+	};
 
-	function pooledStandardDeviation(samples, unbiased) {
-	    return Math.sqrt(pooledVariance(samples, unbiased));
-	}
+	/**
+	 * Computes the standard deviation of the given values
+	 * @param {Array} values
+	 * @param {boolean} [unbiased=true] - if true, divide by (n-1); if false, divide by n.
+	 * @returns {number}
+	 */
+	exports.standardDeviation = function standardDeviation(values, unbiased) {
+	    return Math.sqrt(exports.variance(values, unbiased));
+	};
 
-	function pooledVariance(samples, unbiased) {
+	exports.standardError = function standardError(values) {
+	    return exports.standardDeviation(values) / Math.sqrt(values.length);
+	};
+
+	exports.quartiles = function quartiles(values, alreadySorted) {
+	    if (typeof(alreadySorted) === 'undefined') alreadySorted = false;
+	    if (!alreadySorted) {
+	        values = values.slice();
+	        values.sort(compareNumbers);
+	    }
+
+	    var quart = values.length / 4;
+	    var q1 = values[Math.ceil(quart) - 1];
+	    var q2 = exports.median(values, true);
+	    var q3 = values[Math.ceil(quart * 3) - 1];
+
+	    return {q1: q1, q2: q2, q3: q3};
+	};
+
+	exports.pooledStandardDeviation = function pooledStandardDeviation(samples, unbiased) {
+	    return Math.sqrt(exports.pooledVariance(samples, unbiased));
+	};
+
+	exports.pooledVariance = function pooledVariance(samples, unbiased) {
 	    if (typeof(unbiased) === 'undefined') unbiased = true;
 	    var sum = 0;
 	    var length = 0, l = samples.length;
 	    for (var i = 0; i < l; i++) {
 	        var values = samples[i];
-	        var vari = variance(values);
+	        var vari = exports.variance(values);
 
 	        sum += (values.length - 1) * vari;
 
@@ -749,9 +870,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            length += values.length;
 	    }
 	    return sum / length;
-	}
+	};
 
-	function mode(values) {
+	exports.mode = function mode(values) {
 	    var l = values.length,
 	        itemCount = new Array(l),
 	        i;
@@ -781,12 +902,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return itemArray[maxIndex];
-	}
+	};
 
-	function covariance(vector1, vector2, unbiased) {
+	exports.covariance = function covariance(vector1, vector2, unbiased) {
 	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var mean1 = mean(vector1);
-	    var mean2 = mean(vector2);
+	    var mean1 = exports.mean(vector1);
+	    var mean2 = exports.mean(vector2);
 
 	    if (vector1.length !== vector2.length)
 	        throw "Vectors do not have the same dimensions";
@@ -802,11 +923,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return cov / (l - 1);
 	    else
 	        return cov / l;
-	}
+	};
 
-	function skewness(values, unbiased) {
+	exports.skewness = function skewness(values, unbiased) {
 	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var theMean = mean(values);
+	    var theMean = exports.mean(values);
 
 	    var s2 = 0, s3 = 0, l = values.length;
 	    for (var i = 0; i < l; i++) {
@@ -826,11 +947,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    else {
 	        return g;
 	    }
-	}
+	};
 
-	function kurtosis(values, unbiased) {
+	exports.kurtosis = function kurtosis(values, unbiased) {
 	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var theMean = mean(values);
+	    var theMean = exports.mean(values);
 	    var n = values.length, s2 = 0, s4 = 0;
 
 	    for (var i = 0; i < n; i++) {
@@ -852,29 +973,29 @@ return /******/ (function(modules) { // webpackBootstrap
 	    else {
 	        return m4 / (m2 * m2) - 3;
 	    }
-	}
+	};
 
-	function entropy(values, eps) {
+	exports.entropy = function entropy(values, eps) {
 	    if (typeof(eps) === 'undefined') eps = 0;
 	    var sum = 0, l = values.length;
 	    for (var i = 0; i < l; i++)
 	        sum += values[i] * Math.log(values[i] + eps);
 	    return -sum;
-	}
+	};
 
-	function weightedMean(values, weights) {
+	exports.weightedMean = function weightedMean(values, weights) {
 	    var sum = 0, l = values.length;
 	    for (var i = 0; i < l; i++)
 	        sum += values[i] * weights[i];
 	    return sum;
-	}
+	};
 
-	function weightedStandardDeviation(values, weights) {
-	    return Math.sqrt(weightedVariance(values, weights));
-	}
+	exports.weightedStandardDeviation = function weightedStandardDeviation(values, weights) {
+	    return Math.sqrt(exports.weightedVariance(values, weights));
+	};
 
-	function weightedVariance(values, weights) {
-	    var theMean = weightedMean(values, weights);
+	exports.weightedVariance = function weightedVariance(values, weights) {
+	    var theMean = exports.weightedMean(values, weights);
 	    var vari = 0, l = values.length;
 	    var a = 0, b = 0;
 
@@ -888,75 +1009,47 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return vari * (b / (b * b - a));
-	}
+	};
 
-	function center(values, inPlace) {
+	exports.center = function center(values, inPlace) {
 	    if (typeof(inPlace) === 'undefined') inPlace = false;
 
 	    var result = values;
 	    if (!inPlace)
 	        result = values.slice();
 
-	    var theMean = mean(result), l = result.length;
+	    var theMean = exports.mean(result), l = result.length;
 	    for (var i = 0; i < l; i++)
 	        result[i] -= theMean;
-	}
+	};
 
-	function standardize(values, standardDev, inPlace) {
-	    if (typeof(standardDev) === 'undefined') standardDev = standardDeviation(values);
+	exports.standardize = function standardize(values, standardDev, inPlace) {
+	    if (typeof(standardDev) === 'undefined') standardDev = exports.standardDeviation(values);
 	    if (typeof(inPlace) === 'undefined') inPlace = false;
 	    var l = values.length;
 	    var result = inPlace ? values : new Array(l);
 	    for (var i = 0; i < l; i++)
 	        result[i] = values[i] / standardDev;
 	    return result;
-	}
+	};
 
-	function cumulativeSum(array) {
+	exports.cumulativeSum = function cumulativeSum(array) {
 	    var l = array.length;
 	    var result = new Array(l);
 	    result[0] = array[0];
 	    for (var i = 1; i < l; i++)
 	        result[i] = result[i - 1] + array[i];
 	    return result;
-	}
-
-	module.exports = {
-	    min: min,
-	    max: max,
-	    minMax: minMax,
-	    mean: mean,
-	    geometricMean: geometricMean,
-	    logGeometricMean: logGeometricMean,
-	    grandMean: grandMean,
-	    truncatedMean: truncatedMean,
-	    contraHarmonicMean: contraHarmonicMean,
-	    standardDeviation: standardDeviation,
-	    standardError: standardError,
-	    median: median,
-	    quartiles: quartiles,
-	    variance: variance,
-	    pooledStandardDeviation: pooledStandardDeviation,
-	    pooledVariance: pooledVariance,
-	    mode: mode,
-	    covariance: covariance,
-	    skewness: skewness,
-	    kurtosis: kurtosis,
-	    entropy: entropy,
-	    weightedMean: weightedMean,
-	    weightedStandardDeviation: weightedStandardDeviation,
-	    weightedVariance: weightedVariance,
-	    center: center,
-	    standardize: standardize,
-	    cumulativeSum: cumulativeSum
 	};
 
 
 /***/ },
 /* 7 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+	var arrayStat = __webpack_require__(6);
+
 	// https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
 	function entropy(matrix, eps) {
@@ -1382,7 +1475,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        throw new Error('Invalid dimension');
 	    }
 
-	    var weightSum = sum(weights);
+	    var weightSum = arrayStat.sum(weights);
 	    if (weightSum !== 0) {
 	        for (i = 0, ii = means.length; i < ii; i++) {
 	            means[i] /= weightSum;
@@ -1451,15 +1544,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return cov;
-	}
-
-	// private
-	function sum(vector) {
-	    var sum = 0, l = vector.length;
-	    for (var i = 0; i < l; i++) {
-	        sum += vector[i];
-	    }
-	    return sum;
 	}
 
 	module.exports = {
