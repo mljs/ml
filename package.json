@@ -42,7 +42,7 @@
     "ml-pls": "0.0.6",
     "ml-savitzky-golay": "1.0.0",
     "ml-som": "0.0.6",
-    "ml-stat": "^1.0.1",
+    "ml-stat": "^1.1.0",
     "ml-svm": "1.0.2",
     "ml-xsadd": "^1.0.0"
   },
