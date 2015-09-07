@@ -21,6 +21,9 @@ Stat.matrix = require('ml-stat/matrix');
 Stat.PCA = require('ml-pca');
 
 
+exports.Regression = require('ml-regression');
+
+
 // Random number generation
 var RNG = exports.RNG = {};
 RNG.XSadd = require('ml-xsadd');

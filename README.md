@@ -67,6 +67,7 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
     * Array: `ML.Stat.array`
     * Matrix: `ML.Stat.matrix`
     * Principal component analysis (PCA): [ML.Stat.PCA](https://github.com/mljs/pca)
+* Regression: [`ML.Regression`](https://github.com/mljs/regression)
 * Random number generation: `ML.RNG`
     * XORShift-add: [ML.RNG.XSadd](https://github.com/mljs/xsadd)
 * Clustering: `ML.Clust`
