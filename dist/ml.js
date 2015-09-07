@@ -77,32 +77,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	Stat.PCA = __webpack_require__(86);
 
 
+	exports.Regression = __webpack_require__(97);
+
+
 	// Random number generation
 	var RNG = exports.RNG = {};
-	RNG.XSadd = __webpack_require__(97);
+	RNG.XSadd = __webpack_require__(99);
 
 
 	// Supervised learning
 	var SL = exports.SL = {};
 
-	SL.SVM = __webpack_require__(98);
-	SL.KNN = __webpack_require__(101);
-	SL.NaiveBayes = __webpack_require__(104);
-	SL.PLS = __webpack_require__(115);
+	SL.SVM = __webpack_require__(100);
+	SL.KNN = __webpack_require__(103);
+	SL.NaiveBayes = __webpack_require__(106);
+	SL.PLS = __webpack_require__(117);
 
 
 	// Clustering
 	var Clust = exports.Clust = {};
 
-	Clust.kmeans = __webpack_require__(128);
-	Clust.hclust = __webpack_require__(130);
+	Clust.kmeans = __webpack_require__(130);
+	Clust.hclust = __webpack_require__(132);
 
 
 	// Neural networks
 	var NN = exports.NN = exports.nn = {};
 
-	NN.SOM = __webpack_require__(140);
-	NN.FNN = __webpack_require__(143);
+	NN.SOM = __webpack_require__(142);
+	NN.FNN = __webpack_require__(145);
 
 
 /***/ },
@@ -17216,6 +17219,65 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 97 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.SimpleLinearRegression = exports.SLR = __webpack_require__(98);
+	//exports.MultipleLinearRegression = exports.MLR = require('./regression/multiple-linear-regression');
+	//exports.MultivariateLinearRegression = exports.MVLR = require('./regression/multivariate-linear-regression');
+
+
+/***/ },
+/* 98 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	function SimpleLinearRegression(x, y) {
+	    if (!(this instanceof SimpleLinearRegression)) {
+	        return new SimpleLinearRegression(x, y);
+	    }
+
+	    var n = x.length;
+	    if (n !== y.length) {
+	        throw new RangeError('input and output array have a different length');
+	    }
+
+	    var xSum = 0;
+	    var ySum = 0;
+
+	    var xSquared = 0;
+	    var ySquared = 0;
+	    var xY = 0;
+
+	    for (var i = 0; i < n; i++) {
+	        xSum += x[i];
+	        ySum += y[i];
+	        xSquared += x[i] * x[i];
+	        ySquared += y[i] * y[i];
+	        xY += x[i] * y[i];
+	    }
+
+	    var numerator = (n * xY - xSum * ySum);
+
+	    this.slope = numerator / (n * xSquared - xSum * xSum);
+	    this.intercept = (1 / n) * ySum - this.slope * (1 / n) * xSum;
+	    this.coefficients = [this.intercept, this.slope];
+
+	    this.r = numerator / Math.sqrt((n * xSquared - xSum * xSum) * (n * ySquared - ySum * ySum));
+	    this.coefficientOfDetermination = this.r2 = this.r * this.r;
+	}
+
+	SimpleLinearRegression.prototype.compute = function (input) {
+	    return this.slope * input + this.intercept;
+	};
+
+	module.exports = SimpleLinearRegression;
+
+
+/***/ },
+/* 99 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -17324,20 +17386,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 98 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = exports = __webpack_require__(99);
-	exports.kernel = __webpack_require__(100).kernel;
+	module.exports = exports = __webpack_require__(101);
+	exports.kernel = __webpack_require__(102).kernel;
 
 
 /***/ },
-/* 99 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var kernel = __webpack_require__(100).kernel;
-	var getKernel = __webpack_require__(100).getKernel;
+	var kernel = __webpack_require__(102).kernel;
+	var getKernel = __webpack_require__(102).getKernel;
 
 	/**
 	 * Parameters to implement function
@@ -17566,7 +17628,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SVM;
 
 /***/ },
-/* 100 */
+/* 102 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17645,22 +17707,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 101 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(102);
+	module.exports = __webpack_require__(104);
 
 /***/ },
-/* 102 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	module.exports = KNN;
 
-	var KDTree = __webpack_require__(103).kdTree;
+	var KDTree = __webpack_require__(105).kdTree;
 	var Distances = __webpack_require__(28);
 
 	/**
@@ -17793,7 +17855,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 103 */
+/* 105 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18259,19 +18321,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 104 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = exports = __webpack_require__(105).NaiveBayes;
-	exports.separateClasses = __webpack_require__(105).separateClasses;
+	module.exports = exports = __webpack_require__(107).NaiveBayes;
+	exports.separateClasses = __webpack_require__(107).separateClasses;
 
 /***/ },
-/* 105 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(106);
+	var Matrix = __webpack_require__(108);
 	var Stat = __webpack_require__(5);
 
 	module.exports.NaiveBayes = NaiveBayes;
@@ -18448,17 +18510,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 106 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(107);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(108);
+	module.exports = __webpack_require__(109);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(110);
 
 
 /***/ },
-/* 107 */
+/* 109 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19934,18 +19996,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 108 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(107);
+	var Matrix = __webpack_require__(109);
 
-	var SingularValueDecomposition = __webpack_require__(109);
-	var EigenvalueDecomposition = __webpack_require__(111);
-	var LuDecomposition = __webpack_require__(112);
-	var QrDecomposition = __webpack_require__(113);
-	var CholeskyDecomposition = __webpack_require__(114);
+	var SingularValueDecomposition = __webpack_require__(111);
+	var EigenvalueDecomposition = __webpack_require__(113);
+	var LuDecomposition = __webpack_require__(114);
+	var QrDecomposition = __webpack_require__(115);
+	var CholeskyDecomposition = __webpack_require__(116);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -19980,13 +20042,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 109 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(107);
-	var hypotenuse = __webpack_require__(110).hypotenuse;
+	var Matrix = __webpack_require__(109);
+	var hypotenuse = __webpack_require__(112).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
 	function SingularValueDecomposition(value, options) {
@@ -20483,7 +20545,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 110 */
+/* 112 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20503,13 +20565,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 111 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(107);
-	var hypotenuse = __webpack_require__(110).hypotenuse;
+	var Matrix = __webpack_require__(109);
+	var hypotenuse = __webpack_require__(112).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
 	function EigenvalueDecomposition(matrix) {
@@ -21275,12 +21337,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 112 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(107);
+	var Matrix = __webpack_require__(109);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
 	function LuDecomposition(matrix) {
@@ -21450,13 +21512,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 113 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(107);
-	var hypotenuse = __webpack_require__(110).hypotenuse;
+	var Matrix = __webpack_require__(109);
+	var hypotenuse = __webpack_require__(112).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 	function QrDecomposition(value) {
@@ -21606,12 +21668,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 114 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(107);
+	var Matrix = __webpack_require__(109);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
@@ -21701,22 +21763,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 115 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = exports = __webpack_require__(116);
-	exports.Utils = __webpack_require__(126);
-	exports.OPLS = __webpack_require__(127);
+	module.exports = exports = __webpack_require__(118);
+	exports.Utils = __webpack_require__(128);
+	exports.OPLS = __webpack_require__(129);
 
 /***/ },
-/* 116 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	module.exports = PLS;
-	var Matrix = __webpack_require__(117);
-	var Utils = __webpack_require__(126);
+	var Matrix = __webpack_require__(119);
+	var Utils = __webpack_require__(128);
 
 	/**
 	 * Retrieves the sum at the column of the given matrix.
@@ -21967,17 +22029,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 117 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(118);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(119);
+	module.exports = __webpack_require__(120);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(121);
 
 
 /***/ },
-/* 118 */
+/* 120 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -23453,18 +23515,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 119 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(118);
+	var Matrix = __webpack_require__(120);
 
-	var SingularValueDecomposition = __webpack_require__(120);
-	var EigenvalueDecomposition = __webpack_require__(122);
-	var LuDecomposition = __webpack_require__(123);
-	var QrDecomposition = __webpack_require__(124);
-	var CholeskyDecomposition = __webpack_require__(125);
+	var SingularValueDecomposition = __webpack_require__(122);
+	var EigenvalueDecomposition = __webpack_require__(124);
+	var LuDecomposition = __webpack_require__(125);
+	var QrDecomposition = __webpack_require__(126);
+	var CholeskyDecomposition = __webpack_require__(127);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -23499,13 +23561,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 120 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(118);
-	var hypotenuse = __webpack_require__(121).hypotenuse;
+	var Matrix = __webpack_require__(120);
+	var hypotenuse = __webpack_require__(123).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
 	function SingularValueDecomposition(value, options) {
@@ -24002,7 +24064,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 121 */
+/* 123 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24022,13 +24084,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 122 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(118);
-	var hypotenuse = __webpack_require__(121).hypotenuse;
+	var Matrix = __webpack_require__(120);
+	var hypotenuse = __webpack_require__(123).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
 	function EigenvalueDecomposition(matrix) {
@@ -24794,12 +24856,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 123 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(118);
+	var Matrix = __webpack_require__(120);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
 	function LuDecomposition(matrix) {
@@ -24969,13 +25031,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 124 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(118);
-	var hypotenuse = __webpack_require__(121).hypotenuse;
+	var Matrix = __webpack_require__(120);
+	var hypotenuse = __webpack_require__(123).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 	function QrDecomposition(value) {
@@ -25125,12 +25187,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 125 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(118);
+	var Matrix = __webpack_require__(120);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
@@ -25220,12 +25282,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 126 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(117);
+	var Matrix = __webpack_require__(119);
 	var Stat = __webpack_require__(5);
 
 	/**
@@ -25274,13 +25336,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 127 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(117);
-	var Utils = __webpack_require__(126);
+	var Matrix = __webpack_require__(119);
+	var Utils = __webpack_require__(128);
 
 	module.exports = OPLS;
 
@@ -25359,13 +25421,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 128 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(129);
+	module.exports = __webpack_require__(131);
 
 /***/ },
-/* 129 */
+/* 131 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25557,24 +25619,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 130 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports.agnes = __webpack_require__(131);
-	exports.diana = __webpack_require__(139);
+	exports.agnes = __webpack_require__(133);
+	exports.diana = __webpack_require__(141);
 	//exports.birch = require('./birch');
 	//exports.cure = require('./cure');
 	//exports.chameleon = require('./chameleon');
 
 /***/ },
-/* 131 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var euclidean = __webpack_require__(132);
-	var ClusterLeaf = __webpack_require__(133);
-	var Cluster = __webpack_require__(134);
+	var euclidean = __webpack_require__(134);
+	var ClusterLeaf = __webpack_require__(135);
+	var Cluster = __webpack_require__(136);
 
 	/**
 	 * @param cluster1
@@ -25806,7 +25868,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = agnes;
 
 /***/ },
-/* 132 */
+/* 134 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25828,13 +25890,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 133 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Cluster = __webpack_require__(134);
-	var util = __webpack_require__(135);
+	var Cluster = __webpack_require__(136);
+	var util = __webpack_require__(137);
 
 	function ClusterLeaf (index) {
 	    Cluster.call(this);
@@ -25849,7 +25911,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 134 */
+/* 136 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -25920,7 +25982,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 135 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -26448,7 +26510,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(137);
+	exports.isBuffer = __webpack_require__(139);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -26492,7 +26554,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(138);
+	exports.inherits = __webpack_require__(140);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -26510,10 +26572,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return Object.prototype.hasOwnProperty.call(obj, prop);
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(136)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(138)))
 
 /***/ },
-/* 136 */
+/* 138 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -26609,7 +26671,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 137 */
+/* 139 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -26620,7 +26682,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 138 */
+/* 140 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -26649,14 +26711,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 139 */
+/* 141 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var euclidean = __webpack_require__(132);
-	var ClusterLeaf = __webpack_require__(133);
-	var Cluster = __webpack_require__(134);
+	var euclidean = __webpack_require__(134);
+	var ClusterLeaf = __webpack_require__(135);
+	var Cluster = __webpack_require__(136);
 
 	/**
 	 * @param {Array <Array <number>>} cluster1
@@ -26945,13 +27007,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = diana;
 
 /***/ },
-/* 140 */
+/* 142 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var NodeSquare = __webpack_require__(141),
-	    NodeHexagonal = __webpack_require__(142);
+	var NodeSquare = __webpack_require__(143),
+	    NodeHexagonal = __webpack_require__(144);
 
 	var defaultOptions = {
 	    fields: 3,
@@ -27371,7 +27433,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SOM;
 
 /***/ },
-/* 141 */
+/* 143 */
 /***/ function(module, exports) {
 
 	function NodeSquare(x, y, weights, som) {
@@ -27482,10 +27544,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = NodeSquare;
 
 /***/ },
-/* 142 */
+/* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var NodeSquare = __webpack_require__(141);
+	var NodeSquare = __webpack_require__(143);
 
 	function NodeHexagonal(x, y, weights, som) {
 
@@ -27517,19 +27579,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = NodeHexagonal;
 
 /***/ },
-/* 143 */
+/* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(144);
+	module.exports = __webpack_require__(146);
 
 /***/ },
-/* 144 */
+/* 146 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var Layer = __webpack_require__(145);
-	var Matrix = __webpack_require__(146);
+	var Layer = __webpack_require__(147);
+	var Matrix = __webpack_require__(148);
 
 	module.exports = FeedforwardNeuralNetwork;
 
@@ -27706,12 +27768,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 145 */
+/* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var Matrix = __webpack_require__(146);
+	var Matrix = __webpack_require__(148);
 
 	module.exports = Layer;
 
@@ -27824,17 +27886,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 146 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(147);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(148);
+	module.exports = __webpack_require__(149);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(150);
 
 
 /***/ },
-/* 147 */
+/* 149 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29310,18 +29372,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 148 */
+/* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(147);
+	var Matrix = __webpack_require__(149);
 
-	var SingularValueDecomposition = __webpack_require__(149);
-	var EigenvalueDecomposition = __webpack_require__(151);
-	var LuDecomposition = __webpack_require__(152);
-	var QrDecomposition = __webpack_require__(153);
-	var CholeskyDecomposition = __webpack_require__(154);
+	var SingularValueDecomposition = __webpack_require__(151);
+	var EigenvalueDecomposition = __webpack_require__(153);
+	var LuDecomposition = __webpack_require__(154);
+	var QrDecomposition = __webpack_require__(155);
+	var CholeskyDecomposition = __webpack_require__(156);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -29356,13 +29418,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 149 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(147);
-	var hypotenuse = __webpack_require__(150).hypotenuse;
+	var Matrix = __webpack_require__(149);
+	var hypotenuse = __webpack_require__(152).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
 	function SingularValueDecomposition(value, options) {
@@ -29859,7 +29921,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 150 */
+/* 152 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -29879,13 +29941,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 151 */
+/* 153 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(147);
-	var hypotenuse = __webpack_require__(150).hypotenuse;
+	var Matrix = __webpack_require__(149);
+	var hypotenuse = __webpack_require__(152).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
 	function EigenvalueDecomposition(matrix) {
@@ -30651,12 +30713,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 152 */
+/* 154 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(147);
+	var Matrix = __webpack_require__(149);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
 	function LuDecomposition(matrix) {
@@ -30826,13 +30888,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 153 */
+/* 155 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(147);
-	var hypotenuse = __webpack_require__(150).hypotenuse;
+	var Matrix = __webpack_require__(149);
+	var hypotenuse = __webpack_require__(152).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 	function QrDecomposition(value) {
@@ -30982,12 +31044,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 154 */
+/* 156 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(147);
+	var Matrix = __webpack_require__(149);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
