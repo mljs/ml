@@ -1,6 +1,6 @@
 {
   "name": "ml",
-  "version": "0.7.0",
+  "version": "0.8.0",
   "main": [
     "dist/ml.js",
     "dist/ml.min.js"
