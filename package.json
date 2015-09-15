@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "node -p \"void(require('./'));console.log('OK')\"",
-    "build": "cheminfo build --root ML"
+    "build": "cheminfo build --root ML --no-uglify"
   },
   "repository": {
     "type": "git",
