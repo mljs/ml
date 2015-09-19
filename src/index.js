@@ -5,23 +5,25 @@ exports.ArrayUtils = exports.AU = require('ml-array-utils');
 exports.BitArray = require('ml-bit-array');
 exports.Matrix = require('ml-matrix');
 
+exports.Regression = require('ml-regression');
+exports.PadArray = require('ml-pad-array');
 
+
+// Math packages
 var Math = exports.Math = {};
 
-var distance = require('ml-distance')
+var distance = require('ml-distance');
 Math.Distance = distance.distance;
 Math.Similarity = distance.similarity;
 Math.SG = require('ml-savitzky-golay');
 
 
+// Statistics packages
 var Stat = exports.Stat = {};
 
 Stat.array = require('ml-stat/array');
 Stat.matrix = require('ml-stat/matrix');
 Stat.PCA = require('ml-pca');
-
-
-exports.Regression = require('ml-regression');
 
 
 // Random number generation
