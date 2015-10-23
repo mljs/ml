@@ -38,8 +38,8 @@
     "ml-knn": "^1.0.0",
     "ml-matrix": "^1.0.0",
     "ml-naivebayes": "^1.0.0",
-    "ml-pca": "^0.0.3",
-    "ml-pls": "^0.0.6",
+    "ml-pca": "^0.1.0",
+    "ml-pls": "^0.0.7",
     "ml-regression": "^1.0.0",
     "ml-savitzky-golay": "^2.0.0",
     "ml-som": "^0.0.6",
@@ -51,7 +51,7 @@
   "devDependencies": {
     "cheminfo-tools": "^1.0.1",
     "mocha": "^2.2.5",
-    "mocha-better-spec-reporter": "^2.1.1",
+    "mocha-better-spec-reporter": "^3.0.0",
     "should": "^7.0.2"
   }
 }
