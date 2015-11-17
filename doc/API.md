@@ -78,6 +78,11 @@ If the predictor has a training phase, it is executed here.
 
 This method runs the prediction for a new set of values.
 
+### predictor.score()
+
+This method is optional.
+It should return a value that represents the quality of a predictor.
+
 ### predictor.toJSON()
 
 This method should return plain JSON that enables to reload the current predictor.
