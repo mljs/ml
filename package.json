@@ -39,7 +39,7 @@
     "ml-matrix": "^1.0.0",
     "ml-naivebayes": "^1.0.0",
     "ml-pca": "^0.1.0",
-    "ml-pls": "^0.0.7",
+    "ml-pls": "^0.0.8",
     "ml-regression": "^1.0.0",
     "ml-savitzky-golay": "^2.0.0",
     "ml-som": "^0.0.6",
