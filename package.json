@@ -41,7 +41,7 @@
     "ml-pad-array": "^1.0.0",
     "ml-pca": "^0.1.1",
     "ml-pls": "0.0.8",
-    "ml-regression": "^1.0.0",
+    "ml-regression": "^2.0.0",
     "ml-savitzky-golay": "^2.0.0",
     "ml-som": "^0.0.6",
     "ml-stat": "^1.1.0",
