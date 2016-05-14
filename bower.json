@@ -1,71 +1,30 @@
 {
-  
-"name": "ml",
-  
-"version": "0.8.1",
-  
-"main": [
-  
-  
-"dist/ml.js",
-  
-  
-"dist/ml.min.js"
-  
-],
-  
-"homepage": "https://github.com/mljs/ml",
-  
-"authors": [
-  
-  
-"Michaël Zasso"
-  
-],
-  
-"description": "Machine learning tools",
-  
-"moduleType": [
-  
-  
-"amd",
-  
-  
-"globals",
-  
-  
-"node"
-  
-],
-  
-"keywords": [
-  
-  
-"machine",
-  
-  
-"learning",
-  
-  
-"data",
-  
-  
-"mining",
-  
-  
-"datamining"
-  
-],
-  
-"license": "MIT",
-  
-"ignore": [
-  
-  
-"/*",
-  
-  
-"!dist/*"
-  
-]
+  "name": "ml",
+  "version": "0.8.2",
+  "main": [
+    "dist/ml.js",
+    "dist/ml.min.js"
+  ],
+  "homepage": "https://github.com/mljs/ml",
+  "authors": [
+    "Michaël Zasso"
+  ],
+  "description": "Machine learning tools",
+  "moduleType": [
+    "amd",
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "machine",
+    "learning",
+    "data",
+    "mining",
+    "datamining"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "/*",
+    "!dist/*"
+  ]
 }
