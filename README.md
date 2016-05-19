@@ -28,7 +28,7 @@ $ bower install ml
 
 Using our CDN in a web page
 ```html
-<script src="https://www.lactame.com/lib/ml/0.4.1/ml.min.js"></script>
+<script src="https://www.lactame.com/lib/ml/0.9.0/ml.js"></script>
 ```
 
 ## Usage
@@ -56,19 +56,23 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
 ## Tools
 
 * Root packages
-    * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)
     * Array Utils: [`ML.ArrayUtils`](https://github.com/mljs/array-utils)
     * Bit array operations: [`ML.BitArray`](https://github.com/mljs/bit-array)
-    * Regression: [`ML.Regression`](https://github.com/mljs/regression)
+    * Hash table: [`ML.HashTable`](https://github.com/mljs/hash-table)
+    * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)
     * Pad array: [`ML.PadArray`](https://github.com/mljs/pad-array)
+    * Regression: [`ML.Regression`](https://github.com/mljs/regression)
 * Math: `ML.Math`
     * Distance: [`ML.Math.Distance`](https://github.com/mljs/distance)
     * Similarity: [`ML.Math.Similarity`](https://github.com/mljs/distance)
     * Savitzky-Golay filter: [`ML.Math.SG`](https://github.com/mljs/savitzky-golay)
+    * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)
+    * Sparse matrix: [`ML.SparseMatrix`](https://github.com/mljs/sparse-matrix)
 * Stat: [`ML.Stat`](https://github.com/mljs/stat)
     * Array: `ML.Stat.array`
     * Matrix: `ML.Stat.matrix`
     * Principal component analysis (PCA): [`ML.Stat.PCA`](https://github.com/mljs/pca)
+    * Performance: [`ML.Stat.Performance`](https://github.com/mljs/performance)
 * Random number generation: `ML.RNG`
     * XORShift-add: [`ML.RNG.XSadd`](https://github.com/mljs/xsadd)
 * Clustering: `ML.Clust`

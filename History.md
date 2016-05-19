@@ -1,9 +1,35 @@
-HEAD / 2015-09-19
+0.9.0 / 2016-05-19
+==================
+
+* Add ml.HashTable
+* Add ml.Math.SparseMatrix
+* Add ml.Stat.performance
+
+:arrow_up: ml-array-utils v0.2.1
+
+0.8.2 / 2016-05-14
+==================
+
+:arrow_up: ml-regression v2.0.0
+:arrow_up: ml-array-utils v0.2.0
+
+0.8.1 / 2015-11-19
 ==================
 
 * Add ml.PadArray
 
-:arrow_up: ml-savitzky-golay v2.0.0 
+:arrow_up: ml-savitzky-golay v2.0.0
+:arrow_up: ml-pca v0.1.1
+:arrow_up: ml-pls v0.0.8
+:arrow_up: ml-array-utils v0.1.5
+:arrow_up: ml-fnn v1.0.1
+:arrow_up: ml-matrix v1.0.3
+:arrow_up: ml-naivebaye v1.0.1
+
+0.8.0 / 2015-09-15
+==================
+
+:arrow_up: ml-matrix v1.0.0
 
 0.7.0 / 2015-09-07
 ==================

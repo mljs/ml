@@ -3,10 +3,10 @@
 // Root packages
 exports.ArrayUtils = exports.AU = require('ml-array-utils');
 exports.BitArray = require('ml-bit-array');
+exports.HashTable = require('ml-hash-table');
 exports.Matrix = require('ml-matrix');
-
-exports.Regression = require('ml-regression');
 exports.PadArray = require('ml-pad-array');
+exports.Regression = require('ml-regression');
 
 
 // Math packages
@@ -16,6 +16,8 @@ var distance = require('ml-distance');
 Math.Distance = distance.distance;
 Math.Similarity = distance.similarity;
 Math.SG = require('ml-savitzky-golay');
+Math.Matrix = exports.Matrix;
+Math.SparseMatrix = require('ml-sparse-matrix');
 
 
 // Statistics packages
@@ -24,6 +26,7 @@ var Stat = exports.Stat = {};
 Stat.array = require('ml-stat/array');
 Stat.matrix = require('ml-stat/matrix');
 Stat.PCA = require('ml-pca');
+Stat.Performance = require('ml-performance');
 
 
 // Random number generation
