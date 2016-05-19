@@ -36,13 +36,13 @@
     "ml-hclust": "^1.0.0",
     "ml-kmeans": "^0.1.0",
     "ml-knn": "^1.0.0",
-    "ml-matrix": "^1.0.3",
+    "ml-matrix": "^1.1.2",
     "ml-naivebayes": "^1.0.1",
     "ml-pad-array": "^1.0.0",
     "ml-pca": "^0.1.1",
     "ml-pls": "0.0.8",
     "ml-regression": "^2.0.0",
-    "ml-savitzky-golay": "^2.0.0",
+    "ml-savitzky-golay": "^2.0.3",
     "ml-som": "^0.0.6",
     "ml-stat": "^1.1.0",
     "ml-svm": "^1.0.2",
@@ -50,8 +50,8 @@
   },
   "devDependencies": {
     "cheminfo-tools": "^1.0.1",
-    "mocha": "^2.2.5",
-    "mocha-better-spec-reporter": "^3.0.0",
+    "mocha": "^2.4.5",
+    "mocha-better-spec-reporter": "^3.0.2",
     "should": "^8.0.0"
   }
 }
