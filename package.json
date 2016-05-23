@@ -33,7 +33,7 @@
     "ml-bit-array": "^1.0.0",
     "ml-distance": "^2.0.1",
     "ml-fnn": "^1.0.1",
-    "ml-hash-table": "^0.1.2",
+    "ml-hash-table": "^0.2.0",
     "ml-hclust": "^1.0.0",
     "ml-kmeans": "^0.1.0",
     "ml-knn": "^1.0.0",
