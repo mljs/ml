@@ -1949,34 +1949,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return true;
 	    }
 	    
-	    remove(key) {
+	    remove(key, noRehash) {
 	        const i = this.indexOfKey(key);
 	        if (i < 0) return false;
 
 	        this.state[i] = REMOVED;
 	        this.distinct--;
 
-	        if (this.distinct < this.lowWaterMark) {
-	            const newCapacity = chooseShrinkCapacity(this.distinct, this.minLoadFactor, this.maxLoadFactor);
-	            this.rehash(newCapacity)
-	        }
+	        if (!noRehash) this.maybeShrinkCapacity();
 
 	        return true;
 	    }
 
-	    delete(key) {
+	    delete(key, noRehash) {
 	        const i = this.indexOfKey(key);
 	        if (i < 0) return false;
 
 	        this.state[i] = FREE;
 	        this.distinct--;
 
-	        if (this.distinct < this.lowWaterMark) {
-	            const newCapacity = chooseShrinkCapacity(this.distinct, this.minLoadFactor, this.maxLoadFactor);
-	            this.rehash(newCapacity)
-	        }
+	        if (!noRehash) this.maybeShrinkCapacity();
 
 	        return true;
+	    }
+
+	    maybeShrinkCapacity() {
+	        if (this.distinct < this.lowWaterMark) {
+	            const newCapacity = chooseShrinkCapacity(this.distinct, this.minLoadFactor, this.maxLoadFactor);
+	            this.rehash(newCapacity);
+	        }
 	    }
 
 	    containsKey(key) {
@@ -8810,20 +8811,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    forEachNonZero(callback) {
-	        return this.elements.forEachPair((key, value) => {
+	        this.elements.forEachPair((key, value) => {
 	            const i = (key / this.columns) | 0;
 	            const j = key % this.columns;
-	            const r = callback(i, j, value);
+	            let r = callback(i, j, value);
 	            if (r === false) return false; // stop iteration
+	            if (this.threshold && Math.abs(r) < this.threshold) r = 0;
 	            if (r !== value) {
 	                if (r === 0) {
-	                    this.elements.remove(key);
+	                    this.elements.remove(key, true);
 	                } else {
 	                    this.elements.set(key, r);
 	                }
 	            }
 	            return true;
 	        });
+	        this.elements.maybeShrinkCapacity();
+	        return this;
 	    }
 
 	    getNonZeros() {
@@ -8840,6 +8844,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	            return value;
 	        });
 	        return {rows, columns, values};
+	    }
+
+	    setThreshold(newThreshold) {
+	        if (newThreshold !== 0 && newThreshold !== this.threshold) {
+	            this.threshold = newThreshold;
+	            this.forEachNonZero((i, j, v) => v);
+	        }
+	        return this;
 	    }
 	}
 
@@ -10132,7 +10144,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @option    all    True if the entire matrix must be used. False to ignore the diagonal and lower part (default is false, for similarity/distance matrices)
 	     * @option    max    True if the max value corresponds to a perfect match (like in similarity matrices), false if it is the min value (default is false, like in distance matrices. All values will be multiplied by -1)
 	     */
-	    constructor(prediction, target, options = {}) {
+	    constructor(prediction, target, options) {
+	        options = options || {};
 	        if (prediction.length !== target.length || prediction[0].length !== target[0].length) {
 	            throw new Error('dimensions of prediction and target do not match');
 	        }
@@ -10165,38 +10178,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	        }
 
-	        predP.sort((a, b) => a.pred - b.pred);
-	        const l = predP.length;
+	        predP.sort((a, b) => b.pred - a.pred);
 
-	        const cutoffs = this.cutoffs = new Array(l + 1);
-	        const fp = this.fp = new Array(l + 1);
-	        const tp = this.tp = new Array(l + 1);
-	        const fn = this.fn = new Array(l + 1);
-	        const tn = this.tn = new Array(l + 1);
-	        const nPosPred = this.nPosPred = new Array(l + 1);
-	        const nNegPred = this.nNegPred = new Array(l + 1);
+	        const cutoffs = this.cutoffs = [Number.MAX_VALUE];
+	        const fp = this.fp = [0];
+	        const tp = this.tp = [0];
 
 	        var nPos = 0;
 	        var nNeg = 0;
-	        cutoffs[0] = Number.MAX_VALUE;
-	        fp[0] = tp[0] = 0;
 
-	        for (var i = 0; i < l; i++) {
+	        var currentPred = predP[0].pred;
+	        var nTp = 0;
+	        var nFp = 0;
+	        for (var i = 0; i < predP.length; i++) {
+	            if (predP[i].pred !== currentPred) {
+	                cutoffs.push(currentPred);
+	                fp.push(nFp);
+	                tp.push(nTp);
+	                currentPred = predP[i].pred;
+	            }
 	            if (predP[i].targ) {
 	                nPos++;
-	                tp[i + 1] = tp[i] + 1;
-	                fp[i + 1] = fp[i];
+	                nTp++;
 	            } else {
 	                nNeg++;
-	                tp[i + 1] = tp[i];
-	                fp[i + 1] = fp[i] + 1;
+	                nFp++;
 	            }
-
-	            // TODO eliminate duplicates in tp and fp
-	            cutoffs[i + 1] = predP[i].pred;
 	        }
+	        cutoffs.push(currentPred);
+	        fp.push(nFp);
+	        tp.push(nTp);
 
-	        for (var i = 0; i < (l + 1); i++) {
+	        const l = cutoffs.length;
+	        const fn = this.fn = new Array(l);
+	        const tn = this.tn = new Array(l);
+	        const nPosPred = this.nPosPred = new Array(l);
+	        const nNegPred = this.nNegPred = new Array(l);
+
+	        for (var i = 0; i < l; i++) {
 	            fn[i] = nPos - tp[i];
 	            tn[i] = nNeg - fp[i];
 
@@ -10271,7 +10290,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return auc;
 	    }
 
-	    getDistribution(options = {}) {
+	    getDistribution(options) {
+	        options = options || {};
 	        var cutLength = this.cutoffs.length;
 	        var cutLow = options.xMin || Math.floor(this.cutoffs[cutLength - 1] * 100) / 100;
 	        var cutHigh = options.xMax || Math.ceil(this.cutoffs[1] * 100) / 100;
