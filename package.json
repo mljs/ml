@@ -49,7 +49,8 @@
     "ml-sparse-matrix": "^0.2.1",
     "ml-stat": "^1.1.0",
     "ml-svm": "^1.0.2",
-    "ml-xsadd": "^1.0.0"
+    "ml-xsadd": "^1.0.0",
+    "ml-optimize-lorentzian":"^0.1.2"
   },
   "devDependencies": {
     "cheminfo-tools": "^1.0.1",

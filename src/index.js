@@ -18,6 +18,7 @@ Math.Similarity = distance.similarity;
 Math.SG = require('ml-savitzky-golay');
 Math.Matrix = exports.Matrix;
 Math.SparseMatrix = require('ml-sparse-matrix');
+Math.CurveFitting = require('ml-optimize-lorentzian');
 
 
 // Statistics packages
@@ -55,3 +56,4 @@ var NN = exports.NN = exports.nn = {};
 
 NN.SOM = require('ml-som');
 NN.FNN = require('ml-fnn');
+
