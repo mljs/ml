@@ -1,6 +1,6 @@
 {
   "name": "ml",
-  "version": "0.9.1",
+  "version": "0.10.0",
   "description": "Machine learning tools",
   "main": "src/index.js",
   "scripts": {
@@ -50,7 +50,7 @@
     "ml-stat": "^1.1.0",
     "ml-svm": "^1.0.2",
     "ml-xsadd": "^1.0.0",
-    "ml-optimize-lorentzian":"^0.1.2"
+    "ml-optimize-lorentzian": "^0.1.2"
   },
   "devDependencies": {
     "cheminfo-tools": "^1.0.1",
