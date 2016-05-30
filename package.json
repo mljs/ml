@@ -41,7 +41,7 @@
     "ml-naivebayes": "^1.0.1",
     "ml-pad-array": "^1.0.0",
     "ml-pca": "^0.1.1",
-    "ml-performance": "^0.1.0",
+    "ml-performance": "^0.2.0",
     "ml-pls": "0.1.0",
     "ml-regression": "^2.0.0",
     "ml-savitzky-golay": "^2.0.3",
