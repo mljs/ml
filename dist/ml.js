@@ -2306,6 +2306,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        this.columns = nColumns;
 	    }
 
+	    // Native array methods should return instances of Array, not Matrix
+	    static get [Symbol.species]() {
+	        return Array;
+	    }
+
 	    /**
 	     * Constructs a Matrix with the chosen dimensions from a 1D array
 	     * @param {number} newRows - Number of rows
@@ -17913,7 +17918,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        const rows = prediction.length;
 	        const columns = prediction[0].length;
-	        const neg = !options.max;
+	        const isDistance = !options.max;
 
 	        const predP = [];
 
@@ -17921,7 +17926,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            for (var i = 0; i < rows; i++) {
 	                for (var j = 0; j < columns; j++) {
 	                    predP.push({
-	                        pred: neg ? 0 - prediction[i][j] : prediction[i][j],
+	                        pred: prediction[i][j],
 	                        targ: target[i][j]
 	                    });
 	                }
@@ -17933,16 +17938,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	            for (var i = 0; i < rows - 1; i++) {
 	                for (var j = i + 1; j < columns; j++) {
 	                    predP.push({
-	                        pred: neg ? 0 - prediction[i][j] : prediction[i][j],
+	                        pred: prediction[i][j],
 	                        targ: target[i][j]
 	                    });
 	                }
 	            }
 	        }
 
-	        predP.sort((a, b) => b.pred - a.pred);
-
-	        const cutoffs = this.cutoffs = [Number.MAX_VALUE];
+	        if (isDistance) {
+	            predP.sort((a, b) => a.pred - b.pred);
+	        } else {
+	            predP.sort((a, b) => b.pred - a.pred);
+	        }
+	        
+	        const cutoffs = this.cutoffs = [isDistance ? Number.MIN_VALUE : Number.MAX_VALUE];
 	        const fp = this.fp = [0];
 	        const tp = this.tp = [0];
 
@@ -20512,14 +20521,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	var Utils = __webpack_require__(143);
 
 	class PLS {
-	    constructor(reload, model) {
-	        if (reload) {
-	            this.xmean = model.xmean;
-	            this.xstd = model.xstd;
-	            this.ymean = model.ymean;
-	            this.ystd = model.ystd;
+	    constructor(X, Y) {
+	        if (X === true) {
+	            const model = Y;
+	            this.meanX = model.meanX;
+	            this.stdDevX = model.stdDevX;
+	            this.meanY = model.meanY;
+	            this.stdDevY = model.stdDevY;
 	            this.PBQ = Matrix.checkMatrix(model.PBQ);
 	            this.R2X = model.R2X;
+	        } else {
+	            if (X.length !== Y.length)
+	                throw new RangeError('The number of X rows must be equal to the number of Y rows');
+
+	            const resultX = Utils.featureNormalize(X);
+	            this.X = resultX.result;
+	            this.meanX = resultX.means;
+	            this.stdDevX = resultX.std;
+
+	            const resultY = Utils.featureNormalize(Y);
+	            this.Y = resultY.result;
+	            this.meanY = resultY.means;
+	            this.stdDevY = resultY.std;
 	        }
 	    }
 
@@ -20534,44 +20557,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * B - Matrix of regression coefficient
 	     * W - Weight matrix of X
 	     *
-	     * @param {Matrix} trainingSet - Dataset to be apply the model
-	     * @param {Matrix} predictions - Predictions over each case of the dataset
 	     * @param {Object} options - recieves the latentVectors and the tolerance of each step of the PLS
 	     */
-	    train(trainingSet, predictions, options) {
+	    train(options) {
 	        if(options === undefined) options = {};
 
 	        var latentVectors = options.latentVectors;
 	        if (latentVectors === undefined) {
-	            latentVectors = Math.min(trainingSet.length - 1, trainingSet[0].length);
+	            latentVectors = Math.min(this.X.length - 1, this.X[0].length);
 	        }
 
 	        var tolerance = options.tolerance;
 	        if (tolerance === undefined) {
 	            tolerance = 1e-5;
 	        }
-
-	        if (trainingSet.length !== predictions.length)
-	            throw new RangeError('The number of predictions and elements in the dataset must be the same');
-
-	        var resultX = Utils.featureNormalize(trainingSet);
-	        this.xmean = resultX.means;
-	        this.xstd = resultX.std;
-	        var X = resultX.result;
-
-	        var resultY = Utils.featureNormalize(predictions);
-	        this.ymean = resultY.means;
-	        this.ystd = resultY.std;
-	        var Y = resultY.result;
+	        
+	        var X = this.X;
+	        var Y = this.Y;
 
 	        var rx = X.rows;
 	        var cx = X.columns;
 	        var ry = Y.rows;
 	        var cy = Y.columns;
-
-	        if(rx != ry) {
-	            throw new RangeError('dataset cases is not the same as the predictions');
-	        }
 
 	        var ssqXcal = X.clone().mul(X).sum(); // for the r²
 	        var sumOfSquaresY = Y.clone().mul(Y).sum();
@@ -20662,9 +20669,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    predict(dataset) {
 	        var X = Matrix.checkMatrix(dataset);
-	        X = X.subRowVector(this.xmean).divRowVector(this.xstd);
+	        X = X.subRowVector(this.meanX).divRowVector(this.stdDevX);
 	        var Y = X.mmul(this.PBQ);
-	        Y = Y.mulRowVector(this.ystd).addRowVector(this.ymean);
+	        Y = Y.mulRowVector(this.stdDevY).addRowVector(this.meanY);
 	        return Y;
 	    }
 
@@ -20680,10 +20687,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return {
 	            name: 'PLS',
 	            R2X: this.R2X,
-	            xmean: this.xmean,
-	            xstd: this.xstd,
-	            ymean: this.ymean,
-	            ystd: this.ystd,
+	            meanX: this.meanX,
+	            stdDevX: this.stdDevX,
+	            meanY: this.meanY,
+	            stdDevY: this.stdDevY,
 	            PBQ: this.PBQ,
 	        };
 	    }
