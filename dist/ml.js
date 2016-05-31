@@ -4273,15 +4273,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(15);
-	var util = __webpack_require__(18);
-	var hypotenuse = util.hypotenuse;
-	var getFilled2DArray = util.getFilled2DArray;
+	const Matrix = __webpack_require__(15);
+	const util = __webpack_require__(18);
+	const hypotenuse = util.hypotenuse;
+	const getFilled2DArray = util.getFilled2DArray;
+
+	const defaultOptions = {
+	    assumeSymmetric: false
+	};
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
-	function EigenvalueDecomposition(matrix) {
+	function EigenvalueDecomposition(matrix, options) {
+	    options = Object.assign({}, defaultOptions, options);
 	    if (!(this instanceof EigenvalueDecomposition)) {
-	        return new EigenvalueDecomposition(matrix);
+	        return new EigenvalueDecomposition(matrix, options);
 	    }
 	    matrix = Matrix.checkMatrix(matrix);
 	    if (!matrix.isSquare()) {
@@ -4295,7 +4300,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	        value = matrix,
 	        i, j;
 
-	    if (matrix.isSymmetric()) {
+	    var isSymmetric = false;
+	    if (options.assumeSymmetric) {
+	        isSymmetric = true;
+	    } else {
+	        isSymmetric = matrix.isSymmetric();
+	    }
+
+	    if (isSymmetric) {
 	        for (i = 0; i < n; i++) {
 	            for (j = 0; j < n; j++) {
 	                V[i][j] = value.get(i, j);
@@ -16738,12 +16750,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	const Matrix = __webpack_require__(14);
+	const EVD = Matrix.DC.EVD;
 	const SVD = Matrix.DC.SVD;
 	const Stat = __webpack_require__(5).matrix;
 	const mean = Stat.mean;
 	const stdev = Stat.standardDeviation;
 
 	const defaultOptions = {
+	    isCovarianceMatrix: false,
 	    center: true,
 	    scale: false
 	};
@@ -16765,34 +16779,48 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.stdevs = model.stdevs;
 	            this.U = Matrix.checkMatrix(model.U);
 	            this.S = model.S;
+	            return;
+	        }
+
+	        options = Object.assign({}, defaultOptions, options);
+
+	        this.center = false;
+	        this.scale = false;
+	        this.means = null;
+	        this.stdevs = null;
+
+	        if (options.isCovarianceMatrix) { // user provided a covariance matrix instead of dataset
+	            this._computeFromCovarianceMatrix(dataset);
+	            return;
+	        }
+
+	        var useCovarianceMatrix;
+	        if (typeof options.useCovarianceMatrix === 'boolean') {
+	            useCovarianceMatrix = options.useCovarianceMatrix;
 	        } else {
-	            options = Object.assign({}, defaultOptions, options);
-
-	            this.center = !!options.center;
-	            this.scale = !!options.scale;
-
-	            dataset = new Matrix(dataset);
-
-	            if (this.center) {
-	                const means = mean(dataset);
-	                const stdevs = this.scale ? stdev(dataset, means, true) : null;
-	                this.means = means;
-	                dataset.subRowVector(means);
-	                if (this.scale) {
-	                    this.stdevs = stdevs;
-	                    dataset.divRowVector(stdevs);
-	                }
-	            }
-
-	            var covarianceMatrix = dataset.transpose().mmul(dataset).divS(dataset.rows - 1);
-	            var target = new SVD(covarianceMatrix, {
-	                computeLeftSingularVectors: true,
+	            useCovarianceMatrix = dataset.length > dataset[0].length;
+	        }
+	        
+	        if (useCovarianceMatrix) { // user provided a dataset but wants us to compute and use the covariance matrix
+	            dataset = this._adjust(dataset, options);
+	            const covarianceMatrix = dataset.transpose().mmul(dataset).div(dataset.rows - 1);
+	            this._computeFromCovarianceMatrix(covarianceMatrix);
+	        } else {
+	            dataset = this._adjust(dataset, options);
+	            var svd = new SVD(dataset, {
+	                computeLeftSingularVectors: false,
 	                computeRightSingularVectors: true,
-	                autoTranspose: false
+	                autoTranspose: true
 	            });
 
-	            this.U = target.leftSingularVectors;
-	            this.S = target.diagonal;
+	            this.U = svd.rightSingularVectors;
+
+	            const singularValues = svd.diagonal;
+	            const eigenvalues = new Array(singularValues.length);
+	            for (var i = 0; i < singularValues.length; i++) {
+	                eigenvalues[i] = singularValues[i] * singularValues[i] / (dataset.length - 1);
+	            }
+	            this.S = eigenvalues;
 	        }
 	    }
 
@@ -16895,6 +16923,35 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    getLoadings() {
 	        return this.U.transpose();
+	    }
+
+	    _adjust(dataset, options) {
+	        this.center = !!options.center;
+	        this.scale = !!options.scale;
+
+	        dataset = new Matrix(dataset);
+
+	        if (this.center) {
+	            const means = mean(dataset);
+	            const stdevs = this.scale ? stdev(dataset, means, true) : null;
+	            this.means = means;
+	            dataset.subRowVector(means);
+	            if (this.scale) {
+	                this.stdevs = stdevs;
+	                dataset.divRowVector(stdevs);
+	            }
+	        }
+
+	        return dataset;
+	    }
+
+	    _computeFromCovarianceMatrix(dataset) {
+	        const evd = new EVD(dataset, {assumeSymmetric: true});
+	        this.U = evd.eigenvectorMatrix;
+	        for (var i = 0; i < this.U.length; i++) {
+	            this.U[i].reverse();
+	        }
+	        this.S = evd.realEigenvalues.reverse();
 	    }
 	}
 
