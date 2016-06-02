@@ -16937,6 +16937,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.means = means;
 	            dataset.subRowVector(means);
 	            if (this.scale) {
+	                for (var i = 0; i < stdevs.length; i++) {
+	                    if (stdevs[i] === 0) {
+	                        throw new RangeError('Cannot scale the dataset (standard deviation is zero at index ' + i);
+	                    }
+	                }
 	                this.stdevs = stdevs;
 	                dataset.divRowVector(stdevs);
 	            }
