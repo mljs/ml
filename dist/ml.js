@@ -74,7 +74,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	Math.SG = __webpack_require__(97);
 	Math.Matrix = exports.Matrix;
 	Math.SparseMatrix = __webpack_require__(99);
-	Math.CurveFitting = __webpack_require__(100);
+	Math.BellOptimizer = __webpack_require__(100);
+	Math.CurveFitting = __webpack_require__(101);
 
 
 	// Statistics packages
@@ -5789,7 +5790,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return out;
 	    }
 
-	    _compute(input) {
+	    _predict(input) {
 	        return this.slope * input + this.intercept;
 	    };
 
@@ -5843,24 +5844,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	class BaseRegression {
-	    compute(x) {
+	    predict(x) {
 	        var y2;
 	        if(Array.isArray(x)){
 	            y2 = new Array(x.length);
 	            for(var i=0;i<x.length;i++){
-	                y2[i]=this._compute(x[i]);
+	                y2[i]=this._predict(x[i]);
 	            }
 	        }
 	        else if(Number.isFinite(x)){
-	                y2 = this._compute(x);
+	                y2 = this._predict(x);
 	        } else {
 	            throw new TypeError('x must be a number or array')
 	        }
 	        return y2;
 	    }
 
-	    _compute(x) {
+	    _predict(x) {
 	        throw new Error('_compute not implemented');
+	    }
+	    
+	    train(options){
+	        //Do nothing for this package
 	    }
 	    
 	    /**
@@ -5873,7 +5878,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        let n = x.length;
 	        var y2 = new Array(n);
 	        for (var i = 0; i < n; i++) {
-	            y2[i]=this._compute(x[i]);
+	            y2[i]=this._predict(x[i]);
 	        }
 	        var xSum = 0;
 	        var ySum = 0;
@@ -5982,7 +5987,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    _compute(x) {
+	    _predict(x) {
 	        var y =0;
 	        for(var  k = 0; k < this.powers.length; k++) {
 	            y+=this.coefficients[k]*Math.pow(x,this.powers[k]);
@@ -6094,7 +6099,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    _compute(x) {
+	    _predict(x) {
 	        return this.A*Math.pow(x,this.M);
 	    }
 
@@ -6179,7 +6184,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    _compute(newInputs) {
+	    _predict(newInputs) {
 	        return this.C*Math.exp(newInputs*this.A);
 	    }
 
@@ -6261,7 +6266,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    _compute(newInputs) {
+	    _predict(newInputs) {
 	        return this.A*Math.pow(newInputs,this.B);
 	    }
 
@@ -6342,7 +6347,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 
-	    _compute(newInputs) {
+	    _predict(newInputs) {
 	        return this.kernel.compute([newInputs], this.inputs).mmul(this.alpha)[0];
 	    }
 
