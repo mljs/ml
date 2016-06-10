@@ -18,7 +18,8 @@ Math.Similarity = distance.similarity;
 Math.SG = require('ml-savitzky-golay');
 Math.Matrix = exports.Matrix;
 Math.SparseMatrix = require('ml-sparse-matrix');
-Math.CurveFitting = require('ml-optimize-lorentzian');
+Math.BellOptimizer = require('ml-optimize-lorentzian');
+Math.CurveFitting = require('ml-curve-fitting');
 
 
 // Statistics packages

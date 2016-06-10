@@ -43,14 +43,15 @@
     "ml-pca": "^1.1.1",
     "ml-performance": "^0.2.0",
     "ml-pls": "0.1.0",
-    "ml-regression": "^2.0.0",
+    "ml-regression": "^3.0.0",
     "ml-savitzky-golay": "^2.0.3",
     "ml-som": "^0.0.6",
     "ml-sparse-matrix": "^0.2.1",
     "ml-stat": "^1.1.0",
     "ml-svm": "^1.0.2",
     "ml-xsadd": "^1.0.0",
-    "ml-optimize-lorentzian": "^0.1.2"
+    "ml-optimize-lorentzian": "^0.1.3",
+    "ml-curve-fitting":"^0.0.6"
   },
   "devDependencies": {
     "cheminfo-tools": "^1.0.1",
