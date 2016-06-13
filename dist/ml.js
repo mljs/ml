@@ -6594,6 +6594,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.coefficients = [];
 	            this.X = inputs;
 	            this.y = outputs;
+	            
 	            this.train(this.X,this.y,options);
 	            if(options.computeCoefficient){
 	                this.r = this.rCoefficient(inputs, outputs);
@@ -6614,7 +6615,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    train(X, y, options) {
 	        if(!Matrix.isMatrix(X)) X = new Matrix(X);
 	        if(!Matrix.isMatrix(y)) y = Matrix.columnVector(y);
-	        else y = y.transpose();
+	        
+	        if(y.rows!=X.rows)//Perhaps y is transpose
+	            y = y.transpose();
 
 	        if(X.columns !== 2)
 	            throw new RangeError("You give X with " + X.columns + " columns and it must be 2");
