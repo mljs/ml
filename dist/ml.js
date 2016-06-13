@@ -68,14 +68,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Math packages
 	var Math = exports.Math = {};
 
-	var distance = __webpack_require__(38);
+	var distance = __webpack_require__(42);
 	Math.Distance = distance.distance;
 	Math.Similarity = distance.similarity;
-	Math.SG = __webpack_require__(97);
+	Math.SG = __webpack_require__(101);
 	Math.Matrix = exports.Matrix;
-	Math.SparseMatrix = __webpack_require__(99);
-	Math.BellOptimizer = __webpack_require__(100);
-	Math.CurveFitting = __webpack_require__(101);
+	Math.SparseMatrix = __webpack_require__(103);
+	Math.BellOptimizer = __webpack_require__(104);
+	Math.CurveFitting = __webpack_require__(105);
 
 
 	// Statistics packages
@@ -83,36 +83,36 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	Stat.array = __webpack_require__(6);
 	Stat.matrix = __webpack_require__(7);
-	Stat.PCA = __webpack_require__(122);
-	Stat.Performance = __webpack_require__(123);
+	Stat.PCA = __webpack_require__(126);
+	Stat.Performance = __webpack_require__(127);
 
 
 	// Random number generation
 	var RNG = exports.RNG = {};
-	RNG.XSadd = __webpack_require__(125);
+	RNG.XSadd = __webpack_require__(129);
 
 
 	// Supervised learning
 	var SL = exports.SL = {};
 
-	SL.SVM = __webpack_require__(126);
-	SL.KNN = __webpack_require__(129);
-	SL.NaiveBayes = __webpack_require__(132);
-	SL.PLS = __webpack_require__(137);
+	SL.SVM = __webpack_require__(130);
+	SL.KNN = __webpack_require__(133);
+	SL.NaiveBayes = __webpack_require__(136);
+	SL.PLS = __webpack_require__(141);
 
 
 	// Clustering
 	var Clust = exports.Clust = {};
 
-	Clust.kmeans = __webpack_require__(141);
-	Clust.hclust = __webpack_require__(143);
+	Clust.kmeans = __webpack_require__(145);
+	Clust.hclust = __webpack_require__(147);
 
 
 	// Neural networks
 	var NN = exports.NN = exports.nn = {};
 
-	NN.SOM = __webpack_require__(153);
-	NN.FNN = __webpack_require__(156);
+	NN.SOM = __webpack_require__(157);
+	NN.FNN = __webpack_require__(160);
 
 
 
@@ -5716,6 +5716,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.KernelRidgeRegression = exports.KRR = __webpack_require__(33);
 	//exports.MultipleLinearRegression = exports.MLR = require('./regression/multiple-linear-regression');
 	//exports.MultivariateLinearRegression = exports.MVLR = require('./regression/multivariate-linear-regression');
+	exports.PolinomialFitting2D = __webpack_require__(38);
 
 
 /***/ },
@@ -5814,6 +5815,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return result;
 	    };
 
+	    toLaTeX(precision) {
+	        return toString(precision);
+	    };
+
 	    static load(json) {
 	        if (json.name !== 'simpleLinearRegression') {
 	            throw new TypeError('not a SLR model');
@@ -5866,6 +5871,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	    
 	    train(options){
 	        //Do nothing for this package
+	    }
+
+	    toString(precision){
+	        return "";
+	    }
+
+	    toLaTeX(precision){
+	        return "";
 	    }
 	    
 	    /**
@@ -5977,7 +5990,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var A = FT.mmul(F);
 	            var B = FT.mmul(Y.transpose());
 
-	            this.coefficients = A.solve(B);
+	            this.coefficients = A.solve(B).to1DArray();
 	            this.powers = powers;
 	            this.M = M-1;
 	            if(opt.computeCoefficient){
@@ -6010,6 +6023,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    toString(precision){
+	        return this._toFormula(precision, false);
+	    }
+
+	    toLaTeX(precision){
+	        return this._toFormula(precision, true);
+	    }
+
+	    _toFormula(precision, isLaTeX){
+	        var sup = "^";
+	        var closeSup = "";
+	        var times = "*";
+	        if(isLaTeX){
+	            sup = "^{";
+	            closeSup="}";
+	            times="";
+	        }
+
 	        var fn =  "",str;
 	        for(var  k = 0; k < this.coefficients.length ; k++) {
 	            str="";
@@ -6018,9 +6048,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                    str = maybeToPrecision(this.coefficients[k], precision);
 	                else {
 	                    if (this.powers[k] == 1)
-	                        str = maybeToPrecision(this.coefficients[k], precision) + "*x";
+	                        str = maybeToPrecision(this.coefficients[k], precision) + times +"x";
 	                    else {
-	                        str = maybeToPrecision(this.coefficients[k], precision) + "*x^" + this.powers[k];
+	                        str = maybeToPrecision(this.coefficients[k], precision) + times +"x" + sup + this.powers[k]+closeSup;
 	                    }
 	                }
 	                if (this.coefficients[k] > 0)
@@ -6029,10 +6059,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            fn=str+fn;
 	        }
 	        if(fn.charAt(0)=='+'){
-	            fn.splice(0,1);
+	            fn = fn.slice(1);
 	        }
 
-	        return fn;
+	        return "y = "+fn;
 	    }
 
 	    static load(json) {
@@ -6107,13 +6137,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var out = {name: 'potentialRegression', A: this.A, M: this.M};
 	        if(this.r){
 	            out.r = this.r;
-	            out.r2=this.r2;
+	            out.r2 = this.r2;
 	        }
 	        return out;
 	    }
 
 	    toString(precision){
-	        return maybeToPrecision(this.A, precision)+"*x^"+this.M;
+	        return "y = "+maybeToPrecision(this.A, precision)+"*x^"+this.M;
+	    }
+
+	    toLaTeX(precision){
+	        return "y = "+maybeToPrecision(this.A, precision)+"x^{"+this.M+"}";
 	    }
 
 	    static load(json) {
@@ -6198,7 +6232,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    toString(precision){
-	        return maybeToPrecision(this.C, precision)+"*exp("+maybeToPrecision(this.A, precision)+"*x)";
+	        return "y = "+maybeToPrecision(this.C, precision)+"*exp("+maybeToPrecision(this.A, precision)+"*x)";
+	    }
+
+	    toLaTeX(precision){
+	        return "y = "+maybeToPrecision(this.C, precision)+"e^{"+maybeToPrecision(this.A, precision)+"x}";
 	    }
 
 	    static load(json) {
@@ -6280,7 +6318,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    toString(precision){
-	        return maybeToPrecision(this.A, precision)+"*x^"+maybeToPrecision(this.B, precision);
+	        return "y = "+maybeToPrecision(this.A, precision)+"*x^"+maybeToPrecision(this.B, precision);
+	    }
+
+	    toLaTeX(precision){
+	        return "y = "+maybeToPrecision(this.A, precision)+"x^{"+maybeToPrecision(this.B, precision)+"}";
 	    }
 
 	    static load(json) {
@@ -6517,65 +6559,295 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
-	exports.distance = __webpack_require__(39);
-	exports.similarity = __webpack_require__(84);
+	const Matrix = __webpack_require__(14);
+	const isInteger = __webpack_require__(39);
+	const SVD = Matrix.DC.SingularValueDecomposition;
+	const BaseRegression = __webpack_require__(28);
+
+	const defaultOptions = {
+	    order: 2
+	};
+	// Implements the Kernel ridge regression algorithm.
+	// http://www.ics.uci.edu/~welling/classnotes/papers_class/Kernel-Ridge.pdf
+	class PolynomialFitRegression2D extends BaseRegression {
+	    /**
+	     * Constructor for the 2D polynomial fitting
+	     *
+	     * @param reload - for load purposes
+	     * @param model - for load purposes
+	     * @constructor
+	     */
+	    constructor(inputs, outputs, options) {
+	        super();
+	        if (inputs === true) { // reloading model
+	            this.coefficients = Matrix.columnVector(outputs.coefficients);
+	            this.order = outputs.order;
+	            if(outputs.r){
+	                this.r = outputs.r;
+	                this.r2 = outputs.r2;
+	            }
+	        } else {
+	            options = Object.assign({}, defaultOptions, options);
+	            this.order = options.order;
+	            this.coefficients = [];
+	            this.X = inputs;
+	            this.y = outputs;
+	            this.train(this.X,this.y,options);
+	            if(options.computeCoefficient){
+	                this.r = this.rCoefficient(inputs, outputs);
+	                this.r2 = this.r*this.r;
+	            }
+	        }
+	    }
+
+	    /**
+	     * Function that fits the model given the data(X) and predictions(y).
+	     * The third argument is an object with the following options:
+	     * * order: order of the polynomial to fit.
+	     *
+	     * @param X - A matrix with n rows and 2 columns.
+	     * @param y - A vector of the prediction values.
+	     * @param options
+	     */
+	    train(X, y, options) {
+	        if(!Matrix.isMatrix(X)) X = new Matrix(X);
+	        if(!Matrix.isMatrix(y)) y = Matrix.columnVector(y);
+	        else y = y.transpose();
+
+	        if(X.columns !== 2)
+	            throw new RangeError("You give X with " + X.columns + " columns and it must be 2");
+	        if(X.rows !== y.rows)
+	            throw new RangeError("X and y must have the same rows");
+
+	        var examples = X.rows;
+	        var coefficients = ((this.order + 2) * (this.order + 1)) / 2;
+	        this.coefficients = new Array(coefficients);
+
+	        var x1 = X.getColumnVector(0);
+	        var x2 = X.getColumnVector(1);
+
+	        var scaleX1 = 1.0 / x1.clone().apply(abs).max();
+	        var scaleX2 = 1.0 / x2.clone().apply(abs).max();
+	        var scaleY = 1.0 / y.clone().apply(abs).max();
+
+	        x1.mulColumn(0, scaleX1);
+	        x2.mulColumn(0, scaleX2);
+	        y.mulColumn(0, scaleY);
+
+	        var A = new Matrix(examples, coefficients);
+	        var col = 0;
+
+	        for(var i = 0; i <= this.order; ++i) {
+	            var limit = this.order - i;
+	            for(var j = 0; j <= limit; ++j) {
+	                var result = powColVector(x1, i).mulColumnVector(powColVector(x2, j));
+	                A.setColumn(col, result);
+	                col++;
+	            }
+	        }
+
+	        var svd = new SVD(A.transpose(), {
+	            computeLeftSingularVectors: true,
+	            computeRightSingularVectors: true,
+	            autoTranspose: false
+	        });
+
+	        var qqs = Matrix.rowVector(svd.diagonal);
+	        qqs = qqs.apply(function(i, j) {
+	            if(this[i][j] >= 1e-15) this[i][j] = 1 / this[i][j];
+	            else this[i][j] = 0;
+	        });
+
+	        var qqs1 = Matrix.zeros(examples, coefficients);
+	        for(i = 0; i < coefficients; ++i) {
+	            qqs1[i][i] = qqs[0][i];
+	        }
+
+	        qqs = qqs1;
+
+	        var U = svd.rightSingularVectors;
+	        var V = svd.leftSingularVectors;
+
+	        this.coefficients = V.mmul(qqs.transpose()).mmul(U.transpose()).mmul(y);
+
+	        col = 0;
+
+	        for(i = 0; i <= coefficients; ++i) {
+	            limit = this.order - i;
+	            for(j = 0; j <= limit; ++j) {
+	                this.coefficients[col][0] = (this.coefficients[col][0] * Math.pow(scaleX1, i) * Math.pow(scaleX2, j)) / scaleY;
+	                col++;
+	            }
+	        }
+	    };
+
+	    _predict(newInputs) {
+	        var x1 = newInputs[0];
+	        var x2 = newInputs[1];
+
+	        var y = 0;
+	        var column = 0;
+
+	        for(var i = 0; i <= this.order; i++) {
+	            for(var j = 0; j <= this.order - i; j++) {
+	                var value = Math.pow(x1, i)*(Math.pow(x2, j));
+	                value*=this.coefficients[column][0];
+	                y+=value;
+	                column++;
+	            }
+	        }
+
+	        return y;
+	    }
+
+	    toJSON() {
+	        return {
+	            name: "polyfit2D",
+	            order: this.order,
+	            coefficients: this.coefficients
+	        };
+	    };
+
+	    static load(json) {
+	        if (json.name !== 'polyfit2D') {
+	            throw new TypeError('not a polyfit2D model');
+	        }
+	        return new PolynomialFitRegression2D(true, json);
+	    }
+
+	}
+
+	module.exports = PolynomialFitRegression2D;
+
+
+
+	/**
+	 * Function that given a column vector return this: vector^power
+	 *
+	 * @param x - Column vector.
+	 * @param power - Pow number.
+	 * @returns {Suite|Matrix}
+	 */
+	function powColVector(x, power) {
+	    var result = x.clone();
+	    for(var i = 0; i < x.rows; ++i) {
+	        result[i][0] = Math.pow(result[i][0], power);
+	    }
+	    return result;
+	}
+
+	/**
+	 * Function to use in the apply method to get the absolute value
+	 * of each element of the matrix
+	 *
+	 * @param i - current row.
+	 * @param j - current column.
+	 */
+	function abs(i, j) {
+	    this[i][j] = Math.abs(this[i][j]);
+	}
 
 /***/ },
 /* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
-
-	exports.additiveSymmetric = __webpack_require__(40);
-	exports.avg = __webpack_require__(41);
-	exports.bhattacharyya = __webpack_require__(42);
-	exports.canberra = __webpack_require__(43);
-	exports.chebyshev = __webpack_require__(44);
-	exports.clark = __webpack_require__(45);
-	exports.czekanowski = __webpack_require__(46);
-	exports.dice = __webpack_require__(47);
-	exports.divergence = __webpack_require__(48);
-	exports.euclidean = __webpack_require__(49);
-	exports.fidelity = __webpack_require__(50);
-	exports.gower = __webpack_require__(51);
-	exports.harmonicMean = __webpack_require__(52);
-	exports.hellinger = __webpack_require__(53);
-	exports.innerProduct = __webpack_require__(54);
-	exports.intersection = __webpack_require__(55);
-	exports.jaccard = __webpack_require__(56);
-	exports.jeffreys = __webpack_require__(57);
-	exports.jensenDifference = __webpack_require__(58);
-	exports.jensenShannon = __webpack_require__(59);
-	exports.kdivergence = __webpack_require__(60);
-	exports.kulczynski = __webpack_require__(61);
-	exports.kullbackLeibler = __webpack_require__(62);
-	exports.kumarHassebrook = __webpack_require__(63);
-	exports.kumarJohnson = __webpack_require__(64);
-	exports.lorentzian = __webpack_require__(65);
-	exports.manhattan = __webpack_require__(66);
-	exports.matusita = __webpack_require__(67);
-	exports.minkowski = __webpack_require__(68);
-	exports.motyka = __webpack_require__(69);
-	exports.neyman = __webpack_require__(70);
-	exports.pearson = __webpack_require__(71);
-	exports.probabilisticSymmetric = __webpack_require__(72);
-	exports.ruzicka = __webpack_require__(73);
-	exports.soergel = __webpack_require__(74);
-	exports.sorensen = __webpack_require__(75);
-	exports.squared = __webpack_require__(76);
-	exports.squaredChord = __webpack_require__(77);
-	exports.squaredEuclidean = __webpack_require__(49).squared;
-	exports.taneja = __webpack_require__(78);
-	exports.tanimoto = __webpack_require__(79);
-	exports.topsoe = __webpack_require__(81);
-	exports.tree = __webpack_require__(82);
-	exports.waveHedges = __webpack_require__(83);
+	// https://github.com/paulmillr/es6-shim
+	// http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isinteger
+	var isFinite = __webpack_require__(40);
+	module.exports = Number.isInteger || function(val) {
+	  return typeof val === "number" &&
+	    isFinite(val) &&
+	    Math.floor(val) === val;
+	};
 
 
 /***/ },
 /* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	var numberIsNan = __webpack_require__(41);
+
+	module.exports = Number.isFinite || function (val) {
+		return !(typeof val !== 'number' || numberIsNan(val) || val === Infinity || val === -Infinity);
+	};
+
+
+/***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	'use strict';
+	module.exports = Number.isNaN || function (x) {
+		return x !== x;
+	};
+
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.distance = __webpack_require__(43);
+	exports.similarity = __webpack_require__(88);
+
+/***/ },
+/* 43 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use strict";
+
+	exports.additiveSymmetric = __webpack_require__(44);
+	exports.avg = __webpack_require__(45);
+	exports.bhattacharyya = __webpack_require__(46);
+	exports.canberra = __webpack_require__(47);
+	exports.chebyshev = __webpack_require__(48);
+	exports.clark = __webpack_require__(49);
+	exports.czekanowski = __webpack_require__(50);
+	exports.dice = __webpack_require__(51);
+	exports.divergence = __webpack_require__(52);
+	exports.euclidean = __webpack_require__(53);
+	exports.fidelity = __webpack_require__(54);
+	exports.gower = __webpack_require__(55);
+	exports.harmonicMean = __webpack_require__(56);
+	exports.hellinger = __webpack_require__(57);
+	exports.innerProduct = __webpack_require__(58);
+	exports.intersection = __webpack_require__(59);
+	exports.jaccard = __webpack_require__(60);
+	exports.jeffreys = __webpack_require__(61);
+	exports.jensenDifference = __webpack_require__(62);
+	exports.jensenShannon = __webpack_require__(63);
+	exports.kdivergence = __webpack_require__(64);
+	exports.kulczynski = __webpack_require__(65);
+	exports.kullbackLeibler = __webpack_require__(66);
+	exports.kumarHassebrook = __webpack_require__(67);
+	exports.kumarJohnson = __webpack_require__(68);
+	exports.lorentzian = __webpack_require__(69);
+	exports.manhattan = __webpack_require__(70);
+	exports.matusita = __webpack_require__(71);
+	exports.minkowski = __webpack_require__(72);
+	exports.motyka = __webpack_require__(73);
+	exports.neyman = __webpack_require__(74);
+	exports.pearson = __webpack_require__(75);
+	exports.probabilisticSymmetric = __webpack_require__(76);
+	exports.ruzicka = __webpack_require__(77);
+	exports.soergel = __webpack_require__(78);
+	exports.sorensen = __webpack_require__(79);
+	exports.squared = __webpack_require__(80);
+	exports.squaredChord = __webpack_require__(81);
+	exports.squaredEuclidean = __webpack_require__(53).squared;
+	exports.taneja = __webpack_require__(82);
+	exports.tanimoto = __webpack_require__(83);
+	exports.topsoe = __webpack_require__(85);
+	exports.tree = __webpack_require__(86);
+	exports.waveHedges = __webpack_require__(87);
+
+
+/***/ },
+/* 44 */
 /***/ function(module, exports) {
 
 	module.exports = function additiveSymmetric(a, b) {
@@ -6590,7 +6862,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 41 */
+/* 45 */
 /***/ function(module, exports) {
 
 	module.exports = function avg(a, b) {
@@ -6610,7 +6882,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 42 */
+/* 46 */
 /***/ function(module, exports) {
 
 	module.exports = function bhattacharyya(a, b) {
@@ -6624,7 +6896,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 43 */
+/* 47 */
 /***/ function(module, exports) {
 
 	module.exports = function canberra(a, b) {
@@ -6638,7 +6910,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 44 */
+/* 48 */
 /***/ function(module, exports) {
 
 	module.exports = function chebyshev(a, b) {
@@ -6656,7 +6928,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 45 */
+/* 49 */
 /***/ function(module, exports) {
 
 	module.exports = function clark(a, b) {
@@ -6671,7 +6943,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 46 */
+/* 50 */
 /***/ function(module, exports) {
 
 	module.exports = function czekanowski(a, b) {
@@ -6687,7 +6959,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 47 */
+/* 51 */
 /***/ function(module, exports) {
 
 	module.exports = function dice(a, b) {
@@ -6705,7 +6977,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 48 */
+/* 52 */
 /***/ function(module, exports) {
 
 	module.exports = function divergence(a, b) {
@@ -6720,7 +6992,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 49 */
+/* 53 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -6742,7 +7014,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 50 */
+/* 54 */
 /***/ function(module, exports) {
 
 	module.exports = function fidelity(a, b) {
@@ -6756,7 +7028,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 51 */
+/* 55 */
 /***/ function(module, exports) {
 
 	module.exports = function gower(a, b) {
@@ -6770,7 +7042,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 52 */
+/* 56 */
 /***/ function(module, exports) {
 
 	module.exports = function harmonicMean(a, b) {
@@ -6784,7 +7056,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 53 */
+/* 57 */
 /***/ function(module, exports) {
 
 	module.exports = function hellinger(a, b) {
@@ -6798,7 +7070,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 54 */
+/* 58 */
 /***/ function(module, exports) {
 
 	module.exports = function innerProduct(a, b) {
@@ -6812,7 +7084,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 55 */
+/* 59 */
 /***/ function(module, exports) {
 
 	module.exports = function intersection(a, b) {
@@ -6826,7 +7098,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 56 */
+/* 60 */
 /***/ function(module, exports) {
 
 	module.exports = function jaccard(a, b) {
@@ -6846,7 +7118,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 57 */
+/* 61 */
 /***/ function(module, exports) {
 
 	module.exports = function jeffreys(a, b) {
@@ -6860,7 +7132,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 58 */
+/* 62 */
 /***/ function(module, exports) {
 
 	module.exports = function jensenDifference(a, b) {
@@ -6874,7 +7146,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 59 */
+/* 63 */
 /***/ function(module, exports) {
 
 	module.exports = function jensenShannon(a, b) {
@@ -6890,7 +7162,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 60 */
+/* 64 */
 /***/ function(module, exports) {
 
 	module.exports = function kdivergence(a, b) {
@@ -6904,7 +7176,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 61 */
+/* 65 */
 /***/ function(module, exports) {
 
 	module.exports = function kulczynski(a, b) {
@@ -6920,7 +7192,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 62 */
+/* 66 */
 /***/ function(module, exports) {
 
 	module.exports = function kullbackLeibler(a, b) {
@@ -6934,7 +7206,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 63 */
+/* 67 */
 /***/ function(module, exports) {
 
 	module.exports = function kumarHassebrook(a, b) {
@@ -6952,7 +7224,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 64 */
+/* 68 */
 /***/ function(module, exports) {
 
 	module.exports = function kumarJohnson(a, b) {
@@ -6966,7 +7238,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 65 */
+/* 69 */
 /***/ function(module, exports) {
 
 	module.exports = function lorentzian(a, b) {
@@ -6980,7 +7252,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 66 */
+/* 70 */
 /***/ function(module, exports) {
 
 	module.exports = function manhattan(a, b) {
@@ -6995,7 +7267,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 67 */
+/* 71 */
 /***/ function(module, exports) {
 
 	module.exports = function matusita(a, b) {
@@ -7009,7 +7281,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 68 */
+/* 72 */
 /***/ function(module, exports) {
 
 	module.exports = function minkowski(a, b, p) {
@@ -7024,7 +7296,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 69 */
+/* 73 */
 /***/ function(module, exports) {
 
 	module.exports = function motyka(a, b) {
@@ -7040,7 +7312,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 70 */
+/* 74 */
 /***/ function(module, exports) {
 
 	module.exports = function pearson(a, b) {
@@ -7055,7 +7327,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 71 */
+/* 75 */
 /***/ function(module, exports) {
 
 	module.exports = function pearson(a, b) {
@@ -7070,7 +7342,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 72 */
+/* 76 */
 /***/ function(module, exports) {
 
 	module.exports = function probabilisticSymmetric(a, b) {
@@ -7085,7 +7357,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 73 */
+/* 77 */
 /***/ function(module, exports) {
 
 	module.exports = function ruzicka(a, b) {
@@ -7101,7 +7373,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 74 */
+/* 78 */
 /***/ function(module, exports) {
 
 	module.exports = function soergel(a, b) {
@@ -7117,7 +7389,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 75 */
+/* 79 */
 /***/ function(module, exports) {
 
 	module.exports = function sorensen(a, b) {
@@ -7133,7 +7405,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 76 */
+/* 80 */
 /***/ function(module, exports) {
 
 	module.exports = function squared(a, b) {
@@ -7148,7 +7420,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 77 */
+/* 81 */
 /***/ function(module, exports) {
 
 	module.exports = function squaredChord(a, b) {
@@ -7162,7 +7434,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 78 */
+/* 82 */
 /***/ function(module, exports) {
 
 	module.exports = function taneja(a, b) {
@@ -7176,10 +7448,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 79 */
+/* 83 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var tanimotoS = __webpack_require__(80);
+	var tanimotoS = __webpack_require__(84);
 
 	module.exports = function tanimoto(a, b, bitvector) {
 	    if (bitvector)
@@ -7200,7 +7472,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 80 */
+/* 84 */
 /***/ function(module, exports) {
 
 	module.exports = function tanimoto(a, b, bitvector) {
@@ -7231,7 +7503,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 81 */
+/* 85 */
 /***/ function(module, exports) {
 
 	module.exports = function topsoe(a, b) {
@@ -7245,7 +7517,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 82 */
+/* 86 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -7367,7 +7639,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 83 */
+/* 87 */
 /***/ function(module, exports) {
 
 	module.exports = function waveHedges(a, b) {
@@ -7381,25 +7653,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 84 */
+/* 88 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	exports.cosine = __webpack_require__(85);
-	exports.czekanowski = __webpack_require__(86);
-	exports.dice = __webpack_require__(87);
-	exports.intersection = __webpack_require__(88);
-	exports.jaccard = __webpack_require__(89);
-	exports.kulczynski = __webpack_require__(90);
-	exports.motyka = __webpack_require__(91);
-	exports.pearson = __webpack_require__(92);
-	exports.squaredChord = __webpack_require__(96);
-	exports.tanimoto = __webpack_require__(80);
+	exports.cosine = __webpack_require__(89);
+	exports.czekanowski = __webpack_require__(90);
+	exports.dice = __webpack_require__(91);
+	exports.intersection = __webpack_require__(92);
+	exports.jaccard = __webpack_require__(93);
+	exports.kulczynski = __webpack_require__(94);
+	exports.motyka = __webpack_require__(95);
+	exports.pearson = __webpack_require__(96);
+	exports.squaredChord = __webpack_require__(100);
+	exports.tanimoto = __webpack_require__(84);
 
 
 /***/ },
-/* 85 */
+/* 89 */
 /***/ function(module, exports) {
 
 	module.exports = function cosine(a, b) {
@@ -7417,10 +7689,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 86 */
+/* 90 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var czekanowskiD = __webpack_require__(46);
+	var czekanowskiD = __webpack_require__(50);
 
 	module.exports = function czekanowski(a, b) {
 	    return 1 - czekanowskiD(a,b);
@@ -7428,10 +7700,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 87 */
+/* 91 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var diceD = __webpack_require__(47);
+	var diceD = __webpack_require__(51);
 
 	module.exports = function dice(a, b) {
 	    return 1 - diceD(a,b);
@@ -7439,10 +7711,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 88 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var intersectionD = __webpack_require__(55);
+	var intersectionD = __webpack_require__(59);
 
 	module.exports = function intersection(a, b) {
 	    return 1 - intersectionD(a,b);
@@ -7450,10 +7722,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 89 */
+/* 93 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var jaccardD = __webpack_require__(56);
+	var jaccardD = __webpack_require__(60);
 
 	module.exports = function jaccard(a, b) {
 	    return 1 - jaccardD(a, b);
@@ -7461,10 +7733,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 90 */
+/* 94 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var kulczynskiD = __webpack_require__(61);
+	var kulczynskiD = __webpack_require__(65);
 
 	module.exports = function kulczynski(a, b) {
 	    return 1 / kulczynskiD(a, b);
@@ -7472,10 +7744,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 91 */
+/* 95 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var motykaD = __webpack_require__(69);
+	var motykaD = __webpack_require__(73);
 
 	module.exports = function motyka(a, b) {
 	    return 1 - motykaD(a,b);
@@ -7483,13 +7755,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 92 */
+/* 96 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var stat=__webpack_require__(93).array;
-	var cosine=__webpack_require__(85);
+	var stat=__webpack_require__(97).array;
+	var cosine=__webpack_require__(89);
 
 	module.exports = function pearson(a, b) {
 	    var avgA=stat.mean(a);
@@ -7507,17 +7779,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 93 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	exports.array = __webpack_require__(94);
-	exports.matrix = __webpack_require__(95);
+	exports.array = __webpack_require__(98);
+	exports.matrix = __webpack_require__(99);
 
 
 /***/ },
-/* 94 */
+/* 98 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -7976,11 +8248,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 95 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var arrayStat = __webpack_require__(94);
+	var arrayStat = __webpack_require__(98);
 
 	// https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -8502,10 +8774,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 96 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var squaredChordD = __webpack_require__(77);
+	var squaredChordD = __webpack_require__(81);
 
 	module.exports = function squaredChord(a, b) {
 	    return 1 - squaredChordD(a, b);
@@ -8513,14 +8785,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 97 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(14);
 	var padArray = __webpack_require__(23);
-	var extend = __webpack_require__(98);
+	var extend = __webpack_require__(102);
 
 	var defaultOptions = {
 	    windowSize: 5,
@@ -8599,7 +8871,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 98 */
+/* 102 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -8691,7 +8963,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 99 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
 	const HashTable = __webpack_require__(11);
@@ -8989,14 +9261,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 100 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var LM = __webpack_require__(101);
+	var LM = __webpack_require__(105);
 	var math = LM.Matrix.algebra;
-	var Matrix = __webpack_require__(113);
+	var Matrix = __webpack_require__(117);
 
 	/**
 	 * This function calculates the spectrum as a sum of lorentzian functions. The Lorentzian
@@ -9452,25 +9724,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports.optimizeLorentzianTrain = optimizeLorentzianTrain;
 
 /***/ },
-/* 101 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(102);
-	module.exports.Matrix = __webpack_require__(103);
-	module.exports.Matrix.algebra = __webpack_require__(112);
+	module.exports = __webpack_require__(106);
+	module.exports.Matrix = __webpack_require__(107);
+	module.exports.Matrix.algebra = __webpack_require__(116);
 
 
 /***/ },
-/* 102 */
+/* 106 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Created by acastillo on 8/5/15.
 	 */
-	var Matrix = __webpack_require__(103);
-	var math = __webpack_require__(112);
+	var Matrix = __webpack_require__(107);
+	var math = __webpack_require__(116);
 
 	var DEBUG = false;
 	/** Levenberg Marquardt curve-fitting: minimize sum of weighted squared residuals
@@ -9985,17 +10257,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LM;
 
 /***/ },
-/* 103 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(104);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(105);
+	module.exports = __webpack_require__(108);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(109);
 
 
 /***/ },
-/* 104 */
+/* 108 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -11471,18 +11743,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 105 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(104);
+	var Matrix = __webpack_require__(108);
 
-	var SingularValueDecomposition = __webpack_require__(106);
-	var EigenvalueDecomposition = __webpack_require__(108);
-	var LuDecomposition = __webpack_require__(109);
-	var QrDecomposition = __webpack_require__(110);
-	var CholeskyDecomposition = __webpack_require__(111);
+	var SingularValueDecomposition = __webpack_require__(110);
+	var EigenvalueDecomposition = __webpack_require__(112);
+	var LuDecomposition = __webpack_require__(113);
+	var QrDecomposition = __webpack_require__(114);
+	var CholeskyDecomposition = __webpack_require__(115);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -11517,13 +11789,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 106 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(104);
-	var hypotenuse = __webpack_require__(107).hypotenuse;
+	var Matrix = __webpack_require__(108);
+	var hypotenuse = __webpack_require__(111).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
 	function SingularValueDecomposition(value, options) {
@@ -12020,7 +12292,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 107 */
+/* 111 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12040,13 +12312,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 108 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(104);
-	var hypotenuse = __webpack_require__(107).hypotenuse;
+	var Matrix = __webpack_require__(108);
+	var hypotenuse = __webpack_require__(111).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
 	function EigenvalueDecomposition(matrix) {
@@ -12812,12 +13084,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 109 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(104);
+	var Matrix = __webpack_require__(108);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
 	function LuDecomposition(matrix) {
@@ -12987,13 +13259,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 110 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(104);
-	var hypotenuse = __webpack_require__(107).hypotenuse;
+	var Matrix = __webpack_require__(108);
+	var hypotenuse = __webpack_require__(111).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 	function QrDecomposition(value) {
@@ -13143,12 +13415,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 111 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(104);
+	var Matrix = __webpack_require__(108);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
@@ -13238,7 +13510,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 112 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13250,7 +13522,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(103);
+	var Matrix = __webpack_require__(107);
 
 	function matrix(A,B){
 	    return new Matrix(A,B);
@@ -13496,17 +13768,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 113 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(114);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(115);
+	module.exports = __webpack_require__(118);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(119);
 
 
 /***/ },
-/* 114 */
+/* 118 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -14982,18 +15254,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 115 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(114);
+	var Matrix = __webpack_require__(118);
 
-	var SingularValueDecomposition = __webpack_require__(116);
-	var EigenvalueDecomposition = __webpack_require__(118);
-	var LuDecomposition = __webpack_require__(119);
-	var QrDecomposition = __webpack_require__(120);
-	var CholeskyDecomposition = __webpack_require__(121);
+	var SingularValueDecomposition = __webpack_require__(120);
+	var EigenvalueDecomposition = __webpack_require__(122);
+	var LuDecomposition = __webpack_require__(123);
+	var QrDecomposition = __webpack_require__(124);
+	var CholeskyDecomposition = __webpack_require__(125);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -15028,13 +15300,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 116 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(114);
-	var hypotenuse = __webpack_require__(117).hypotenuse;
+	var Matrix = __webpack_require__(118);
+	var hypotenuse = __webpack_require__(121).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
 	function SingularValueDecomposition(value, options) {
@@ -15531,7 +15803,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 117 */
+/* 121 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -15551,13 +15823,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 118 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(114);
-	var hypotenuse = __webpack_require__(117).hypotenuse;
+	var Matrix = __webpack_require__(118);
+	var hypotenuse = __webpack_require__(121).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
 	function EigenvalueDecomposition(matrix) {
@@ -16323,12 +16595,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 119 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(114);
+	var Matrix = __webpack_require__(118);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
 	function LuDecomposition(matrix) {
@@ -16498,13 +16770,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 120 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(114);
-	var hypotenuse = __webpack_require__(117).hypotenuse;
+	var Matrix = __webpack_require__(118);
+	var hypotenuse = __webpack_require__(121).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 	function QrDecomposition(value) {
@@ -16654,12 +16926,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 121 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(114);
+	var Matrix = __webpack_require__(118);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
@@ -16749,7 +17021,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 122 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -16969,12 +17241,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 123 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	const measures = __webpack_require__(124);
+	const measures = __webpack_require__(128);
 
 	class Performance {
 	    /**
@@ -17202,7 +17474,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 124 */
+/* 128 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17346,7 +17618,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 125 */
+/* 129 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -17455,20 +17727,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 126 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = exports = __webpack_require__(127);
-	exports.kernel = __webpack_require__(128).kernel;
+	module.exports = exports = __webpack_require__(131);
+	exports.kernel = __webpack_require__(132).kernel;
 
 
 /***/ },
-/* 127 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var kernel = __webpack_require__(128).kernel;
-	var getKernel = __webpack_require__(128).getKernel;
+	var kernel = __webpack_require__(132).kernel;
+	var getKernel = __webpack_require__(132).getKernel;
 
 	/**
 	 * Parameters to implement function
@@ -17697,7 +17969,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SVM;
 
 /***/ },
-/* 128 */
+/* 132 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17776,23 +18048,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 129 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(130);
+	module.exports = __webpack_require__(134);
 
 /***/ },
-/* 130 */
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	module.exports = KNN;
 
-	var KDTree = __webpack_require__(131).kdTree;
-	var Distances = __webpack_require__(38);
+	var KDTree = __webpack_require__(135).kdTree;
+	var Distances = __webpack_require__(42);
 
 	/**
 	 * K-Nearest neighboor constructor.
@@ -17924,7 +18196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 131 */
+/* 135 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18390,23 +18662,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 132 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = exports = __webpack_require__(133).NaiveBayes;
-	exports.separateClasses = __webpack_require__(133).separateClasses;
+	module.exports = exports = __webpack_require__(137).NaiveBayes;
+	exports.separateClasses = __webpack_require__(137).separateClasses;
 
 
 /***/ },
-/* 133 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(14);
-	var Stat = __webpack_require__(134);
+	var Stat = __webpack_require__(138);
 
 	module.exports.NaiveBayes = NaiveBayes;
 	module.exports.separateClasses = separateClasses;
@@ -18583,17 +18855,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 134 */
+/* 138 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	exports.array = __webpack_require__(135);
-	exports.matrix = __webpack_require__(136);
+	exports.array = __webpack_require__(139);
+	exports.matrix = __webpack_require__(140);
 
 
 /***/ },
-/* 135 */
+/* 139 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -19052,11 +19324,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 136 */
+/* 140 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var arrayStat = __webpack_require__(135);
+	var arrayStat = __webpack_require__(139);
 
 	// https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -19578,22 +19850,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 137 */
+/* 141 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = exports = __webpack_require__(138);
-	exports.Utils = __webpack_require__(139);
-	exports.OPLS = __webpack_require__(140);
+	module.exports = exports = __webpack_require__(142);
+	exports.Utils = __webpack_require__(143);
+	exports.OPLS = __webpack_require__(144);
 
 
 /***/ },
-/* 138 */
+/* 142 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(14);
-	var Utils = __webpack_require__(139);
+	var Utils = __webpack_require__(143);
 
 	class PLS {
 	    constructor(X, Y) {
@@ -19819,7 +20091,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 139 */
+/* 143 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -19870,13 +20142,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 140 */
+/* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(14);
-	var Utils = __webpack_require__(139);
+	var Utils = __webpack_require__(143);
 
 	module.exports = OPLS;
 
@@ -19954,13 +20226,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 141 */
+/* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(142);
+	module.exports = __webpack_require__(146);
 
 /***/ },
-/* 142 */
+/* 146 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20152,24 +20424,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 143 */
+/* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports.agnes = __webpack_require__(144);
-	exports.diana = __webpack_require__(152);
+	exports.agnes = __webpack_require__(148);
+	exports.diana = __webpack_require__(156);
 	//exports.birch = require('./birch');
 	//exports.cure = require('./cure');
 	//exports.chameleon = require('./chameleon');
 
 /***/ },
-/* 144 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var euclidean = __webpack_require__(145);
-	var ClusterLeaf = __webpack_require__(146);
-	var Cluster = __webpack_require__(147);
+	var euclidean = __webpack_require__(149);
+	var ClusterLeaf = __webpack_require__(150);
+	var Cluster = __webpack_require__(151);
 
 	/**
 	 * @param cluster1
@@ -20401,7 +20673,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = agnes;
 
 /***/ },
-/* 145 */
+/* 149 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20423,13 +20695,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 146 */
+/* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Cluster = __webpack_require__(147);
-	var util = __webpack_require__(148);
+	var Cluster = __webpack_require__(151);
+	var util = __webpack_require__(152);
 
 	function ClusterLeaf (index) {
 	    Cluster.call(this);
@@ -20444,7 +20716,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 147 */
+/* 151 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20515,7 +20787,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 148 */
+/* 152 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -21043,7 +21315,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(150);
+	exports.isBuffer = __webpack_require__(154);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -21087,7 +21359,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(151);
+	exports.inherits = __webpack_require__(155);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -21105,10 +21377,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return Object.prototype.hasOwnProperty.call(obj, prop);
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(149)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(153)))
 
 /***/ },
-/* 149 */
+/* 153 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
@@ -21205,7 +21477,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 150 */
+/* 154 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -21216,7 +21488,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 151 */
+/* 155 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -21245,14 +21517,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 152 */
+/* 156 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var euclidean = __webpack_require__(145);
-	var ClusterLeaf = __webpack_require__(146);
-	var Cluster = __webpack_require__(147);
+	var euclidean = __webpack_require__(149);
+	var ClusterLeaf = __webpack_require__(150);
+	var Cluster = __webpack_require__(151);
 
 	/**
 	 * @param {Array <Array <number>>} cluster1
@@ -21541,13 +21813,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = diana;
 
 /***/ },
-/* 153 */
+/* 157 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var NodeSquare = __webpack_require__(154),
-	    NodeHexagonal = __webpack_require__(155);
+	var NodeSquare = __webpack_require__(158),
+	    NodeHexagonal = __webpack_require__(159);
 
 	var defaultOptions = {
 	    fields: 3,
@@ -21967,7 +22239,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SOM;
 
 /***/ },
-/* 154 */
+/* 158 */
 /***/ function(module, exports) {
 
 	function NodeSquare(x, y, weights, som) {
@@ -22078,10 +22350,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = NodeSquare;
 
 /***/ },
-/* 155 */
+/* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var NodeSquare = __webpack_require__(154);
+	var NodeSquare = __webpack_require__(158);
 
 	function NodeHexagonal(x, y, weights, som) {
 
@@ -22113,19 +22385,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = NodeHexagonal;
 
 /***/ },
-/* 156 */
+/* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(157);
+	module.exports = __webpack_require__(161);
 
 
 /***/ },
-/* 157 */
+/* 161 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var Layer = __webpack_require__(158);
+	var Layer = __webpack_require__(162);
 	var Matrix = __webpack_require__(14);
 
 	class FeedforwardNeuralNetwork {
@@ -22299,7 +22571,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 158 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
