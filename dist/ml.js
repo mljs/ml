@@ -5741,6 +5741,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.r = y.r;
 	                this.r2 = y.r2;
 	            }
+	            if(y.chi2){
+	                this.chi2 = y.chi2;
+	            }
 	        }
 	        else{
 	            var n = x.length;
@@ -5769,9 +5772,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.slope = numerator / (n * xSquared - xSum * xSum);
 	            this.intercept = (1 / n) * ySum - this.slope * (1 / n) * xSum;
 	            this.coefficients = [this.intercept, this.slope];
-	            if(options.computeCoefficient){
-	                this.r = this.rCoefficient(x,y);
-	                this.r2 = this.r*this.r;
+	            if(options.computeQuality){
+	                this.quality = this.modelQuality(x,y);
 	            }
 	        }
 
@@ -5783,9 +5785,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            slope: this.slope,
 	            intercept: this.intercept
 	        }
-	        if (this.r) {
-	            out. r=this.r;
-	            out.r2 = this.r2;
+	        if(this.quality){
+	            out.quality = this.quality;
 	        }
 
 	        return out;
@@ -5882,12 +5883,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    
 	    /**
-	     * Return the correlation coefficient of determination (r).
+	     * Return the correlation coefficient of determination (r) and chi-square.
 	     * @param x
 	     * @param y
 	     * @returns {number}
 	     */
-	    rCoefficient(x, y) {
+	    modelQuality(x, y) {
 	        let n = x.length;
 	        var y2 = new Array(n);
 	        for (var i = 0; i < n; i++) {
@@ -5895,7 +5896,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	        var xSum = 0;
 	        var ySum = 0;
-
+	        var chi2 = 0;
+	        var rmsd = 0;
 	        var xSquared = 0;
 	        var ySquared = 0;
 	        var xY = 0;
@@ -5906,10 +5908,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	            xSquared += y2[i] * y2[i];
 	            ySquared += y[i] * y[i];
 	            xY += y2[i] * y[i];
+	            if(y[i]!=0)
+	                chi2 += (y[i]-y2[i])*(y[i]-y2[i])/y[i];
+	            rmsd = (y[i]-y2[i])*(y[i]-y2[i]);
 	        }
 
-	        return (n*xY-xSum*ySum)/Math.sqrt((n*xSquared-xSum*xSum)*(n*ySquared-ySum*ySum));
+	        var r = (n*xY-xSum*ySum)/Math.sqrt((n*xSquared-xSum*xSum)*(n*ySquared-ySum*ySum));
+
+	        return {r:r, r2:r*r, chi2:chi2, rmsd:rmsd*rmsd/n};
 	    }
+
 	}
 
 	module.exports = BaseRegression;
@@ -5953,9 +5961,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.coefficients = outputs.coefficients;
 	            this.powers = outputs.powers;
 	            this.M = outputs.M;
-	            if(y.r){
-	                this.r = y.r;
-	                this.r2 = y.r2;
+	            if(y.quality){
+	                this.quality = y.quality;
 	            }
 	        } else {
 	            var n = x.length;
@@ -5993,9 +6000,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.coefficients = A.solve(B).to1DArray();
 	            this.powers = powers;
 	            this.M = M-1;
-	            if(opt.computeCoefficient){
-	                this.r = this.rCoefficient(x,y);
-	                this.r2 = this.r*this.r;
+	            if(opt.computeQuality){
+	                this.quality = this.modelQuality(x,y);
 	            }
 	        }
 	    }
@@ -6015,9 +6021,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            M: this.M
 	        };
 
-	        if(this.r){
-	            out.r = this.r;
-	            out.r2=this.r2;
+	        if(this.quality){
+	            out.quality = this.quality;
 	        }
 	        return out;
 	    }
@@ -6109,9 +6114,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (x === true) { // reloading model
 	            this.A = outputs.A;
 	            this.M = outputs.M;
-	            if(y.r){
-	                this.r = y.r;
-	                this.r2 = y.r2;
+	            if(y.quality){
+	                this.quality = y.quality;
 	            }
 	        } else {
 	            var n = x.length;
@@ -6122,9 +6126,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var linear = new PolynomialRegression(x, y, [M] ,{computeCoefficient:true});
 	            this.A = linear.coefficients[0];
 	            this.M = M;
-	            if(opt.computeCoefficient){
-	                this.r = this.rCoefficient(x,y);
-	                this.r2 = this.r*this.r;
+	            if(opt.computeQuality){
+	                this.quality = this.modelQuality(x,y);
 	            }
 	        }
 	    }
@@ -6135,9 +6138,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    toJSON() {
 	        var out = {name: 'potentialRegression', A: this.A, M: this.M};
-	        if(this.r){
-	            out.r = this.r;
-	            out.r2 = this.r2;
+	        if(this.quality){
+	            out.quality = this.quality;
 	        }
 	        return out;
 	    }
@@ -6147,7 +6149,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    toLaTeX(precision){
-	        return "y = "+maybeToPrecision(this.A, precision)+"x^{"+this.M+"}";
+
+	        if (this.M >= 0)
+	            return "y = "+maybeToPrecision(this.A, precision)+"x^{"+this.M+"}";
+	        else
+	            return "y = \\frac{"+maybeToPrecision(this.A, precision)+"}{x^{"+(-this.M)+"}}";
 	    }
 
 	    static load(json) {
@@ -6194,9 +6200,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (x === true) { // reloading model
 	            this.A = outputs.A;
 	            this.C = outputs.C;
-	            if(y.r){
-	                this.r = y.r;
-	                this.r2 = y.r2;
+	            if(y.quality){
+	                this.quality = y.quality;
 	            }
 	        } else {
 	            var n = x.length;
@@ -6211,9 +6216,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var linear = new SimpleLinearRegression(x, yl, {computeCoefficient:false});
 	            this.A = linear.slope;
 	            this.C = Math.exp(linear.intercept);
-	            if(opt.computeCoefficient){
-	                this.r = this.rCoefficient(x,y);
-	                this.r2 = this.r*this.r;
+	            if(opt.computeQuality){
+	                this.quality = this.modelQuality(x,y);
 	            }
 	        }
 	    }
@@ -6224,9 +6228,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    toJSON() {
 	        var out = {name: 'expRegression', A: this.A, C: this.C};
-	        if(this.r){
-	            out.r = this.r;
-	            out.r2=this.r2;
+	        if(this.quality){
+	            out.quality = this.quality;
 	        }
 	        return out;
 	    }
@@ -6236,7 +6239,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    toLaTeX(precision){
-	        return "y = "+maybeToPrecision(this.C, precision)+"e^{"+maybeToPrecision(this.A, precision)+"x}";
+	        if(this.A>=0)
+	            return "y = "+maybeToPrecision(this.C, precision)+"e^{"+maybeToPrecision(this.A, precision)+"x}";
+	        else
+	            return "y = \\frac{"+maybeToPrecision(this.C, precision)+"}{e^{"+maybeToPrecision(-this.A, precision)+"x}}";
+
 	    }
 
 	    static load(json) {
@@ -6283,6 +6290,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.r = y.r;
 	                this.r2 = y.r2;
 	            }
+	            if(y.chi2){
+	                this.chi2 = y.chi2;
+	            }
 	        } else {
 	            var n = x.length;
 	            if (n !== y.length) {
@@ -6297,9 +6307,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            var linear = new SimpleLinearRegression(xl, yl, {computeCoefficient:false});
 	            this.A = Math.exp(linear.intercept);
 	            this.B = linear.slope;
-	            if(opt.computeCoefficient){
-	                this.r = this.rCoefficient(x,y);
-	                this.r2 = this.r*this.r;
+	            if(opt.computeQuality){
+	                this.quality = this.modelQuality(x,y);
 	            }
 	        }
 	    }
@@ -6310,9 +6319,8 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    toJSON() {
 	        var out = {name: 'powerRegression', A: this.A, B: this.B};
-	        if(this.r){
-	            out.r = this.r;
-	            out.r2=this.r2;
+	        if(this.quality){
+	            out.quality = this.quality;
 	        }
 	        return out;
 	    }
@@ -6321,8 +6329,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return "y = "+maybeToPrecision(this.A, precision)+"*x^"+maybeToPrecision(this.B, precision);
 	    }
 
-	    toLaTeX(precision){
-	        return "y = "+maybeToPrecision(this.A, precision)+"x^{"+maybeToPrecision(this.B, precision)+"}";
+	    toLaTeX(precision) {
+	        if (this.B >= 0)
+	            return "y = " + maybeToPrecision(this.A, precision) + "x^{" + maybeToPrecision(this.B, precision) + "}";
+	        else
+	            return "y = \\frac{" + maybeToPrecision(this.A, precision) + "}{x^{" + maybeToPrecision(-this.B, precision) + "}}";
 	    }
 
 	    static load(json) {
@@ -6364,9 +6375,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.kernelType = outputs.kernelType;
 	            this.kernelOptions = outputs.kernelOptions;
 	            this.kernel = new Kernel(outputs.kernelType, outputs.kernelOptions);
-	            if(outputs.r){
-	                this.r = outputs.r;
-	                this.r2 = outputs.r2;
+
+	            if(outputs.quality){
+	                this.quality = outputs.quality;
 	            }
 	        } else {
 	            options = Object.assign({}, defaultOptions, options);
@@ -6382,9 +6393,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.kernelOptions = options.kernelOptions;
 	            this.kernel = kernelFunction;
 
-	            if(options.computeCoefficient){
-	                this.r = this.rCoefficient(inputs, outputs);
-	                this.r2 = this.r*this.r;
+	            if(options.computeQuality){
+	                this.quality=this.modelQuality(inputs,outputs);
 	            }
 	        }
 	    }
@@ -6394,13 +6404,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    toJSON() {
-	        return {
+	        var out = {
 	            name: 'kernelRidgeRegression',
 	            alpha: this.alpha,
 	            inputs: this.inputs,
 	            kernelType: this.kernelType,
 	            kernelOptions: this.kernelOptions
 	        };
+	        if(this.quality){
+	            out.quality = this.quality;
+	        }
+	        return out;
 	    }
 
 	    static load(json) {
@@ -6588,6 +6602,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	                this.r = outputs.r;
 	                this.r2 = outputs.r2;
 	            }
+	            if(outputs.chi2){
+	                this.chi2 = outputs.chi2;
+	            }
 	        } else {
 	            options = Object.assign({}, defaultOptions, options);
 	            this.order = options.order;
@@ -6596,9 +6613,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.y = outputs;
 	            
 	            this.train(this.X,this.y,options);
-	            if(options.computeCoefficient){
-	                this.r = this.rCoefficient(inputs, outputs);
-	                this.r2 = this.r*this.r;
+
+	            if(options.computeQuality){
+	                this.quality = this.modelQuality(inputs,outputs);
 	            }
 	        }
 	    }
@@ -6695,9 +6712,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        for(var i = 0; i <= this.order; i++) {
 	            for(var j = 0; j <= this.order - i; j++) {
-	                var value = Math.pow(x1, i)*(Math.pow(x2, j));
-	                value*=this.coefficients[column][0];
-	                y+=value;
+	                y+= Math.pow(x1, i)*(Math.pow(x2, j))*this.coefficients[column][0];
 	                column++;
 	            }
 	        }
@@ -6706,11 +6721,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    toJSON() {
-	        return {
+	        var out = {
 	            name: "polyfit2D",
 	            order: this.order,
 	            coefficients: this.coefficients
 	        };
+	        if(this.quality){
+	            out.quality = this.quality;
+	        }
+	        return out;
 	    };
 
 	    static load(json) {
