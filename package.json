@@ -1,6 +1,6 @@
 {
   "name": "ml",
-  "version": "0.13.6",
+  "version": "0.13.7",
   "description": "Machine learning tools",
   "main": "src/index.js",
   "scripts": {

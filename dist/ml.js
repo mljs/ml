@@ -81,8 +81,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Statistics packages
 	var Stat = exports.Stat = {};
 
-	Stat.array = __webpack_require__(6);
-	Stat.matrix = __webpack_require__(7);
+	Stat.array = __webpack_require__(4);
+	Stat.matrix = __webpack_require__(5);
 	Stat.PCA = __webpack_require__(126);
 	Stat.Performance = __webpack_require__(127);
 
@@ -121,17 +121,18 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = exports = __webpack_require__(2);
-	exports.getEquallySpacedData = __webpack_require__(3).getEquallySpacedData;
-	exports.SNV = __webpack_require__(4).SNV;
+	exports.getEquallySpacedData = __webpack_require__(6).getEquallySpacedData;
+	exports.SNV = __webpack_require__(7).SNV;
 	exports.binarySearch = __webpack_require__(8);
 
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
+	const Stat = __webpack_require__(3).array;
 	/**
 	 * Function that returns an array of points given 1D array as follows:
 	 *
@@ -297,6 +298,52 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    return dotProductApplied;
 	}
+	/**
+	 * To scale the input array between the specified min and max values. The operation is performed inplace
+	 * if the options.inplace is specified. If only one of the min or max parameters is specified, then the scaling
+	 * will multiply the input array by min/min(input) or max/max(input)
+	 * @param input
+	 * @param options
+	 * @returns {*}
+	 */
+	function scale(input, options){
+	    var y;
+	    if(options.inplace){
+	        y = input;
+	    }
+	    else{
+	        y = new Array(input.length);
+	    }
+	    const max = options.max;
+	    const min = options.min;
+	    if(typeof max === "number"){
+	        if(typeof min === "number"){
+	            var minMax = Stat.minMax(input);
+	            var factor = (max - min)/(minMax.max-minMax.min);
+	            for(var i=0;i< y.length;i++){
+	                y[i]=(input[i]-minMax.min)*factor+min;
+	            }
+	        }
+	        else{
+	            var currentMin = Stat.max(input);
+	            var factor = max/currentMin;
+	            for(var i=0;i< y.length;i++){
+	                y[i] = input[i]*factor;
+	            }
+	        }
+	    }
+	    else{
+	        if(typeof min === "number"){
+	            var currentMin = Stat.min(input);
+	            var factor = min/currentMin;
+	            for(var i=0;i< y.length;i++){
+	                y[i] = input[i]*factor;
+	            }
+	        }
+	    }
+	    return y;
+
+	}
 
 	module.exports = {
 	    coordArrayToPoints: coordArrayToPoints,
@@ -305,308 +352,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	    coordMatrixToPoints: transpose,
 	    pointsToCoordArray: pointsToCoordArray,
 	    pointsToCoordMatrix: transpose,
-	    applyDotProduct: applyDotProduct
+	    applyDotProduct: applyDotProduct,
+	    scale:scale
 	};
 
 
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	/**
-	 *
-	 * Function that returns a Number array of equally spaced numberOfPoints
-	 * containing a representation of intensities of the spectra arguments x
-	 * and y.
-	 *
-	 * The options parameter contains an object in the following form:
-	 * from: starting point
-	 * to: last point
-	 * numberOfPoints: number of points between from and to
-	 * variant: "slot" or "smooth" - smooth is the default option
-	 *
-	 * The slot variant consist that each point in the new array is calculated
-	 * averaging the existing points between the slot that belongs to the current
-	 * value. The smooth variant is the same but takes the integral of the range
-	 * of the slot and divide by the step size between two points in the new array.
-	 *
-	 * @param x - sorted increasing x values
-	 * @param y
-	 * @param options
-	 * @returns {Array} new array with the equally spaced data.
-	 *
-	 */
-	function getEquallySpacedData(x, y, options) {
-	    if (x.length>1 && x[0]>x[1]) {
-	        x=x.reverse();
-	        y=y.reverse();
-	    }
+	exports.array = __webpack_require__(4);
+	exports.matrix = __webpack_require__(5);
 
-	    var xLength = x.length;
-	    if(xLength !== y.length)
-	        throw new RangeError("the x and y vector doesn't have the same size.");
-
-	    if (options === undefined) options = {};
-
-	    var from = options.from === undefined ? x[0] : options.from
-	    if (isNaN(from) || !isFinite(from)) {
-	        throw new RangeError("'From' value must be a number");
-	    }
-	    var to = options.to === undefined ? x[x.length - 1] : options.to;
-	    if (isNaN(to) || !isFinite(to)) {
-	        throw new RangeError("'To' value must be a number");
-	    }
-
-	    var reverse = from > to;
-	    if(reverse) {
-	        var temp = from;
-	        from = to;
-	        to = temp;
-	    }
-
-	    var numberOfPoints = options.numberOfPoints === undefined ? 100 : options.numberOfPoints;
-	    if (isNaN(numberOfPoints) || !isFinite(numberOfPoints)) {
-	        throw new RangeError("'Number of points' value must be a number");
-	    }
-	    if(numberOfPoints < 1)
-	        throw new RangeError("the number of point must be higher than 1");
-
-	    var algorithm = options.variant === "slot" ? "slot" : "smooth"; // default value: smooth
-
-	    var output = algorithm === "slot" ? getEquallySpacedSlot(x, y, from, to, numberOfPoints) : getEquallySpacedSmooth(x, y, from, to, numberOfPoints);
-
-	    return reverse ? output.reverse() : output;
-	}
-
-	/**
-	 * function that retrieves the getEquallySpacedData with the variant "smooth"
-	 *
-	 * @param x
-	 * @param y
-	 * @param from - Initial point
-	 * @param to - Final point
-	 * @param numberOfPoints
-	 * @returns {Array} - Array of y's equally spaced with the variant "smooth"
-	 */
-	function getEquallySpacedSmooth(x, y, from, to, numberOfPoints) {
-	    var xLength = x.length;
-
-	    var step = (to - from) / (numberOfPoints - 1);
-	    var halfStep = step / 2;
-
-	    var start = from - halfStep;
-	    var output = new Array(numberOfPoints);
-
-	    var initialOriginalStep = x[1] - x[0];
-	    var lastOriginalStep = x[x.length - 1] - x[x.length - 2];
-
-	    // Init main variables
-	    var min = start;
-	    var max = start + step;
-
-	    var previousX = -Number.MAX_VALUE;
-	    var previousY = 0;
-	    var nextX = x[0] - initialOriginalStep;
-	    var nextY = 0;
-
-	    var currentValue = 0;
-	    var slope = 0;
-	    var intercept = 0;
-	    var sumAtMin = 0;
-	    var sumAtMax = 0;
-
-	    var i = 0; // index of input
-	    var j = 0; // index of output
-
-	    function getSlope(x0, y0, x1, y1) {
-	        return (y1 - y0) / (x1 - x0);
-	    }
-
-	    main: while(true) {
-	        while (nextX - max >= 0) {
-	            // no overlap with original point, just consume current value
-	            var add = integral(0, max - previousX, slope, previousY);
-	            sumAtMax = currentValue + add;
-
-	            output[j] = (sumAtMax - sumAtMin) / step;
-	            j++;
-
-	            if (j === numberOfPoints)
-	                break main;
-
-	            min = max;
-	            max += step;
-	            sumAtMin = sumAtMax;
-	        }
-
-	        if(previousX <= min && min <= nextX) {
-	            add = integral(0, min - previousX, slope, previousY);
-	            sumAtMin = currentValue + add;
-	        }
-
-	        currentValue += integral(previousX, nextX, slope, intercept);
-
-	        previousX = nextX;
-	        previousY = nextY;
-
-	        if (i < xLength) {
-	            nextX = x[i];
-	            nextY = y[i];
-	            i++;
-	        } else if (i === xLength) {
-	            nextX += lastOriginalStep;
-	            nextY = 0;
-	        }
-	        // updating parameters
-	        slope = getSlope(previousX, previousY, nextX, nextY);
-	        intercept = -slope*previousX + previousY;
-	    }
-
-	    return output;
-	}
-
-	/**
-	 * function that retrieves the getEquallySpacedData with the variant "slot"
-	 *
-	 * @param x
-	 * @param y
-	 * @param from - Initial point
-	 * @param to - Final point
-	 * @param numberOfPoints
-	 * @returns {Array} - Array of y's equally spaced with the variant "slot"
-	 */
-	function getEquallySpacedSlot(x, y, from, to, numberOfPoints) {
-	    var xLength = x.length;
-
-	    var step = (to - from) / (numberOfPoints - 1);
-	    var halfStep = step / 2;
-	    var lastStep = x[x.length - 1] - x[x.length - 2];
-
-	    var start = from - halfStep;
-	    var output = new Array(numberOfPoints);
-
-	    // Init main variables
-	    var min = start;
-	    var max = start + step;
-
-	    var previousX = -Number.MAX_VALUE;
-	    var previousY = 0;
-	    var nextX = x[0];
-	    var nextY = y[0];
-	    var frontOutsideSpectra = 0;
-	    var backOutsideSpectra = true;
-
-	    var currentValue = 0;
-
-	    // for slot algorithm
-	    var currentPoints = 0;
-
-	    var i = 1; // index of input
-	    var j = 0; // index of output
-
-	    main: while(true) {
-	        if (previousX>=nextX) throw (new Error('x must be an increasing serie'));
-	        while (previousX - max > 0) {
-	            // no overlap with original point, just consume current value
-	            if(backOutsideSpectra) {
-	                currentPoints++;
-	                backOutsideSpectra = false;
-	            }
-
-	            output[j] = currentPoints <= 0 ? 0 : currentValue / currentPoints;
-	            j++;
-
-	            if (j === numberOfPoints)
-	                break main;
-
-	            min = max;
-	            max += step;
-	            currentValue = 0;
-	            currentPoints = 0;
-	        }
-
-	        if(previousX > min) {
-	            currentValue += previousY;
-	            currentPoints++;
-	        }
-
-	        if(previousX === -Number.MAX_VALUE || frontOutsideSpectra > 1)
-	            currentPoints--;
-
-	        previousX = nextX;
-	        previousY = nextY;
-
-	        if (i < xLength) {
-	            nextX = x[i];
-	            nextY = y[i];
-	            i++;
-	        } else {
-	            nextX += lastStep;
-	            nextY = 0;
-	            frontOutsideSpectra++;
-	        }
-	    }
-
-	    return output;
-	}
-	/**
-	 * Function that calculates the integral of the line between two
-	 * x-coordinates, given the slope and intercept of the line.
-	 *
-	 * @param x0
-	 * @param x1
-	 * @param slope
-	 * @param intercept
-	 * @returns {number} integral value.
-	 */
-	function integral(x0, x1, slope, intercept) {
-	    return (0.5 * slope * x1 * x1 + intercept * x1) - (0.5 * slope * x0 * x0 + intercept * x0);
-	}
-
-	exports.getEquallySpacedData = getEquallySpacedData;
-	exports.integral = integral;
 
 /***/ },
 /* 4 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.SNV = SNV;
-	var Stat = __webpack_require__(5).array;
-
-	/**
-	 * Function that applies the standard normal variate (SNV) to an array of values.
-	 *
-	 * @param data - Array of values.
-	 * @returns {Array} - applied the SNV.
-	 */
-	function SNV(data) {
-	    var mean = Stat.mean(data);
-	    var std = Stat.standardDeviation(data);
-	    var result = data.slice();
-	    for (var i = 0; i < data.length; i++) {
-	        result[i] = (result[i] - mean) / std;
-	    }
-	    return result;
-	}
-
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.array = __webpack_require__(6);
-	exports.matrix = __webpack_require__(7);
-
-
-/***/ },
-/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -634,9 +397,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {number}
 	 */
 	exports.max = function max(values) {
-	    var max = -Infinity;
+	    var max = values[0];
 	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
+	    for (var i = 1; i < l; i++) {
 	        if (values[i] > max) max = values[i];
 	    }
 	    return max;
@@ -648,9 +411,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {number}
 	 */
 	exports.min = function min(values) {
-	    var min = Infinity;
+	    var min = values[0];
 	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
+	    for (var i = 1; i < l; i++) {
 	        if (values[i] < min) min = values[i];
 	    }
 	    return min;
@@ -662,10 +425,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {{min: number, max: number}}
 	 */
 	exports.minMax = function minMax(values) {
-	    var min = Infinity;
-	    var max = -Infinity;
+	    var min = values[0];
+	    var max = values[0];
 	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
+	    for (var i = 1; i < l; i++) {
 	        if (values[i] < min) min = values[i];
 	        if (values[i] > max) max = values[i];
 	    }
@@ -751,7 +514,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.truncatedMean = function truncatedMean(values, percent, alreadySorted) {
 	    if (alreadySorted === undefined) alreadySorted = false;
 	    if (!alreadySorted) {
-	        values = values.slice().sort(compareNumbers);
+	        values = [].concat(values).sort(compareNumbers);
 	    }
 	    var l = values.length;
 	    var k = Math.floor(l * percent);
@@ -807,7 +570,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.median = function median(values, alreadySorted) {
 	    if (alreadySorted === undefined) alreadySorted = false;
 	    if (!alreadySorted) {
-	        values = values.slice().sort(compareNumbers);
+	        values = [].concat(values).sort(compareNumbers);
 	    }
 	    var l = values.length;
 	    var half = Math.floor(l / 2);
@@ -856,11 +619,36 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return exports.standardDeviation(values) / Math.sqrt(values.length);
 	};
 
+	/**
+	 * IEEE Transactions on biomedical engineering, vol. 52, no. 1, january 2005, p. 76-
+	 * Calculate the standard deviation via the Median of the absolute deviation
+	 *  The formula for the standard deviation only holds for Gaussian random variables.
+	 * @returns {{mean: number, stdev: number}}
+	 */
+	exports.robustMeanAndStdev = function robustMeanAndStdev(y) {
+	    var mean = 0, stdev = 0;
+	    var length = y.length, i = 0;
+	    for (i = 0; i < length; i++) {
+	        mean += y[i];
+	    }
+	    mean /= length;
+	    var averageDeviations = new Array(length);
+	    for (i = 0; i < length; i++)
+	        averageDeviations[i] = Math.abs(y[i] - mean);
+	    averageDeviations.sort(compareNumbers);
+	    if (length % 2 == 1) {
+	        stdev = averageDeviations[(length - 1) / 2] / 0.6745;
+	    } else {
+	        stdev = 0.5 * (averageDeviations[length / 2] + averageDeviations[length / 2 - 1]) / 0.6745;
+	    }
+
+	    return {mean, stdev};
+	};
+
 	exports.quartiles = function quartiles(values, alreadySorted) {
 	    if (typeof(alreadySorted) === 'undefined') alreadySorted = false;
 	    if (!alreadySorted) {
-	        values = values.slice();
-	        values.sort(compareNumbers);
+	        values = [].concat(values).sort(compareNumbers);
 	    }
 
 	    var quart = values.length / 4;
@@ -1037,7 +825,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    var result = values;
 	    if (!inPlace)
-	        result = values.slice();
+	        result = [].concat(values);
 
 	    var theMean = exports.mean(result), l = result.length;
 	    for (var i = 0; i < l; i++)
@@ -1065,15 +853,50 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 7 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var arrayStat = __webpack_require__(6);
 
-	// https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
+	var arrayStat = __webpack_require__(4);
 
-	function entropy(matrix, eps) {
+	function compareNumbers(a, b) {
+	    return a - b;
+	}
+
+	exports.max = function max(matrix) {
+	    var max = -Infinity;
+	    for (var i = 0; i < matrix.length; i++) {
+	        for (var j = 0; j < matrix[i].length; j++) {
+	            if (matrix[i][j] > max) max = matrix[i][j];
+	        }
+	    }
+	    return max;
+	};
+
+	exports.min = function min(matrix) {
+	    var min = Infinity;
+	    for (var i = 0; i < matrix.length; i++) {
+	        for (var j = 0; j < matrix[i].length; j++) {
+	            if (matrix[i][j] < min) min = matrix[i][j];
+	        }
+	    }
+	    return min;
+	};
+
+	exports.minMax = function minMax(matrix) {
+	    var min = Infinity;
+	    var max = -Infinity;
+	    for (var i = 0; i < matrix.length; i++) {
+	        for (var j = 0; j < matrix[i].length; j++) {
+	            if (matrix[i][j] < min) min = matrix[i][j];
+	            if (matrix[i][j] > max) max = matrix[i][j];
+	        }
+	    }
+	    return {min, max};
+	};
+
+	exports.entropy = function entropy(matrix, eps) {
 	    if (typeof(eps) === 'undefined') {
 	        eps = 0;
 	    }
@@ -1086,9 +909,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    return -sum;
-	}
+	};
 
-	function mean(matrix, dimension) {
+	exports.mean = function mean(matrix, dimension) {
 	    if (typeof(dimension) === 'undefined') {
 	        dimension = 0;
 	    }
@@ -1129,21 +952,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	        throw new Error('Invalid dimension');
 	    }
 	    return theMean;
-	}
+	};
 
-	function standardDeviation(matrix, means, unbiased) {
-	    var vari = variance(matrix, means, unbiased), l = vari.length;
+	exports.standardDeviation = function standardDeviation(matrix, means, unbiased) {
+	    var vari = exports.variance(matrix, means, unbiased), l = vari.length;
 	    for (var i = 0; i < l; i++) {
 	        vari[i] = Math.sqrt(vari[i]);
 	    }
 	    return vari;
-	}
+	};
 
-	function variance(matrix, means, unbiased) {
+	exports.variance = function variance(matrix, means, unbiased) {
 	    if (typeof(unbiased) === 'undefined') {
 	        unbiased = true;
 	    }
-	    means = means || mean(matrix);
+	    means = means || exports.mean(matrix);
 	    var rows = matrix.length;
 	    if (rows === 0) return [];
 	    var cols = matrix[0].length;
@@ -1163,9 +986,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    return vari;
-	}
+	};
 
-	function median(matrix) {
+	exports.median = function median(matrix) {
 	    var rows = matrix.length, cols = matrix[0].length;
 	    var medians = new Array(cols);
 
@@ -1174,7 +997,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        for (var j = 0; j < rows; j++) {
 	            data[j] = matrix[j][i];
 	        }
-	        data.sort();
+	        data.sort(compareNumbers);
 	        var N = data.length;
 	        if (N % 2 === 0) {
 	            medians[i] = (data[N / 2] + data[(N / 2) - 1]) * 0.5;
@@ -1183,9 +1006,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    return medians;
-	}
+	};
 
-	function mode(matrix) {
+	exports.mode = function mode(matrix) {
 	    var rows = matrix.length,
 	        cols = matrix[0].length,
 	        modes = new Array(cols),
@@ -1220,11 +1043,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        modes[i] = itemArray[maxIndex];
 	    }
 	    return modes;
-	}
+	};
 
-	function skewness(matrix, unbiased) {
+	exports.skewness = function skewness(matrix, unbiased) {
 	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var means = mean(matrix);
+	    var means = exports.mean(matrix);
 	    var n = matrix.length, l = means.length;
 	    var skew = new Array(l);
 
@@ -1249,11 +1072,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    return skew;
-	}
+	};
 
-	function kurtosis(matrix, unbiased) {
+	exports.kurtosis = function kurtosis(matrix, unbiased) {
 	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var means = mean(matrix);
+	    var means = exports.mean(matrix);
 	    var n = matrix.length, m = matrix[0].length;
 	    var kurt = new Array(m);
 
@@ -1278,11 +1101,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    return kurt;
-	}
+	};
 
-	function standardError(matrix) {
+	exports.standardError = function standardError(matrix) {
 	    var samples = matrix.length;
-	    var standardDeviations = standardDeviation(matrix), l = standardDeviations.length;
+	    var standardDeviations = exports.standardDeviation(matrix)
+	    var l = standardDeviations.length;
 	    var standardErrors = new Array(l);
 	    var sqrtN = Math.sqrt(samples);
 
@@ -1290,13 +1114,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        standardErrors[i] = standardDeviations[i] / sqrtN;
 	    }
 	    return standardErrors;
-	}
+	};
 
-	function covariance(matrix, dimension) {
-	    return scatter(matrix, undefined, dimension);
-	}
+	exports.covariance = function covariance(matrix, dimension) {
+	    return exports.scatter(matrix, undefined, dimension);
+	};
 
-	function scatter(matrix, divisor, dimension) {
+	exports.scatter = function scatter(matrix, divisor, dimension) {
 	    if (typeof(dimension) === 'undefined') {
 	        dimension = 0;
 	    }
@@ -1307,8 +1131,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            divisor = matrix[0].length - 1;
 	        }
 	    }
-	    var means = mean(matrix, dimension),
-	        rows = matrix.length;
+	    var means = exports.mean(matrix, dimension);
+	    var rows = matrix.length;
 	    if (rows === 0) {
 	        return [[]];
 	    }
@@ -1352,12 +1176,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return cov;
-	}
+	};
 
-	function correlation(matrix) {
-	    var means = mean(matrix),
-	        standardDeviations = standardDeviation(matrix, true, means),
-	        scores = zScores(matrix, means, standardDeviations),
+	exports.correlation = function correlation(matrix) {
+	    var means = exports.mean(matrix),
+	        standardDeviations = exports.standardDeviation(matrix, true, means),
+	        scores = exports.zScores(matrix, means, standardDeviations),
 	        rows = matrix.length,
 	        cols = matrix[0].length,
 	        i, j;
@@ -1378,16 +1202,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    return cor;
-	}
+	};
 
-	function zScores(matrix, means, standardDeviations) {
-	    means = means || mean(matrix);
-	    if (typeof(standardDeviations) === 'undefined') standardDeviations = standardDeviation(matrix, true, means);
-	    return standardize(center(matrix, means, false), standardDeviations, true);
-	}
+	exports.zScores = function zScores(matrix, means, standardDeviations) {
+	    means = means || exports.mean(matrix);
+	    if (typeof(standardDeviations) === 'undefined') standardDeviations = exports.standardDeviation(matrix, true, means);
+	    return exports.standardize(exports.center(matrix, means, false), standardDeviations, true);
+	};
 
-	function center(matrix, means, inPlace) {
-	    means = means || mean(matrix);
+	exports.center = function center(matrix, means, inPlace) {
+	    means = means || exports.mean(matrix);
 	    var result = matrix,
 	        l = matrix.length,
 	        i, j, jj;
@@ -1406,10 +1230,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    return result;
-	}
+	};
 
-	function standardize(matrix, standardDeviations, inPlace) {
-	    if (typeof(standardDeviations) === 'undefined') standardDeviations = standardDeviation(matrix);
+	exports.standardize = function standardize(matrix, standardDeviations, inPlace) {
+	    if (typeof(standardDeviations) === 'undefined') standardDeviations = exports.standardDeviation(matrix);
 	    var result = matrix,
 	        l = matrix.length,
 	        i, j, jj;
@@ -1431,10 +1255,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    return result;
-	}
+	};
 
-	function weightedVariance(matrix, weights) {
-	    var means = mean(matrix);
+	exports.weightedVariance = function weightedVariance(matrix, weights) {
+	    var means = exports.mean(matrix);
 	    var rows = matrix.length;
 	    if (rows === 0) return [];
 	    var cols = matrix[0].length;
@@ -1457,9 +1281,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return vari;
-	}
+	};
 
-	function weightedMean(matrix, weights, dimension) {
+	exports.weightedMean = function weightedMean(matrix, weights, dimension) {
 	    if (typeof(dimension) === 'undefined') {
 	        dimension = 0;
 	    }
@@ -1503,23 +1327,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	        }
 	    }
 	    return means;
-	}
+	};
 
-	function weightedCovariance(matrix, weights, means, dimension) {
+	exports.weightedCovariance = function weightedCovariance(matrix, weights, means, dimension) {
 	    dimension = dimension || 0;
-	    means = means || weightedMean(matrix, weights, dimension);
+	    means = means || exports.weightedMean(matrix, weights, dimension);
 	    var s1 = 0, s2 = 0;
 	    for (var i = 0, ii = weights.length; i < ii; i++) {
 	        s1 += weights[i];
 	        s2 += weights[i] * weights[i];
 	    }
 	    var factor = s1 / (s1 * s1 - s2);
-	    return weightedScatter(matrix, weights, means, factor, dimension);
-	}
+	    return exports.weightedScatter(matrix, weights, means, factor, dimension);
+	};
 
-	function weightedScatter(matrix, weights, means, factor, dimension) {
+	exports.weightedScatter = function weightedScatter(matrix, weights, means, factor, dimension) {
 	    dimension = dimension || 0;
-	    means = means || weightedMean(matrix, weights, dimension);
+	    means = means || exports.weightedMean(matrix, weights, dimension);
 	    if (typeof(factor) === 'undefined') {
 	        factor = 1;
 	    }
@@ -1565,29 +1389,292 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    return cov;
+	};
+
+
+/***/ },
+/* 6 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	/**
+	 *
+	 * Function that returns a Number array of equally spaced numberOfPoints
+	 * containing a representation of intensities of the spectra arguments x
+	 * and y.
+	 *
+	 * The options parameter contains an object in the following form:
+	 * from: starting point
+	 * to: last point
+	 * numberOfPoints: number of points between from and to
+	 * variant: "slot" or "smooth" - smooth is the default option
+	 *
+	 * The slot variant consist that each point in the new array is calculated
+	 * averaging the existing points between the slot that belongs to the current
+	 * value. The smooth variant is the same but takes the integral of the range
+	 * of the slot and divide by the step size between two points in the new array.
+	 *
+	 * @param x - sorted increasing x values
+	 * @param y
+	 * @param options
+	 * @returns {Array} new array with the equally spaced data.
+	 *
+	 */
+	function getEquallySpacedData(x, y, options) {
+	    if (x.length>1 && x[0]>x[1]) {
+	        x=x.reverse();
+	        y=y.reverse();
+	    }
+
+	    var xLength = x.length;
+	    if(xLength !== y.length)
+	        throw new RangeError("the x and y vector doesn't have the same size.");
+
+	    if (options === undefined) options = {};
+
+	    var from = options.from === undefined ? x[0] : options.from
+	    if (isNaN(from) || !isFinite(from)) {
+	        throw new RangeError("'From' value must be a number");
+	    }
+	    var to = options.to === undefined ? x[x.length - 1] : options.to;
+	    if (isNaN(to) || !isFinite(to)) {
+	        throw new RangeError("'To' value must be a number");
+	    }
+
+	    var reverse = from > to;
+	    if(reverse) {
+	        var temp = from;
+	        from = to;
+	        to = temp;
+	    }
+
+	    var numberOfPoints = options.numberOfPoints === undefined ? 100 : options.numberOfPoints;
+	    if (isNaN(numberOfPoints) || !isFinite(numberOfPoints)) {
+	        throw new RangeError("'Number of points' value must be a number");
+	    }
+	    if(numberOfPoints < 1)
+	        throw new RangeError("the number of point must be higher than 1");
+
+	    var algorithm = options.variant === "slot" ? "slot" : "smooth"; // default value: smooth
+
+	    var output = algorithm === "slot" ? getEquallySpacedSlot(x, y, from, to, numberOfPoints) : getEquallySpacedSmooth(x, y, from, to, numberOfPoints);
+
+	    return reverse ? output.reverse() : output;
 	}
 
-	module.exports = {
-	    entropy: entropy,
-	    mean: mean,
-	    standardDeviation: standardDeviation,
-	    variance: variance,
-	    median: median,
-	    mode: mode,
-	    skewness: skewness,
-	    kurtosis: kurtosis,
-	    standardError: standardError,
-	    covariance: covariance,
-	    scatter: scatter,
-	    correlation: correlation,
-	    zScores: zScores,
-	    center: center,
-	    standardize: standardize,
-	    weightedVariance: weightedVariance,
-	    weightedMean: weightedMean,
-	    weightedCovariance: weightedCovariance,
-	    weightedScatter: weightedScatter
-	};
+	/**
+	 * function that retrieves the getEquallySpacedData with the variant "smooth"
+	 *
+	 * @param x
+	 * @param y
+	 * @param from - Initial point
+	 * @param to - Final point
+	 * @param numberOfPoints
+	 * @returns {Array} - Array of y's equally spaced with the variant "smooth"
+	 */
+	function getEquallySpacedSmooth(x, y, from, to, numberOfPoints) {
+	    var xLength = x.length;
+
+	    var step = (to - from) / (numberOfPoints - 1);
+	    var halfStep = step / 2;
+
+	    var start = from - halfStep;
+	    var output = new Array(numberOfPoints);
+
+	    var initialOriginalStep = x[1] - x[0];
+	    var lastOriginalStep = x[x.length - 1] - x[x.length - 2];
+
+	    // Init main variables
+	    var min = start;
+	    var max = start + step;
+
+	    var previousX = Number.MIN_VALUE;
+	    var previousY = 0;
+	    var nextX = x[0] - initialOriginalStep;
+	    var nextY = 0;
+
+	    var currentValue = 0;
+	    var slope = 0;
+	    var intercept = 0;
+	    var sumAtMin = 0;
+	    var sumAtMax = 0;
+
+	    var i = 0; // index of input
+	    var j = 0; // index of output
+
+	    function getSlope(x0, y0, x1, y1) {
+	        return (y1 - y0) / (x1 - x0);
+	    }
+
+	    main: while(true) {
+	        while (nextX - max >= 0) {
+	            // no overlap with original point, just consume current value
+	            var add = integral(0, max - previousX, slope, previousY);
+	            sumAtMax = currentValue + add;
+
+	            output[j] = (sumAtMax - sumAtMin) / step;
+	            j++;
+
+	            if (j === numberOfPoints)
+	                break main;
+
+	            min = max;
+	            max += step;
+	            sumAtMin = sumAtMax;
+	        }
+
+	        if(previousX <= min && min <= nextX) {
+	            add = integral(0, min - previousX, slope, previousY);
+	            sumAtMin = currentValue + add;
+	        }
+
+	        currentValue += integral(previousX, nextX, slope, intercept);
+
+	        previousX = nextX;
+	        previousY = nextY;
+
+	        if (i < xLength) {
+	            nextX = x[i];
+	            nextY = y[i];
+	            i++;
+	        } else if (i === xLength) {
+	            nextX += lastOriginalStep;
+	            nextY = 0;
+	        }
+	        // updating parameters
+	        slope = getSlope(previousX, previousY, nextX, nextY);
+	        intercept = -slope*previousX + previousY;
+	    }
+
+	    return output;
+	}
+
+	/**
+	 * function that retrieves the getEquallySpacedData with the variant "slot"
+	 *
+	 * @param x
+	 * @param y
+	 * @param from - Initial point
+	 * @param to - Final point
+	 * @param numberOfPoints
+	 * @returns {Array} - Array of y's equally spaced with the variant "slot"
+	 */
+	function getEquallySpacedSlot(x, y, from, to, numberOfPoints) {
+	    var xLength = x.length;
+
+	    var step = (to - from) / (numberOfPoints - 1);
+	    var halfStep = step / 2;
+	    var lastStep = x[x.length - 1] - x[x.length - 2];
+
+	    var start = from - halfStep;
+	    var output = new Array(numberOfPoints);
+
+	    // Init main variables
+	    var min = start;
+	    var max = start + step;
+
+	    var previousX = -Number.MAX_VALUE;
+	    var previousY = 0;
+	    var nextX = x[0];
+	    var nextY = y[0];
+	    var frontOutsideSpectra = 0;
+	    var backOutsideSpectra = true;
+
+	    var currentValue = 0;
+
+	    // for slot algorithm
+	    var currentPoints = 0;
+
+	    var i = 1; // index of input
+	    var j = 0; // index of output
+
+	    main: while(true) {
+	        if (previousX>=nextX) throw (new Error('x must be an increasing serie'));
+	        while (previousX - max > 0) {
+	            // no overlap with original point, just consume current value
+	            if(backOutsideSpectra) {
+	                currentPoints++;
+	                backOutsideSpectra = false;
+	            }
+
+	            output[j] = currentPoints <= 0 ? 0 : currentValue / currentPoints;
+	            j++;
+
+	            if (j === numberOfPoints)
+	                break main;
+
+	            min = max;
+	            max += step;
+	            currentValue = 0;
+	            currentPoints = 0;
+	        }
+
+	        if(previousX > min) {
+	            currentValue += previousY;
+	            currentPoints++;
+	        }
+
+	        if(previousX === -Number.MAX_VALUE || frontOutsideSpectra > 1)
+	            currentPoints--;
+
+	        previousX = nextX;
+	        previousY = nextY;
+
+	        if (i < xLength) {
+	            nextX = x[i];
+	            nextY = y[i];
+	            i++;
+	        } else {
+	            nextX += lastStep;
+	            nextY = 0;
+	            frontOutsideSpectra++;
+	        }
+	    }
+
+	    return output;
+	}
+	/**
+	 * Function that calculates the integral of the line between two
+	 * x-coordinates, given the slope and intercept of the line.
+	 *
+	 * @param x0
+	 * @param x1
+	 * @param slope
+	 * @param intercept
+	 * @returns {number} integral value.
+	 */
+	function integral(x0, x1, slope, intercept) {
+	    return (0.5 * slope * x1 * x1 + intercept * x1) - (0.5 * slope * x0 * x0 + intercept * x0);
+	}
+
+	exports.getEquallySpacedData = getEquallySpacedData;
+	exports.integral = integral;
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.SNV = SNV;
+	var Stat = __webpack_require__(3).array;
+
+	/**
+	 * Function that applies the standard normal variate (SNV) to an array of values.
+	 *
+	 * @param data - Array of values.
+	 * @returns {Array} - applied the SNV.
+	 */
+	function SNV(data) {
+	    var mean = Stat.mean(data);
+	    var std = Stat.standardDeviation(data);
+	    var result = data.slice();
+	    for (var i = 0; i < data.length; i++) {
+	        result[i] = (result[i] - mean) / std;
+	    }
+	    return result;
+	}
 
 
 /***/ },
@@ -17051,7 +17138,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	const Matrix = __webpack_require__(14);
 	const EVD = Matrix.DC.EVD;
 	const SVD = Matrix.DC.SVD;
-	const Stat = __webpack_require__(5).matrix;
+	const Stat = __webpack_require__(3).matrix;
 	const mean = Stat.mean;
 	const stdev = Stat.standardDeviation;
 
@@ -20119,7 +20206,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	const Matrix = __webpack_require__(14);
-	const Stat = __webpack_require__(5);
+	const Stat = __webpack_require__(3);
 
 	/**
 	 * Function that given vector, returns his norm
