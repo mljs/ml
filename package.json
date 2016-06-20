@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/mljs/ml",
   "dependencies": {
-    "ml-array-utils": "^0.2.1",
+    "ml-array-utils": "^0.2.4",
     "ml-bit-array": "^1.0.0",
     "ml-distance": "^2.0.1",
     "ml-fnn": "^2.1.0",
