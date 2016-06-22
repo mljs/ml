@@ -35,6 +35,7 @@
     "ml-fnn": "^2.1.0",
     "ml-hash-table": "^0.2.0",
     "ml-hclust": "^1.0.0",
+    "ml-kernel": "^2.1.0",
     "ml-kmeans": "^0.1.0",
     "ml-knn": "^1.0.0",
     "ml-matrix": "^1.1.5",
@@ -54,9 +55,6 @@
     "ml-curve-fitting": "^0.0.6"
   },
   "devDependencies": {
-    "cheminfo-tools": "^1.0.1",
-    "mocha": "^2.4.5",
-    "mocha-better-spec-reporter": "^3.0.2",
-    "should": "^8.0.0"
+    "cheminfo-tools": "^1.0.1"
   }
 }
