@@ -68,6 +68,7 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
     * Savitzky-Golay filter: [`ML.Math.SG`](https://github.com/mljs/savitzky-golay)
     * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)
     * Sparse matrix: [`ML.SparseMatrix`](https://github.com/mljs/sparse-matrix)
+    * Kernels: [`ML.Kernel`](https://github.com/mljs/kernel)
 * Stat: [`ML.Stat`](https://github.com/mljs/stat)
     * Array: `ML.Stat.array`
     * Matrix: `ML.Stat.matrix`

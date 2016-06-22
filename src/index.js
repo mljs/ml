@@ -20,6 +20,7 @@ Math.Matrix = exports.Matrix;
 Math.SparseMatrix = require('ml-sparse-matrix');
 Math.BellOptimizer = require('ml-optimize-lorentzian');
 Math.CurveFitting = require('ml-curve-fitting');
+Math.Kernel = require('ml-kernel');
 
 
 // Statistics packages
