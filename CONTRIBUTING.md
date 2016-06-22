@@ -100,7 +100,7 @@ parameter is the object returned by an earlier call of `toJSON`.
 
 ## Commit Guidelines
 
-The rules are based in the [AngularJS commit guidelines](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit). This leads to **more readable messages** that are easy to follow when looking through the **project history**.
+The rules are based on the [AngularJS commit guidelines](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit). This leads to **more readable messages** that are easy to follow when looking through the **project history**.
 
 ### Commit Message Format
 Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
@@ -173,7 +173,7 @@ chances of your issue being dealt with quickly:
 * **Module Version(s)** - is it a regression?
 * **NodeJS Version(s) and Operating System** - is this a platform related issue?
 * **Reproduce the Error** - provide a live example (using [Tonic](https://tonicdev.com/) or
-  [Visualizer](http://www.cheminfo.org/)) or an unambiguous set of steps.
+  [Visualizer](https://my.cheminfo.org)) or an unambiguous set of steps.
 * **Related Issues** - has a similar issue been reported before?
 * **Suggest a Fix** - if you can't fix the bug yourself, perhaps you can point to what might be
   causing the problem (line of code or commit)
