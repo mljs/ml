@@ -57,6 +57,6 @@
     "cheminfo-tools": "^1.0.1",
     "mocha": "^2.4.5",
     "mocha-better-spec-reporter": "^3.0.2",
-    "should": "^8.0.0"
+    "should": "^9.0.2"
   }
 }
