@@ -54,9 +54,6 @@
     "ml-curve-fitting": "^0.0.6"
   },
   "devDependencies": {
-    "cheminfo-tools": "^1.0.1",
-    "mocha": "^2.4.5",
-    "mocha-better-spec-reporter": "^3.0.2",
-    "should": "^8.0.0"
+    "cheminfo-tools": "^1.0.1"
   }
 }
