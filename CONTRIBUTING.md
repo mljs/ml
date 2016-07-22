@@ -75,14 +75,12 @@ Predictors are classes which implement the following interface.
 
 Creates the predictor. The constructor can take parameters or options to initialize the algorithm.
 
-### predictor.train(trainingSet)
-
-This method is optional.  
+### predictor.train(features, [labels])
 If the predictor has a training phase, it is executed here.
 
-### predictor.predict(data)
+### predictor.predict(features)
 
-This method runs the prediction for a new set of values.
+This method runs the prediction for a new set of observations.
 
 ### predictor.score()
 
@@ -91,7 +89,7 @@ It should return a value that represents the quality of a predictor.
 
 ### predictor.toJSON()
 
-This method should return plain JSON that enables to reload the current predictor.
+This method should return plain JS Object that enables to reload the current predictor.
 
 ### Predictor.load(json)
 
