@@ -49,7 +49,7 @@
     "ml-som": "^0.0.6",
     "ml-sparse-matrix": "^0.2.1",
     "ml-stat": "^1.1.0",
-    "ml-svm": "^1.0.2",
+    "ml-svm": "^2.0.0",
     "ml-xsadd": "^1.0.0",
     "ml-optimize-lorentzian": "^0.1.3",
     "ml-curve-fitting": "^0.0.6"
