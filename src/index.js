@@ -40,6 +40,8 @@ RNG.XSadd = require('ml-xsadd');
 // Supervised learning
 var SL = exports.SL = {};
 
+SL.CV = require('ml-cross-validation');
+SL.CrossValidation = SL.CV; // Alias
 SL.SVM = require('ml-svm');
 SL.KNN = require('ml-knn');
 SL.NaiveBayes = require('ml-naivebayes');

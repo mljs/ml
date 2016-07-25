@@ -52,7 +52,8 @@
     "ml-svm": "^2.0.0",
     "ml-xsadd": "^1.0.0",
     "ml-optimize-lorentzian": "^0.1.3",
-    "ml-curve-fitting": "^0.0.6"
+    "ml-curve-fitting": "^0.0.6",
+    "ml-cross-validation": "^1.0.1"
   },
   "devDependencies": {
     "cheminfo-tools": "^1.0.1"

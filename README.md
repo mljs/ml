@@ -84,6 +84,7 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
     * Naive Bayes: [`ML.SL.NaiveBayes`](https://github.com/mljs/naive-bayes)
     * K-Nearest Neighbor: [`ML.SL.KNN`](https://github.com/mljs/knn)
     * Partial least squares (PLS): [`ML.SL.PLS`](https://github.com/mljs/pls)
+    * Cross-validation utility: [`ML.SL.CrossValidation`](https://github.com/mljs/cross-validation) (alias [`ML.SL.CV`](https://github.com/mljs/cross-validation))
 * Neural networks: `ML.NN`
     * Self-organizing map / Kohonen networks: [`ML.NN.SOM`](https://github.com/mljs/som)
     * Feedforward Neural Networks: [`ML.NN.FNN`](https://github.com/mljs/feedforward-neural-networks)
