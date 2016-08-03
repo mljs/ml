@@ -28,7 +28,7 @@ $ bower install ml
 
 Using our CDN in a web page
 ```html
-<script src="https://www.lactame.com/lib/ml/0.9.0/ml.js"></script>
+<script src="https://www.lactame.com/lib/ml/1.1.0/ml.js"></script>
 ```
 
 ## Usage
