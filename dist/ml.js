@@ -68,14 +68,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Math packages
 	var Math = exports.Math = {};
 
-	var distance = __webpack_require__(49);
+	var distance = __webpack_require__(50);
 	Math.Distance = distance.distance;
 	Math.Similarity = distance.similarity;
-	Math.SG = __webpack_require__(108);
+	Math.SG = __webpack_require__(106);
 	Math.Matrix = exports.Matrix;
-	Math.SparseMatrix = __webpack_require__(110);
-	Math.BellOptimizer = __webpack_require__(111);
-	Math.CurveFitting = __webpack_require__(112);
+	Math.SparseMatrix = __webpack_require__(108);
+	Math.BellOptimizer = __webpack_require__(109);
+	Math.CurveFitting = __webpack_require__(110);
 	Math.Kernel = __webpack_require__(34);
 
 
@@ -84,36 +84,38 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	Stat.array = __webpack_require__(4);
 	Stat.matrix = __webpack_require__(5);
-	Stat.PCA = __webpack_require__(133);
-	Stat.Performance = __webpack_require__(134);
+	Stat.PCA = __webpack_require__(131);
+	Stat.Performance = __webpack_require__(132);
 
 
 	// Random number generation
 	var RNG = exports.RNG = {};
-	RNG.XSadd = __webpack_require__(136);
+	RNG.XSadd = __webpack_require__(134);
 
 
 	// Supervised learning
 	var SL = exports.SL = {};
 
-	SL.SVM = __webpack_require__(137);
-	SL.KNN = __webpack_require__(140);
-	SL.NaiveBayes = __webpack_require__(143);
-	SL.PLS = __webpack_require__(148);
+	SL.CV = __webpack_require__(135);
+	SL.CrossValidation = SL.CV; // Alias
+	SL.SVM = __webpack_require__(138);
+	SL.KNN = __webpack_require__(139);
+	SL.NaiveBayes = __webpack_require__(142);
+	SL.PLS = __webpack_require__(144);
 
 
 	// Clustering
 	var Clust = exports.Clust = {};
 
-	Clust.kmeans = __webpack_require__(152);
-	Clust.hclust = __webpack_require__(154);
+	Clust.kmeans = __webpack_require__(148);
+	Clust.hclust = __webpack_require__(150);
 
 
 	// Neural networks
 	var NN = exports.NN = exports.nn = {};
 
-	NN.SOM = __webpack_require__(164);
-	NN.FNN = __webpack_require__(167);
+	NN.SOM = __webpack_require__(160);
+	NN.FNN = __webpack_require__(163);
 
 
 
@@ -2347,20 +2349,20 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 15 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
+	const arrayUtils = __webpack_require__(1);
+
 	/**
 	 * Real matrix
+	 * @class Matrix
+	 * @param {number|Array|Matrix} nRows - Number of rows of the new matrix,
+	 * 2D array containing the data or Matrix instance to clone
+	 * @param {number} [nColumns] - Number of columns of the new matrix
 	 */
 	class Matrix extends Array {
-	    /**
-	     * @constructor
-	     * @param {number|Array|Matrix} nRows - Number of rows of the new matrix,
-	     * 2D array containing the data or Matrix instance to clone
-	     * @param {number} [nColumns] - Number of columns of the new matrix
-	     */
 	    constructor(nRows, nColumns) {
 	        if (Matrix.isMatrix(nRows)) {
 	            return nRows.clone();
@@ -3380,6 +3382,45 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    /**
+	     * Returns a row-by-row scaled matrix
+	     * @param {Number} [min=0] - Minimum scaled value
+	     * @param {Number} [max=1] - Maximum scaled value
+	     * @returns {Matrix} - The scaled matrix
+	     */
+	    scaleRows(min, max) {
+	        min = min === undefined ? 0 : min;
+	        max = max === undefined ? 1 : max;
+	        var newMatrix = Matrix.empty(this.rows, this.columns);
+	        for(var i=0; i<this.rows; i++) {
+	            var scaled = arrayUtils.scale(this.getRow(i), {min, max});
+	            newMatrix.setRow(i, scaled);
+	        }
+	        return newMatrix;
+	    }
+
+	    /**
+	     * Returns a new column-by-column scaled matrix
+	     * @param {Number} [min=0] - Minimum scaled value
+	     * @param {Number} [max=1] - Maximum scaled value
+	     * @returns {Matrix} - The new scaled matrix
+	     */
+	    scaleColumns(min, max) {
+	        min = min === undefined ? 0 : min;
+	        max = max === undefined ? 1 : max;
+	        var newMatrix = Matrix.empty(this.rows, this.columns);
+	        for(var i=0; i<this.columns; i++) {
+	            var scaled = arrayUtils.scale(this.getColumn(i), {
+	                min: min,
+	                max: max
+	            });
+	            newMatrix.setColumn(i, scaled);
+	        }
+	        return newMatrix;
+	    }
+
+
+
+	    /**
 	     * Returns the Kronecker product (also known as tensor product) between this and other
 	     * See https://en.wikipedia.org/wiki/Kronecker_product
 	     * @param {Matrix} other
@@ -3690,6 +3731,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	})
 	`;
 
+	var inplaceMethodWithArgs = `
+	(function %name%(%args%) {
+	    for (var i = 0; i < this.rows; i++) {
+	        for (var j = 0; j < this.columns; j++) {
+	            this[i][j] = %method%(this[i][j], %args%);
+	        }
+	    }
+	    return this;
+	})
+	`;
+
+	var staticMethodWithArgs = `
+	(function %name%(matrix, %args%) {
+	    var newMatrix = new Matrix(matrix);
+	    return newMatrix.%name%(%args%);
+	})
+	`;
+
 	var operators = [
 	    // Arithmetic operators
 	    ['+', 'add'],
@@ -3707,12 +3766,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	];
 
 	for (var operator of operators) {
+	    var inplaceOp = eval(fillTemplateFunction(inplaceOperator, {name: operator[1], op: operator[0]}));
+	    var inplaceOpS = eval(fillTemplateFunction(inplaceOperatorScalar, {name: operator[1] + 'S', op: operator[0]}));
+	    var inplaceOpM = eval(fillTemplateFunction(inplaceOperatorMatrix, {name: operator[1] + 'M', op: operator[0]}));
+	    var staticOp = eval(fillTemplateFunction(staticOperator, {name: operator[1]}));
 	    for (var i = 1; i < operator.length; i++) {
-	        Matrix.prototype[operator[i]] = eval(fillTemplateFunction(inplaceOperator, {name: operator[i], op: operator[0]}));
-	        Matrix.prototype[operator[i] + 'S'] = eval(fillTemplateFunction(inplaceOperatorScalar, {name: operator[i] + 'S', op: operator[0]}));
-	        Matrix.prototype[operator[i] + 'M'] = eval(fillTemplateFunction(inplaceOperatorMatrix, {name: operator[i] + 'M', op: operator[0]}));
-
-	        Matrix[operator[i]] = eval(fillTemplateFunction(staticOperator, {name: operator[i]}));
+	        Matrix.prototype[operator[i]] = inplaceOp;
+	        Matrix.prototype[operator[i] + 'S'] = inplaceOpS;
+	        Matrix.prototype[operator[i] + 'M'] = inplaceOpM;
+	        Matrix[operator[i]] = staticOp;
 	    }
 	}
 
@@ -3729,9 +3791,28 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 
 	for (var method of methods) {
+	    var inplaceMeth = eval(fillTemplateFunction(inplaceMethod, {name: method[1], method: method[0]}));
+	    var staticMeth = eval(fillTemplateFunction(staticMethod, {name: method[1]}));
 	    for (var i = 1; i < method.length; i++) {
-	        Matrix.prototype[method[i]] = eval(fillTemplateFunction(inplaceMethod, {name: method[i], method: method[0]}));
-	        Matrix[method[i]] = eval(fillTemplateFunction(staticMethod, {name: method[i]}));
+	        Matrix.prototype[method[i]] = inplaceMeth;
+	        Matrix[method[i]] = staticMeth;
+	    }
+	}
+
+	var methodsWithArgs = [
+	    ['Math.pow', 1, 'pow']
+	];
+
+	for (var methodWithArg of methodsWithArgs) {
+	    var args = 'arg0';
+	    for (var i = 1; i < methodWithArg[1]; i++) {
+	        args += `, arg${i}`;
+	    }
+	    var inplaceMethWithArgs = eval(fillTemplateFunction(inplaceMethodWithArgs, {name: methodWithArg[2], method: methodWithArg[0], args: args}));
+	    var staticMethWithArgs = eval(fillTemplateFunction(staticMethodWithArgs, {name: methodWithArg[2], args: args}));
+	    for (var i = 2; i < methodWithArg.length; i++) {
+	        Matrix.prototype[methodWithArg[i]] = inplaceMethWithArgs;
+	        Matrix[methodWithArg[i]] = staticMethWithArgs;
 	    }
 	}
 
@@ -5803,7 +5884,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.KernelRidgeRegression = exports.KRR = __webpack_require__(33);
 	//exports.MultipleLinearRegression = exports.MLR = require('./regression/multiple-linear-regression');
 	//exports.MultivariateLinearRegression = exports.MVLR = require('./regression/multivariate-linear-regression');
-	exports.PolinomialFitting2D = __webpack_require__(45);
+	exports.PolinomialFitting2D = __webpack_require__(46);
 
 
 /***/ },
@@ -6532,6 +6613,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	const LaplacianKernel = __webpack_require__(42);
 	const MultiquadraticKernel = __webpack_require__(43);
 	const RationalKernel = __webpack_require__(44);
+	const SigmoidKernel = __webpack_require__(45);
 
 	const kernelType = {
 	    gaussian: GaussianKernel,
@@ -6545,14 +6627,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	    min: HistogramKernel,
 	    laplacian: LaplacianKernel,
 	    multiquadratic: MultiquadraticKernel,
-	    rational: RationalKernel
+	    rational: RationalKernel,
+	    sigmoid: SigmoidKernel,
+	    mlp: SigmoidKernel
 	};
 
 	class Kernel {
 	    constructor(type, options) {
+	        this.kernelType = type;
+	        if (type === 'linear') return;
+
 	        if (typeof type === 'string') {
 	            type = type.toLowerCase();
-	            
+
 	            var KernelConstructor = kernelType[type];
 	            if (KernelConstructor) {
 	                this.kernelFunction = new KernelConstructor(options);
@@ -6570,6 +6657,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (landmarks === undefined) {
 	            landmarks = inputs;
 	        }
+
+	        if (this.kernelType === 'linear') {
+	            var matrix = new Matrix(inputs);
+	            return matrix.mmul(new Matrix(landmarks).transpose());
+	        }
+
 	        const kernelMatrix = new Matrix(inputs.length, landmarks.length);
 	        var i, j;
 	        if (inputs === landmarks) { // fast path, matrix is symmetric
@@ -6853,7 +6946,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 
 	    compute(x, y) {
-	        return 1 - (squaredEuclidean(x, y) / (squaredEuclidean(x, y) + this.constant));
+	        const distance = squaredEuclidean(x, y);
+	        return 1 - (distance / (distance + this.constant));
 	    }
 	}
 
@@ -6862,12 +6956,42 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 45 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	const defaultOptions = {
+	    alpha: 0.01,
+	    constant: -Math.E
+	};
+
+	class SigmoidKernel {
+	    constructor(options) {
+	        options = Object.assign({}, defaultOptions, options);
+	        this.alpha = options.alpha;
+	        this.constant = options.constant;
+	    }
+
+	    compute(x, y) {
+	        var sum = 0;
+	        for (var i = 0; i < x.length; i++) {
+	            sum += x[i] * y[i];
+	        }
+	        return Math.tanh(this.alpha * sum + this.constant);
+	    }
+	}
+
+	module.exports = SigmoidKernel;
+
+
+/***/ },
+/* 46 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
 	const Matrix = __webpack_require__(14);
-	const isInteger = __webpack_require__(46);
+	const isInteger = __webpack_require__(47);
 	const SVD = Matrix.DC.SingularValueDecomposition;
 	const BaseRegression = __webpack_require__(28);
 
@@ -7063,12 +7187,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 46 */
+/* 47 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// https://github.com/paulmillr/es6-shim
 	// http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isinteger
-	var isFinite = __webpack_require__(47);
+	var isFinite = __webpack_require__(48);
 	module.exports = Number.isInteger || function(val) {
 	  return typeof val === "number" &&
 	    isFinite(val) &&
@@ -7077,11 +7201,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 47 */
+/* 48 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var numberIsNan = __webpack_require__(48);
+	var numberIsNan = __webpack_require__(49);
 
 	module.exports = Number.isFinite || function (val) {
 		return !(typeof val !== 'number' || numberIsNan(val) || val === Infinity || val === -Infinity);
@@ -7089,7 +7213,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 48 */
+/* 49 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -7099,68 +7223,68 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 49 */
+/* 50 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	exports.distance = __webpack_require__(50);
-	exports.similarity = __webpack_require__(95);
+	exports.distance = __webpack_require__(51);
+	exports.similarity = __webpack_require__(97);
 
 /***/ },
-/* 50 */
+/* 51 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	exports.additiveSymmetric = __webpack_require__(51);
-	exports.avg = __webpack_require__(52);
-	exports.bhattacharyya = __webpack_require__(53);
-	exports.canberra = __webpack_require__(54);
-	exports.chebyshev = __webpack_require__(55);
-	exports.clark = __webpack_require__(56);
-	exports.czekanowski = __webpack_require__(57);
-	exports.dice = __webpack_require__(58);
-	exports.divergence = __webpack_require__(59);
-	exports.euclidean = __webpack_require__(60);
-	exports.fidelity = __webpack_require__(61);
-	exports.gower = __webpack_require__(62);
-	exports.harmonicMean = __webpack_require__(63);
-	exports.hellinger = __webpack_require__(64);
-	exports.innerProduct = __webpack_require__(65);
-	exports.intersection = __webpack_require__(66);
-	exports.jaccard = __webpack_require__(67);
-	exports.jeffreys = __webpack_require__(68);
-	exports.jensenDifference = __webpack_require__(69);
-	exports.jensenShannon = __webpack_require__(70);
-	exports.kdivergence = __webpack_require__(71);
-	exports.kulczynski = __webpack_require__(72);
-	exports.kullbackLeibler = __webpack_require__(73);
-	exports.kumarHassebrook = __webpack_require__(74);
-	exports.kumarJohnson = __webpack_require__(75);
-	exports.lorentzian = __webpack_require__(76);
-	exports.manhattan = __webpack_require__(77);
-	exports.matusita = __webpack_require__(78);
-	exports.minkowski = __webpack_require__(79);
-	exports.motyka = __webpack_require__(80);
-	exports.neyman = __webpack_require__(81);
-	exports.pearson = __webpack_require__(82);
-	exports.probabilisticSymmetric = __webpack_require__(83);
-	exports.ruzicka = __webpack_require__(84);
-	exports.soergel = __webpack_require__(85);
-	exports.sorensen = __webpack_require__(86);
-	exports.squared = __webpack_require__(87);
-	exports.squaredChord = __webpack_require__(88);
-	exports.squaredEuclidean = __webpack_require__(60).squared;
-	exports.taneja = __webpack_require__(89);
-	exports.tanimoto = __webpack_require__(90);
-	exports.topsoe = __webpack_require__(92);
-	exports.tree = __webpack_require__(93);
-	exports.waveHedges = __webpack_require__(94);
+	exports.additiveSymmetric = __webpack_require__(52);
+	exports.avg = __webpack_require__(53);
+	exports.bhattacharyya = __webpack_require__(54);
+	exports.canberra = __webpack_require__(55);
+	exports.chebyshev = __webpack_require__(56);
+	exports.clark = __webpack_require__(57);
+	exports.czekanowski = __webpack_require__(58);
+	exports.dice = __webpack_require__(60);
+	exports.divergence = __webpack_require__(61);
+	exports.euclidean = __webpack_require__(62);
+	exports.fidelity = __webpack_require__(63);
+	exports.gower = __webpack_require__(64);
+	exports.harmonicMean = __webpack_require__(65);
+	exports.hellinger = __webpack_require__(66);
+	exports.innerProduct = __webpack_require__(67);
+	exports.intersection = __webpack_require__(68);
+	exports.jaccard = __webpack_require__(69);
+	exports.jeffreys = __webpack_require__(70);
+	exports.jensenDifference = __webpack_require__(71);
+	exports.jensenShannon = __webpack_require__(72);
+	exports.kdivergence = __webpack_require__(73);
+	exports.kulczynski = __webpack_require__(74);
+	exports.kullbackLeibler = __webpack_require__(75);
+	exports.kumarHassebrook = __webpack_require__(76);
+	exports.kumarJohnson = __webpack_require__(77);
+	exports.lorentzian = __webpack_require__(78);
+	exports.manhattan = __webpack_require__(79);
+	exports.matusita = __webpack_require__(80);
+	exports.minkowski = __webpack_require__(81);
+	exports.motyka = __webpack_require__(82);
+	exports.neyman = __webpack_require__(83);
+	exports.pearson = __webpack_require__(84);
+	exports.probabilisticSymmetric = __webpack_require__(85);
+	exports.ruzicka = __webpack_require__(86);
+	exports.soergel = __webpack_require__(87);
+	exports.sorensen = __webpack_require__(88);
+	exports.squared = __webpack_require__(89);
+	exports.squaredChord = __webpack_require__(90);
+	exports.squaredEuclidean = __webpack_require__(62).squared;
+	exports.taneja = __webpack_require__(91);
+	exports.tanimoto = __webpack_require__(92);
+	exports.topsoe = __webpack_require__(94);
+	exports.tree = __webpack_require__(95);
+	exports.waveHedges = __webpack_require__(96);
 
 
 /***/ },
-/* 51 */
+/* 52 */
 /***/ function(module, exports) {
 
 	module.exports = function additiveSymmetric(a, b) {
@@ -7175,7 +7299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 52 */
+/* 53 */
 /***/ function(module, exports) {
 
 	module.exports = function avg(a, b) {
@@ -7195,7 +7319,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 53 */
+/* 54 */
 /***/ function(module, exports) {
 
 	module.exports = function bhattacharyya(a, b) {
@@ -7209,7 +7333,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 54 */
+/* 55 */
 /***/ function(module, exports) {
 
 	module.exports = function canberra(a, b) {
@@ -7223,7 +7347,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 55 */
+/* 56 */
 /***/ function(module, exports) {
 
 	module.exports = function chebyshev(a, b) {
@@ -7241,7 +7365,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 56 */
+/* 57 */
 /***/ function(module, exports) {
 
 	module.exports = function clark(a, b) {
@@ -7256,23 +7380,37 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 57 */
-/***/ function(module, exports) {
+/* 58 */
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports = function czekanowski(a, b) {
-	    var ii = a.length,
-	        up = 0,
-	        down = 0;
-	    for (var i = 0; i < ii ; i++) {
-	        up += Math.min(a[i], b[i]);
-	        down += a[i] + b[i];
-	    }
-	    return 1 - (2 * up / down);
+	'use strict';
+
+	const czekanowskiSimilarity = __webpack_require__(59);
+
+	module.exports = function czekanowskiDistance(a, b) {
+	    return 1 - czekanowskiSimilarity(a, b);
 	};
 
 
 /***/ },
-/* 58 */
+/* 59 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	module.exports = function czekanowskiSimilarity(a, b) {
+	    var up = 0;
+	    var down = 0;
+	    for (var i = 0; i < a.length; i++) {
+	        up += Math.min(a[i], b[i]);
+	        down += a[i] + b[i];
+	    }
+	    return 2 * up / down;
+	};
+
+
+/***/ },
+/* 60 */
 /***/ function(module, exports) {
 
 	module.exports = function dice(a, b) {
@@ -7290,7 +7428,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 59 */
+/* 61 */
 /***/ function(module, exports) {
 
 	module.exports = function divergence(a, b) {
@@ -7305,7 +7443,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 60 */
+/* 62 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -7327,7 +7465,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 61 */
+/* 63 */
 /***/ function(module, exports) {
 
 	module.exports = function fidelity(a, b) {
@@ -7341,7 +7479,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 62 */
+/* 64 */
 /***/ function(module, exports) {
 
 	module.exports = function gower(a, b) {
@@ -7355,7 +7493,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 63 */
+/* 65 */
 /***/ function(module, exports) {
 
 	module.exports = function harmonicMean(a, b) {
@@ -7369,7 +7507,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 64 */
+/* 66 */
 /***/ function(module, exports) {
 
 	module.exports = function hellinger(a, b) {
@@ -7383,7 +7521,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 65 */
+/* 67 */
 /***/ function(module, exports) {
 
 	module.exports = function innerProduct(a, b) {
@@ -7397,7 +7535,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 66 */
+/* 68 */
 /***/ function(module, exports) {
 
 	module.exports = function intersection(a, b) {
@@ -7411,7 +7549,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 67 */
+/* 69 */
 /***/ function(module, exports) {
 
 	module.exports = function jaccard(a, b) {
@@ -7431,7 +7569,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 68 */
+/* 70 */
 /***/ function(module, exports) {
 
 	module.exports = function jeffreys(a, b) {
@@ -7445,7 +7583,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 69 */
+/* 71 */
 /***/ function(module, exports) {
 
 	module.exports = function jensenDifference(a, b) {
@@ -7459,7 +7597,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 70 */
+/* 72 */
 /***/ function(module, exports) {
 
 	module.exports = function jensenShannon(a, b) {
@@ -7475,7 +7613,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 71 */
+/* 73 */
 /***/ function(module, exports) {
 
 	module.exports = function kdivergence(a, b) {
@@ -7489,7 +7627,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 72 */
+/* 74 */
 /***/ function(module, exports) {
 
 	module.exports = function kulczynski(a, b) {
@@ -7505,7 +7643,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 73 */
+/* 75 */
 /***/ function(module, exports) {
 
 	module.exports = function kullbackLeibler(a, b) {
@@ -7519,7 +7657,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 74 */
+/* 76 */
 /***/ function(module, exports) {
 
 	module.exports = function kumarHassebrook(a, b) {
@@ -7537,7 +7675,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 75 */
+/* 77 */
 /***/ function(module, exports) {
 
 	module.exports = function kumarJohnson(a, b) {
@@ -7551,7 +7689,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 76 */
+/* 78 */
 /***/ function(module, exports) {
 
 	module.exports = function lorentzian(a, b) {
@@ -7565,7 +7703,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 77 */
+/* 79 */
 /***/ function(module, exports) {
 
 	module.exports = function manhattan(a, b) {
@@ -7580,7 +7718,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 78 */
+/* 80 */
 /***/ function(module, exports) {
 
 	module.exports = function matusita(a, b) {
@@ -7594,7 +7732,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 79 */
+/* 81 */
 /***/ function(module, exports) {
 
 	module.exports = function minkowski(a, b, p) {
@@ -7609,7 +7747,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 80 */
+/* 82 */
 /***/ function(module, exports) {
 
 	module.exports = function motyka(a, b) {
@@ -7625,10 +7763,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 81 */
+/* 83 */
 /***/ function(module, exports) {
 
-	module.exports = function pearson(a, b) {
+	module.exports = function neyman(a, b) {
 	    var i = 0,
 	        ii = a.length,
 	        d = 0;
@@ -7640,7 +7778,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 82 */
+/* 84 */
 /***/ function(module, exports) {
 
 	module.exports = function pearson(a, b) {
@@ -7655,7 +7793,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 83 */
+/* 85 */
 /***/ function(module, exports) {
 
 	module.exports = function probabilisticSymmetric(a, b) {
@@ -7670,7 +7808,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 84 */
+/* 86 */
 /***/ function(module, exports) {
 
 	module.exports = function ruzicka(a, b) {
@@ -7686,7 +7824,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 85 */
+/* 87 */
 /***/ function(module, exports) {
 
 	module.exports = function soergel(a, b) {
@@ -7702,7 +7840,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 86 */
+/* 88 */
 /***/ function(module, exports) {
 
 	module.exports = function sorensen(a, b) {
@@ -7718,7 +7856,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 87 */
+/* 89 */
 /***/ function(module, exports) {
 
 	module.exports = function squared(a, b) {
@@ -7733,7 +7871,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 88 */
+/* 90 */
 /***/ function(module, exports) {
 
 	module.exports = function squaredChord(a, b) {
@@ -7747,7 +7885,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 89 */
+/* 91 */
 /***/ function(module, exports) {
 
 	module.exports = function taneja(a, b) {
@@ -7761,10 +7899,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 90 */
+/* 92 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var tanimotoS = __webpack_require__(91);
+	var tanimotoS = __webpack_require__(93);
 
 	module.exports = function tanimoto(a, b, bitvector) {
 	    if (bitvector)
@@ -7785,7 +7923,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 91 */
+/* 93 */
 /***/ function(module, exports) {
 
 	module.exports = function tanimoto(a, b, bitvector) {
@@ -7816,7 +7954,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 92 */
+/* 94 */
 /***/ function(module, exports) {
 
 	module.exports = function topsoe(a, b) {
@@ -7830,7 +7968,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 93 */
+/* 95 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -7952,7 +8090,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 94 */
+/* 96 */
 /***/ function(module, exports) {
 
 	module.exports = function waveHedges(a, b) {
@@ -7966,25 +8104,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 95 */
+/* 97 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	exports.cosine = __webpack_require__(96);
-	exports.czekanowski = __webpack_require__(97);
-	exports.dice = __webpack_require__(98);
-	exports.intersection = __webpack_require__(99);
-	exports.jaccard = __webpack_require__(100);
-	exports.kulczynski = __webpack_require__(101);
-	exports.motyka = __webpack_require__(102);
-	exports.pearson = __webpack_require__(103);
-	exports.squaredChord = __webpack_require__(107);
-	exports.tanimoto = __webpack_require__(91);
+	exports.cosine = __webpack_require__(98);
+	exports.czekanowski = __webpack_require__(59);
+	exports.dice = __webpack_require__(99);
+	exports.intersection = __webpack_require__(100);
+	exports.jaccard = __webpack_require__(101);
+	exports.kulczynski = __webpack_require__(102);
+	exports.motyka = __webpack_require__(103);
+	exports.pearson = __webpack_require__(104);
+	exports.squaredChord = __webpack_require__(105);
+	exports.tanimoto = __webpack_require__(93);
 
 
 /***/ },
-/* 96 */
+/* 98 */
 /***/ function(module, exports) {
 
 	module.exports = function cosine(a, b) {
@@ -8002,21 +8140,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 97 */
+/* 99 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var czekanowskiD = __webpack_require__(57);
-
-	module.exports = function czekanowski(a, b) {
-	    return 1 - czekanowskiD(a,b);
-	};
-
-
-/***/ },
-/* 98 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var diceD = __webpack_require__(58);
+	var diceD = __webpack_require__(60);
 
 	module.exports = function dice(a, b) {
 	    return 1 - diceD(a,b);
@@ -8024,10 +8151,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 99 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var intersectionD = __webpack_require__(66);
+	var intersectionD = __webpack_require__(68);
 
 	module.exports = function intersection(a, b) {
 	    return 1 - intersectionD(a,b);
@@ -8035,10 +8162,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 100 */
+/* 101 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var jaccardD = __webpack_require__(67);
+	var jaccardD = __webpack_require__(69);
 
 	module.exports = function jaccard(a, b) {
 	    return 1 - jaccardD(a, b);
@@ -8046,10 +8173,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 101 */
+/* 102 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var kulczynskiD = __webpack_require__(72);
+	var kulczynskiD = __webpack_require__(74);
 
 	module.exports = function kulczynski(a, b) {
 	    return 1 / kulczynskiD(a, b);
@@ -8057,10 +8184,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 102 */
+/* 103 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var motykaD = __webpack_require__(80);
+	var motykaD = __webpack_require__(82);
 
 	module.exports = function motyka(a, b) {
 	    return 1 - motykaD(a,b);
@@ -8068,13 +8195,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 103 */
+/* 104 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var stat=__webpack_require__(104).array;
-	var cosine=__webpack_require__(96);
+	var stat=__webpack_require__(3).array;
+	var cosine=__webpack_require__(98);
 
 	module.exports = function pearson(a, b) {
 	    var avgA=stat.mean(a);
@@ -8092,471 +8219,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 104 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	var squaredChordD = __webpack_require__(90);
 
-	exports.array = __webpack_require__(105);
-	exports.matrix = __webpack_require__(106);
-
-
-/***/ },
-/* 105 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	function compareNumbers(a, b) {
-	    return a - b;
-	}
-
-	/**
-	 * Computes the sum of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.sum = function sum(values) {
-	    var sum = 0;
-	    for (var i = 0; i < values.length; i++) {
-	        sum += values[i];
-	    }
-	    return sum;
-	};
-
-	/**
-	 * Computes the maximum of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.max = function max(values) {
-	    var max = -Infinity;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        if (values[i] > max) max = values[i];
-	    }
-	    return max;
-	};
-
-	/**
-	 * Computes the minimum of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.min = function min(values) {
-	    var min = Infinity;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        if (values[i] < min) min = values[i];
-	    }
-	    return min;
-	};
-
-	/**
-	 * Computes the min and max of the given values
-	 * @param {Array} values
-	 * @returns {{min: number, max: number}}
-	 */
-	exports.minMax = function minMax(values) {
-	    var min = Infinity;
-	    var max = -Infinity;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        if (values[i] < min) min = values[i];
-	        if (values[i] > max) max = values[i];
-	    }
-	    return {
-	        min: min,
-	        max: max
-	    };
-	};
-
-	/**
-	 * Computes the arithmetic mean of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.arithmeticMean = function arithmeticMean(values) {
-	    var sum = 0;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        sum += values[i];
-	    }
-	    return sum / l;
-	};
-
-	/**
-	 * {@link arithmeticMean}
-	 */
-	exports.mean = exports.arithmeticMean;
-
-	/**
-	 * Computes the geometric mean of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.geometricMean = function geometricMean(values) {
-	    var mul = 1;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        mul *= values[i];
-	    }
-	    return Math.pow(mul, 1 / l);
-	};
-
-	/**
-	 * Computes the mean of the log of the given values
-	 * If the return value is exponentiated, it gives the same result as the
-	 * geometric mean.
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.logMean = function logMean(values) {
-	    var lnsum = 0;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        lnsum += Math.log(values[i]);
-	    }
-	    return lnsum / l;
-	};
-
-	/**
-	 * Computes the weighted grand mean for a list of means and sample sizes
-	 * @param {Array} means - Mean values for each set of samples
-	 * @param {Array} samples - Number of original values for each set of samples
-	 * @returns {number}
-	 */
-	exports.grandMean = function grandMean(means, samples) {
-	    var sum = 0;
-	    var n = 0;
-	    var l = means.length;
-	    for (var i = 0; i < l; i++) {
-	        sum += samples[i] * means[i];
-	        n += samples[i];
-	    }
-	    return sum / n;
-	};
-
-	/**
-	 * Computes the truncated mean of the given values using a given percentage
-	 * @param {Array} values
-	 * @param {number} percent - The percentage of values to keep (range: [0,1])
-	 * @param {boolean} [alreadySorted=false]
-	 * @returns {number}
-	 */
-	exports.truncatedMean = function truncatedMean(values, percent, alreadySorted) {
-	    if (alreadySorted === undefined) alreadySorted = false;
-	    if (!alreadySorted) {
-	        values = values.slice().sort(compareNumbers);
-	    }
-	    var l = values.length;
-	    var k = Math.floor(l * percent);
-	    var sum = 0;
-	    for (var i = k; i < (l - k); i++) {
-	        sum += values[i];
-	    }
-	    return sum / (l - 2 * k);
-	};
-
-	/**
-	 * Computes the harmonic mean of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.harmonicMean = function harmonicMean(values) {
-	    var sum = 0;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        if (values[i] === 0) {
-	            throw new RangeError('value at index ' + i + 'is zero');
-	        }
-	        sum += 1 / values[i];
-	    }
-	    return l / sum;
-	};
-
-	/**
-	 * Computes the contraharmonic mean of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.contraHarmonicMean = function contraHarmonicMean(values) {
-	    var r1 = 0;
-	    var r2 = 0;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        r1 += values[i] * values[i];
-	        r2 += values[i];
-	    }
-	    if (r2 < 0) {
-	        throw new RangeError('sum of values is negative');
-	    }
-	    return r1 / r2;
-	};
-
-	/**
-	 * Computes the median of the given values
-	 * @param {Array} values
-	 * @param {boolean} [alreadySorted=false]
-	 * @returns {number}
-	 */
-	exports.median = function median(values, alreadySorted) {
-	    if (alreadySorted === undefined) alreadySorted = false;
-	    if (!alreadySorted) {
-	        values = values.slice().sort(compareNumbers);
-	    }
-	    var l = values.length;
-	    var half = Math.floor(l / 2);
-	    if (l % 2 === 0) {
-	        return (values[half - 1] + values[half]) * 0.5;
-	    } else {
-	        return values[half];
-	    }
-	};
-
-	/**
-	 * Computes the variance of the given values
-	 * @param {Array} values
-	 * @param {boolean} [unbiased=true] - if true, divide by (n-1); if false, divide by n.
-	 * @returns {number}
-	 */
-	exports.variance = function variance(values, unbiased) {
-	    if (unbiased === undefined) unbiased = true;
-	    var theMean = exports.mean(values);
-	    var theVariance = 0;
-	    var l = values.length;
-
-	    for (var i = 0; i < l; i++) {
-	        var x = values[i] - theMean;
-	        theVariance += x * x;
-	    }
-
-	    if (unbiased) {
-	        return theVariance / (l - 1);
-	    } else {
-	        return theVariance / l;
-	    }
-	};
-
-	/**
-	 * Computes the standard deviation of the given values
-	 * @param {Array} values
-	 * @param {boolean} [unbiased=true] - if true, divide by (n-1); if false, divide by n.
-	 * @returns {number}
-	 */
-	exports.standardDeviation = function standardDeviation(values, unbiased) {
-	    return Math.sqrt(exports.variance(values, unbiased));
-	};
-
-	exports.standardError = function standardError(values) {
-	    return exports.standardDeviation(values) / Math.sqrt(values.length);
-	};
-
-	exports.quartiles = function quartiles(values, alreadySorted) {
-	    if (typeof(alreadySorted) === 'undefined') alreadySorted = false;
-	    if (!alreadySorted) {
-	        values = values.slice();
-	        values.sort(compareNumbers);
-	    }
-
-	    var quart = values.length / 4;
-	    var q1 = values[Math.ceil(quart) - 1];
-	    var q2 = exports.median(values, true);
-	    var q3 = values[Math.ceil(quart * 3) - 1];
-
-	    return {q1: q1, q2: q2, q3: q3};
-	};
-
-	exports.pooledStandardDeviation = function pooledStandardDeviation(samples, unbiased) {
-	    return Math.sqrt(exports.pooledVariance(samples, unbiased));
-	};
-
-	exports.pooledVariance = function pooledVariance(samples, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var sum = 0;
-	    var length = 0, l = samples.length;
-	    for (var i = 0; i < l; i++) {
-	        var values = samples[i];
-	        var vari = exports.variance(values);
-
-	        sum += (values.length - 1) * vari;
-
-	        if (unbiased)
-	            length += values.length - 1;
-	        else
-	            length += values.length;
-	    }
-	    return sum / length;
-	};
-
-	exports.mode = function mode(values) {
-	    var l = values.length,
-	        itemCount = new Array(l),
-	        i;
-	    for (i = 0; i < l; i++) {
-	        itemCount[i] = 0;
-	    }
-	    var itemArray = new Array(l);
-	    var count = 0;
-
-	    for (i = 0; i < l; i++) {
-	        var index = itemArray.indexOf(values[i]);
-	        if (index >= 0)
-	            itemCount[index]++;
-	        else {
-	            itemArray[count] = values[i];
-	            itemCount[count] = 1;
-	            count++;
-	        }
-	    }
-
-	    var maxValue = 0, maxIndex = 0;
-	    for (i = 0; i < count; i++) {
-	        if (itemCount[i] > maxValue) {
-	            maxValue = itemCount[i];
-	            maxIndex = i;
-	        }
-	    }
-
-	    return itemArray[maxIndex];
-	};
-
-	exports.covariance = function covariance(vector1, vector2, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var mean1 = exports.mean(vector1);
-	    var mean2 = exports.mean(vector2);
-
-	    if (vector1.length !== vector2.length)
-	        throw "Vectors do not have the same dimensions";
-
-	    var cov = 0, l = vector1.length;
-	    for (var i = 0; i < l; i++) {
-	        var x = vector1[i] - mean1;
-	        var y = vector2[i] - mean2;
-	        cov += x * y;
-	    }
-
-	    if (unbiased)
-	        return cov / (l - 1);
-	    else
-	        return cov / l;
-	};
-
-	exports.skewness = function skewness(values, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var theMean = exports.mean(values);
-
-	    var s2 = 0, s3 = 0, l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        var dev = values[i] - theMean;
-	        s2 += dev * dev;
-	        s3 += dev * dev * dev;
-	    }
-	    var m2 = s2 / l;
-	    var m3 = s3 / l;
-
-	    var g = m3 / (Math.pow(m2, 3 / 2.0));
-	    if (unbiased) {
-	        var a = Math.sqrt(l * (l - 1));
-	        var b = l - 2;
-	        return (a / b) * g;
-	    }
-	    else {
-	        return g;
-	    }
-	};
-
-	exports.kurtosis = function kurtosis(values, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var theMean = exports.mean(values);
-	    var n = values.length, s2 = 0, s4 = 0;
-
-	    for (var i = 0; i < n; i++) {
-	        var dev = values[i] - theMean;
-	        s2 += dev * dev;
-	        s4 += dev * dev * dev * dev;
-	    }
-	    var m2 = s2 / n;
-	    var m4 = s4 / n;
-
-	    if (unbiased) {
-	        var v = s2 / (n - 1);
-	        var a = (n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3));
-	        var b = s4 / (v * v);
-	        var c = ((n - 1) * (n - 1)) / ((n - 2) * (n - 3));
-
-	        return a * b - 3 * c;
-	    }
-	    else {
-	        return m4 / (m2 * m2) - 3;
-	    }
-	};
-
-	exports.entropy = function entropy(values, eps) {
-	    if (typeof(eps) === 'undefined') eps = 0;
-	    var sum = 0, l = values.length;
-	    for (var i = 0; i < l; i++)
-	        sum += values[i] * Math.log(values[i] + eps);
-	    return -sum;
-	};
-
-	exports.weightedMean = function weightedMean(values, weights) {
-	    var sum = 0, l = values.length;
-	    for (var i = 0; i < l; i++)
-	        sum += values[i] * weights[i];
-	    return sum;
-	};
-
-	exports.weightedStandardDeviation = function weightedStandardDeviation(values, weights) {
-	    return Math.sqrt(exports.weightedVariance(values, weights));
-	};
-
-	exports.weightedVariance = function weightedVariance(values, weights) {
-	    var theMean = exports.weightedMean(values, weights);
-	    var vari = 0, l = values.length;
-	    var a = 0, b = 0;
-
-	    for (var i = 0; i < l; i++) {
-	        var z = values[i] - theMean;
-	        var w = weights[i];
-
-	        vari += w * (z * z);
-	        b += w;
-	        a += w * w;
-	    }
-
-	    return vari * (b / (b * b - a));
-	};
-
-	exports.center = function center(values, inPlace) {
-	    if (typeof(inPlace) === 'undefined') inPlace = false;
-
-	    var result = values;
-	    if (!inPlace)
-	        result = values.slice();
-
-	    var theMean = exports.mean(result), l = result.length;
-	    for (var i = 0; i < l; i++)
-	        result[i] -= theMean;
-	};
-
-	exports.standardize = function standardize(values, standardDev, inPlace) {
-	    if (typeof(standardDev) === 'undefined') standardDev = exports.standardDeviation(values);
-	    if (typeof(inPlace) === 'undefined') inPlace = false;
-	    var l = values.length;
-	    var result = inPlace ? values : new Array(l);
-	    for (var i = 0; i < l; i++)
-	        result[i] = values[i] / standardDev;
-	    return result;
-	};
-
-	exports.cumulativeSum = function cumulativeSum(array) {
-	    var l = array.length;
-	    var result = new Array(l);
-	    result[0] = array[0];
-	    for (var i = 1; i < l; i++)
-	        result[i] = result[i - 1] + array[i];
-	    return result;
+	module.exports = function squaredChord(a, b) {
+	    return 1 - squaredChordD(a, b);
 	};
 
 
@@ -8565,547 +8234,10 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var arrayStat = __webpack_require__(105);
-
-	// https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
-
-	function entropy(matrix, eps) {
-	    if (typeof(eps) === 'undefined') {
-	        eps = 0;
-	    }
-	    var sum = 0,
-	        l1 = matrix.length,
-	        l2 = matrix[0].length;
-	    for (var i = 0; i < l1; i++) {
-	        for (var j = 0; j < l2; j++) {
-	            sum += matrix[i][j] * Math.log(matrix[i][j] + eps);
-	        }
-	    }
-	    return -sum;
-	}
-
-	function mean(matrix, dimension) {
-	    if (typeof(dimension) === 'undefined') {
-	        dimension = 0;
-	    }
-	    var rows = matrix.length,
-	        cols = matrix[0].length,
-	        theMean, N, i, j;
-
-	    if (dimension === -1) {
-	        theMean = [0];
-	        N = rows * cols;
-	        for (i = 0; i < rows; i++) {
-	            for (j = 0; j < cols; j++) {
-	                theMean[0] += matrix[i][j];
-	            }
-	        }
-	        theMean[0] /= N;
-	    } else if (dimension === 0) {
-	        theMean = new Array(cols);
-	        N = rows;
-	        for (j = 0; j < cols; j++) {
-	            theMean[j] = 0;
-	            for (i = 0; i < rows; i++) {
-	                theMean[j] += matrix[i][j];
-	            }
-	            theMean[j] /= N;
-	        }
-	    } else if (dimension === 1) {
-	        theMean = new Array(rows);
-	        N = cols;
-	        for (j = 0; j < rows; j++) {
-	            theMean[j] = 0;
-	            for (i = 0; i < cols; i++) {
-	                theMean[j] += matrix[j][i];
-	            }
-	            theMean[j] /= N;
-	        }
-	    } else {
-	        throw new Error('Invalid dimension');
-	    }
-	    return theMean;
-	}
-
-	function standardDeviation(matrix, means, unbiased) {
-	    var vari = variance(matrix, means, unbiased), l = vari.length;
-	    for (var i = 0; i < l; i++) {
-	        vari[i] = Math.sqrt(vari[i]);
-	    }
-	    return vari;
-	}
-
-	function variance(matrix, means, unbiased) {
-	    if (typeof(unbiased) === 'undefined') {
-	        unbiased = true;
-	    }
-	    means = means || mean(matrix);
-	    var rows = matrix.length;
-	    if (rows === 0) return [];
-	    var cols = matrix[0].length;
-	    var vari = new Array(cols);
-
-	    for (var j = 0; j < cols; j++) {
-	        var sum1 = 0, sum2 = 0, x = 0;
-	        for (var i = 0; i < rows; i++) {
-	            x = matrix[i][j] - means[j];
-	            sum1 += x;
-	            sum2 += x * x;
-	        }
-	        if (unbiased) {
-	            vari[j] = (sum2 - ((sum1 * sum1) / rows)) / (rows - 1);
-	        } else {
-	            vari[j] = (sum2 - ((sum1 * sum1) / rows)) / rows;
-	        }
-	    }
-	    return vari;
-	}
-
-	function median(matrix) {
-	    var rows = matrix.length, cols = matrix[0].length;
-	    var medians = new Array(cols);
-
-	    for (var i = 0; i < cols; i++) {
-	        var data = new Array(rows);
-	        for (var j = 0; j < rows; j++) {
-	            data[j] = matrix[j][i];
-	        }
-	        data.sort();
-	        var N = data.length;
-	        if (N % 2 === 0) {
-	            medians[i] = (data[N / 2] + data[(N / 2) - 1]) * 0.5;
-	        } else {
-	            medians[i] = data[Math.floor(N / 2)];
-	        }
-	    }
-	    return medians;
-	}
-
-	function mode(matrix) {
-	    var rows = matrix.length,
-	        cols = matrix[0].length,
-	        modes = new Array(cols),
-	        i, j;
-	    for (i = 0; i < cols; i++) {
-	        var itemCount = new Array(rows);
-	        for (var k = 0; k < rows; k++) {
-	            itemCount[k] = 0;
-	        }
-	        var itemArray = new Array(rows);
-	        var count = 0;
-
-	        for (j = 0; j < rows; j++) {
-	            var index = itemArray.indexOf(matrix[j][i]);
-	            if (index >= 0) {
-	                itemCount[index]++;
-	            } else {
-	                itemArray[count] = matrix[j][i];
-	                itemCount[count] = 1;
-	                count++;
-	            }
-	        }
-
-	        var maxValue = 0, maxIndex = 0;
-	        for (j = 0; j < count; j++) {
-	            if (itemCount[j] > maxValue) {
-	                maxValue = itemCount[j];
-	                maxIndex = j;
-	            }
-	        }
-
-	        modes[i] = itemArray[maxIndex];
-	    }
-	    return modes;
-	}
-
-	function skewness(matrix, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var means = mean(matrix);
-	    var n = matrix.length, l = means.length;
-	    var skew = new Array(l);
-
-	    for (var j = 0; j < l; j++) {
-	        var s2 = 0, s3 = 0;
-	        for (var i = 0; i < n; i++) {
-	            var dev = matrix[i][j] - means[j];
-	            s2 += dev * dev;
-	            s3 += dev * dev * dev;
-	        }
-
-	        var m2 = s2 / n;
-	        var m3 = s3 / n;
-	        var g = m3 / Math.pow(m2, 3 / 2);
-
-	        if (unbiased) {
-	            var a = Math.sqrt(n * (n - 1));
-	            var b = n - 2;
-	            skew[j] = (a / b) * g;
-	        } else {
-	            skew[j] = g;
-	        }
-	    }
-	    return skew;
-	}
-
-	function kurtosis(matrix, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var means = mean(matrix);
-	    var n = matrix.length, m = matrix[0].length;
-	    var kurt = new Array(m);
-
-	    for (var j = 0; j < m; j++) {
-	        var s2 = 0, s4 = 0;
-	        for (var i = 0; i < n; i++) {
-	            var dev = matrix[i][j] - means[j];
-	            s2 += dev * dev;
-	            s4 += dev * dev * dev * dev;
-	        }
-	        var m2 = s2 / n;
-	        var m4 = s4 / n;
-
-	        if (unbiased) {
-	            var v = s2 / (n - 1);
-	            var a = (n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3));
-	            var b = s4 / (v * v);
-	            var c = ((n - 1) * (n - 1)) / ((n - 2) * (n - 3));
-	            kurt[j] = a * b - 3 * c;
-	        } else {
-	            kurt[j] = m4 / (m2 * m2) - 3;
-	        }
-	    }
-	    return kurt;
-	}
-
-	function standardError(matrix) {
-	    var samples = matrix.length;
-	    var standardDeviations = standardDeviation(matrix), l = standardDeviations.length;
-	    var standardErrors = new Array(l);
-	    var sqrtN = Math.sqrt(samples);
-
-	    for (var i = 0; i < l; i++) {
-	        standardErrors[i] = standardDeviations[i] / sqrtN;
-	    }
-	    return standardErrors;
-	}
-
-	function covariance(matrix, dimension) {
-	    return scatter(matrix, undefined, dimension);
-	}
-
-	function scatter(matrix, divisor, dimension) {
-	    if (typeof(dimension) === 'undefined') {
-	        dimension = 0;
-	    }
-	    if (typeof(divisor) === 'undefined') {
-	        if (dimension === 0) {
-	            divisor = matrix.length - 1;
-	        } else if (dimension === 1) {
-	            divisor = matrix[0].length - 1;
-	        }
-	    }
-	    var means = mean(matrix, dimension),
-	        rows = matrix.length;
-	    if (rows === 0) {
-	        return [[]];
-	    }
-	    var cols = matrix[0].length,
-	        cov, i, j, s, k;
-
-	    if (dimension === 0) {
-	        cov = new Array(cols);
-	        for (i = 0; i < cols; i++) {
-	            cov[i] = new Array(cols);
-	        }
-	        for (i = 0; i < cols; i++) {
-	            for (j = i; j < cols; j++) {
-	                s = 0;
-	                for (k = 0; k < rows; k++) {
-	                    s += (matrix[k][j] - means[j]) * (matrix[k][i] - means[i]);
-	                }
-	                s /= divisor;
-	                cov[i][j] = s;
-	                cov[j][i] = s;
-	            }
-	        }
-	    } else if (dimension === 1) {
-	        cov = new Array(rows);
-	        for (i = 0; i < rows; i++) {
-	            cov[i] = new Array(rows);
-	        }
-	        for (i = 0; i < rows; i++) {
-	            for (j = i; j < rows; j++) {
-	                s = 0;
-	                for (k = 0; k < cols; k++) {
-	                    s += (matrix[j][k] - means[j]) * (matrix[i][k] - means[i]);
-	                }
-	                s /= divisor;
-	                cov[i][j] = s;
-	                cov[j][i] = s;
-	            }
-	        }
-	    } else {
-	        throw new Error('Invalid dimension');
-	    }
-
-	    return cov;
-	}
-
-	function correlation(matrix) {
-	    var means = mean(matrix),
-	        standardDeviations = standardDeviation(matrix, true, means),
-	        scores = zScores(matrix, means, standardDeviations),
-	        rows = matrix.length,
-	        cols = matrix[0].length,
-	        i, j;
-
-	    var cor = new Array(cols);
-	    for (i = 0; i < cols; i++) {
-	        cor[i] = new Array(cols);
-	    }
-	    for (i = 0; i < cols; i++) {
-	        for (j = i; j < cols; j++) {
-	            var c = 0;
-	            for (var k = 0, l = scores.length; k < l; k++) {
-	                c += scores[k][j] * scores[k][i];
-	            }
-	            c /= rows - 1;
-	            cor[i][j] = c;
-	            cor[j][i] = c;
-	        }
-	    }
-	    return cor;
-	}
-
-	function zScores(matrix, means, standardDeviations) {
-	    means = means || mean(matrix);
-	    if (typeof(standardDeviations) === 'undefined') standardDeviations = standardDeviation(matrix, true, means);
-	    return standardize(center(matrix, means, false), standardDeviations, true);
-	}
-
-	function center(matrix, means, inPlace) {
-	    means = means || mean(matrix);
-	    var result = matrix,
-	        l = matrix.length,
-	        i, j, jj;
-
-	    if (!inPlace) {
-	        result = new Array(l);
-	        for (i = 0; i < l; i++) {
-	            result[i] = new Array(matrix[i].length);
-	        }
-	    }
-
-	    for (i = 0; i < l; i++) {
-	        var row = result[i];
-	        for (j = 0, jj = row.length; j < jj; j++) {
-	            row[j] = matrix[i][j] - means[j];
-	        }
-	    }
-	    return result;
-	}
-
-	function standardize(matrix, standardDeviations, inPlace) {
-	    if (typeof(standardDeviations) === 'undefined') standardDeviations = standardDeviation(matrix);
-	    var result = matrix,
-	        l = matrix.length,
-	        i, j, jj;
-
-	    if (!inPlace) {
-	        result = new Array(l);
-	        for (i = 0; i < l; i++) {
-	            result[i] = new Array(matrix[i].length);
-	        }
-	    }
-
-	    for (i = 0; i < l; i++) {
-	        var resultRow = result[i];
-	        var sourceRow = matrix[i];
-	        for (j = 0, jj = resultRow.length; j < jj; j++) {
-	            if (standardDeviations[j] !== 0 && !isNaN(standardDeviations[j])) {
-	                resultRow[j] = sourceRow[j] / standardDeviations[j];
-	            }
-	        }
-	    }
-	    return result;
-	}
-
-	function weightedVariance(matrix, weights) {
-	    var means = mean(matrix);
-	    var rows = matrix.length;
-	    if (rows === 0) return [];
-	    var cols = matrix[0].length;
-	    var vari = new Array(cols);
-
-	    for (var j = 0; j < cols; j++) {
-	        var sum = 0;
-	        var a = 0, b = 0;
-
-	        for (var i = 0; i < rows; i++) {
-	            var z = matrix[i][j] - means[j];
-	            var w = weights[i];
-
-	            sum += w * (z * z);
-	            b += w;
-	            a += w * w;
-	        }
-
-	        vari[j] = sum * (b / (b * b - a));
-	    }
-
-	    return vari;
-	}
-
-	function weightedMean(matrix, weights, dimension) {
-	    if (typeof(dimension) === 'undefined') {
-	        dimension = 0;
-	    }
-	    var rows = matrix.length;
-	    if (rows === 0) return [];
-	    var cols = matrix[0].length,
-	        means, i, ii, j, w, row;
-
-	    if (dimension === 0) {
-	        means = new Array(cols);
-	        for (i = 0; i < cols; i++) {
-	            means[i] = 0;
-	        }
-	        for (i = 0; i < rows; i++) {
-	            row = matrix[i];
-	            w = weights[i];
-	            for (j = 0; j < cols; j++) {
-	                means[j] += row[j] * w;
-	            }
-	        }
-	    } else if (dimension === 1) {
-	        means = new Array(rows);
-	        for (i = 0; i < rows; i++) {
-	            means[i] = 0;
-	        }
-	        for (j = 0; j < rows; j++) {
-	            row = matrix[j];
-	            w = weights[j];
-	            for (i = 0; i < cols; i++) {
-	                means[j] += row[i] * w;
-	            }
-	        }
-	    } else {
-	        throw new Error('Invalid dimension');
-	    }
-
-	    var weightSum = arrayStat.sum(weights);
-	    if (weightSum !== 0) {
-	        for (i = 0, ii = means.length; i < ii; i++) {
-	            means[i] /= weightSum;
-	        }
-	    }
-	    return means;
-	}
-
-	function weightedCovariance(matrix, weights, means, dimension) {
-	    dimension = dimension || 0;
-	    means = means || weightedMean(matrix, weights, dimension);
-	    var s1 = 0, s2 = 0;
-	    for (var i = 0, ii = weights.length; i < ii; i++) {
-	        s1 += weights[i];
-	        s2 += weights[i] * weights[i];
-	    }
-	    var factor = s1 / (s1 * s1 - s2);
-	    return weightedScatter(matrix, weights, means, factor, dimension);
-	}
-
-	function weightedScatter(matrix, weights, means, factor, dimension) {
-	    dimension = dimension || 0;
-	    means = means || weightedMean(matrix, weights, dimension);
-	    if (typeof(factor) === 'undefined') {
-	        factor = 1;
-	    }
-	    var rows = matrix.length;
-	    if (rows === 0) {
-	        return [[]];
-	    }
-	    var cols = matrix[0].length,
-	        cov, i, j, k, s;
-
-	    if (dimension === 0) {
-	        cov = new Array(cols);
-	        for (i = 0; i < cols; i++) {
-	            cov[i] = new Array(cols);
-	        }
-	        for (i = 0; i < cols; i++) {
-	            for (j = i; j < cols; j++) {
-	                s = 0;
-	                for (k = 0; k < rows; k++) {
-	                    s += weights[k] * (matrix[k][j] - means[j]) * (matrix[k][i] - means[i]);
-	                }
-	                cov[i][j] = s * factor;
-	                cov[j][i] = s * factor;
-	            }
-	        }
-	    } else if (dimension === 1) {
-	        cov = new Array(rows);
-	        for (i = 0; i < rows; i++) {
-	            cov[i] = new Array(rows);
-	        }
-	        for (i = 0; i < rows; i++) {
-	            for (j = i; j < rows; j++) {
-	                s = 0;
-	                for (k = 0; k < cols; k++) {
-	                    s += weights[k] * (matrix[j][k] - means[j]) * (matrix[i][k] - means[i]);
-	                }
-	                cov[i][j] = s * factor;
-	                cov[j][i] = s * factor;
-	            }
-	        }
-	    } else {
-	        throw new Error('Invalid dimension');
-	    }
-
-	    return cov;
-	}
-
-	module.exports = {
-	    entropy: entropy,
-	    mean: mean,
-	    standardDeviation: standardDeviation,
-	    variance: variance,
-	    median: median,
-	    mode: mode,
-	    skewness: skewness,
-	    kurtosis: kurtosis,
-	    standardError: standardError,
-	    covariance: covariance,
-	    scatter: scatter,
-	    correlation: correlation,
-	    zScores: zScores,
-	    center: center,
-	    standardize: standardize,
-	    weightedVariance: weightedVariance,
-	    weightedMean: weightedMean,
-	    weightedCovariance: weightedCovariance,
-	    weightedScatter: weightedScatter
-	};
-
-
-/***/ },
-/* 107 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var squaredChordD = __webpack_require__(88);
-
-	module.exports = function squaredChord(a, b) {
-	    return 1 - squaredChordD(a, b);
-	};
-
-
-/***/ },
-/* 108 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
 
 	var Matrix = __webpack_require__(14);
 	var padArray = __webpack_require__(23);
-	var extend = __webpack_require__(109);
+	var extend = __webpack_require__(107);
 
 	var defaultOptions = {
 	    windowSize: 5,
@@ -9184,7 +8316,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 109 */
+/* 107 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9276,7 +8408,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 110 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
 	const HashTable = __webpack_require__(11);
@@ -9574,14 +8706,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 111 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var LM = __webpack_require__(112);
+	var LM = __webpack_require__(110);
 	var math = LM.Matrix.algebra;
-	var Matrix = __webpack_require__(124);
+	var Matrix = __webpack_require__(122);
 
 	/**
 	 * This function calculates the spectrum as a sum of lorentzian functions. The Lorentzian
@@ -10037,25 +9169,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports.optimizeLorentzianTrain = optimizeLorentzianTrain;
 
 /***/ },
-/* 112 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(113);
-	module.exports.Matrix = __webpack_require__(114);
-	module.exports.Matrix.algebra = __webpack_require__(123);
+	module.exports = __webpack_require__(111);
+	module.exports.Matrix = __webpack_require__(112);
+	module.exports.Matrix.algebra = __webpack_require__(121);
 
 
 /***/ },
-/* 113 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Created by acastillo on 8/5/15.
 	 */
-	var Matrix = __webpack_require__(114);
-	var math = __webpack_require__(123);
+	var Matrix = __webpack_require__(112);
+	var math = __webpack_require__(121);
 
 	var DEBUG = false;
 	/** Levenberg Marquardt curve-fitting: minimize sum of weighted squared residuals
@@ -10570,17 +9702,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LM;
 
 /***/ },
-/* 114 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(115);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(116);
+	module.exports = __webpack_require__(113);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(114);
 
 
 /***/ },
-/* 115 */
+/* 113 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12056,18 +11188,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 116 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(115);
+	var Matrix = __webpack_require__(113);
 
-	var SingularValueDecomposition = __webpack_require__(117);
-	var EigenvalueDecomposition = __webpack_require__(119);
-	var LuDecomposition = __webpack_require__(120);
-	var QrDecomposition = __webpack_require__(121);
-	var CholeskyDecomposition = __webpack_require__(122);
+	var SingularValueDecomposition = __webpack_require__(115);
+	var EigenvalueDecomposition = __webpack_require__(117);
+	var LuDecomposition = __webpack_require__(118);
+	var QrDecomposition = __webpack_require__(119);
+	var CholeskyDecomposition = __webpack_require__(120);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -12102,13 +11234,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 117 */
+/* 115 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(115);
-	var hypotenuse = __webpack_require__(118).hypotenuse;
+	var Matrix = __webpack_require__(113);
+	var hypotenuse = __webpack_require__(116).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
 	function SingularValueDecomposition(value, options) {
@@ -12605,7 +11737,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 118 */
+/* 116 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12625,13 +11757,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 119 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(115);
-	var hypotenuse = __webpack_require__(118).hypotenuse;
+	var Matrix = __webpack_require__(113);
+	var hypotenuse = __webpack_require__(116).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
 	function EigenvalueDecomposition(matrix) {
@@ -13397,12 +12529,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 120 */
+/* 118 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(115);
+	var Matrix = __webpack_require__(113);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
 	function LuDecomposition(matrix) {
@@ -13572,13 +12704,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 121 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(115);
-	var hypotenuse = __webpack_require__(118).hypotenuse;
+	var Matrix = __webpack_require__(113);
+	var hypotenuse = __webpack_require__(116).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 	function QrDecomposition(value) {
@@ -13728,12 +12860,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 122 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(115);
+	var Matrix = __webpack_require__(113);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
@@ -13823,7 +12955,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 123 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -13835,7 +12967,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	var Matrix = __webpack_require__(114);
+	var Matrix = __webpack_require__(112);
 
 	function matrix(A,B){
 	    return new Matrix(A,B);
@@ -14081,17 +13213,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 124 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(125);
-	module.exports.Decompositions = module.exports.DC = __webpack_require__(126);
+	module.exports = __webpack_require__(123);
+	module.exports.Decompositions = module.exports.DC = __webpack_require__(124);
 
 
 /***/ },
-/* 125 */
+/* 123 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -15567,18 +14699,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 126 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(125);
+	var Matrix = __webpack_require__(123);
 
-	var SingularValueDecomposition = __webpack_require__(127);
-	var EigenvalueDecomposition = __webpack_require__(129);
-	var LuDecomposition = __webpack_require__(130);
-	var QrDecomposition = __webpack_require__(131);
-	var CholeskyDecomposition = __webpack_require__(132);
+	var SingularValueDecomposition = __webpack_require__(125);
+	var EigenvalueDecomposition = __webpack_require__(127);
+	var LuDecomposition = __webpack_require__(128);
+	var QrDecomposition = __webpack_require__(129);
+	var CholeskyDecomposition = __webpack_require__(130);
 
 	function inverse(matrix) {
 	    return solve(matrix, Matrix.eye(matrix.rows));
@@ -15613,13 +14745,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 127 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(125);
-	var hypotenuse = __webpack_require__(128).hypotenuse;
+	var Matrix = __webpack_require__(123);
+	var hypotenuse = __webpack_require__(126).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
 	function SingularValueDecomposition(value, options) {
@@ -16116,7 +15248,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 128 */
+/* 126 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -16136,13 +15268,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 129 */
+/* 127 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(125);
-	var hypotenuse = __webpack_require__(128).hypotenuse;
+	var Matrix = __webpack_require__(123);
+	var hypotenuse = __webpack_require__(126).hypotenuse;
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/EigenvalueDecomposition.cs
 	function EigenvalueDecomposition(matrix) {
@@ -16908,12 +16040,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 130 */
+/* 128 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(125);
+	var Matrix = __webpack_require__(123);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/LuDecomposition.cs
 	function LuDecomposition(matrix) {
@@ -17083,13 +16215,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 131 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(125);
-	var hypotenuse = __webpack_require__(128).hypotenuse;
+	var Matrix = __webpack_require__(123);
+	var hypotenuse = __webpack_require__(126).hypotenuse;
 
 	//https://github.com/lutzroeder/Mapack/blob/master/Source/QrDecomposition.cs
 	function QrDecomposition(value) {
@@ -17239,12 +16371,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 132 */
+/* 130 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Matrix = __webpack_require__(125);
+	var Matrix = __webpack_require__(123);
 
 	// https://github.com/lutzroeder/Mapack/blob/master/Source/CholeskyDecomposition.cs
 	function CholeskyDecomposition(value) {
@@ -17334,7 +16466,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 133 */
+/* 131 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -17554,12 +16686,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 134 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	const measures = __webpack_require__(135);
+	const measures = __webpack_require__(133);
 
 	class Performance {
 	    /**
@@ -17787,7 +16919,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 135 */
+/* 133 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -17931,7 +17063,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 136 */
+/* 134 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -18040,11 +17172,318 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 137 */
+/* 135 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = exports = __webpack_require__(138);
-	exports.kernel = __webpack_require__(139).kernel;
+	'use strict';
+
+	const ConfusionMatrix = __webpack_require__(136);
+
+	const CV = {};
+	const combinations = __webpack_require__(137);
+
+	/**
+	 * Performs a leave-one-out cross-validation (LOO-CV) of the given samples. In LOO-CV, 1 observation is used as the validation
+	 * set while the rest is used as the training set. This is repeated once for each observation. LOO-CV is a special case
+	 * of LPO-CV. @see leavePout
+	 * @param {constructor} Classifier - The classifier to use for the cross validation. Expect ml-classifier api.
+	 * @param {Array} features - The features for all samples of the data-set
+	 * @param {Array} labels - The classification class of all samples of the data-set
+	 * @param {Object} classifierOptions - The classifier options with which the classifier should be instantiated.
+	 * @returns {ConfusionMatrix} - The cross-validation confusion matrix
+	 */
+	CV.leaveOneOut = function (Classifier, features, labels, classifierOptions) {
+	    return CV.leavePOut(Classifier, features, labels, classifierOptions, 1);
+	};
+
+
+	/**
+	 * Performs a leave-p-out cross-validation (LPO-CV) of the given samples. In LPO-CV, p observations are used as the
+	 * validation set while the rest is used as the training set. This is repeated as many times as there are possible
+	 * ways to combine p observations from the set (unordered without replacement). Be aware that for relatively small
+	 * data-set size this can require a very large number of training and testing to do!
+	 * @param Classifier - The classifier to use for the cross validation. Expect ml-classifier api.
+	 * @param {Array} features - The features for all samples of the data-set
+	 * @param {Array} labels - The classification class of all samples of the data-set
+	 * @param {Object} classifierOptions - The classifier options with which the classifier should be instantiated.
+	 * @param {Number} p - The size of the validation sub-samples' set
+	 * @returns {ConfusionMatrix} - The cross-validation confusion matrix
+	 */
+	CV.leavePOut = function (Classifier, features, labels, classifierOptions, p) {
+	    check(features, labels);
+	    const distinct = getDistinct(labels);
+	    const confusionMatrix = initMatrix(distinct.length, distinct.length);
+	    var i, N = features.length;
+	    var gen = combinations(p, N);
+	    var allIdx = new Array(N);
+	    for (i = 0; i < N; i++) {
+	        allIdx[i] = i;
+	    }
+	    for (const testIdx of gen) {
+	        var trainIdx = allIdx.slice();
+
+	        for (i = testIdx.length - 1; i >= 0; i--) {
+	            trainIdx.splice(testIdx[i], 1);
+	        }
+
+	        validate(Classifier, features, labels, classifierOptions, testIdx, trainIdx, confusionMatrix, distinct);
+	    }
+
+	    return new ConfusionMatrix(confusionMatrix, distinct);
+	};
+
+	/**
+	 * Performs k-fold cross-validation (KF-CV). KF-CV separates the data-set into k random equally sized partitions, and
+	 * uses each as a validation set, with all other partitions used in the training set. Observations left over from if k
+	 * does not divide the number of observations are left out of the cross-validation process.
+	 * @param Classifier - The classifier to use for the cross validation. Expect ml-classifier api.
+	 * @param {Array} features - The features for all samples of the data-set
+	 * @param {Array} labels - The classification class of all samples of the data-set
+	 * @param {Object} classifierOptions - The classifier options with which the classifier should be instantiated.
+	 * @param {Number} k - The number of partitions to create
+	 * @returns {ConfusionMatrix} - The cross-validation confusion matrix
+	 */
+	CV.kFold = function (Classifier, features, labels, classifierOptions, k) {
+	    check(features, labels);
+	    const distinct = getDistinct(labels);
+	    const confusionMatrix = initMatrix(distinct.length, distinct.length);
+	    var N = features.length;
+	    var allIdx = new Array(N);
+	    for (var i = 0; i < N; i++) {
+	        allIdx[i] = i;
+	    }
+
+	    var l = Math.floor(N / k);
+	    // create random k-folds
+	    var current = [];
+	    var folds = [];
+	    while (allIdx.length) {
+	        var randi = Math.floor(Math.random() * allIdx.length);
+	        current.push(allIdx[randi]);
+	        allIdx.splice(randi, 1);
+	        if (current.length === l) {
+	            folds.push(current);
+	            current = [];
+	        }
+	    }
+	    if (current.length) folds.push(current);
+	    folds = folds.slice(0, k);
+
+
+	    for (i = 0; i < folds.length; i++) {
+	        var testIdx = folds[i];
+	        var trainIdx = [];
+	        for (var j = 0; j < folds.length; j++) {
+	            if (j !== i) trainIdx = trainIdx.concat(folds[j]);
+	        }
+
+	        validate(Classifier, features, labels, classifierOptions, testIdx, trainIdx, confusionMatrix, distinct);
+	    }
+
+	    return new ConfusionMatrix(confusionMatrix, distinct);
+	};
+
+	function check(features, labels) {
+	    if (features.length !== labels.length) {
+	        throw new Error('features and labels should have the same length');
+	    }
+	}
+
+	function initMatrix(rows, columns) {
+	    return new Array(rows).fill(0).map(() => new Array(columns).fill(0));
+	}
+
+	function getDistinct(arr) {
+	    var s = new Set();
+	    for (let i = 0; i < arr.length; i++) {
+	        s.add(arr[i]);
+	    }
+	    return Array.from(s);
+	}
+
+	function validate(Classifier, features, labels, classifierOptions, testIdx, trainIdx, confusionMatrix, distinct) {
+	    var testFeatures = testIdx.map(function (index) {
+	        return features[index];
+	    });
+	    var trainFeatures = trainIdx.map(function (index) {
+	        return features[index];
+	    });
+	    var testLabels = testIdx.map(function (index) {
+	        return labels[index];
+	    });
+	    var trainLabels = trainIdx.map(function (index) {
+	        return labels[index];
+	    });
+
+	    var classifier = new Classifier(classifierOptions);
+	    classifier.train(trainFeatures, trainLabels);
+	    var predictedLabels = classifier.predict(testFeatures);
+	    for (var i = 0; i < predictedLabels.length; i++) {
+	        confusionMatrix[distinct.indexOf(testLabels[i])][distinct.indexOf(predictedLabels[i])]++;
+	    }
+	}
+
+	module.exports = CV;
+
+
+/***/ },
+/* 136 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	/**
+	 * ConfusionMatrix class
+	 */
+	class ConfusionMatrix {
+	    /**
+	     * Constructor
+	     * @param {Array} matrix - The confusion matrix, a 2D Array
+	     * @param {Array} labels - Labels of the confusion matrix, a 1D Array
+	     */
+	    constructor(matrix, labels) {
+	        if (matrix.length !== matrix[0].length) {
+	            throw new Error('Confusion matrix must be square');
+	        }
+	        if (labels.length !== matrix.length) {
+	            throw new Error('Confusion matrix and labels should have the same length');
+	        }
+	        this.labels = labels;
+	        this.matrix = matrix;
+
+	    }
+
+	    /**
+	     * Compute the general prediction accuracy
+	     * @returns {number} - The prediction accuracy ([0-1]
+	     */
+	    get accuracy() {
+	        var correct = 0, incorrect = 0;
+	        for (var i = 0; i < this.matrix.length; i++) {
+	            for (var j = 0; j < this.matrix.length; j++) {
+	                if (i === j) correct += this.matrix[i][j];
+	                else incorrect += this.matrix[i][j];
+	            }
+	        }
+
+	        return correct / (correct + incorrect);
+	    }
+
+	    /**
+	     * Compute the number of predicted observations
+	     * @returns {number} - The number of predicted observations
+	     */
+	    get nbPredicted() {
+	        var predicted = 0;
+	        for (var i = 0; i < this.matrix.length; i++) {
+	            for (var j = 0; j < this.matrix.length; j++) {
+	                predicted += this.matrix[i][j];
+	            }
+	        }
+	        return predicted;
+	    }
+	}
+
+	module.exports = ConfusionMatrix;
+
+
+/***/ },
+/* 137 */
+/***/ function(module, exports) {
+
+	'use strict';
+	const defaultOptions = {
+	    mode: 'index'
+	};
+
+	module.exports = function *(M, N, options) {
+	    options = Object.assign({}, defaultOptions, options);
+	    var a = new Array(N);
+	    var c = new Array(M);
+	    var b = new Array(N);
+	    var p = new Array(N + 2);
+	    var x, y, z;
+
+	    // init a and b
+	    for (var i = 0; i < N; i++) {
+	        a[i] = i;
+	        if (i < N - M) b[i] = 0;
+	        else b[i] = 1;
+	    }
+
+	    // init c
+	    for (i = 0; i < M; i++) {
+	        c[i] = N - M + i;
+	    }
+
+	    // init p
+	    for (i = 0; i < p.length; i++) {
+	        if (i === 0) p[i] = N + 1;
+	        else if (i <= N - M) p[i] = 0;
+	        else if (i <= N) p[i] = i - N + M;
+	        else p[i] = -2;
+	    }
+
+	    function twiddle() {
+	        var i, j, k;
+	        j = 1;
+	        while (p[j] <= 0)
+	            j++;
+	        if (p[j - 1] === 0) {
+	            for (i = j - 1; i !== 1; i--)
+	                p[i] = -1;
+	            p[j] = 0;
+	            x = z = 0;
+	            p[1] = 1;
+	            y = j - 1;
+	        } else {
+	            if (j > 1)
+	                p[j - 1] = 0;
+	            do
+	                j++;
+	            while (p[j] > 0);
+	            k = j - 1;
+	            i = j;
+	            while (p[i] === 0)
+	                p[i++] = -1;
+	            if (p[i] === -1) {
+	                p[i] = p[k];
+	                z = p[k] - 1;
+	                x = i - 1;
+	                y = k - 1;
+	                p[k] = -1;
+	            } else {
+	                if (i === p[0]) {
+	                    return 0;
+	                } else {
+	                    p[j] = p[i];
+	                    z = p[i] - 1;
+	                    p[i] = 0;
+	                    x = j - 1;
+	                    y = i - 1;
+	                }
+	            }
+	        }
+	        return 1;
+	    }
+
+	    if (options.mode === 'index') {
+	        yield c.slice();
+	        while (twiddle()) {
+	            c[z] = a[x];
+	            yield c.slice();
+	        }
+	    } else if (options.mode === 'mask') {
+	        yield b.slice();
+	        while (twiddle()) {
+	            b[x] = 1;
+	            b[y] = 0;
+	            yield b.slice();
+	        }
+	    } else {
+	        throw new Error('Invalid mode');
+	    }
+	};
 
 
 /***/ },
@@ -18052,85 +17491,91 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var kernel = __webpack_require__(139).kernel;
-	var getKernel = __webpack_require__(139).getKernel;
+	const Kernel = __webpack_require__(34);
+	const stat = __webpack_require__(3).array;
 
-	/**
-	 * Parameters to implement function
-	 * @type {{C: number, tol: number, max_passes: number, par: number, k: string}}
-	 * @param {number} C - regularization parameter
-	 * @param {number} tol - numerical tolerance
-	 * @param {number} max_passes - max number of times to iterate over alphas without
-	 * changing
-	 * @param {string} k - the kind of kernel
-	 * @param {number} par - parameter used in the polynomial and the radial function
-	 * of the kernel
-	 */
 	var defaultOptions = {
-	    C: 10,
-	    tol: 10e-2,
-	    max_passes: 100,
-	    par: 2,
-	    k: 'lineal'
+	    C: 1,
+	    tol: 1e-4,
+	    maxPasses: 10,
+	    maxIterations: 10000,
+	    kernel: 'linear',
+	    alphaTol: 1e-6,
+	    random: Math.random,
+	    whitening: true
 	};
-
-	/**
-	 * Function to calculate the estimated prediction
-	 * @param {Array <number>} x - point where calculate the function prediction
-	 * @param {Array <Array <number>>} X - training data point in the form (x1, x2)
-	 * @param {Array <number>} Y - training data labels in the domain {1,-1}
-	 * @param {Array <number>} alpha - Lagrange multipliers
-	 * @param {number} b - threshold of the function
-	 * @param {string} k - the kind of kernel
-	 * @param {number} par - parameter used in the polynomial and the radial function
-	 * of the kernel
-	 * @returns {number}
-	 */
-	function f(x, X, Y, alpha, b, kernel, par) {
-	    var m = X.length;
-	    var aux = b;
-	    for (var i = 0; i < m; i++) {
-	        b += alpha[i]*Y[i]*kernel(X[i],x, par)
-	    }
-	    return aux;
-	}
 
 	/**
 	 * Simplified version of the Sequential Minimal Optimization algorithm for training
 	 * support vector machines
-	 * @param {{json}} options - parameters to implement function
+	 * @param {{Object}} options - SVM options
+	 * @param {Number} [options.C=1] - regularization parameter
+	 * @param {Number} [options.tol=1e-4] - numerical tolerance
+	 * @param {Number} [options.alphaTol=1e-6] - alpha tolerance, threshold to decide support vectors
+	 * @param {Number} [options.maxPasses=10] - max number of times to iterate over alphas without changing
+	 * @param {Number} [options.maxIterations=10000] - max number of iterations
+	 * @param {String} [options.kernel=linear] - the kind of kernel. {@link https://github.com/mljs/kernel/tree/1252de5f9012776e6e0eb06c7b434b8631fb21f0 List of kernels}
+	 * @param {Function} [options.random=Math.random] - custom random number generator
 	 * @constructor
 	 */
 	function SVM(options) {
-	    options = options || {};
-	    this.options = {};
-	    for (var o in defaultOptions) {
-	        if (options.hasOwnProperty(o)) {
-	            this.options[o] = options[o];
-	        } else {
-	            this.options[o] = defaultOptions[o];
-	        }
-	    }
-	    this.kernel = getKernel(this.options.k);
+	    this.options = Object.assign({}, defaultOptions, options);
+
+	    this.kernel = new Kernel(this.options.kernel, this.options.kernelOptions);
 	    this.b = 0;
 	}
 
 	/**
 	 * Train the SVM model
-	 * @param {Array <Array <number>>} X - training data point in the form (x1, x2)
-	 * @param {Array <number>} Y - training data labels in the domain {1,-1}
+	 * @param {Array <Array <number>>} features - training data features
+	 * @param {Array <number>} labels - training data labels in the domain {1,-1}
 	 */
-	SVM.prototype.train = function (X, Y) {
-	    var m = Y.length;
-	    var alpha = new Array(m);
+	SVM.prototype.train = function (features, labels) {
+	    if (features.length !== labels.length) {
+	        throw new Error('Features and labels should have the same length');
+	    }
+	    if (features.length < 2) {
+	        throw new Error('Cannot train with less than 2 observations');
+	    }
+	    this._trained = false;
+	    this._loaded = false;
+	    this.N = labels.length;
+	    this.D = features[0].length;
+	    if (this.options.whitening) {
+	        this.X = new Array(this.N);
+	        for (var i = 0; i < this.N; i++) {
+	            this.X[i] = new Array(this.D);
+	        }
+	        this.minMax = new Array(this.D);
+	        // Apply normalization and keep normalization parameters
+	        for (var j = 0; j < this.D; j++) {
+	            var d = new Array(this.N);
+	            for (i = 0; i < this.N; i++) {
+	                d[i] = features[i][j];
+	            }
+	            this.minMax[j] = stat.minMax(d);
+	            for (i = 0; i < this.N; i++) {
+	                this.X[i][j] = (features[i][j] - this.minMax[j].min) / (this.minMax[j].max - this.minMax[j].min);
+	            }
+	        }
+	    } else {
+	        this.X = features;
+	    }
+	    this.Y = labels;
+	    this.b = 0;
+	    this.W = undefined;
+
+	    var kernel = this.kernel.compute(this.X);
+	    var m = labels.length;
+	    var alpha = new Array(m).fill(0);
+	    this.alphas = alpha;
 	    for (var a = 0; a < m; a++)
 	        alpha[a] = 0;
-	    if (X.length !== m)
-	        throw new TypeError('Arrays should have the same length');
-	    var b = 0,
-	        b1 = 0,
+
+	    var b1 = 0,
 	        b2 = 0,
 	        iter = 0,
+	        passes = 0,
 	        Ei = 0,
 	        Ej = 0,
 	        ai = 0,
@@ -18139,226 +17584,252 @@ return /******/ (function(modules) { // webpackBootstrap
 	        H = 0,
 	        eta = 0;
 
-	    while (iter < this.options.max_passes) {
+	    while (passes < this.options.maxPasses && iter < this.options.maxIterations) {
 	        var numChange = 0;
-	        for (var i = 0; i < m; i++) {
-	            Ei = f(X[i],X,Y,alpha,b,this.kernel,this.options.par) - Y[i];
-	            if (((Y[i]*Ei < -this.options.tol) && (alpha[i] < this.options.C)) || ((Y[i]*Ei > this.options.tol) && (alpha[i] > 0))) {
-	                var j = 0;
-	                do {
-	                    j = Math.ceil(Math.random()*(m - 1));
-	                }
-	                while (j === i);
-	                Ej = f(X[j],X,Y,alpha,b,this.kernel,this.options.par) - Y[j];
+	        for (i = 0; i < m; i++) {
+	            Ei = this._marginOnePrecomputed(i, kernel) - labels[i];
+	            if (labels[i] * Ei < -this.options.tol && alpha[i] < this.options.C || labels[i] * Ei > this.options.tol && alpha[i] > 0) {
+	                j = i;
+	                while (j === i) j = Math.floor(this.options.random() * m);
+	                Ej = this._marginOnePrecomputed(j, kernel) - labels[j];
 	                ai = alpha[i];
 	                aj = alpha[j];
-	                if (Y[i] === Y[j]) {
-	                    L = Math.max(0, ai+aj-this.options.C);
-	                    H = Math.min(this.options.C, ai+aj);
+	                if (labels[i] === labels[j]) {
+	                    L = Math.max(0, ai + aj - this.options.C);
+	                    H = Math.min(this.options.C, ai + aj);
+	                } else  {
+	                    L = Math.max(0, aj - ai);
+	                    H = Math.min(this.options.C, this.options.C + aj + ai);
 	                }
-	                else  {
-	                    L = Math.max(0, ai-aj);
-	                    H = Math.min(this.options.C, this.options.C-ai+aj);
-	                }
-	                if (L !== H) {
-	                    eta = 2*this.kernel(X[i],X[j], this.options.par) - this.kernel(X[i],X[i], this.options.par) - this.kernel(X[j],X[j], this.options.par);
-	                    if (eta < 0) {
-	                        alpha[j] = alpha[j] - (Y[j]*(Ei - Ej)) / eta;
-	                        if (alpha[j] > H)
-	                            alpha[j] = H;
-	                        else if (alpha[j] < L)
-	                            alpha[j] = L;
-	                        if (Math.abs(aj - alpha[j]) >= 10e-5) {
-	                            alpha[i] = alpha[i] + Y[i]*Y[j]*(aj - alpha[j]);
-	                            b1 = b - Ei - Y[i]*(alpha[i] - ai)*this.kernel(X[i],X[i], this.options.par) - Y[j]*(alpha[j] - aj)*this.kernel(X[i],X[j], this.options.par);
-	                            b2 = b - Ej - Y[i]*(alpha[i] - ai)*this.kernel(X[i],X[j], this.options.par) - Y[j]*(alpha[j] - aj)*this.kernel(X[j],X[j], this.options.par);
-	                            if ((alpha[i] < this.options.C) && (alpha[i] > 0))
-	                                b = b1;
-	                            else if ((alpha[j] < this.options.C) && (alpha[j] > 0))
-	                                b = b2;
-	                            else
-	                                b = (b1 + b2) / 2;
-	                            numChange += 1;
-	                        }
-	                    }
-	                }
+	                if (Math.abs(L - H) < 1e-4) continue;
+
+	                eta = 2 * kernel[i][j] - kernel[i][i] - kernel[j][j];
+	                if (eta >= 0) continue;
+	                var newaj = alpha[j] - labels[j] * (Ei - Ej) / eta;
+	                if (newaj > H)
+	                    newaj = H;
+	                else if (newaj < L)
+	                    newaj = L;
+	                if (Math.abs(aj - newaj) < 10e-4) continue;
+	                alpha[j] = newaj;
+	                alpha[i] = alpha[i] + labels[i] * labels[j] * (aj - newaj);
+	                b1 = this.b - Ei - labels[i] * (alpha[i] - ai) * kernel[i][i] - labels[j] * (alpha[j] - aj) * kernel[i][j];
+	                b2 = this.b - Ej - labels[i] * (alpha[i] - ai) * kernel[i][j] - labels[j] * (alpha[j] - aj) * kernel[j][j];
+	                this.b = (b1 + b2) / 2;
+	                if (alpha[i] < this.options.C && alpha[i] > 0) this.b = b1;
+	                if (alpha[j] < this.options.C && alpha[j] > 0) this.b = b2;
+	                numChange += 1;
 	            }
 	        }
-	        if (numChange == 0)
-	            iter += 1;
+	        iter++;
+	        if (numChange === 0)
+	            passes += 1;
 	        else
-	            iter = 0;
+	            passes = 0;
 	    }
-	    this.b = b;
-	    var s = X[0].length;
-	    this.W = new Array(s);
-	    for (var r = 0; r < s; r++) {
-	        this.W[r] = 0;
-	        for (var w = 0; w < m; w++)
-	            this.W[r] += Y[w]*alpha[w]*X[w][r];
+	    if (iter === this.options.maxIterations) {
+	        throw new Error('max iterations reached');
 	    }
-	    this.alphas = alpha.splice();
+
+	    this.iterations = iter;
+
+	    // Compute the weights (useful for fast decision on new test instances when linear SVM)
+	    if (this.options.kernel === 'linear') {
+	        this.W = new Array(this.D);
+	        for (var r = 0; r < this.D; r++) {
+	            this.W[r] = 0;
+	            for (var w = 0; w < m; w++)
+	                this.W[r] += labels[w] * alpha[w] * this.X[w][r];
+	        }
+	    }
+
+	    // Keep only support vectors
+	    // It will compute decision on new test instances faster
+	    // We also keep the index of the support vectors
+	    // in the original data
+	    var nX = [];
+	    var nY = [];
+	    var nAlphas = [];
+	    this._supportVectorIdx = [];
+	    for (i = 0; i < this.N; i++) {
+	        if (this.alphas[i] > this.options.alphaTol) {
+	            nX.push(this.X[i]);
+	            nY.push(labels[i]);
+	            nAlphas.push(this.alphas[i]);
+	            this._supportVectorIdx.push(i);
+
+	        }
+	    }
+	    this.X = nX;
+	    this.Y = nY;
+	    this.N = nX.length;
+	    this.alphas = nAlphas;
+
+
+	    // A flag to say this SVM has been trained
+	    this._trained = true;
 	};
 
 	/**
-	 * Recreates a SVM based in the exported model
-	 * @param {{name: string, ,options: {json} ,alpha: Array<number>, b: number}} model
-	 * @returns {SVM}
+	 * Get prediction ({-1,1}) given one observation's features.
+	 * @private
+	 * @param p The observation's features.
+	 * @returns {number} Classification result ({-1,1})
+	 */
+	SVM.prototype.predictOne = function (p) {
+	    var margin = this.marginOne(p);
+	    return margin > 0 ? 1 : -1;
+	};
+
+	/**
+	 * Predict the classification outcome of a trained svm given one or several observations' features.
+	 * @param {Array} features - The observation(s)' features
+	 * @returns {Array<Number>|Number} An array of {-1, 1} if several observations are given or a number if one observation
+	 * is given
+	 */
+	SVM.prototype.predict = function (features) {
+	    if (!this._trained && !this._loaded) throw new Error('Cannot predict, you need to train the SVM first');
+	    if (Array.isArray(features) && Array.isArray(features[0])) {
+	        return features.map(this.predictOne.bind(this));
+	    } else {
+	        return this.predictOne(features);
+	    }
+	};
+
+	/**
+	 * Get margin given one observation's features
+	 * @private
+	 * @param {Array<Number>} features - Features
+	 * @returns {Number} - The computed margin
+	 */
+	SVM.prototype.marginOne = function (features, noWhitening) {
+	    // Apply normalization
+	    if (this.options.whitening && !noWhitening) {
+	        features = this._applyWhitening(features);
+	    }
+	    var ans = this.b, i;
+	    if (this.options.kernel === 'linear' && this.W) {
+	        // Use weights, it's faster
+	        for (i = 0; i < this.W.length; i++) {
+	            ans += this.W[i] * features[i];
+	        }
+	    } else {
+	        for (i = 0; i < this.N; i++) {
+	            ans += this.alphas[i] * this.Y[i] * this.kernel.compute([features], [this.X[i]])[0][0];
+	        }
+	    }
+	    return ans;
+	};
+
+
+	/**
+	 * Get a margin using the precomputed kernel. Much faster than normal margin computation
+	 * @private
+	 * @param {Number} index - Train data index
+	 * @param {Array< Array<Number> >} kernel - The precomputed kernel
+	 * @returns {number} Computed margin
+	 * @private
+	 */
+	SVM.prototype._marginOnePrecomputed = function (index, kernel) {
+	    var ans = this.b, i;
+	    for (i = 0; i < this.N; i++) {
+	        ans += this.alphas[i] * this.Y[i] * kernel[index][i];
+	    }
+	    return ans;
+	};
+
+
+	/**
+	 * Returns the margin of one or several observations given its features
+	 * @param {Array <Array<Number> >|Array<Number>} features - Features from on or several observations.
+	 * @returns {Number|Array} The computed margin. Is an Array if several observations' features given, or a Number if
+	 * only one observation's features given
+	 */
+	SVM.prototype.margin = function (features) {
+	    if (Array.isArray(features)) {
+	        return features.map(this.marginOne.bind(this));
+	    } else {
+	        return this.marginOne(features);
+	    }
+	};
+
+	/**
+	 * Get support vectors indexes of the trained classifier. WARINNG: this method does not work for svm instances
+	 * created from {@link #SVM.load load} if linear kernel
+	 * @returns {Array<Number>} The indices in the training vector of the support vectors
+	 */
+	SVM.prototype.supportVectors = function () {
+	    if (!this._trained && !this._loaded) throw new Error('Cannot get support vectors, you need to train the SVM first');
+	    if (this._loaded && this.options.kernel === 'linear') throw new Error('Cannot get support vectors from saved linear model, you need to train the SVM to have them');
+	    return this._supportVectorIdx;
+	};
+
+	/**
+	 * Create a SVM instance from a saved model
+	 * @param {Object} model -  Object such as returned by a trained SVM instance with {@link #SVM#toJSON toJSON}
+	 * @returns {SVM} Instance of svm classifier
 	 */
 	SVM.load = function (model) {
-	    if (model.name === 'SVM') {
-	        var svm = new SVM(model.options);
+	    this._loaded = true;
+	    this._trained = false;
+	    var svm = new SVM(model.options);
+	    if (model.options.kernel === 'linear') {
 	        svm.W = model.W.slice();
-	        svm.b = model.b;
-	        return svm;
+	        svm.D = svm.W.length;
 	    } else {
-	        throw new TypeError('expecting a SVM model');
+	        svm.X = model.X.slice();
+	        svm.Y = model.Y.slice();
+	        svm.alphas = model.alphas.slice();
+	        svm.N = svm.X.length;
+	        svm.D = svm.X[0].length;
 	    }
+	    svm.minMax = model.minMax;
+	    svm.b = model.b;
+	    svm._loaded = true;
+	    svm._trained = false;
+	    return svm;
 	};
 
 	/**
-	 * Let's have a JSON to recreate the model
-	 * @returns {{name: String("SVM"), ,options: {json} ,alpha: Array<number>, b: number}}
-	 * name identifier, options to recreate model, the Lagrange multipliers and the
-	 * threshold of the objective function
+	 * Export the minimal object that enables to reload the model
+	 * @returns {Object} Model object that can be reused with {@link #SVM.load load}
 	 */
-	SVM.prototype.export = function () {
-	    var model = {
-	        name: 'SVM'
-	    };
-	    model.options = this.options;
-	    model.W = this.W;
+	SVM.prototype.toJSON = function () {
+	    if (!this._trained && !this._loaded) throw new Error('Cannot export, you need to train the SVM first');
+	    var model = {};
+	    model.options = Object.assign({}, this.options);
 	    model.b = this.b;
+	    model.minMax = this.minMax;
+	    if (model.options.kernel === 'linear') {
+	        model.W = this.W.slice();
+	    } else {
+	        // Exporting non-linear models is heavier
+	        model.X = this.X.slice();
+	        model.Y = this.Y.slice();
+	        model.alphas = this.alphas.slice();
+	    }
 	    return model;
 	};
 
-	/**
-	 * Return the Lagrange multipliers
-	 * @returns {Array <number>}
-	 */
-	SVM.prototype.getAlphas = function () {
-	    return this.alphas.slice();
-	};
-
-	/**
-	 * Returns the threshold of the model function
-	 * @returns {number} threshold of the function
-	 */
-	SVM.prototype.getThreshold = function () {
-	    return this.b;
-	};
-
-	/**
-	 * Use the train model to make predictions
-	 * @param {Array} p - An array or a single dot to have the prediction
-	 * @returns {*} An array or a single {-1, 1} value of the prediction
-	 */
-	SVM.prototype.predict = function (p) {
-	    var ev;
-	    if (Array.isArray(p) && (Array.isArray(p[0]) || (typeof p[0] === 'object'))) {
-	        var ans = new Array(p.length);
-	        for (var i = 0; i < ans.length; i++) {
-	            ev = this.b;
-	            for (var j = 0; j < this.W.length; j++)
-	                ev += this.W[j]*p[j];
-	            if (ev < 0)
-	                ans[i] = -1;
-	            else
-	                ans[i] = 1;
-	        }
-	        return ans;
+	SVM.prototype._applyWhitening = function (features) {
+	    if (!this.minMax) throw new Error('Could not apply whitening');
+	    var whitened = new Array(features.length);
+	    for (var j = 0; j < features.length; j++) {
+	        whitened[j] = (features[j] - this.minMax[j].min) / (this.minMax[j].max - this.minMax[j].min);
 	    }
-	    else {
-	        ev = this.b;
-	        for (var e = 0; e < this.W.length; e++)
-	            ev += this.W[e]*p[e];
-	        if (ev < 0)
-	            return -1;
-	        else
-	            return 1;
-	    }
+	    return whitened;
 	};
 
 	module.exports = SVM;
 
+
 /***/ },
 /* 139 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	/**
-	 * Kernel function to return the dot product for different spaces
-	 * @param {Array <number>} x1 - input first vector
-	 * @param {Array <number>} x2 - input second vector
-	 * @param {string} func - the kind of transformation
-	 * @param {number} par - parameter used in the polynomial and the radial function
-	 * @return {number} calculus of the dot product using the function
-	 * */
-	function kernel(x1,x2,func,par) {
-	    return getKernel(func)(x1, x2, par);
-	}
-
-	/**
-	 * The dot product between the p1 and p2 vectors
-	 * @param {Array <number>} p1 - first vector to get dot product
-	 * @param {Array <number>} p2 - second vector to get dot product
-	 * @returns {number} dot product between the p1 and p2 vectors
-	 */
-	function dot(p1, p2) {
-	    var l = p1.length;
-	    var prod = 0;
-
-	    for (var i = 0; i < l; i++) {
-	        prod += p1[i] * p2[i];
-	    }
-
-	    return prod;
-	}
-
-	function getKernel(func) {
-	    func = (typeof func === 'undefined') ? 'lineal' : func;
-
-	    switch(func) {
-	        case 'lineal':
-	            return kernelLineal;
-	        case 'polynomial':
-	            return kernelPolynomial;
-	        case 'radial':
-	            return kernelRadial;
-	        default:
-	            throw new TypeError('Function kernel undefined: ' + func);
-	    }
-	}
-
-	function kernelLineal(x1,x2) {
-	    return dot(x1,x2);
-	}
-
-	function kernelPolynomial(x1, x2, par) {
-	    par = (typeof par === 'undefined') ? 2 : par;
-	    return Math.pow((dot(x1, x2) + 1), par);
-	}
-
-	function kernelRadial(x1, x2, par) {
-	    par = (typeof par === 'undefined') ? 2 : par;
-	    var l = x1.length;
-	    var rest = new Array(l);
-	    for (var i = 0; i < l; i++) {
-	        rest[i] = x1[i] - x2[i];
-	    }
-	    var norm = dot(rest, rest);
-	    return Math.exp((norm)/(-2*par*par));
-	}
-
-	module.exports = {
-	    kernel: kernel,
-	    getKernel: getKernel,
-	    lineal : kernelLineal,
-	    polynomial : kernelPolynomial,
-	    radial : kernelRadial
-	};
-
+	module.exports = __webpack_require__(140);
 
 /***/ },
 /* 140 */
@@ -18366,18 +17837,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	'use strict';
 
-	module.exports = __webpack_require__(141);
-
-/***/ },
-/* 141 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
 	module.exports = KNN;
 
-	var KDTree = __webpack_require__(142).kdTree;
-	var Distances = __webpack_require__(49);
+	var KDTree = __webpack_require__(141).kdTree;
+	var Distances = __webpack_require__(50);
 
 	/**
 	 * K-Nearest neighboor constructor.
@@ -18509,7 +17972,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 142 */
+/* 141 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -18975,23 +18438,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
+/* 142 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = exports = __webpack_require__(143).NaiveBayes;
+	exports.separateClasses = __webpack_require__(143).separateClasses;
+
+
+/***/ },
 /* 143 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = exports = __webpack_require__(144).NaiveBayes;
-	exports.separateClasses = __webpack_require__(144).separateClasses;
-
-
-/***/ },
-/* 144 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
 	var Matrix = __webpack_require__(14);
-	var Stat = __webpack_require__(145);
+	var Stat = __webpack_require__(3);
 
 	module.exports.NaiveBayes = NaiveBayes;
 	module.exports.separateClasses = separateClasses;
@@ -19168,1017 +18631,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
+/* 144 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = exports = __webpack_require__(145);
+	exports.Utils = __webpack_require__(146);
+	exports.OPLS = __webpack_require__(147);
+
+
+/***/ },
 /* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	exports.array = __webpack_require__(146);
-	exports.matrix = __webpack_require__(147);
-
-
-/***/ },
-/* 146 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	function compareNumbers(a, b) {
-	    return a - b;
-	}
-
-	/**
-	 * Computes the sum of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.sum = function sum(values) {
-	    var sum = 0;
-	    for (var i = 0; i < values.length; i++) {
-	        sum += values[i];
-	    }
-	    return sum;
-	};
-
-	/**
-	 * Computes the maximum of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.max = function max(values) {
-	    var max = -Infinity;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        if (values[i] > max) max = values[i];
-	    }
-	    return max;
-	};
-
-	/**
-	 * Computes the minimum of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.min = function min(values) {
-	    var min = Infinity;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        if (values[i] < min) min = values[i];
-	    }
-	    return min;
-	};
-
-	/**
-	 * Computes the min and max of the given values
-	 * @param {Array} values
-	 * @returns {{min: number, max: number}}
-	 */
-	exports.minMax = function minMax(values) {
-	    var min = Infinity;
-	    var max = -Infinity;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        if (values[i] < min) min = values[i];
-	        if (values[i] > max) max = values[i];
-	    }
-	    return {
-	        min: min,
-	        max: max
-	    };
-	};
-
-	/**
-	 * Computes the arithmetic mean of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.arithmeticMean = function arithmeticMean(values) {
-	    var sum = 0;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        sum += values[i];
-	    }
-	    return sum / l;
-	};
-
-	/**
-	 * {@link arithmeticMean}
-	 */
-	exports.mean = exports.arithmeticMean;
-
-	/**
-	 * Computes the geometric mean of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.geometricMean = function geometricMean(values) {
-	    var mul = 1;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        mul *= values[i];
-	    }
-	    return Math.pow(mul, 1 / l);
-	};
-
-	/**
-	 * Computes the mean of the log of the given values
-	 * If the return value is exponentiated, it gives the same result as the
-	 * geometric mean.
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.logMean = function logMean(values) {
-	    var lnsum = 0;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        lnsum += Math.log(values[i]);
-	    }
-	    return lnsum / l;
-	};
-
-	/**
-	 * Computes the weighted grand mean for a list of means and sample sizes
-	 * @param {Array} means - Mean values for each set of samples
-	 * @param {Array} samples - Number of original values for each set of samples
-	 * @returns {number}
-	 */
-	exports.grandMean = function grandMean(means, samples) {
-	    var sum = 0;
-	    var n = 0;
-	    var l = means.length;
-	    for (var i = 0; i < l; i++) {
-	        sum += samples[i] * means[i];
-	        n += samples[i];
-	    }
-	    return sum / n;
-	};
-
-	/**
-	 * Computes the truncated mean of the given values using a given percentage
-	 * @param {Array} values
-	 * @param {number} percent - The percentage of values to keep (range: [0,1])
-	 * @param {boolean} [alreadySorted=false]
-	 * @returns {number}
-	 */
-	exports.truncatedMean = function truncatedMean(values, percent, alreadySorted) {
-	    if (alreadySorted === undefined) alreadySorted = false;
-	    if (!alreadySorted) {
-	        values = values.slice().sort(compareNumbers);
-	    }
-	    var l = values.length;
-	    var k = Math.floor(l * percent);
-	    var sum = 0;
-	    for (var i = k; i < (l - k); i++) {
-	        sum += values[i];
-	    }
-	    return sum / (l - 2 * k);
-	};
-
-	/**
-	 * Computes the harmonic mean of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.harmonicMean = function harmonicMean(values) {
-	    var sum = 0;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        if (values[i] === 0) {
-	            throw new RangeError('value at index ' + i + 'is zero');
-	        }
-	        sum += 1 / values[i];
-	    }
-	    return l / sum;
-	};
-
-	/**
-	 * Computes the contraharmonic mean of the given values
-	 * @param {Array} values
-	 * @returns {number}
-	 */
-	exports.contraHarmonicMean = function contraHarmonicMean(values) {
-	    var r1 = 0;
-	    var r2 = 0;
-	    var l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        r1 += values[i] * values[i];
-	        r2 += values[i];
-	    }
-	    if (r2 < 0) {
-	        throw new RangeError('sum of values is negative');
-	    }
-	    return r1 / r2;
-	};
-
-	/**
-	 * Computes the median of the given values
-	 * @param {Array} values
-	 * @param {boolean} [alreadySorted=false]
-	 * @returns {number}
-	 */
-	exports.median = function median(values, alreadySorted) {
-	    if (alreadySorted === undefined) alreadySorted = false;
-	    if (!alreadySorted) {
-	        values = values.slice().sort(compareNumbers);
-	    }
-	    var l = values.length;
-	    var half = Math.floor(l / 2);
-	    if (l % 2 === 0) {
-	        return (values[half - 1] + values[half]) * 0.5;
-	    } else {
-	        return values[half];
-	    }
-	};
-
-	/**
-	 * Computes the variance of the given values
-	 * @param {Array} values
-	 * @param {boolean} [unbiased=true] - if true, divide by (n-1); if false, divide by n.
-	 * @returns {number}
-	 */
-	exports.variance = function variance(values, unbiased) {
-	    if (unbiased === undefined) unbiased = true;
-	    var theMean = exports.mean(values);
-	    var theVariance = 0;
-	    var l = values.length;
-
-	    for (var i = 0; i < l; i++) {
-	        var x = values[i] - theMean;
-	        theVariance += x * x;
-	    }
-
-	    if (unbiased) {
-	        return theVariance / (l - 1);
-	    } else {
-	        return theVariance / l;
-	    }
-	};
-
-	/**
-	 * Computes the standard deviation of the given values
-	 * @param {Array} values
-	 * @param {boolean} [unbiased=true] - if true, divide by (n-1); if false, divide by n.
-	 * @returns {number}
-	 */
-	exports.standardDeviation = function standardDeviation(values, unbiased) {
-	    return Math.sqrt(exports.variance(values, unbiased));
-	};
-
-	exports.standardError = function standardError(values) {
-	    return exports.standardDeviation(values) / Math.sqrt(values.length);
-	};
-
-	exports.quartiles = function quartiles(values, alreadySorted) {
-	    if (typeof(alreadySorted) === 'undefined') alreadySorted = false;
-	    if (!alreadySorted) {
-	        values = values.slice();
-	        values.sort(compareNumbers);
-	    }
-
-	    var quart = values.length / 4;
-	    var q1 = values[Math.ceil(quart) - 1];
-	    var q2 = exports.median(values, true);
-	    var q3 = values[Math.ceil(quart * 3) - 1];
-
-	    return {q1: q1, q2: q2, q3: q3};
-	};
-
-	exports.pooledStandardDeviation = function pooledStandardDeviation(samples, unbiased) {
-	    return Math.sqrt(exports.pooledVariance(samples, unbiased));
-	};
-
-	exports.pooledVariance = function pooledVariance(samples, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var sum = 0;
-	    var length = 0, l = samples.length;
-	    for (var i = 0; i < l; i++) {
-	        var values = samples[i];
-	        var vari = exports.variance(values);
-
-	        sum += (values.length - 1) * vari;
-
-	        if (unbiased)
-	            length += values.length - 1;
-	        else
-	            length += values.length;
-	    }
-	    return sum / length;
-	};
-
-	exports.mode = function mode(values) {
-	    var l = values.length,
-	        itemCount = new Array(l),
-	        i;
-	    for (i = 0; i < l; i++) {
-	        itemCount[i] = 0;
-	    }
-	    var itemArray = new Array(l);
-	    var count = 0;
-
-	    for (i = 0; i < l; i++) {
-	        var index = itemArray.indexOf(values[i]);
-	        if (index >= 0)
-	            itemCount[index]++;
-	        else {
-	            itemArray[count] = values[i];
-	            itemCount[count] = 1;
-	            count++;
-	        }
-	    }
-
-	    var maxValue = 0, maxIndex = 0;
-	    for (i = 0; i < count; i++) {
-	        if (itemCount[i] > maxValue) {
-	            maxValue = itemCount[i];
-	            maxIndex = i;
-	        }
-	    }
-
-	    return itemArray[maxIndex];
-	};
-
-	exports.covariance = function covariance(vector1, vector2, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var mean1 = exports.mean(vector1);
-	    var mean2 = exports.mean(vector2);
-
-	    if (vector1.length !== vector2.length)
-	        throw "Vectors do not have the same dimensions";
-
-	    var cov = 0, l = vector1.length;
-	    for (var i = 0; i < l; i++) {
-	        var x = vector1[i] - mean1;
-	        var y = vector2[i] - mean2;
-	        cov += x * y;
-	    }
-
-	    if (unbiased)
-	        return cov / (l - 1);
-	    else
-	        return cov / l;
-	};
-
-	exports.skewness = function skewness(values, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var theMean = exports.mean(values);
-
-	    var s2 = 0, s3 = 0, l = values.length;
-	    for (var i = 0; i < l; i++) {
-	        var dev = values[i] - theMean;
-	        s2 += dev * dev;
-	        s3 += dev * dev * dev;
-	    }
-	    var m2 = s2 / l;
-	    var m3 = s3 / l;
-
-	    var g = m3 / (Math.pow(m2, 3 / 2.0));
-	    if (unbiased) {
-	        var a = Math.sqrt(l * (l - 1));
-	        var b = l - 2;
-	        return (a / b) * g;
-	    }
-	    else {
-	        return g;
-	    }
-	};
-
-	exports.kurtosis = function kurtosis(values, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var theMean = exports.mean(values);
-	    var n = values.length, s2 = 0, s4 = 0;
-
-	    for (var i = 0; i < n; i++) {
-	        var dev = values[i] - theMean;
-	        s2 += dev * dev;
-	        s4 += dev * dev * dev * dev;
-	    }
-	    var m2 = s2 / n;
-	    var m4 = s4 / n;
-
-	    if (unbiased) {
-	        var v = s2 / (n - 1);
-	        var a = (n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3));
-	        var b = s4 / (v * v);
-	        var c = ((n - 1) * (n - 1)) / ((n - 2) * (n - 3));
-
-	        return a * b - 3 * c;
-	    }
-	    else {
-	        return m4 / (m2 * m2) - 3;
-	    }
-	};
-
-	exports.entropy = function entropy(values, eps) {
-	    if (typeof(eps) === 'undefined') eps = 0;
-	    var sum = 0, l = values.length;
-	    for (var i = 0; i < l; i++)
-	        sum += values[i] * Math.log(values[i] + eps);
-	    return -sum;
-	};
-
-	exports.weightedMean = function weightedMean(values, weights) {
-	    var sum = 0, l = values.length;
-	    for (var i = 0; i < l; i++)
-	        sum += values[i] * weights[i];
-	    return sum;
-	};
-
-	exports.weightedStandardDeviation = function weightedStandardDeviation(values, weights) {
-	    return Math.sqrt(exports.weightedVariance(values, weights));
-	};
-
-	exports.weightedVariance = function weightedVariance(values, weights) {
-	    var theMean = exports.weightedMean(values, weights);
-	    var vari = 0, l = values.length;
-	    var a = 0, b = 0;
-
-	    for (var i = 0; i < l; i++) {
-	        var z = values[i] - theMean;
-	        var w = weights[i];
-
-	        vari += w * (z * z);
-	        b += w;
-	        a += w * w;
-	    }
-
-	    return vari * (b / (b * b - a));
-	};
-
-	exports.center = function center(values, inPlace) {
-	    if (typeof(inPlace) === 'undefined') inPlace = false;
-
-	    var result = values;
-	    if (!inPlace)
-	        result = values.slice();
-
-	    var theMean = exports.mean(result), l = result.length;
-	    for (var i = 0; i < l; i++)
-	        result[i] -= theMean;
-	};
-
-	exports.standardize = function standardize(values, standardDev, inPlace) {
-	    if (typeof(standardDev) === 'undefined') standardDev = exports.standardDeviation(values);
-	    if (typeof(inPlace) === 'undefined') inPlace = false;
-	    var l = values.length;
-	    var result = inPlace ? values : new Array(l);
-	    for (var i = 0; i < l; i++)
-	        result[i] = values[i] / standardDev;
-	    return result;
-	};
-
-	exports.cumulativeSum = function cumulativeSum(array) {
-	    var l = array.length;
-	    var result = new Array(l);
-	    result[0] = array[0];
-	    for (var i = 1; i < l; i++)
-	        result[i] = result[i - 1] + array[i];
-	    return result;
-	};
-
-
-/***/ },
-/* 147 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	var arrayStat = __webpack_require__(146);
-
-	// https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
-
-	function entropy(matrix, eps) {
-	    if (typeof(eps) === 'undefined') {
-	        eps = 0;
-	    }
-	    var sum = 0,
-	        l1 = matrix.length,
-	        l2 = matrix[0].length;
-	    for (var i = 0; i < l1; i++) {
-	        for (var j = 0; j < l2; j++) {
-	            sum += matrix[i][j] * Math.log(matrix[i][j] + eps);
-	        }
-	    }
-	    return -sum;
-	}
-
-	function mean(matrix, dimension) {
-	    if (typeof(dimension) === 'undefined') {
-	        dimension = 0;
-	    }
-	    var rows = matrix.length,
-	        cols = matrix[0].length,
-	        theMean, N, i, j;
-
-	    if (dimension === -1) {
-	        theMean = [0];
-	        N = rows * cols;
-	        for (i = 0; i < rows; i++) {
-	            for (j = 0; j < cols; j++) {
-	                theMean[0] += matrix[i][j];
-	            }
-	        }
-	        theMean[0] /= N;
-	    } else if (dimension === 0) {
-	        theMean = new Array(cols);
-	        N = rows;
-	        for (j = 0; j < cols; j++) {
-	            theMean[j] = 0;
-	            for (i = 0; i < rows; i++) {
-	                theMean[j] += matrix[i][j];
-	            }
-	            theMean[j] /= N;
-	        }
-	    } else if (dimension === 1) {
-	        theMean = new Array(rows);
-	        N = cols;
-	        for (j = 0; j < rows; j++) {
-	            theMean[j] = 0;
-	            for (i = 0; i < cols; i++) {
-	                theMean[j] += matrix[j][i];
-	            }
-	            theMean[j] /= N;
-	        }
-	    } else {
-	        throw new Error('Invalid dimension');
-	    }
-	    return theMean;
-	}
-
-	function standardDeviation(matrix, means, unbiased) {
-	    var vari = variance(matrix, means, unbiased), l = vari.length;
-	    for (var i = 0; i < l; i++) {
-	        vari[i] = Math.sqrt(vari[i]);
-	    }
-	    return vari;
-	}
-
-	function variance(matrix, means, unbiased) {
-	    if (typeof(unbiased) === 'undefined') {
-	        unbiased = true;
-	    }
-	    means = means || mean(matrix);
-	    var rows = matrix.length;
-	    if (rows === 0) return [];
-	    var cols = matrix[0].length;
-	    var vari = new Array(cols);
-
-	    for (var j = 0; j < cols; j++) {
-	        var sum1 = 0, sum2 = 0, x = 0;
-	        for (var i = 0; i < rows; i++) {
-	            x = matrix[i][j] - means[j];
-	            sum1 += x;
-	            sum2 += x * x;
-	        }
-	        if (unbiased) {
-	            vari[j] = (sum2 - ((sum1 * sum1) / rows)) / (rows - 1);
-	        } else {
-	            vari[j] = (sum2 - ((sum1 * sum1) / rows)) / rows;
-	        }
-	    }
-	    return vari;
-	}
-
-	function median(matrix) {
-	    var rows = matrix.length, cols = matrix[0].length;
-	    var medians = new Array(cols);
-
-	    for (var i = 0; i < cols; i++) {
-	        var data = new Array(rows);
-	        for (var j = 0; j < rows; j++) {
-	            data[j] = matrix[j][i];
-	        }
-	        data.sort();
-	        var N = data.length;
-	        if (N % 2 === 0) {
-	            medians[i] = (data[N / 2] + data[(N / 2) - 1]) * 0.5;
-	        } else {
-	            medians[i] = data[Math.floor(N / 2)];
-	        }
-	    }
-	    return medians;
-	}
-
-	function mode(matrix) {
-	    var rows = matrix.length,
-	        cols = matrix[0].length,
-	        modes = new Array(cols),
-	        i, j;
-	    for (i = 0; i < cols; i++) {
-	        var itemCount = new Array(rows);
-	        for (var k = 0; k < rows; k++) {
-	            itemCount[k] = 0;
-	        }
-	        var itemArray = new Array(rows);
-	        var count = 0;
-
-	        for (j = 0; j < rows; j++) {
-	            var index = itemArray.indexOf(matrix[j][i]);
-	            if (index >= 0) {
-	                itemCount[index]++;
-	            } else {
-	                itemArray[count] = matrix[j][i];
-	                itemCount[count] = 1;
-	                count++;
-	            }
-	        }
-
-	        var maxValue = 0, maxIndex = 0;
-	        for (j = 0; j < count; j++) {
-	            if (itemCount[j] > maxValue) {
-	                maxValue = itemCount[j];
-	                maxIndex = j;
-	            }
-	        }
-
-	        modes[i] = itemArray[maxIndex];
-	    }
-	    return modes;
-	}
-
-	function skewness(matrix, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var means = mean(matrix);
-	    var n = matrix.length, l = means.length;
-	    var skew = new Array(l);
-
-	    for (var j = 0; j < l; j++) {
-	        var s2 = 0, s3 = 0;
-	        for (var i = 0; i < n; i++) {
-	            var dev = matrix[i][j] - means[j];
-	            s2 += dev * dev;
-	            s3 += dev * dev * dev;
-	        }
-
-	        var m2 = s2 / n;
-	        var m3 = s3 / n;
-	        var g = m3 / Math.pow(m2, 3 / 2);
-
-	        if (unbiased) {
-	            var a = Math.sqrt(n * (n - 1));
-	            var b = n - 2;
-	            skew[j] = (a / b) * g;
-	        } else {
-	            skew[j] = g;
-	        }
-	    }
-	    return skew;
-	}
-
-	function kurtosis(matrix, unbiased) {
-	    if (typeof(unbiased) === 'undefined') unbiased = true;
-	    var means = mean(matrix);
-	    var n = matrix.length, m = matrix[0].length;
-	    var kurt = new Array(m);
-
-	    for (var j = 0; j < m; j++) {
-	        var s2 = 0, s4 = 0;
-	        for (var i = 0; i < n; i++) {
-	            var dev = matrix[i][j] - means[j];
-	            s2 += dev * dev;
-	            s4 += dev * dev * dev * dev;
-	        }
-	        var m2 = s2 / n;
-	        var m4 = s4 / n;
-
-	        if (unbiased) {
-	            var v = s2 / (n - 1);
-	            var a = (n * (n + 1)) / ((n - 1) * (n - 2) * (n - 3));
-	            var b = s4 / (v * v);
-	            var c = ((n - 1) * (n - 1)) / ((n - 2) * (n - 3));
-	            kurt[j] = a * b - 3 * c;
-	        } else {
-	            kurt[j] = m4 / (m2 * m2) - 3;
-	        }
-	    }
-	    return kurt;
-	}
-
-	function standardError(matrix) {
-	    var samples = matrix.length;
-	    var standardDeviations = standardDeviation(matrix), l = standardDeviations.length;
-	    var standardErrors = new Array(l);
-	    var sqrtN = Math.sqrt(samples);
-
-	    for (var i = 0; i < l; i++) {
-	        standardErrors[i] = standardDeviations[i] / sqrtN;
-	    }
-	    return standardErrors;
-	}
-
-	function covariance(matrix, dimension) {
-	    return scatter(matrix, undefined, dimension);
-	}
-
-	function scatter(matrix, divisor, dimension) {
-	    if (typeof(dimension) === 'undefined') {
-	        dimension = 0;
-	    }
-	    if (typeof(divisor) === 'undefined') {
-	        if (dimension === 0) {
-	            divisor = matrix.length - 1;
-	        } else if (dimension === 1) {
-	            divisor = matrix[0].length - 1;
-	        }
-	    }
-	    var means = mean(matrix, dimension),
-	        rows = matrix.length;
-	    if (rows === 0) {
-	        return [[]];
-	    }
-	    var cols = matrix[0].length,
-	        cov, i, j, s, k;
-
-	    if (dimension === 0) {
-	        cov = new Array(cols);
-	        for (i = 0; i < cols; i++) {
-	            cov[i] = new Array(cols);
-	        }
-	        for (i = 0; i < cols; i++) {
-	            for (j = i; j < cols; j++) {
-	                s = 0;
-	                for (k = 0; k < rows; k++) {
-	                    s += (matrix[k][j] - means[j]) * (matrix[k][i] - means[i]);
-	                }
-	                s /= divisor;
-	                cov[i][j] = s;
-	                cov[j][i] = s;
-	            }
-	        }
-	    } else if (dimension === 1) {
-	        cov = new Array(rows);
-	        for (i = 0; i < rows; i++) {
-	            cov[i] = new Array(rows);
-	        }
-	        for (i = 0; i < rows; i++) {
-	            for (j = i; j < rows; j++) {
-	                s = 0;
-	                for (k = 0; k < cols; k++) {
-	                    s += (matrix[j][k] - means[j]) * (matrix[i][k] - means[i]);
-	                }
-	                s /= divisor;
-	                cov[i][j] = s;
-	                cov[j][i] = s;
-	            }
-	        }
-	    } else {
-	        throw new Error('Invalid dimension');
-	    }
-
-	    return cov;
-	}
-
-	function correlation(matrix) {
-	    var means = mean(matrix),
-	        standardDeviations = standardDeviation(matrix, true, means),
-	        scores = zScores(matrix, means, standardDeviations),
-	        rows = matrix.length,
-	        cols = matrix[0].length,
-	        i, j;
-
-	    var cor = new Array(cols);
-	    for (i = 0; i < cols; i++) {
-	        cor[i] = new Array(cols);
-	    }
-	    for (i = 0; i < cols; i++) {
-	        for (j = i; j < cols; j++) {
-	            var c = 0;
-	            for (var k = 0, l = scores.length; k < l; k++) {
-	                c += scores[k][j] * scores[k][i];
-	            }
-	            c /= rows - 1;
-	            cor[i][j] = c;
-	            cor[j][i] = c;
-	        }
-	    }
-	    return cor;
-	}
-
-	function zScores(matrix, means, standardDeviations) {
-	    means = means || mean(matrix);
-	    if (typeof(standardDeviations) === 'undefined') standardDeviations = standardDeviation(matrix, true, means);
-	    return standardize(center(matrix, means, false), standardDeviations, true);
-	}
-
-	function center(matrix, means, inPlace) {
-	    means = means || mean(matrix);
-	    var result = matrix,
-	        l = matrix.length,
-	        i, j, jj;
-
-	    if (!inPlace) {
-	        result = new Array(l);
-	        for (i = 0; i < l; i++) {
-	            result[i] = new Array(matrix[i].length);
-	        }
-	    }
-
-	    for (i = 0; i < l; i++) {
-	        var row = result[i];
-	        for (j = 0, jj = row.length; j < jj; j++) {
-	            row[j] = matrix[i][j] - means[j];
-	        }
-	    }
-	    return result;
-	}
-
-	function standardize(matrix, standardDeviations, inPlace) {
-	    if (typeof(standardDeviations) === 'undefined') standardDeviations = standardDeviation(matrix);
-	    var result = matrix,
-	        l = matrix.length,
-	        i, j, jj;
-
-	    if (!inPlace) {
-	        result = new Array(l);
-	        for (i = 0; i < l; i++) {
-	            result[i] = new Array(matrix[i].length);
-	        }
-	    }
-
-	    for (i = 0; i < l; i++) {
-	        var resultRow = result[i];
-	        var sourceRow = matrix[i];
-	        for (j = 0, jj = resultRow.length; j < jj; j++) {
-	            if (standardDeviations[j] !== 0 && !isNaN(standardDeviations[j])) {
-	                resultRow[j] = sourceRow[j] / standardDeviations[j];
-	            }
-	        }
-	    }
-	    return result;
-	}
-
-	function weightedVariance(matrix, weights) {
-	    var means = mean(matrix);
-	    var rows = matrix.length;
-	    if (rows === 0) return [];
-	    var cols = matrix[0].length;
-	    var vari = new Array(cols);
-
-	    for (var j = 0; j < cols; j++) {
-	        var sum = 0;
-	        var a = 0, b = 0;
-
-	        for (var i = 0; i < rows; i++) {
-	            var z = matrix[i][j] - means[j];
-	            var w = weights[i];
-
-	            sum += w * (z * z);
-	            b += w;
-	            a += w * w;
-	        }
-
-	        vari[j] = sum * (b / (b * b - a));
-	    }
-
-	    return vari;
-	}
-
-	function weightedMean(matrix, weights, dimension) {
-	    if (typeof(dimension) === 'undefined') {
-	        dimension = 0;
-	    }
-	    var rows = matrix.length;
-	    if (rows === 0) return [];
-	    var cols = matrix[0].length,
-	        means, i, ii, j, w, row;
-
-	    if (dimension === 0) {
-	        means = new Array(cols);
-	        for (i = 0; i < cols; i++) {
-	            means[i] = 0;
-	        }
-	        for (i = 0; i < rows; i++) {
-	            row = matrix[i];
-	            w = weights[i];
-	            for (j = 0; j < cols; j++) {
-	                means[j] += row[j] * w;
-	            }
-	        }
-	    } else if (dimension === 1) {
-	        means = new Array(rows);
-	        for (i = 0; i < rows; i++) {
-	            means[i] = 0;
-	        }
-	        for (j = 0; j < rows; j++) {
-	            row = matrix[j];
-	            w = weights[j];
-	            for (i = 0; i < cols; i++) {
-	                means[j] += row[i] * w;
-	            }
-	        }
-	    } else {
-	        throw new Error('Invalid dimension');
-	    }
-
-	    var weightSum = arrayStat.sum(weights);
-	    if (weightSum !== 0) {
-	        for (i = 0, ii = means.length; i < ii; i++) {
-	            means[i] /= weightSum;
-	        }
-	    }
-	    return means;
-	}
-
-	function weightedCovariance(matrix, weights, means, dimension) {
-	    dimension = dimension || 0;
-	    means = means || weightedMean(matrix, weights, dimension);
-	    var s1 = 0, s2 = 0;
-	    for (var i = 0, ii = weights.length; i < ii; i++) {
-	        s1 += weights[i];
-	        s2 += weights[i] * weights[i];
-	    }
-	    var factor = s1 / (s1 * s1 - s2);
-	    return weightedScatter(matrix, weights, means, factor, dimension);
-	}
-
-	function weightedScatter(matrix, weights, means, factor, dimension) {
-	    dimension = dimension || 0;
-	    means = means || weightedMean(matrix, weights, dimension);
-	    if (typeof(factor) === 'undefined') {
-	        factor = 1;
-	    }
-	    var rows = matrix.length;
-	    if (rows === 0) {
-	        return [[]];
-	    }
-	    var cols = matrix[0].length,
-	        cov, i, j, k, s;
-
-	    if (dimension === 0) {
-	        cov = new Array(cols);
-	        for (i = 0; i < cols; i++) {
-	            cov[i] = new Array(cols);
-	        }
-	        for (i = 0; i < cols; i++) {
-	            for (j = i; j < cols; j++) {
-	                s = 0;
-	                for (k = 0; k < rows; k++) {
-	                    s += weights[k] * (matrix[k][j] - means[j]) * (matrix[k][i] - means[i]);
-	                }
-	                cov[i][j] = s * factor;
-	                cov[j][i] = s * factor;
-	            }
-	        }
-	    } else if (dimension === 1) {
-	        cov = new Array(rows);
-	        for (i = 0; i < rows; i++) {
-	            cov[i] = new Array(rows);
-	        }
-	        for (i = 0; i < rows; i++) {
-	            for (j = i; j < rows; j++) {
-	                s = 0;
-	                for (k = 0; k < cols; k++) {
-	                    s += weights[k] * (matrix[j][k] - means[j]) * (matrix[i][k] - means[i]);
-	                }
-	                cov[i][j] = s * factor;
-	                cov[j][i] = s * factor;
-	            }
-	        }
-	    } else {
-	        throw new Error('Invalid dimension');
-	    }
-
-	    return cov;
-	}
-
-	module.exports = {
-	    entropy: entropy,
-	    mean: mean,
-	    standardDeviation: standardDeviation,
-	    variance: variance,
-	    median: median,
-	    mode: mode,
-	    skewness: skewness,
-	    kurtosis: kurtosis,
-	    standardError: standardError,
-	    covariance: covariance,
-	    scatter: scatter,
-	    correlation: correlation,
-	    zScores: zScores,
-	    center: center,
-	    standardize: standardize,
-	    weightedVariance: weightedVariance,
-	    weightedMean: weightedMean,
-	    weightedCovariance: weightedCovariance,
-	    weightedScatter: weightedScatter
-	};
-
-
-/***/ },
-/* 148 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = exports = __webpack_require__(149);
-	exports.Utils = __webpack_require__(150);
-	exports.OPLS = __webpack_require__(151);
-
-
-/***/ },
-/* 149 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
 	var Matrix = __webpack_require__(14);
-	var Utils = __webpack_require__(150);
+	var Utils = __webpack_require__(146);
 
 	class PLS {
 	    constructor(X, Y) {
@@ -20404,7 +18872,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 150 */
+/* 146 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20455,13 +18923,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 151 */
+/* 147 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(14);
-	var Utils = __webpack_require__(150);
+	var Utils = __webpack_require__(146);
 
 	module.exports = OPLS;
 
@@ -20539,13 +19007,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 152 */
+/* 148 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(153);
+	module.exports = __webpack_require__(149);
 
 /***/ },
-/* 153 */
+/* 149 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -20737,24 +19205,24 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 154 */
+/* 150 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports.agnes = __webpack_require__(155);
-	exports.diana = __webpack_require__(163);
+	exports.agnes = __webpack_require__(151);
+	exports.diana = __webpack_require__(159);
 	//exports.birch = require('./birch');
 	//exports.cure = require('./cure');
 	//exports.chameleon = require('./chameleon');
 
 /***/ },
-/* 155 */
+/* 151 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var euclidean = __webpack_require__(156);
-	var ClusterLeaf = __webpack_require__(157);
-	var Cluster = __webpack_require__(158);
+	var euclidean = __webpack_require__(152);
+	var ClusterLeaf = __webpack_require__(153);
+	var Cluster = __webpack_require__(154);
 
 	/**
 	 * @param cluster1
@@ -20986,7 +19454,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = agnes;
 
 /***/ },
-/* 156 */
+/* 152 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21008,13 +19476,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 157 */
+/* 153 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Cluster = __webpack_require__(158);
-	var util = __webpack_require__(159);
+	var Cluster = __webpack_require__(154);
+	var util = __webpack_require__(155);
 
 	function ClusterLeaf (index) {
 	    Cluster.call(this);
@@ -21029,7 +19497,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 158 */
+/* 154 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -21100,7 +19568,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 159 */
+/* 155 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(global, process) {// Copyright Joyent, Inc. and other Node contributors.
@@ -21628,7 +20096,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 	exports.isPrimitive = isPrimitive;
 
-	exports.isBuffer = __webpack_require__(161);
+	exports.isBuffer = __webpack_require__(157);
 
 	function objectToString(o) {
 	  return Object.prototype.toString.call(o);
@@ -21672,7 +20140,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 *     prototype.
 	 * @param {function} superCtor Constructor function to inherit prototype from.
 	 */
-	exports.inherits = __webpack_require__(162);
+	exports.inherits = __webpack_require__(158);
 
 	exports._extend = function(origin, add) {
 	  // Don't do anything if add isn't an object
@@ -21690,21 +20158,62 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return Object.prototype.hasOwnProperty.call(obj, prop);
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(160)))
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(156)))
 
 /***/ },
-/* 160 */
+/* 156 */
 /***/ function(module, exports) {
 
 	// shim for using process in browser
-
 	var process = module.exports = {};
+
+	// cached from whatever global is present so that test runners that stub it
+	// don't break things.  But we need to wrap it in a try catch in case it is
+	// wrapped in strict mode code which doesn't define any globals.  It's inside a
+	// function because try/catches deoptimize in certain engines.
+
+	var cachedSetTimeout;
+	var cachedClearTimeout;
+
+	(function () {
+	    try {
+	        cachedSetTimeout = setTimeout;
+	    } catch (e) {
+	        cachedSetTimeout = function () {
+	            throw new Error('setTimeout is not defined');
+	        }
+	    }
+	    try {
+	        cachedClearTimeout = clearTimeout;
+	    } catch (e) {
+	        cachedClearTimeout = function () {
+	            throw new Error('clearTimeout is not defined');
+	        }
+	    }
+	} ())
+	function runTimeout(fun) {
+	    if (cachedSetTimeout === setTimeout) {
+	        return setTimeout(fun, 0);
+	    } else {
+	        return cachedSetTimeout.call(null, fun, 0);
+	    }
+	}
+	function runClearTimeout(marker) {
+	    if (cachedClearTimeout === clearTimeout) {
+	        clearTimeout(marker);
+	    } else {
+	        cachedClearTimeout.call(null, marker);
+	    }
+	}
 	var queue = [];
 	var draining = false;
 	var currentQueue;
 	var queueIndex = -1;
 
 	function cleanUpNextTick() {
+	    if (!draining || !currentQueue) {
+	        return;
+	    }
 	    draining = false;
 	    if (currentQueue.length) {
 	        queue = currentQueue.concat(queue);
@@ -21720,7 +20229,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if (draining) {
 	        return;
 	    }
-	    var timeout = setTimeout(cleanUpNextTick);
+	    var timeout = runTimeout(cleanUpNextTick);
 	    draining = true;
 
 	    var len = queue.length;
@@ -21737,7 +20246,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    currentQueue = null;
 	    draining = false;
-	    clearTimeout(timeout);
+	    runClearTimeout(timeout);
 	}
 
 	process.nextTick = function (fun) {
@@ -21749,7 +20258,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    }
 	    queue.push(new Item(fun, args));
 	    if (queue.length === 1 && !draining) {
-	        setTimeout(drainQueue, 0);
+	        runTimeout(drainQueue);
 	    }
 	};
 
@@ -21790,7 +20299,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 161 */
+/* 157 */
 /***/ function(module, exports) {
 
 	module.exports = function isBuffer(arg) {
@@ -21801,7 +20310,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 162 */
+/* 158 */
 /***/ function(module, exports) {
 
 	if (typeof Object.create === 'function') {
@@ -21830,14 +20339,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 163 */
+/* 159 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var euclidean = __webpack_require__(156);
-	var ClusterLeaf = __webpack_require__(157);
-	var Cluster = __webpack_require__(158);
+	var euclidean = __webpack_require__(152);
+	var ClusterLeaf = __webpack_require__(153);
+	var Cluster = __webpack_require__(154);
 
 	/**
 	 * @param {Array <Array <number>>} cluster1
@@ -22126,13 +20635,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = diana;
 
 /***/ },
-/* 164 */
+/* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var NodeSquare = __webpack_require__(165),
-	    NodeHexagonal = __webpack_require__(166);
+	var NodeSquare = __webpack_require__(161),
+	    NodeHexagonal = __webpack_require__(162);
 
 	var defaultOptions = {
 	    fields: 3,
@@ -22552,7 +21061,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = SOM;
 
 /***/ },
-/* 165 */
+/* 161 */
 /***/ function(module, exports) {
 
 	function NodeSquare(x, y, weights, som) {
@@ -22663,10 +21172,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = NodeSquare;
 
 /***/ },
-/* 166 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var NodeSquare = __webpack_require__(165);
+	var NodeSquare = __webpack_require__(161);
 
 	function NodeHexagonal(x, y, weights, som) {
 
@@ -22698,19 +21207,19 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = NodeHexagonal;
 
 /***/ },
-/* 167 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(168);
+	module.exports = __webpack_require__(164);
 
 
 /***/ },
-/* 168 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	var Layer = __webpack_require__(169);
+	var Layer = __webpack_require__(165);
 	var Matrix = __webpack_require__(14);
 
 	class FeedforwardNeuralNetwork {
@@ -22884,7 +21393,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 169 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
