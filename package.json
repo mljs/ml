@@ -38,7 +38,7 @@
     "ml-kernel": "^2.3.1",
     "ml-kmeans": "^0.1.0",
     "ml-knn": "^1.0.0",
-    "ml-matrix": "^1.1.5",
+    "ml-matrix": "^2.0.0",
     "ml-naivebayes": "^1.0.1",
     "ml-pad-array": "^1.0.0",
     "ml-pca": "^1.1.1",
