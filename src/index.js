@@ -27,8 +27,8 @@ Math.Optimization = require('optimization');
 // Statistics packages
 var Stat = exports.Stat = {};
 
-Stat.array = require('ml-stat/array');
-Stat.matrix = require('ml-stat/matrix');
+Stat.array = require('ml-stat').array;
+Stat.matrix = require('ml-stat').matrix;
 Stat.PCA = require('ml-pca');
 Stat.Performance = require('ml-performance');
 
