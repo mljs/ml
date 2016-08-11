@@ -21,6 +21,7 @@ Math.SparseMatrix = require('ml-sparse-matrix');
 Math.BellOptimizer = require('ml-optimize-lorentzian');
 Math.CurveFitting = require('ml-curve-fitting');
 Math.Kernel = require('ml-kernel');
+Math.Optimization = require('optimization');
 
 
 // Statistics packages
@@ -60,4 +61,3 @@ var NN = exports.NN = exports.nn = {};
 
 NN.SOM = require('ml-som');
 NN.FNN = require('ml-fnn');
-

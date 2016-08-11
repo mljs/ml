@@ -31,6 +31,8 @@
   "dependencies": {
     "ml-array-utils": "^0.2.4",
     "ml-bit-array": "^1.0.0",
+    "ml-cross-validation": "^1.0.1",
+    "ml-curve-fitting": "^0.0.6",
     "ml-distance": "^2.1.1",
     "ml-fnn": "^2.1.0",
     "ml-hash-table": "^0.2.0",
@@ -40,6 +42,7 @@
     "ml-knn": "^1.0.0",
     "ml-matrix": "^1.1.5",
     "ml-naivebayes": "^1.0.1",
+    "ml-optimize-lorentzian": "^0.1.3",
     "ml-pad-array": "^1.0.0",
     "ml-pca": "^1.1.1",
     "ml-performance": "^0.2.0",
@@ -51,9 +54,7 @@
     "ml-stat": "^1.1.0",
     "ml-svm": "^2.1.1",
     "ml-xsadd": "^1.0.0",
-    "ml-optimize-lorentzian": "^0.1.3",
-    "ml-curve-fitting": "^0.0.6",
-    "ml-cross-validation": "^1.0.1"
+    "optimization": "0.0.1"
   },
   "devDependencies": {
     "cheminfo-tools": "^1.0.1"

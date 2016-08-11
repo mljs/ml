@@ -69,6 +69,7 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
     * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)
     * Sparse matrix: [`ML.SparseMatrix`](https://github.com/mljs/sparse-matrix)
     * Kernels: [`ML.Kernel`](https://github.com/mljs/kernel)
+    * optimization: [`ML.Optimization`](https://github.com/mljs/optimization)
 * Stat: [`ML.Stat`](https://github.com/mljs/stat)
     * Array: `ML.Stat.array`
     * Matrix: `ML.Stat.matrix`
