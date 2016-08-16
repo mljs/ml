@@ -32,7 +32,7 @@
     "ml-array-utils": "^0.2.4",
     "ml-bit-array": "^1.0.0",
     "ml-cross-validation": "^1.0.1",
-    "ml-curve-fitting": "^0.0.6",
+    "ml-curve-fitting": "^0.0.7",
     "ml-distance": "^2.1.1",
     "ml-fnn": "^2.1.1",
     "ml-hash-table": "^0.2.0",
