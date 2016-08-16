@@ -36,7 +36,7 @@
     "ml-distance": "^2.1.1",
     "ml-fnn": "^2.1.1",
     "ml-hash-table": "^0.2.0",
-    "ml-hclust": "^1.0.0",
+    "ml-hclust": "^1.0.1",
     "ml-kernel": "^2.3.2",
     "ml-kmeans": "^0.1.0",
     "ml-knn": "^1.0.0",
