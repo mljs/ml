@@ -7,6 +7,7 @@ exports.HashTable = require('ml-hash-table');
 exports.Matrix = require('ml-matrix');
 exports.PadArray = require('ml-pad-array');
 exports.Regression = require('ml-regression');
+exports.BinarySearch = require('ml-binary-search');
 
 
 // Math packages

@@ -9,9 +9,9 @@ Machine learning tools
 
 ## Introduction
 
-This library is a compilation of the tools developed in the [mljs](https://github.com/mljs) organization.  
+This library is a compilation of the tools developed in the [mljs](https://github.com/mljs) organization.
 It is mainly maintained for use in the browser. If you are working with Node.js, you might prefer to add
-to your dependencies only the libraries that you need, as they are usually published to npm more often.  
+to your dependencies only the libraries that you need, as they are usually published to npm more often.
 We prefix all our npm package names with `ml-` (eg. ml-matrix) so they are easy to find.
 
 ## Installation
@@ -62,6 +62,7 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
     * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)
     * Pad array: [`ML.PadArray`](https://github.com/mljs/pad-array)
     * Regression: [`ML.Regression`](https://github.com/mljs/regression)
+    * Binary search: [`ML.BinarySearch`](https://github.com/mljs/binary-search)
 * Math: `ML.Math`
     * Distance: [`ML.Math.Distance`](https://github.com/mljs/distance)
     * Similarity: [`ML.Math.Similarity`](https://github.com/mljs/distance)
