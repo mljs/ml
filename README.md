@@ -9,9 +9,9 @@ Machine learning tools
 
 ## Introduction
 
-This library is a compilation of the tools developed in the [mljs](https://github.com/mljs) organization.
+This library is a compilation of the tools developed in the [mljs](https://github.com/mljs) organization.  
 It is mainly maintained for use in the browser. If you are working with Node.js, you might prefer to add
-to your dependencies only the libraries that you need, as they are usually published to npm more often.
+to your dependencies only the libraries that you need, as they are usually published to npm more often.  
 We prefix all our npm package names with `ml-` (eg. ml-matrix) so they are easy to find.
 
 ## Installation
