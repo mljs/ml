@@ -63,6 +63,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.Matrix = __webpack_require__(14);
 	exports.PadArray = __webpack_require__(34);
 	exports.Regression = __webpack_require__(36);
+	exports.BinarySearch = __webpack_require__(8);
 
 
 	// Math packages
@@ -643,7 +644,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	        stdev = 0.5 * (averageDeviations[length / 2] + averageDeviations[length / 2 - 1]) / 0.6745;
 	    }
 
-	    return {mean, stdev};
+	    return {
+	        mean: mean,
+	        stdev: stdev
+	    };
 	};
 
 	exports.quartiles = function quartiles(values, alreadySorted) {
@@ -892,7 +896,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (matrix[i][j] > max) max = matrix[i][j];
 	        }
 	    }
-	    return {min, max};
+	    return {
+	        min:min,
+	        max:max
+	    };
 	};
 
 	exports.entropy = function entropy(matrix, eps) {
@@ -1756,13 +1763,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * Performs a binary search of value in array
-	 * @param array - Array in which value will be searched. It must be sorted.
-	 * @param value - Value to search in array
+	 * @param {number[]} array - Array in which value will be searched. It must be sorted.
+	 * @param {number} value - Value to search in array
 	 * @return {number} If value is found, returns its index in array. Otherwise, returns a negative number indicating where the value should be inserted: -(index + 1)
 	 */
-	function binarySearch(array, value) {
-	    var low = 0;
-	    var high = array.length - 1;
+	function binarySearch(array, value, options) {
+	    options = options || {};
+	    var low = options.from || 0;
+	    var high = options.to || array.length - 1;
 
 	    while (low <= high) {
 	        var mid = (low + high) >>> 1;
@@ -13251,6 +13259,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	//exports.cure = require('./cure');
 	//exports.chameleon = require('./chameleon');
 
+
 /***/ },
 /* 143 */
 /***/ function(module, exports, __webpack_require__) {
@@ -13270,8 +13279,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function simpleLink(cluster1, cluster2, disFun) {
 	    var m = 10e100;
 	    for (var i = 0; i < cluster1.length; i++)
-	        for (var j = i; j < cluster2.length; j++) {
-	            var d = disFun(cluster1[i], cluster2[j]);
+	        for (var j = 0; j < cluster2.length; j++) {
+	            var d = disFun[cluster1[i]][ cluster2[j]];
 	            m = Math.min(d,m);
 	        }
 	    return m;
@@ -13286,8 +13295,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function completeLink(cluster1, cluster2, disFun) {
 	    var m = -1;
 	    for (var i = 0; i < cluster1.length; i++)
-	        for (var j = i; j < cluster2.length; j++) {
-	            var d = disFun(cluster1[i], cluster2[j]);
+	        for (var j = 0; j < cluster2.length; j++) {
+	            var d = disFun[cluster1[i]][ cluster2[j]];
 	            m = Math.max(d,m);
 	        }
 	    return m;
@@ -13303,7 +13312,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var m = 0;
 	    for (var i = 0; i < cluster1.length; i++)
 	        for (var j = 0; j < cluster2.length; j++)
-	            m += disFun(cluster1[i], cluster2[j]);
+	            m += disFun[cluster1[i]][ cluster2[j]];
 	    return m / (cluster1.length * cluster2.length);
 	}
 
@@ -13314,23 +13323,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {*}
 	 */
 	function centroidLink(cluster1, cluster2, disFun) {
-	    var x1 = 0,
-	        y1 = 0,
-	        x2 = 0,
-	        y2 = 0;
-	    for (var i = 0; i < cluster1.length; i++) {
-	        x1 += cluster1[i][0];
-	        y1 += cluster1[i][1];
-	    }
-	    for (var j = 0; j < cluster2.length; j++) {
-	        x2 += cluster2[j][0];
-	        y2 += cluster2[j][1];
-	    }
-	    x1 /= cluster1.length;
-	    y1 /= cluster1.length;
-	    x2 /= cluster2.length;
-	    y2 /= cluster2.length;
-	    return disFun([x1,y1], [x2,y2]);
+	    var m = -1;
+	    var dist = new Array(cluster1.length*cluster2.length);
+	    for (var i = 0; i < cluster1.length; i++)
+	        for (var j = 0; j < cluster2.length; j++) {
+	            dist[i*cluster1.length+j]=(disFun[cluster1[i]][ cluster2[j]]);
+	        }
+	    return median(dist);
 	}
 
 	/**
@@ -13340,42 +13339,57 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @returns {number}
 	 */
 	function wardLink(cluster1, cluster2, disFun) {
-	    var x1 = 0,
-	        y1 = 0,
-	        x2 = 0,
-	        y2 = 0;
-	    for (var i = 0; i < cluster1.length; i++) {
-	        x1 += cluster1[i][0];
-	        y1 += cluster1[i][1];
+	    return centroidLink(cluster1, cluster2, disFun)
+	        *cluster1.length*cluster2.length / (cluster1.length+cluster2.length);
+	}
+
+	function compareNumbers(a, b) {
+	    return a - b;
+	}
+
+	function median(values, alreadySorted) {
+	    if (alreadySorted === undefined) alreadySorted = false;
+	    if (!alreadySorted) {
+	        values = [].concat(values).sort(compareNumbers);
 	    }
-	    for (var j = 0; j < cluster2.length; j++) {
-	        x2 += cluster2[j][0];
-	        y2 += cluster2[j][1];
+	    var l = values.length;
+	    var half = Math.floor(l / 2);
+	    if (l % 2 === 0) {
+	        return (values[half - 1] + values[half]) * 0.5;
+	    } else {
+	        return values[half];
 	    }
-	    x1 /= cluster1.length;
-	    y1 /= cluster1.length;
-	    x2 /= cluster2.length;
-	    y2 /= cluster2.length;
-	    return disFun([x1,y1], [x2,y2])*cluster1.length*cluster2.length / (cluster1.length+cluster2.length);
 	}
 
 	var defaultOptions = {
 	    disFunc: euclidean,
-	    kind: 'single'
+	    kind: 'single',
+	    isDistanceMatrix:false
+
 	};
 
 	/**
 	 * Continuously merge nodes that have the least dissimilarity
-	 * @param {Array <Array <number>>} data - Array of points to be clustered
+	 * @param {Array <Array <number>>} distance - Array of points to be clustered
 	 * @param {json} options
+	 * @option isDistanceMatrix: Is the input a distance matrix?
 	 * @constructor
 	 */
 	function agnes(data, options) {
-	    options = options || {};
-	    for (var o in defaultOptions)
-	        if (!(options.hasOwnProperty(o)))
-	            options[o] = defaultOptions[o];
+	    options = Object.assign({}, defaultOptions, options);
 	    var len = data.length;
+
+	    var distance = data;//If source
+	    if(!options.isDistanceMatrix) {
+	        distance = new Array(len);
+	        for(var i = 0;i < len; i++) {
+	            distance[i] = new Array(len);
+	            for (var j = 0; j < len; j++) {
+	                distance[i][j] = options.disFunc(data[i],data[j]);
+	            }
+	        }
+	    }
+
 
 	    // allows to use a string or a given function
 	    if (typeof options.kind === "string") {
@@ -13403,35 +13417,34 @@ return /******/ (function(modules) { // webpackBootstrap
 	        throw new TypeError('Undefined kind of similarity');
 
 	    var list = new Array(len);
-	    for (var i = 0; i < data.length; i++)
+	    for (var i = 0; i < distance.length; i++)
 	        list[i] = new ClusterLeaf(i);
 	    var min  = 10e5,
 	        d = {},
 	        dis = 0;
 
 	    while (list.length > 1) {
-
 	        // calculates the minimum distance
 	        d = {};
 	        min = 10e5;
-	        for (var j = 0; j < list.length; j++)
+	        for (var j = 0; j < list.length; j++){
 	            for (var k = j + 1; k < list.length; k++) {
-	                var fData, sData;
+	                var fdistance, sdistance;
 	                if (list[j] instanceof ClusterLeaf)
-	                    fData = [data[list[j].index]];
+	                    fdistance = [list[j].index];
 	                else {
-	                    fData = new Array(list[j].index.length);
-	                    for (var e = 0; e < fData.length; e++)
-	                        fData[e] = data[list[j].index[e].index];
+	                    fdistance = new Array(list[j].index.length);
+	                    for (var e = 0; e < fdistance.length; e++)
+	                        fdistance[e] = list[j].index[e].index;
 	                }
 	                if (list[k] instanceof ClusterLeaf)
-	                    sData = [data[list[k].index]];
+	                    sdistance = [list[k].index];
 	                else {
-	                    sData = new Array(list[k].index.length);
-	                    for (var f = 0; f < sData.length; f++)
-	                        sData[f] = data[list[k].index[f].index];
+	                    sdistance = new Array(list[k].index.length);
+	                    for (var f = 0; f < sdistance.length; f++)
+	                        sdistance[f] = list[k].index[f].index;
 	                }
-	                dis = options.kind(fData, sData, options.disFunc).toFixed(4);
+	                dis = options.kind(fdistance, sdistance, distance).toFixed(4);
 	                if (dis in d) {
 	                    d[dis].push([list[j], list[k]]);
 	                }
@@ -13440,7 +13453,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	                }
 	                min = Math.min(dis, min);
 	            }
-
+	        }
 	        // cluster dots
 	        var dmin = d[min.toFixed(4)];
 	        var clustered = new Array(dmin.length);
@@ -13562,11 +13575,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	        return root;
 	    var list = [root];
 	    var aux;
-	    while (list.length < minGroups && list.length !== 0) {
+	    var listLeafs = [];
+	    while ((list.length + listLeafs.length) < minGroups && list.length !== 0) {
 	        aux = list.shift();
-	        list = list.concat(aux.children);
+	        if (aux.children)
+	            list = list.concat(aux.children);
+	        else
+	            listLeafs.push(aux);
 	    }
 	    if (list.length === 0) throw new RangeError('Number of groups too big');
+	    list = list.concat(listLeafs);
 	    for (var i = 0; i < list.length; i++)
 	        if (list[i].distance === aux.distance) {
 	            list.concat(list[i].children.slice(1));
@@ -14209,17 +14227,45 @@ return /******/ (function(modules) { // webpackBootstrap
 	} ())
 	function runTimeout(fun) {
 	    if (cachedSetTimeout === setTimeout) {
+	        //normal enviroments in sane situations
 	        return setTimeout(fun, 0);
-	    } else {
-	        return cachedSetTimeout.call(null, fun, 0);
 	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedSetTimeout(fun, 0);
+	    } catch(e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't trust the global object when called normally
+	            return cachedSetTimeout.call(null, fun, 0);
+	        } catch(e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error
+	            return cachedSetTimeout.call(this, fun, 0);
+	        }
+	    }
+
+
 	}
 	function runClearTimeout(marker) {
 	    if (cachedClearTimeout === clearTimeout) {
-	        clearTimeout(marker);
-	    } else {
-	        cachedClearTimeout.call(null, marker);
+	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
 	    }
+	    try {
+	        // when when somebody has screwed with setTimeout but no I.E. maddness
+	        return cachedClearTimeout(marker);
+	    } catch (e){
+	        try {
+	            // When we are in I.E. but the script has been evaled so I.E. doesn't  trust the global object when called normally
+	            return cachedClearTimeout.call(null, marker);
+	        } catch (e){
+	            // same as above but when it's a version of I.E. that must have the global object for 'this', hopfully our context correct otherwise it will throw a global error.
+	            // Some versions of I.E. have different rules for clearTimeout vs setTimeout
+	            return cachedClearTimeout.call(this, marker);
+	        }
+	    }
+
+
+
 	}
 	var queue = [];
 	var draining = false;
