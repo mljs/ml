@@ -17,6 +17,7 @@ var distance = require('ml-distance');
 Math.Distance = distance.distance;
 Math.Similarity = distance.similarity;
 Math.SG = require('ml-savitzky-golay');
+Math.SGG = require('ml-savitzky-golay-generalized');
 Math.Matrix = exports.Matrix;
 Math.SparseMatrix = require('ml-sparse-matrix');
 Math.BellOptimizer = require('ml-optimize-lorentzian');
