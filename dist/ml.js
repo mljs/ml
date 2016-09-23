@@ -69,15 +69,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	// Math packages
 	var Math = exports.Math = {};
 
-	var distance = __webpack_require__(61);
+	var distance = __webpack_require__(59);
 	Math.Distance = distance.distance;
 	Math.Similarity = distance.similarity;
-	Math.SG = __webpack_require__(116);
-	Math.SGG = __webpack_require__(118);
+	Math.SG = __webpack_require__(114);
+	Math.SGG = __webpack_require__(116);
 	Math.Matrix = exports.Matrix;
-	Math.SparseMatrix = __webpack_require__(122);
-	Math.BellOptimizer = __webpack_require__(123);
-	Math.CurveFitting = __webpack_require__(124);
+	Math.SparseMatrix = __webpack_require__(120);
+	Math.BellOptimizer = __webpack_require__(121);
+	Math.CurveFitting = __webpack_require__(122);
 	Math.Kernel = __webpack_require__(45);
 
 
@@ -86,31 +86,31 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	Stat.array = __webpack_require__(3).array;
 	Stat.matrix = __webpack_require__(3).matrix;
-	Stat.PCA = __webpack_require__(127);
-	Stat.Performance = __webpack_require__(128);
+	Stat.PCA = __webpack_require__(125);
+	Stat.Performance = __webpack_require__(126);
 
 
 	// Random number generation
 	var RNG = exports.RNG = {};
-	RNG.XSadd = __webpack_require__(130);
+	RNG.XSadd = __webpack_require__(128);
 
 
 	// Supervised learning
 	var SL = exports.SL = {};
 
-	SL.CV = __webpack_require__(131);
+	SL.CV = __webpack_require__(129);
 	SL.CrossValidation = SL.CV; // Alias
-	SL.SVM = __webpack_require__(134);
-	SL.KNN = __webpack_require__(135);
-	SL.NaiveBayes = __webpack_require__(138);
-	SL.PLS = __webpack_require__(140);
+	SL.SVM = __webpack_require__(132);
+	SL.KNN = __webpack_require__(133);
+	SL.NaiveBayes = __webpack_require__(136);
+	SL.PLS = __webpack_require__(138);
 
 
 	// Clustering
 	var Clust = exports.Clust = {};
 
-	Clust.kmeans = __webpack_require__(144);
-	Clust.hclust = __webpack_require__(146);
+	Clust.kmeans = __webpack_require__(142);
+	Clust.hclust = __webpack_require__(144);
 
 
 	// Neural networks
@@ -6449,13 +6449,14 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.NonLinearRegression = exports.NLR = {
 	    PolynomialRegression: __webpack_require__(40),
 	    PotentialRegression: __webpack_require__(41),
-	    ExpRegression: __webpack_require__(42),
-	    PowerRegression: __webpack_require__(43)
+	    ExpRegression: __webpack_require__(43),
+	    PowerRegression: __webpack_require__(42)
 	};
 	exports.KernelRidgeRegression = exports.KRR = __webpack_require__(44);
 	//exports.MultipleLinearRegression = exports.MLR = require('./regression/multiple-linear-regression');
 	//exports.MultivariateLinearRegression = exports.MVLR = require('./regression/multivariate-linear-regression');
 	exports.PolinomialFitting2D = __webpack_require__(57);
+	exports.TheilSenRegression = __webpack_require__(58);
 
 
 /***/ },
@@ -6473,18 +6474,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    constructor(x, y, options) {
 	        options = options || {};
 	        super();
-	        if(x===true){
+	        if (x === true) {
 	            this.slope = y.slope;
 	            this.intercept = y.intercept;
-	            if(y.r){
-	                this.r = y.r;
-	                this.r2 = y.r2;
+	            this.quality = y.quality || {};
+	            if (y.quality.r) {
+	                this.quality.r = y.quality.r;
+	                this.quality.r2 = y.quality.r2;
 	            }
-	            if(y.chi2){
-	                this.chi2 = y.chi2;
+	            if (y.quality.chi2) {
+	                this.quality.chi2 = y.quality.chi2;
 	            }
-	        }
-	        else{
+	        } else {
 	            var n = x.length;
 	            if (n !== y.length) {
 	                throw new RangeError('input and output array have a different length');
@@ -6511,20 +6512,20 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.slope = numerator / (n * xSquared - xSum * xSum);
 	            this.intercept = (1 / n) * ySum - this.slope * (1 / n) * xSum;
 	            this.coefficients = [this.intercept, this.slope];
-	            if(options.computeQuality){
-	                this.quality = this.modelQuality(x,y);
+	            if (options.computeQuality) {
+	                this.quality = this.modelQuality(x, y);
 	            }
 	        }
 
 	    }
-	    
+
 	    toJSON() {
 	        var out = {
-	            name: "simpleLinearRegression",
+	            name: 'simpleLinearRegression',
 	            slope: this.slope,
 	            intercept: this.intercept
-	        }
-	        if(this.quality){
+	        };
+	        if (this.quality) {
 	            out.quality = this.quality;
 	        }
 
@@ -6533,11 +6534,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    _predict(input) {
 	        return this.slope * input + this.intercept;
-	    };
+	    }
 
 	    computeX(input) {
 	        return (input - this.intercept) / this.slope;
-	    };
+	    }
 
 	    toString(precision) {
 	        var result = 'y = ';
@@ -6553,11 +6554,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            result += maybeToPrecision(this.intercept, precision);
 	        }
 	        return result;
-	    };
+	    }
 
 	    toLaTeX(precision) {
-	        return toString(precision);
-	    };
+	        return this.toString(precision);
+	    }
 
 	    static load(json) {
 	        if (json.name !== 'simpleLinearRegression') {
@@ -6591,16 +6592,15 @@ return /******/ (function(modules) { // webpackBootstrap
 	class BaseRegression {
 	    predict(x) {
 	        var y2;
-	        if(Array.isArray(x)){
+	        if (Array.isArray(x)) {
 	            y2 = new Array(x.length);
-	            for(var i=0;i<x.length;i++){
-	                y2[i]=this._predict(x[i]);
+	            for (var i = 0; i < x.length; i++) {
+	                y2[i] = this._predict(x[i]);
 	            }
-	        }
-	        else if(Number.isFinite(x)){
-	                y2 = this._predict(x);
+	        } else if (Number.isFinite(x)) {
+	            y2 = this._predict(x);
 	        } else {
-	            throw new TypeError('x must be a number or array')
+	            throw new TypeError('x must be a number or array');
 	        }
 	        return y2;
 	    }
@@ -6608,30 +6608,30 @@ return /******/ (function(modules) { // webpackBootstrap
 	    _predict(x) {
 	        throw new Error('_compute not implemented');
 	    }
-	    
-	    train(options){
+
+	    train(options) {
 	        //Do nothing for this package
 	    }
 
-	    toString(precision){
-	        return "";
+	    toString(precision) {
+	        return '';
 	    }
 
-	    toLaTeX(precision){
-	        return "";
+	    toLaTeX(precision) {
+	        return '';
 	    }
-	    
+
 	    /**
 	     * Return the correlation coefficient of determination (r) and chi-square.
 	     * @param x
 	     * @param y
-	     * @returns {number}
+	     * @returns {object}
 	     */
 	    modelQuality(x, y) {
 	        let n = x.length;
 	        var y2 = new Array(n);
-	        for (var i = 0; i < n; i++) {
-	            y2[i]=this._predict(x[i]);
+	        for (let i = 0; i < n; i++) {
+	            y2[i] = this._predict(x[i]);
 	        }
 	        var xSum = 0;
 	        var ySum = 0;
@@ -6641,20 +6641,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var ySquared = 0;
 	        var xY = 0;
 
-	        for (var i = 0; i < n; i++) {
+	        for (let i = 0; i < n; i++) {
 	            xSum += y2[i];
 	            ySum += y[i];
 	            xSquared += y2[i] * y2[i];
 	            ySquared += y[i] * y[i];
 	            xY += y2[i] * y[i];
-	            if(y[i]!=0)
-	                chi2 += (y[i]-y2[i])*(y[i]-y2[i])/y[i];
-	            rmsd = (y[i]-y2[i])*(y[i]-y2[i]);
+	            if (y[i] !== 0)
+	                chi2 += (y[i] - y2[i]) * (y[i] - y2[i]) / y[i];
+	            rmsd = (y[i] - y2[i]) * (y[i] - y2[i]);
 	        }
 
-	        var r = (n*xY-xSum*ySum)/Math.sqrt((n*xSquared-xSum*xSum)*(n*ySquared-ySum*ySum));
+	        var r = (n * xY - xSum * ySum) / Math.sqrt((n * xSquared - xSum * xSum) * (n * ySquared - ySum * ySum));
 
-	        return {r:r, r2:r*r, chi2:chi2, rmsd:rmsd*rmsd/n};
+	        return {
+	            r: r,
+	            r2: r * r,
+	            chi2: chi2,
+	            rmsd: rmsd * rmsd / n
+	        };
 	    }
 
 	}
@@ -6682,10 +6687,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	const maybeToPrecision = __webpack_require__(38).maybeToPrecision;
 	const BaseRegression = __webpack_require__(39);
-	var Matrix = __webpack_require__(14);
+	const Matrix = __webpack_require__(14);
 
 
-	class PolynomialRegression extends BaseRegression{
+	class PolynomialRegression extends BaseRegression {
 	    /**
 	     * @constructor
 	     * @param x: Independent variable
@@ -6695,12 +6700,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    constructor(x, y, M, options) {
 	        super();
-	        let opt = options||{};
+	        let opt = options || {};
 	        if (x === true) { // reloading model
-	            this.coefficients = outputs.coefficients;
-	            this.powers = outputs.powers;
-	            this.M = outputs.M;
-	            if(y.quality){
+	            this.coefficients = y.coefficients;
+	            this.powers = y.powers;
+	            this.M = y.M;
+	            if (y.quality) {
 	                this.quality = y.quality;
 	            }
 	        } else {
@@ -6708,26 +6713,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	            if (n !== y.length) {
 	                throw new RangeError('input and output array have a different length');
 	            }
-	            if(Array.isArray(M)){
-	                var powers = M;
+
+	            let powers;
+	            if (Array.isArray(M)) {
+	                powers = M;
 	                M = powers.length;
-	            }
-	            else{
+	            } else {
 	                M++;
-	                var powers = new Array(M);
-	                for( k = 0; k < M; k++) {
-	                    powers[k]=k;
+	                powers = new Array(M);
+	                for (k = 0; k < M; k++) {
+	                    powers[k] = k;
 	                }
 	            }
 	            var F = new Matrix(n, M);
 	            var Y = new Matrix([y]);
-	            var k,i;
-	            for( k = 0; k < M; k++) {
-	                for(i=0; i< n;i++){
-	                    if(powers[k]==0)
-	                        F[i][k]=1;
-	                    else{
-	                        F[i][k]=Math.pow(x[i],powers[k]);
+	            var k, i;
+	            for (k = 0; k < M; k++) {
+	                for (i = 0; i < n; i++) {
+	                    if (powers[k] === 0)
+	                        F[i][k] = 1;
+	                    else {
+	                        F[i][k] = Math.pow(x[i], powers[k]);
 	                    }
 	                }
 	            }
@@ -6738,17 +6744,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	            this.coefficients = A.solve(B).to1DArray();
 	            this.powers = powers;
-	            this.M = M-1;
-	            if(opt.computeQuality){
-	                this.quality = this.modelQuality(x,y);
+	            this.M = M - 1;
+	            if (opt.computeQuality) {
+	                this.quality = this.modelQuality(x, y);
 	            }
 	        }
 	    }
 
 	    _predict(x) {
-	        var y =0;
-	        for(var  k = 0; k < this.powers.length; k++) {
-	            y+=this.coefficients[k]*Math.pow(x,this.powers[k]);
+	        var y = 0;
+	        for (var  k = 0; k < this.powers.length; k++) {
+	            y += this.coefficients[k] * Math.pow(x, this.powers[k]);
 	        }
 	        return y;
 	    }
@@ -6760,53 +6766,53 @@ return /******/ (function(modules) { // webpackBootstrap
 	            M: this.M
 	        };
 
-	        if(this.quality){
+	        if (this.quality) {
 	            out.quality = this.quality;
 	        }
 	        return out;
 	    }
 
-	    toString(precision){
+	    toString(precision) {
 	        return this._toFormula(precision, false);
 	    }
 
-	    toLaTeX(precision){
+	    toLaTeX(precision) {
 	        return this._toFormula(precision, true);
 	    }
 
-	    _toFormula(precision, isLaTeX){
-	        var sup = "^";
-	        var closeSup = "";
-	        var times = "*";
-	        if(isLaTeX){
-	            sup = "^{";
-	            closeSup="}";
-	            times="";
+	    _toFormula(precision, isLaTeX) {
+	        var sup = '^';
+	        var closeSup = '';
+	        var times = '*';
+	        if (isLaTeX) {
+	            sup = '^{';
+	            closeSup = '}';
+	            times = '';
 	        }
 
-	        var fn =  "",str;
-	        for(var  k = 0; k < this.coefficients.length ; k++) {
-	            str="";
-	            if(this.coefficients[k]!=0) {
-	                if (this.powers[k] == 0)
+	        var fn =  '', str;
+	        for (var  k = 0; k < this.coefficients.length; k++) {
+	            str = '';
+	            if (this.coefficients[k] !== 0) {
+	                if (this.powers[k] === 0)
 	                    str = maybeToPrecision(this.coefficients[k], precision);
 	                else {
-	                    if (this.powers[k] == 1)
-	                        str = maybeToPrecision(this.coefficients[k], precision) + times +"x";
+	                    if (this.powers[k] === 1)
+	                        str = maybeToPrecision(this.coefficients[k], precision) + times + 'x';
 	                    else {
-	                        str = maybeToPrecision(this.coefficients[k], precision) + times +"x" + sup + this.powers[k]+closeSup;
+	                        str = maybeToPrecision(this.coefficients[k], precision) + times + 'x' + sup + this.powers[k] + closeSup;
 	                    }
 	                }
 	                if (this.coefficients[k] > 0)
-	                    str= "+"+str;
+	                    str = '+' + str;
 	            }
-	            fn=str+fn;
+	            fn = str + fn;
 	        }
-	        if(fn.charAt(0)=='+'){
+	        if (fn.charAt(0) === '+') {
 	            fn = fn.slice(1);
 	        }
 
-	        return "y = "+fn;
+	        return 'y = ' + fn;
 	    }
 
 	    static load(json) {
@@ -6818,6 +6824,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	module.exports = PolynomialRegression;
+
 
 /***/ },
 /* 41 */
@@ -6838,22 +6845,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	const maybeToPrecision = __webpack_require__(38).maybeToPrecision;
 	const PolynomialRegression = __webpack_require__(40);
+	const PowerRegression = __webpack_require__(42);
 	const BaseRegression = __webpack_require__(39);
 
-	class PotentialRegression extends BaseRegression{
+	class PotentialRegression extends BaseRegression {
 	    /**
 	     * @constructor
 	     * @param x: Independent variable
 	     * @param y: Dependent variable
 	     * @param options
 	     */
-	    constructor(x, y, M,options) {
+	    constructor(x, y, M, options) {
 	        super();
-	        let opt = options||{};
+	        let opt = options || {};
 	        if (x === true) { // reloading model
-	            this.A = outputs.A;
-	            this.M = outputs.M;
-	            if(y.quality){
+	            this.A = y.A;
+	            this.M = y.M;
+	            if (y.quality) {
 	                this.quality = y.quality;
 	            }
 	        } else {
@@ -6862,37 +6870,37 @@ return /******/ (function(modules) { // webpackBootstrap
 	                throw new RangeError('input and output array have a different length');
 	            }
 
-	            var linear = new PolynomialRegression(x, y, [M] ,{computeCoefficient:true});
+	            var linear = new PolynomialRegression(x, y, [M], {computeCoefficient: true});
 	            this.A = linear.coefficients[0];
 	            this.M = M;
-	            if(opt.computeQuality){
-	                this.quality = this.modelQuality(x,y);
+	            if (opt.computeQuality) {
+	                this.quality = this.modelQuality(x, y);
 	            }
 	        }
 	    }
 
 	    _predict(x) {
-	        return this.A*Math.pow(x,this.M);
+	        return this.A * Math.pow(x, this.M);
 	    }
 
 	    toJSON() {
 	        var out = {name: 'potentialRegression', A: this.A, M: this.M};
-	        if(this.quality){
+	        if (this.quality) {
 	            out.quality = this.quality;
 	        }
 	        return out;
 	    }
 
-	    toString(precision){
-	        return "y = "+maybeToPrecision(this.A, precision)+"*x^"+this.M;
+	    toString(precision) {
+	        return 'y = ' + maybeToPrecision(this.A, precision) + '*x^' + this.M;
 	    }
 
-	    toLaTeX(precision){
+	    toLaTeX(precision) {
 
 	        if (this.M >= 0)
-	            return "y = "+maybeToPrecision(this.A, precision)+"x^{"+this.M+"}";
+	            return 'y = ' + maybeToPrecision(this.A, precision) + 'x^{' + this.M + '}';
 	        else
-	            return "y = \\frac{"+maybeToPrecision(this.A, precision)+"}{x^{"+(-this.M)+"}}";
+	            return 'y = \\frac{' + maybeToPrecision(this.A, precision) + '}{x^{' + (-this.M) + '}}';
 	    }
 
 	    static load(json) {
@@ -6905,8 +6913,99 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	module.exports = PotentialRegression;
 
+
 /***/ },
 /* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/**
+	 * This class implements the power regression f(x)=A*x^B
+	 * Created by acastillo on 5/12/16.
+	 */
+
+	const maybeToPrecision = __webpack_require__(38).maybeToPrecision;
+	const SimpleLinearRegression = __webpack_require__(37);
+	const BaseRegression = __webpack_require__(39);
+
+	class PowerRegression extends BaseRegression {
+	    /**
+	     * @constructor
+	     * @param x: Independent variable
+	     * @param y: Dependent variable
+	     * @param options
+	     */
+	    constructor(x, y, options) {
+	        super();
+	        let opt = options || {};
+	        if (x === true) { // reloading model
+	            this.A = y.A;
+	            this.B = y.B;
+	            this.quality = y.quality || {};
+	            if (y.quality.r) {
+	                this.quality.r = y.quality.r;
+	                this.quality.r2 = y.quality.r2;
+	            }
+	            if (y.quality.chi2) {
+	                this.quality.chi2 = y.quality.chi2;
+	            }
+	        } else {
+	            var n = x.length;
+	            if (n !== y.length) {
+	                throw new RangeError('input and output array have a different length');
+	            }
+	            var xl = new Array(n), yl = new Array(n);
+	            for (var i = 0; i < n; i++) {
+	                xl[i] = Math.log(x[i]);
+	                yl[i] = Math.log(y[i]);
+	            }
+
+	            var linear = new SimpleLinearRegression(xl, yl, {computeCoefficient: false});
+	            this.A = Math.exp(linear.intercept);
+	            this.B = linear.slope;
+	            if (opt.computeQuality) {
+	                this.quality = this.modelQuality(x, y);
+	            }
+	        }
+	    }
+
+	    _predict(newInputs) {
+	        return this.A * Math.pow(newInputs, this.B);
+	    }
+
+	    toJSON() {
+	        var out = {name: 'powerRegression', A: this.A, B: this.B};
+	        if (this.quality) {
+	            out.quality = this.quality;
+	        }
+	        return out;
+	    }
+
+	    toString(precision) {
+	        return 'y = ' + maybeToPrecision(this.A, precision) + '*x^' + maybeToPrecision(this.B, precision);
+	    }
+
+	    toLaTeX(precision) {
+	        if (this.B >= 0)
+	            return 'y = ' + maybeToPrecision(this.A, precision) + 'x^{' + maybeToPrecision(this.B, precision) + '}';
+	        else
+	            return 'y = \\frac{' + maybeToPrecision(this.A, precision) + '}{x^{' + maybeToPrecision(-this.B, precision) + '}}';
+	    }
+
+	    static load(json) {
+	        if (json.name !== 'powerRegression') {
+	            throw new TypeError('not a power regression model');
+	        }
+	        return new PowerRegression(true, json);
+	    }
+	}
+
+	module.exports = PowerRegression;
+
+
+/***/ },
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -6926,7 +7025,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	const SimpleLinearRegression = __webpack_require__(37);
 	const BaseRegression = __webpack_require__(39);
 
-	class ExpRegression extends BaseRegression{
+	class ExpRegression extends BaseRegression {
 	    /**
 	     * @constructor
 	     * @param x: Independent variable
@@ -6935,11 +7034,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	     */
 	    constructor(x, y, options) {
 	        super();
-	        let opt = options||{};
+	        let opt = options || {};
 	        if (x === true) { // reloading model
-	            this.A = outputs.A;
-	            this.C = outputs.C;
-	            if(y.quality){
+	            this.A = y.A;
+	            this.C = y.C;
+	            if (y.quality) {
 	                this.quality = y.quality;
 	            }
 	        } else {
@@ -6949,39 +7048,39 @@ return /******/ (function(modules) { // webpackBootstrap
 	            }
 	            var yl = new Array(n);
 	            for (var i = 0; i < n; i++) {
-	                yl[i]=Math.log(y[i]);
+	                yl[i] = Math.log(y[i]);
 	            }
 
-	            var linear = new SimpleLinearRegression(x, yl, {computeCoefficient:false});
+	            var linear = new SimpleLinearRegression(x, yl, {computeCoefficient: false});
 	            this.A = linear.slope;
 	            this.C = Math.exp(linear.intercept);
-	            if(opt.computeQuality){
-	                this.quality = this.modelQuality(x,y);
+	            if (opt.computeQuality) {
+	                this.quality = this.modelQuality(x, y);
 	            }
 	        }
 	    }
 
 	    _predict(newInputs) {
-	        return this.C*Math.exp(newInputs*this.A);
+	        return this.C * Math.exp(newInputs * this.A);
 	    }
 
 	    toJSON() {
 	        var out = {name: 'expRegression', A: this.A, C: this.C};
-	        if(this.quality){
+	        if (this.quality) {
 	            out.quality = this.quality;
 	        }
 	        return out;
 	    }
 
-	    toString(precision){
-	        return "y = "+maybeToPrecision(this.C, precision)+"*exp("+maybeToPrecision(this.A, precision)+"*x)";
+	    toString(precision) {
+	        return 'y = ' + maybeToPrecision(this.C, precision) + '*exp(' + maybeToPrecision(this.A, precision) + '*x)';
 	    }
 
-	    toLaTeX(precision){
-	        if(this.A>=0)
-	            return "y = "+maybeToPrecision(this.C, precision)+"e^{"+maybeToPrecision(this.A, precision)+"x}";
+	    toLaTeX(precision) {
+	        if (this.A >= 0)
+	            return 'y = ' + maybeToPrecision(this.C, precision) + 'e^{' + maybeToPrecision(this.A, precision) + 'x}';
 	        else
-	            return "y = \\frac{"+maybeToPrecision(this.C, precision)+"}{e^{"+maybeToPrecision(-this.A, precision)+"x}}";
+	            return 'y = \\frac{' + maybeToPrecision(this.C, precision) + '}{e^{' + maybeToPrecision(-this.A, precision) + 'x}}';
 
 	    }
 
@@ -6989,101 +7088,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (json.name !== 'expRegression') {
 	            throw new TypeError('not a exp regression model');
 	        }
-	        return new expRegression(true, json);
+	        return new ExpRegression(true, json);
 	    }
 	}
-
 
 
 	module.exports = ExpRegression;
 
-/***/ },
-/* 43 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	/**
-	 * This class implements the power regression f(x)=A*x^B
-	 * Created by acastillo on 5/12/16.
-	 */
-
-	const maybeToPrecision = __webpack_require__(38).maybeToPrecision;
-	const SimpleLinearRegression = __webpack_require__(37);
-	const BaseRegression = __webpack_require__(39);
-
-	class PowerRegression extends BaseRegression{
-	    /**
-	     * @constructor
-	     * @param x: Independent variable
-	     * @param y: Dependent variable
-	     * @param options
-	     */
-	    constructor(x, y, options) {
-	        super();
-	        let opt = options||{};
-	        if (x === true) { // reloading model
-	            this.A = outputs.A;
-	            this.B = outputs.B;
-	            if(y.r){
-	                this.r = y.r;
-	                this.r2 = y.r2;
-	            }
-	            if(y.chi2){
-	                this.chi2 = y.chi2;
-	            }
-	        } else {
-	            var n = x.length;
-	            if (n !== y.length) {
-	                throw new RangeError('input and output array have a different length');
-	            }
-	            var xl = new Array(n), yl = new Array(n);
-	            for (var i = 0; i < n; i++) {
-	                xl[i]=Math.log(x[i]);
-	                yl[i]=Math.log(y[i]);
-	            }
-
-	            var linear = new SimpleLinearRegression(xl, yl, {computeCoefficient:false});
-	            this.A = Math.exp(linear.intercept);
-	            this.B = linear.slope;
-	            if(opt.computeQuality){
-	                this.quality = this.modelQuality(x,y);
-	            }
-	        }
-	    }
-
-	    _predict(newInputs) {
-	        return this.A*Math.pow(newInputs,this.B);
-	    }
-
-	    toJSON() {
-	        var out = {name: 'powerRegression', A: this.A, B: this.B};
-	        if(this.quality){
-	            out.quality = this.quality;
-	        }
-	        return out;
-	    }
-
-	    toString(precision){
-	        return "y = "+maybeToPrecision(this.A, precision)+"*x^"+maybeToPrecision(this.B, precision);
-	    }
-
-	    toLaTeX(precision) {
-	        if (this.B >= 0)
-	            return "y = " + maybeToPrecision(this.A, precision) + "x^{" + maybeToPrecision(this.B, precision) + "}";
-	        else
-	            return "y = \\frac{" + maybeToPrecision(this.A, precision) + "}{x^{" + maybeToPrecision(-this.B, precision) + "}}";
-	    }
-
-	    static load(json) {
-	        if (json.name !== 'powerRegression') {
-	            throw new TypeError('not a power regression model');
-	        }
-	        return new PowerRegression(true, json);
-	    }
-	}
-
-	module.exports = PowerRegression;
 
 /***/ },
 /* 44 */
@@ -7100,7 +7111,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    lambda: 0.1,
 	    kernelType: 'gaussian',
 	    kernelOptions: {},
-	    computeCoefficient:false
+	    computeCoefficient: false
 	};
 
 	// Implements the Kernel ridge regression algorithm.
@@ -7115,7 +7126,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.kernelOptions = outputs.kernelOptions;
 	            this.kernel = new Kernel(outputs.kernelType, outputs.kernelOptions);
 
-	            if(outputs.quality){
+	            if (outputs.quality) {
 	                this.quality = outputs.quality;
 	            }
 	        } else {
@@ -7132,8 +7143,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.kernelOptions = options.kernelOptions;
 	            this.kernel = kernelFunction;
 
-	            if(options.computeQuality){
-	                this.quality=this.modelQuality(inputs,outputs);
+	            if (options.computeQuality) {
+	                this.quality = this.modelQuality(inputs, outputs);
 	            }
 	        }
 	    }
@@ -7150,7 +7161,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            kernelType: this.kernelType,
 	            kernelOptions: this.kernelOptions
 	        };
-	        if(this.quality){
+	        if (this.quality) {
 	            out.quality = this.quality;
 	        }
 	        return out;
@@ -7559,10 +7570,9 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 57 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 
 	const Matrix = __webpack_require__(14);
-	const isInteger = __webpack_require__(58);
 	const SVD = Matrix.DC.SingularValueDecomposition;
 	const BaseRegression = __webpack_require__(39);
 
@@ -7575,8 +7585,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    /**
 	     * Constructor for the 2D polynomial fitting
 	     *
-	     * @param reload - for load purposes
-	     * @param model - for load purposes
+	     * @param inputs
+	     * @param outputs
+	     * @param options
 	     * @constructor
 	     */
 	    constructor(inputs, outputs, options) {
@@ -7584,11 +7595,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	        if (inputs === true) { // reloading model
 	            this.coefficients = Matrix.columnVector(outputs.coefficients);
 	            this.order = outputs.order;
-	            if(outputs.r){
+	            if (outputs.r) {
 	                this.r = outputs.r;
 	                this.r2 = outputs.r2;
 	            }
-	            if(outputs.chi2){
+	            if (outputs.chi2) {
 	                this.chi2 = outputs.chi2;
 	            }
 	        } else {
@@ -7597,11 +7608,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	            this.coefficients = [];
 	            this.X = inputs;
 	            this.y = outputs;
-	            
-	            this.train(this.X,this.y,options);
 
-	            if(options.computeQuality){
-	                this.quality = this.modelQuality(inputs,outputs);
+	            this.train(this.X, this.y, options);
+
+	            if (options.computeQuality) {
+	                this.quality = this.modelQuality(inputs, outputs);
 	            }
 	        }
 	    }
@@ -7616,16 +7627,16 @@ return /******/ (function(modules) { // webpackBootstrap
 	     * @param options
 	     */
 	    train(X, y, options) {
-	        if(!Matrix.isMatrix(X)) X = new Matrix(X);
-	        if(!Matrix.isMatrix(y)) y = Matrix.columnVector(y);
-	        
-	        if(y.rows!=X.rows)//Perhaps y is transpose
+	        if (!Matrix.isMatrix(X)) X = new Matrix(X);
+	        if (!Matrix.isMatrix(y)) y = Matrix.columnVector(y);
+
+	        if (y.rows !== X.rows)//Perhaps y is transpose
 	            y = y.transpose();
 
-	        if(X.columns !== 2)
-	            throw new RangeError("You give X with " + X.columns + " columns and it must be 2");
-	        if(X.rows !== y.rows)
-	            throw new RangeError("X and y must have the same rows");
+	        if (X.columns !== 2)
+	            throw new RangeError('You give X with ' + X.columns + ' columns and it must be 2');
+	        if (X.rows !== y.rows)
+	            throw new RangeError('X and y must have the same rows');
 
 	        var examples = X.rows;
 	        var coefficients = ((this.order + 2) * (this.order + 1)) / 2;
@@ -7645,9 +7656,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var A = new Matrix(examples, coefficients);
 	        var col = 0;
 
-	        for(var i = 0; i <= this.order; ++i) {
+	        for (var i = 0; i <= this.order; ++i) {
 	            var limit = this.order - i;
-	            for(var j = 0; j <= limit; ++j) {
+	            for (var j = 0; j <= limit; ++j) {
 	                var result = powColVector(x1, i).mulColumnVector(powColVector(x2, j));
 	                A.setColumn(col, result);
 	                col++;
@@ -7661,13 +7672,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	        });
 
 	        var qqs = Matrix.rowVector(svd.diagonal);
-	        qqs = qqs.apply(function(i, j) {
-	            if(this[i][j] >= 1e-15) this[i][j] = 1 / this[i][j];
+	        qqs = qqs.apply(function (i, j) {
+	            if (this[i][j] >= 1e-15) this[i][j] = 1 / this[i][j];
 	            else this[i][j] = 0;
 	        });
 
 	        var qqs1 = Matrix.zeros(examples, coefficients);
-	        for(i = 0; i < coefficients; ++i) {
+	        for (i = 0; i < coefficients; ++i) {
 	            qqs1[i][i] = qqs[0][i];
 	        }
 
@@ -7680,14 +7691,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	        col = 0;
 
-	        for(i = 0; i <= coefficients; ++i) {
+	        for (i = 0; i <= coefficients; ++i) {
 	            limit = this.order - i;
-	            for(j = 0; j <= limit; ++j) {
+	            for (j = 0; j <= limit; ++j) {
 	                this.coefficients[col][0] = (this.coefficients[col][0] * Math.pow(scaleX1, i) * Math.pow(scaleX2, j)) / scaleY;
 	                col++;
 	            }
 	        }
-	    };
+	    }
 
 	    _predict(newInputs) {
 	        var x1 = newInputs[0];
@@ -7696,9 +7707,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	        var y = 0;
 	        var column = 0;
 
-	        for(var i = 0; i <= this.order; i++) {
-	            for(var j = 0; j <= this.order - i; j++) {
-	                y+= Math.pow(x1, i)*(Math.pow(x2, j))*this.coefficients[column][0];
+	        for (var i = 0; i <= this.order; i++) {
+	            for (var j = 0; j <= this.order - i; j++) {
+	                y += Math.pow(x1, i) * (Math.pow(x2, j)) * this.coefficients[column][0];
 	                column++;
 	            }
 	        }
@@ -7708,15 +7719,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	    toJSON() {
 	        var out = {
-	            name: "polyfit2D",
+	            name: 'polyfit2D',
 	            order: this.order,
 	            coefficients: this.coefficients
 	        };
-	        if(this.quality){
+	        if (this.quality) {
 	            out.quality = this.quality;
 	        }
 	        return out;
-	    };
+	    }
 
 	    static load(json) {
 	        if (json.name !== 'polyfit2D') {
@@ -7730,7 +7741,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = PolynomialFitRegression2D;
 
 
-
 	/**
 	 * Function that given a column vector return this: vector^power
 	 *
@@ -7740,7 +7750,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	 */
 	function powColVector(x, power) {
 	    var result = x.clone();
-	    for(var i = 0; i < x.rows; ++i) {
+	    for (var i = 0; i < x.rows; ++i) {
 	        result[i][0] = Math.pow(result[i][0], power);
 	    }
 	    return result;
@@ -7757,18 +7767,131 @@ return /******/ (function(modules) { // webpackBootstrap
 	    this[i][j] = Math.abs(this[i][j]);
 	}
 
+
 /***/ },
 /* 58 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// https://github.com/paulmillr/es6-shim
-	// http://people.mozilla.org/~jorendorff/es6-draft.html#sec-number.isinteger
-	var isFinite = __webpack_require__(59);
-	module.exports = Number.isInteger || function(val) {
-	  return typeof val === "number" &&
-	    isFinite(val) &&
-	    Math.floor(val) === val;
-	};
+	'use strict';
+
+	const BaseRegression = __webpack_require__(39);
+	const maybeToPrecision = __webpack_require__(38).maybeToPrecision;
+	const median = __webpack_require__(4).median;
+
+	/**
+	 * Theil–Sen estimator
+	 *
+	 * https://en.wikipedia.org/wiki/Theil%E2%80%93Sen_estimator
+	 * @class
+	 */
+	class TheilSenRegression extends BaseRegression {
+
+	    /**
+	     *
+	     * @param x
+	     * @param y
+	     * @param options
+	     * @constructor
+	     */
+	    constructor(x, y, options) {
+	        options = options || {};
+	        super();
+	        if (x === true) {
+	            // loads the model
+	            this.slope = y.slope;
+	            this.intercept = y.intercept;
+	            this.quality = y.quality || {};
+	            if (y.quality.r) {
+	                this.quality.r = y.quality.r;
+	                this.quality.r2 = y.quality.r2;
+	            }
+	            if (y.quality.chi2) {
+	                this.quality.chi2 = y.quality.chi2;
+	            }
+	        } else {
+	            // creates the model
+	            let len = x.length;
+	            if (len !== y.length) {
+	                throw new RangeError('Input and output array have a different length');
+	            }
+
+	            let slopes = new Array(len * len);
+	            let count = 0;
+	            for (let i = 0; i < len; ++i) {
+	                for (let j =  i + 1; j < len; ++j) {
+	                    if (x[i] !== x[j]) {
+	                        slopes[count++] = (y[j] - y[i]) / (x[j] - x[i]);
+	                    }
+	                }
+	            }
+	            slopes.length = count;
+	            let medianSlope = median(slopes);
+
+	            let cuts = new Array(len);
+	            for (let i = 0; i < len; ++i) {
+	                cuts[i] = y[i] - medianSlope * x[i];
+	            }
+
+	            this.slope = medianSlope;
+	            this.intercept = median(cuts);
+	            this.coefficients = [this.intercept, this.slope];
+	            if (options.computeQuality) {
+	                this.quality = this.modelQuality(x, y);
+	            }
+	        }
+
+	    }
+
+	    toJSON() {
+	        var out = {
+	            name: 'TheilSenRegression',
+	            slope: this.slope,
+	            intercept: this.intercept
+	        };
+	        if (this.quality) {
+	            out.quality = this.quality;
+	        }
+
+	        return out;
+	    }
+
+	    _predict(input) {
+	        return this.slope * input + this.intercept;
+	    }
+
+	    computeX(input) {
+	        return (input - this.intercept) / this.slope;
+	    }
+
+	    toString(precision) {
+	        var result = 'y = ';
+	        if (this.slope) {
+	            var xFactor = maybeToPrecision(this.slope, precision);
+	            result += (Math.abs(xFactor - 1) < 1e-5 ? '' : xFactor) + 'x';
+	            if (this.intercept) {
+	                var absIntercept = Math.abs(this.intercept);
+	                var operator = absIntercept === this.intercept ? '+' : '-';
+	                result += ' ' + operator + ' ' + maybeToPrecision(absIntercept, precision);
+	            }
+	        } else {
+	            result += maybeToPrecision(this.intercept, precision);
+	        }
+	        return result;
+	    }
+
+	    toLaTeX(precision) {
+	        return this.toString(precision);
+	    }
+
+	    static load(json) {
+	        if (json.name !== 'TheilSenRegression') {
+	            throw new TypeError('not a Theil-Sen model');
+	        }
+	        return new TheilSenRegression(true, json);
+	    }
+	}
+
+	module.exports = TheilSenRegression;
 
 
 /***/ },
@@ -7776,86 +7899,64 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var numberIsNan = __webpack_require__(60);
 
-	module.exports = Number.isFinite || function (val) {
-		return !(typeof val !== 'number' || numberIsNan(val) || val === Infinity || val === -Infinity);
-	};
-
+	exports.distance = __webpack_require__(60);
+	exports.similarity = __webpack_require__(105);
 
 /***/ },
 /* 60 */
-/***/ function(module, exports) {
-
-	'use strict';
-	module.exports = Number.isNaN || function (x) {
-		return x !== x;
-	};
-
-
-/***/ },
-/* 61 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.distance = __webpack_require__(62);
-	exports.similarity = __webpack_require__(107);
-
-/***/ },
-/* 62 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	exports.additiveSymmetric = __webpack_require__(63);
-	exports.avg = __webpack_require__(64);
-	exports.bhattacharyya = __webpack_require__(65);
-	exports.canberra = __webpack_require__(66);
-	exports.chebyshev = __webpack_require__(67);
-	exports.clark = __webpack_require__(68);
-	exports.czekanowski = __webpack_require__(69);
-	exports.dice = __webpack_require__(71);
-	exports.divergence = __webpack_require__(72);
+	exports.additiveSymmetric = __webpack_require__(61);
+	exports.avg = __webpack_require__(62);
+	exports.bhattacharyya = __webpack_require__(63);
+	exports.canberra = __webpack_require__(64);
+	exports.chebyshev = __webpack_require__(65);
+	exports.clark = __webpack_require__(66);
+	exports.czekanowski = __webpack_require__(67);
+	exports.dice = __webpack_require__(69);
+	exports.divergence = __webpack_require__(70);
 	exports.euclidean = __webpack_require__(47);
-	exports.fidelity = __webpack_require__(73);
-	exports.gower = __webpack_require__(74);
-	exports.harmonicMean = __webpack_require__(75);
-	exports.hellinger = __webpack_require__(76);
-	exports.innerProduct = __webpack_require__(77);
-	exports.intersection = __webpack_require__(78);
-	exports.jaccard = __webpack_require__(79);
-	exports.jeffreys = __webpack_require__(80);
-	exports.jensenDifference = __webpack_require__(81);
-	exports.jensenShannon = __webpack_require__(82);
-	exports.kdivergence = __webpack_require__(83);
-	exports.kulczynski = __webpack_require__(84);
-	exports.kullbackLeibler = __webpack_require__(85);
-	exports.kumarHassebrook = __webpack_require__(86);
-	exports.kumarJohnson = __webpack_require__(87);
-	exports.lorentzian = __webpack_require__(88);
-	exports.manhattan = __webpack_require__(89);
-	exports.matusita = __webpack_require__(90);
-	exports.minkowski = __webpack_require__(91);
-	exports.motyka = __webpack_require__(92);
-	exports.neyman = __webpack_require__(93);
-	exports.pearson = __webpack_require__(94);
-	exports.probabilisticSymmetric = __webpack_require__(95);
-	exports.ruzicka = __webpack_require__(96);
-	exports.soergel = __webpack_require__(97);
-	exports.sorensen = __webpack_require__(98);
-	exports.squared = __webpack_require__(99);
-	exports.squaredChord = __webpack_require__(100);
+	exports.fidelity = __webpack_require__(71);
+	exports.gower = __webpack_require__(72);
+	exports.harmonicMean = __webpack_require__(73);
+	exports.hellinger = __webpack_require__(74);
+	exports.innerProduct = __webpack_require__(75);
+	exports.intersection = __webpack_require__(76);
+	exports.jaccard = __webpack_require__(77);
+	exports.jeffreys = __webpack_require__(78);
+	exports.jensenDifference = __webpack_require__(79);
+	exports.jensenShannon = __webpack_require__(80);
+	exports.kdivergence = __webpack_require__(81);
+	exports.kulczynski = __webpack_require__(82);
+	exports.kullbackLeibler = __webpack_require__(83);
+	exports.kumarHassebrook = __webpack_require__(84);
+	exports.kumarJohnson = __webpack_require__(85);
+	exports.lorentzian = __webpack_require__(86);
+	exports.manhattan = __webpack_require__(87);
+	exports.matusita = __webpack_require__(88);
+	exports.minkowski = __webpack_require__(89);
+	exports.motyka = __webpack_require__(90);
+	exports.neyman = __webpack_require__(91);
+	exports.pearson = __webpack_require__(92);
+	exports.probabilisticSymmetric = __webpack_require__(93);
+	exports.ruzicka = __webpack_require__(94);
+	exports.soergel = __webpack_require__(95);
+	exports.sorensen = __webpack_require__(96);
+	exports.squared = __webpack_require__(97);
+	exports.squaredChord = __webpack_require__(98);
 	exports.squaredEuclidean = __webpack_require__(47).squared;
-	exports.taneja = __webpack_require__(101);
-	exports.tanimoto = __webpack_require__(102);
-	exports.topsoe = __webpack_require__(104);
-	exports.tree = __webpack_require__(105);
-	exports.waveHedges = __webpack_require__(106);
+	exports.taneja = __webpack_require__(99);
+	exports.tanimoto = __webpack_require__(100);
+	exports.topsoe = __webpack_require__(102);
+	exports.tree = __webpack_require__(103);
+	exports.waveHedges = __webpack_require__(104);
 
 
 /***/ },
-/* 63 */
+/* 61 */
 /***/ function(module, exports) {
 
 	module.exports = function additiveSymmetric(a, b) {
@@ -7870,7 +7971,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 64 */
+/* 62 */
 /***/ function(module, exports) {
 
 	module.exports = function avg(a, b) {
@@ -7890,7 +7991,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 65 */
+/* 63 */
 /***/ function(module, exports) {
 
 	module.exports = function bhattacharyya(a, b) {
@@ -7904,7 +8005,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 66 */
+/* 64 */
 /***/ function(module, exports) {
 
 	module.exports = function canberra(a, b) {
@@ -7918,7 +8019,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 67 */
+/* 65 */
 /***/ function(module, exports) {
 
 	module.exports = function chebyshev(a, b) {
@@ -7936,7 +8037,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 68 */
+/* 66 */
 /***/ function(module, exports) {
 
 	module.exports = function clark(a, b) {
@@ -7951,12 +8052,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 69 */
+/* 67 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	const czekanowskiSimilarity = __webpack_require__(70);
+	const czekanowskiSimilarity = __webpack_require__(68);
 
 	module.exports = function czekanowskiDistance(a, b) {
 	    return 1 - czekanowskiSimilarity(a, b);
@@ -7964,7 +8065,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 70 */
+/* 68 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -7981,7 +8082,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 71 */
+/* 69 */
 /***/ function(module, exports) {
 
 	module.exports = function dice(a, b) {
@@ -7999,7 +8100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 72 */
+/* 70 */
 /***/ function(module, exports) {
 
 	module.exports = function divergence(a, b) {
@@ -8014,7 +8115,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 73 */
+/* 71 */
 /***/ function(module, exports) {
 
 	module.exports = function fidelity(a, b) {
@@ -8028,7 +8129,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 74 */
+/* 72 */
 /***/ function(module, exports) {
 
 	module.exports = function gower(a, b) {
@@ -8042,7 +8143,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 75 */
+/* 73 */
 /***/ function(module, exports) {
 
 	module.exports = function harmonicMean(a, b) {
@@ -8056,7 +8157,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 76 */
+/* 74 */
 /***/ function(module, exports) {
 
 	module.exports = function hellinger(a, b) {
@@ -8070,7 +8171,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 77 */
+/* 75 */
 /***/ function(module, exports) {
 
 	module.exports = function innerProduct(a, b) {
@@ -8084,7 +8185,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 78 */
+/* 76 */
 /***/ function(module, exports) {
 
 	module.exports = function intersection(a, b) {
@@ -8098,7 +8199,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 79 */
+/* 77 */
 /***/ function(module, exports) {
 
 	module.exports = function jaccard(a, b) {
@@ -8118,7 +8219,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 80 */
+/* 78 */
 /***/ function(module, exports) {
 
 	module.exports = function jeffreys(a, b) {
@@ -8132,7 +8233,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 81 */
+/* 79 */
 /***/ function(module, exports) {
 
 	module.exports = function jensenDifference(a, b) {
@@ -8146,7 +8247,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 82 */
+/* 80 */
 /***/ function(module, exports) {
 
 	module.exports = function jensenShannon(a, b) {
@@ -8162,7 +8263,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 83 */
+/* 81 */
 /***/ function(module, exports) {
 
 	module.exports = function kdivergence(a, b) {
@@ -8176,7 +8277,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 84 */
+/* 82 */
 /***/ function(module, exports) {
 
 	module.exports = function kulczynski(a, b) {
@@ -8192,7 +8293,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 85 */
+/* 83 */
 /***/ function(module, exports) {
 
 	module.exports = function kullbackLeibler(a, b) {
@@ -8206,7 +8307,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 86 */
+/* 84 */
 /***/ function(module, exports) {
 
 	module.exports = function kumarHassebrook(a, b) {
@@ -8224,7 +8325,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 87 */
+/* 85 */
 /***/ function(module, exports) {
 
 	module.exports = function kumarJohnson(a, b) {
@@ -8238,7 +8339,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 88 */
+/* 86 */
 /***/ function(module, exports) {
 
 	module.exports = function lorentzian(a, b) {
@@ -8252,7 +8353,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 89 */
+/* 87 */
 /***/ function(module, exports) {
 
 	module.exports = function manhattan(a, b) {
@@ -8267,7 +8368,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 90 */
+/* 88 */
 /***/ function(module, exports) {
 
 	module.exports = function matusita(a, b) {
@@ -8281,7 +8382,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 91 */
+/* 89 */
 /***/ function(module, exports) {
 
 	module.exports = function minkowski(a, b, p) {
@@ -8296,7 +8397,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 92 */
+/* 90 */
 /***/ function(module, exports) {
 
 	module.exports = function motyka(a, b) {
@@ -8312,7 +8413,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 93 */
+/* 91 */
 /***/ function(module, exports) {
 
 	module.exports = function neyman(a, b) {
@@ -8327,7 +8428,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 94 */
+/* 92 */
 /***/ function(module, exports) {
 
 	module.exports = function pearson(a, b) {
@@ -8342,7 +8443,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 95 */
+/* 93 */
 /***/ function(module, exports) {
 
 	module.exports = function probabilisticSymmetric(a, b) {
@@ -8357,7 +8458,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 96 */
+/* 94 */
 /***/ function(module, exports) {
 
 	module.exports = function ruzicka(a, b) {
@@ -8373,7 +8474,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 97 */
+/* 95 */
 /***/ function(module, exports) {
 
 	module.exports = function soergel(a, b) {
@@ -8389,7 +8490,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 98 */
+/* 96 */
 /***/ function(module, exports) {
 
 	module.exports = function sorensen(a, b) {
@@ -8405,7 +8506,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 99 */
+/* 97 */
 /***/ function(module, exports) {
 
 	module.exports = function squared(a, b) {
@@ -8420,7 +8521,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 100 */
+/* 98 */
 /***/ function(module, exports) {
 
 	module.exports = function squaredChord(a, b) {
@@ -8434,7 +8535,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 101 */
+/* 99 */
 /***/ function(module, exports) {
 
 	module.exports = function taneja(a, b) {
@@ -8448,10 +8549,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 102 */
+/* 100 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var tanimotoS = __webpack_require__(103);
+	var tanimotoS = __webpack_require__(101);
 
 	module.exports = function tanimoto(a, b, bitvector) {
 	    if (bitvector)
@@ -8472,7 +8573,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 103 */
+/* 101 */
 /***/ function(module, exports) {
 
 	module.exports = function tanimoto(a, b, bitvector) {
@@ -8503,7 +8604,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 104 */
+/* 102 */
 /***/ function(module, exports) {
 
 	module.exports = function topsoe(a, b) {
@@ -8517,7 +8618,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 105 */
+/* 103 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -8639,7 +8740,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 106 */
+/* 104 */
 /***/ function(module, exports) {
 
 	module.exports = function waveHedges(a, b) {
@@ -8653,25 +8754,25 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 107 */
+/* 105 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
 
-	exports.cosine = __webpack_require__(108);
-	exports.czekanowski = __webpack_require__(70);
-	exports.dice = __webpack_require__(109);
-	exports.intersection = __webpack_require__(110);
-	exports.jaccard = __webpack_require__(111);
-	exports.kulczynski = __webpack_require__(112);
-	exports.motyka = __webpack_require__(113);
-	exports.pearson = __webpack_require__(114);
-	exports.squaredChord = __webpack_require__(115);
-	exports.tanimoto = __webpack_require__(103);
+	exports.cosine = __webpack_require__(106);
+	exports.czekanowski = __webpack_require__(68);
+	exports.dice = __webpack_require__(107);
+	exports.intersection = __webpack_require__(108);
+	exports.jaccard = __webpack_require__(109);
+	exports.kulczynski = __webpack_require__(110);
+	exports.motyka = __webpack_require__(111);
+	exports.pearson = __webpack_require__(112);
+	exports.squaredChord = __webpack_require__(113);
+	exports.tanimoto = __webpack_require__(101);
 
 
 /***/ },
-/* 108 */
+/* 106 */
 /***/ function(module, exports) {
 
 	module.exports = function cosine(a, b) {
@@ -8689,10 +8790,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 109 */
+/* 107 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var diceD = __webpack_require__(71);
+	var diceD = __webpack_require__(69);
 
 	module.exports = function dice(a, b) {
 	    return 1 - diceD(a,b);
@@ -8700,10 +8801,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 110 */
+/* 108 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var intersectionD = __webpack_require__(78);
+	var intersectionD = __webpack_require__(76);
 
 	module.exports = function intersection(a, b) {
 	    return 1 - intersectionD(a,b);
@@ -8711,10 +8812,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 111 */
+/* 109 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var jaccardD = __webpack_require__(79);
+	var jaccardD = __webpack_require__(77);
 
 	module.exports = function jaccard(a, b) {
 	    return 1 - jaccardD(a, b);
@@ -8722,10 +8823,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 112 */
+/* 110 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var kulczynskiD = __webpack_require__(84);
+	var kulczynskiD = __webpack_require__(82);
 
 	module.exports = function kulczynski(a, b) {
 	    return 1 / kulczynskiD(a, b);
@@ -8733,10 +8834,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 113 */
+/* 111 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var motykaD = __webpack_require__(92);
+	var motykaD = __webpack_require__(90);
 
 	module.exports = function motyka(a, b) {
 	    return 1 - motykaD(a,b);
@@ -8744,13 +8845,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 114 */
+/* 112 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var stat=__webpack_require__(3).array;
-	var cosine=__webpack_require__(108);
+	var cosine=__webpack_require__(106);
 
 	module.exports = function pearson(a, b) {
 	    var avgA=stat.mean(a);
@@ -8768,10 +8869,10 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 115 */
+/* 113 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var squaredChordD = __webpack_require__(100);
+	var squaredChordD = __webpack_require__(98);
 
 	module.exports = function squaredChord(a, b) {
 	    return 1 - squaredChordD(a, b);
@@ -8779,14 +8880,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 116 */
+/* 114 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(14);
 	var padArray = __webpack_require__(34);
-	var extend = __webpack_require__(117);
+	var extend = __webpack_require__(115);
 
 	var defaultOptions = {
 	    windowSize: 5,
@@ -8865,7 +8966,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 117 */
+/* 115 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -8957,12 +9058,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 118 */
+/* 116 */
 /***/ function(module, exports, __webpack_require__) {
 
 	//Code translate from Pascal source in http://pubs.acs.org/doi/pdf/10.1021/ac00205a007
-	var extend = __webpack_require__(117);
-	var stat = __webpack_require__(119);
+	var extend = __webpack_require__(115);
+	var stat = __webpack_require__(117);
 
 	var defaultOptions = {
 	    windowSize: 9,
@@ -9132,17 +9233,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 119 */
+/* 117 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	exports.array = __webpack_require__(120);
-	exports.matrix = __webpack_require__(121);
+	exports.array = __webpack_require__(118);
+	exports.matrix = __webpack_require__(119);
 
 
 /***/ },
-/* 120 */
+/* 118 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -9601,11 +9702,11 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 121 */
+/* 119 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	var arrayStat = __webpack_require__(120);
+	var arrayStat = __webpack_require__(118);
 
 	// https://github.com/accord-net/framework/blob/development/Sources/Accord.Statistics/Tools.cs
 
@@ -10127,7 +10228,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 122 */
+/* 120 */
 /***/ function(module, exports, __webpack_require__) {
 
 	const HashTable = __webpack_require__(11);
@@ -10425,12 +10526,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 123 */
+/* 121 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var LM = __webpack_require__(124);
+	var LM = __webpack_require__(122);
 	var math = LM.Matrix.algebra;
 	var Matrix = __webpack_require__(14);
 
@@ -10888,25 +10989,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports.optimizeLorentzianTrain = optimizeLorentzianTrain;
 
 /***/ },
-/* 124 */
+/* 122 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(125);
+	module.exports = __webpack_require__(123);
 	module.exports.Matrix = __webpack_require__(14);
-	module.exports.Matrix.algebra = __webpack_require__(126);
+	module.exports.Matrix.algebra = __webpack_require__(124);
 
 
 /***/ },
-/* 125 */
+/* 123 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Created by acastillo on 8/5/15.
 	 */
 	var Matrix = __webpack_require__(14);
-	var math = __webpack_require__(126);
+	var math = __webpack_require__(124);
 
 	var DEBUG = false;
 	/** Levenberg Marquardt curve-fitting: minimize sum of weighted squared residuals
@@ -11423,7 +11524,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = LM;
 
 /***/ },
-/* 126 */
+/* 124 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -11681,7 +11782,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 127 */
+/* 125 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -11902,12 +12003,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 128 */
+/* 126 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	const measures = __webpack_require__(129);
+	const measures = __webpack_require__(127);
 
 	class Performance {
 	    /**
@@ -12135,7 +12236,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 129 */
+/* 127 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12279,7 +12380,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 130 */
+/* 128 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -12388,15 +12489,15 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 131 */
+/* 129 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	const ConfusionMatrix = __webpack_require__(132);
+	const ConfusionMatrix = __webpack_require__(130);
 
 	const CV = {};
-	const combinations = __webpack_require__(133);
+	const combinations = __webpack_require__(131);
 
 	/**
 	 * Performs a leave-one-out cross-validation (LOO-CV) of the given samples. In LOO-CV, 1 observation is used as the validation
@@ -12543,7 +12644,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 132 */
+/* 130 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12604,7 +12705,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 133 */
+/* 131 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12703,7 +12804,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 134 */
+/* 132 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13040,23 +13141,23 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 135 */
+/* 133 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = __webpack_require__(136);
+	module.exports = __webpack_require__(134);
 
 /***/ },
-/* 136 */
+/* 134 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	module.exports = KNN;
 
-	var KDTree = __webpack_require__(137).kdTree;
-	var Distances = __webpack_require__(61);
+	var KDTree = __webpack_require__(135).kdTree;
+	var Distances = __webpack_require__(59);
 
 	/**
 	 * K-Nearest neighboor constructor.
@@ -13188,7 +13289,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 137 */
+/* 135 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -13654,17 +13755,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 138 */
+/* 136 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	module.exports = exports = __webpack_require__(139).NaiveBayes;
-	exports.separateClasses = __webpack_require__(139).separateClasses;
+	module.exports = exports = __webpack_require__(137).NaiveBayes;
+	exports.separateClasses = __webpack_require__(137).separateClasses;
 
 
 /***/ },
-/* 139 */
+/* 137 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13847,22 +13948,22 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 140 */
+/* 138 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = exports = __webpack_require__(141);
-	exports.Utils = __webpack_require__(142);
-	exports.OPLS = __webpack_require__(143);
+	module.exports = exports = __webpack_require__(139);
+	exports.Utils = __webpack_require__(140);
+	exports.OPLS = __webpack_require__(141);
 
 
 /***/ },
-/* 141 */
+/* 139 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(14);
-	var Utils = __webpack_require__(142);
+	var Utils = __webpack_require__(140);
 
 	class PLS {
 	    constructor(X, Y) {
@@ -14088,7 +14189,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 142 */
+/* 140 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -14139,13 +14240,13 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 143 */
+/* 141 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var Matrix = __webpack_require__(14);
-	var Utils = __webpack_require__(142);
+	var Utils = __webpack_require__(140);
 
 	module.exports = OPLS;
 
@@ -14223,43 +14324,25 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 144 */
+/* 142 */
 /***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(145);
-
-/***/ },
-/* 145 */
-/***/ function(module, exports) {
 
 	'use strict';
 
-	/**
-	 * Calculates the squared distance between two vectors
-	 * @param {Array<number>} vec1 - the x vector
-	 * @param {Array<number>} vec2 - the y vector
-	 * @returns {number} sum - the calculated distance
-	 */
-	function squaredDistance(vec1, vec2) {
-	    var sum = 0;
-	    var dim = vec1.length;
-	    for (var i = 0; i < dim; i++)
-	        sum += (vec1[i] - vec2[i]) * (vec1[i] - vec2[i]);
-	    return sum;
-	}
+	const squaredDistance = __webpack_require__(143).squared;
 
 	/**
 	 * Calculates the sum of squared errors
-	 * @param {Array <Array <number>>} data - the (x,y) points to cluster
-	 * @param {Array <Array <number>>} centers - the K centers in format (x,y)
-	 * @param {Array <number>} clusterID - the cluster identifier for each data dot
-	 * @returns {number} the sum of squared errors
+	 * @param {Array <Array <Number>>} data - the (x,y) points to cluster
+	 * @param {Array <Array <Number>>} centers - the K centers in format (x,y)
+	 * @param {Array <Number>} clusterID - the cluster identifier for each data dot
+	 * @returns {Number} the sum of squared errors
 	 */
 	function computeSSE(data, centers, clusterID) {
-	    var sse = 0;
-	    var nData = data.length;
-	    var c = 0;
-	    for (var i = 0; i < nData;i++) {
+	    let sse = 0;
+	    let nData = data.length;
+	    let c = 0;
+	    for (let i = 0; i < nData; i++) {
 	        c = clusterID[i];
 	        sse += squaredDistance(data[i], centers[c]);
 	    }
@@ -14268,29 +14351,29 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * Updates the cluster identifier based in the new data
-	 * @param {Array <Array <number>>} data - the (x,y) points to cluster
-	 * @param {Array <Array <number>>} centers - the K centers in format (x,y)
+	 * @param {Array <Array <Number>>} data - the (x,y) points to cluster
+	 * @param {Array <Array <Number>>} centers - the K centers in format (x,y)
 	 * @returns {Array} the cluster identifier for each data dot
 	 */
-	function updateClusterID (data, centers) {
-	    var nData = data.length;
-	    var k = centers.length;
-	    var aux = 0;
-	    var clusterID = new Array(nData);
-	    for (var i = 0; i < nData; i++)
+	function updateClusterID(data, centers) {
+	    let nData = data.length;
+	    let k = centers.length;
+	    let aux = 0;
+	    let clusterID = new Array(nData);
+	    for (let i = 0; i < nData; i++)
 	        clusterID[i] = 0;
-	    var d = new Array(nData);
-	    for (var i = 0; i < nData; i++) {
+	    let d = new Array(nData);
+	    for (let i = 0; i < nData; i++) {
 	        d[i] = new Array(k);
-	        for (var j = 0; j < k; j++) {
+	        for (let j = 0; j < k; j++) {
 	            aux = squaredDistance(data[i], centers[j]);
 	            d[i][j] = new Array(2);
 	            d[i][j][0] = aux;
 	            d[i][j][1] = j;
 	        }
-	        var min = d[i][0][0];
-	        var id = 0;
-	        for (var j = 0; j < k; j++)
+	        let min = d[i][0][0];
+	        let id = 0;
+	        for (let j = 0; j < k; j++)
 	            if (d[i][j][0] < min) {
 	                min  = d[i][j][0];
 	                id = d[i][j][1];
@@ -14302,34 +14385,34 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	/**
 	 * Update the center values based in the new configurations of the clusters
-	 * @param {Array <Array <number>>} data - the (x,y) points to cluster
-	 * @param {Array <number>} clusterID - the cluster identifier for each data dot
-	 * @param K - number of clusters
+	 * @param {Array <Array <Number>>} data - the (x,y) points to cluster
+	 * @param {Array <Number>} clusterID - the cluster identifier for each data dot
+	 * @param {Number} K - Number of clusters
 	 * @returns {Array} he K centers in format (x,y)
 	 */
 	function updateCenters(data, clusterID, K) {
-	    var nDim = data[0].length;
-	    var nData = data.length;
-	    var centers = new Array(K);
-	    for (var i = 0; i < K; i++) {
+	    let nDim = data[0].length;
+	    let nData = data.length;
+	    let centers = new Array(K);
+	    for (let i = 0; i < K; i++) {
 	        centers[i] = new Array(nDim);
-	        for (var j = 0; j < nDim; j++)
+	        for (let j = 0; j < nDim; j++)
 	            centers[i][j] = 0;
 	    }
 
-	    for (var k = 0; k < K; k++) {
-	        var cluster = [];
-	        for (var i = 0; i < nData;i++)
-	            if (clusterID[i] == k)
+	    for (let k = 0; k < K; k++) {
+	        let cluster = [];
+	        for (let i = 0; i < nData; i++)
+	            if (clusterID[i] === k)
 	                cluster.push(data[i]);
-	        for (var d = 0; d < nDim; d++) {
-	            var x = [];
-	            for (var i = 0; i < nData; i++)
-	                if (clusterID[i] == k)
+	        for (let d = 0; d < nDim; d++) {
+	            let x = [];
+	            for (let i = 0; i < nData; i++)
+	                if (clusterID[i] === k)
 	                    x.push(data[i][d]);
-	            var sum = 0;
-	            var l = x.length;
-	            for (var i = 0; i < l; i++)
+	            let sum = 0;
+	            let l = x.length;
+	            for (let i = 0; i < l; i++)
 	                sum += x[i];
 	            centers[k][d] = sum / l;
 	        }
@@ -14337,82 +14420,82 @@ return /******/ (function(modules) { // webpackBootstrap
 	    return centers;
 	}
 
+	const defaultOptions = {
+	    maxIterations: 100,
+	    tolerance: 1e-6,
+	    withIterations: false
+	};
+
 	/**
 	 * K-means algorithm
-	 * @param {Array <Array <number>>} data - the (x,y) points to cluster
-	 * @param {Array <Array <number>>} centers - the K centers in format (x,y)
-	 * @param {Object} props - properties
-	 * @param {number} maxIter - maximum of iterations allowed
-	 * @param {number} tol - the error tolerance
-	 * @param {boolean} withIter - store clusters and centroids for each iteration
+	 * @param {Array <Array <Number>>} data - the (x,y) points to cluster
+	 * @param {Array <Array <Number>>} centers - the K centers in format (x,y)
+	 * @param {Object} options - properties
+	 * @param {Number} options.maxIterations - maximum of iterations allowed
+	 * @param {Number} options.tolerance - the error tolerance
+	 * @param {boolean} options.withIterations - store clusters and centroids for each iteration
 	 * @returns {Object} the cluster identifier for each data dot and centroids
 	 */
-	function kmeans(data, centers, props) {
-	    var maxIter, tol, withIter;
-	    if (typeof props === "undefined") {
-	        maxIter = 100;
-	        tol = 1e-6;
-	        withIter = false;
-	    } else {
-	        maxIter = (typeof props.maxIter === "undefined") ? 100 : props.maxIter;
-	        tol = (typeof props.tol === "undefined") ? 1e-6 : props.tol;
-	        withIter = (typeof props.withIter === "undefined") ? false : props.withIter;
-	    }
+	function kmeans(data, centers, options) {
+	    if (!options) options = defaultOptions;
+	    let maxIterations = options.maxIterations || defaultOptions.maxIterations;
+	    let tolerance = options.tolerance || defaultOptions.tolerance;
+	    let withIterations = options.withIterations || defaultOptions.withIterations;
 
-	    var nData = data.length;
-	    if (nData == 0) {
+	    let nData = data.length;
+	    if (nData === 0) {
 	        return [];
 	    }
-	    var K = centers.length;
-	    var clusterID = new Array(nData);
-	    for (var i = 0; i < nData; i++)
+	    let K = centers.length;
+	    let clusterID = new Array(nData);
+	    for (let i = 0; i < nData; i++)
 	        clusterID[i] = 0;
 	    if (K >= nData) {
-	        for (var i = 0; i < nData; i++)
+	        for (let i = 0; i < nData; i++)
 	            clusterID[i] = i;
 	        return clusterID;
 	    }
-	    var lastDistance;
+	    let lastDistance;
 	    lastDistance = 1e100;
-	    var curDistance = 0;
-	    var iterations = [];
-	    for (var iter = 0; iter < maxIter; iter++) {
+	    let curDistance = 0;
+	    let iterations = [];
+	    for (let iter = 0; iter < maxIterations; iter++) {
 	        clusterID = updateClusterID(data, centers);
 	        centers = updateCenters(data, clusterID, K);
 	        curDistance = computeSSE(data, centers, clusterID);
-	        if (withIter) {
+	        if (withIterations) {
 	            iterations.push({
-	                "clusters": clusterID,
-	                "centroids": centers
+	                'clusters': clusterID,
+	                'centroids': centers
 	            });
 	        }
 
-	        if ((lastDistance - curDistance < tol) || ((lastDistance - curDistance)/lastDistance < tol)) {
-	            if (withIter) {
+	        if ((lastDistance - curDistance < tolerance) || ((lastDistance - curDistance) / lastDistance < tolerance)) {
+	            if (withIterations) {
 	                return {
-	                    "clusters": clusterID,
-	                    "centroids": centers,
-	                    "iterations": iterations
+	                    'clusters': clusterID,
+	                    'centroids': centers,
+	                    'iterations': iterations
 	                };
 	            } else {
 	                return {
-	                    "clusters": clusterID,
-	                    "centroids": centers
+	                    'clusters': clusterID,
+	                    'centroids': centers
 	                };
 	            }
 	        }
 	        lastDistance = curDistance;
 	    }
-	    if (withIter) {
+	    if (withIterations) {
 	        return {
-	            "clusters": clusterID,
-	            "centroids": centers,
-	            "iterations": iterations
+	            'clusters': clusterID,
+	            'centroids': centers,
+	            'iterations': iterations
 	        };
 	    } else {
 	        return {
-	            "clusters": clusterID,
-	            "centroids": centers
+	            'clusters': clusterID,
+	            'centroids': centers
 	        };
 	    }
 	}
@@ -14421,10 +14504,32 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 146 */
+/* 143 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	function squaredEuclidean(p, q) {
+	    var d = 0;
+	    for (var i = 0; i < p.length; i++) {
+	        d += (p[i] - q[i]) * (p[i] - q[i]);
+	    }
+	    return d;
+	}
+
+	function euclidean(p, q) {
+	    return Math.sqrt(squaredEuclidean(p, q));
+	}
+
+	module.exports = euclidean;
+	euclidean.squared = squaredEuclidean;
+
+
+/***/ },
+/* 144 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports.agnes = __webpack_require__(147);
+	exports.agnes = __webpack_require__(145);
 	exports.diana = __webpack_require__(154);
 	//exports.birch = require('./birch');
 	//exports.cure = require('./cure');
@@ -14432,16 +14537,17 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 147 */
+/* 145 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	var euclidean = __webpack_require__(47);
-	var ClusterLeaf = __webpack_require__(148);
-	var Cluster = __webpack_require__(149);
+	var ClusterLeaf = __webpack_require__(146);
+	var Cluster = __webpack_require__(147);
 
 	/**
+	 * @private
 	 * @param cluster1
 	 * @param cluster2
 	 * @param disFun
@@ -14458,6 +14564,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
+	 * @private
 	 * @param cluster1
 	 * @param cluster2
 	 * @param disFun
@@ -14474,6 +14581,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
+	 * @private
 	 * @param cluster1
 	 * @param cluster2
 	 * @param disFun
@@ -14488,6 +14596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
+	 * @private
 	 * @param cluster1
 	 * @param cluster2
 	 * @param disFun
@@ -14504,6 +14613,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
+	 * @private
 	 * @param cluster1
 	 * @param cluster2
 	 * @param disFun
@@ -14676,19 +14786,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 148 */
+/* 146 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
-	var Cluster = __webpack_require__(149);
+	var Cluster = __webpack_require__(147);
 	var util = __webpack_require__(150);
 
 	function ClusterLeaf (index) {
 	    Cluster.call(this);
 	    this.index = index;
 	    this.distance = 0;
-	    this.children = undefined;
+	    this.children = [];
 	}
 
 	util.inherits(ClusterLeaf, Cluster);
@@ -14697,10 +14807,12 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 149 */
-/***/ function(module, exports) {
+/* 147 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
+
+	const Heap = __webpack_require__(148);
 
 	function Cluster () {
 	    this.children = [];
@@ -14737,39 +14849,418 @@ return /******/ (function(modules) { // webpackBootstrap
 	 * @return {Cluster}
 	 */
 	Cluster.prototype.group = function (minGroups) {
-	    if (minGroups < 1) throw new RangeError('Number of groups too small');
-	    var root = new Cluster();
-	    root.children = this.children;
-	    root.distance = this.distance;
-	    root.index = this.index;
-	    if (minGroups === 1)
-	        return root;
-	    var list = [root];
-	    var aux;
-	    var listLeafs = [];
-	    while ((list.length + listLeafs.length) < minGroups && list.length !== 0) {
-	        aux = list.shift();
-	        if (aux.children)
-	            list = list.concat(aux.children);
-	        else
-	            listLeafs.push(aux);
+	    if (!Number.isInteger(minGroups) || minGroups < 1) throw new RangeError('Number of groups must be a positive integer');
+
+	    const heap = new Heap(function (a, b) {
+	        return b.distance - a.distance;
+	    });
+
+	    heap.push(this);
+
+	    while (heap.size() < minGroups) {
+	        var first = heap.pop();
+	        if (first.children.length === 0) {
+	            break;
+	        }
+	        first.children.forEach(child => heap.push(child));
 	    }
-	    if (list.length === 0) throw new RangeError('Number of groups too big');
-	    list = list.concat(listLeafs);
-	    for (var i = 0; i < list.length; i++)
-	        if (list[i].distance === aux.distance) {
-	            list.concat(list[i].children.slice(1));
-	            list[i] = list[i].children[0];
-	        }
-	    for (var j = 0; j < list.length; j++)
-	        if (list[j].distance !== 0) {
-	            var obj = list[j];
-	            obj.children = obj.index;
-	        }
+
+	    var root = new Cluster();
+	    root.children = heap.toArray();
+	    root.distance = this.distance;
+
 	    return root;
 	};
 
 	module.exports = Cluster;
+
+
+/***/ },
+/* 148 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(149);
+
+
+/***/ },
+/* 149 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Generated by CoffeeScript 1.8.0
+	(function() {
+	  var Heap, defaultCmp, floor, heapify, heappop, heappush, heappushpop, heapreplace, insort, min, nlargest, nsmallest, updateItem, _siftdown, _siftup;
+
+	  floor = Math.floor, min = Math.min;
+
+
+	  /*
+	  Default comparison function to be used
+	   */
+
+	  defaultCmp = function(x, y) {
+	    if (x < y) {
+	      return -1;
+	    }
+	    if (x > y) {
+	      return 1;
+	    }
+	    return 0;
+	  };
+
+
+	  /*
+	  Insert item x in list a, and keep it sorted assuming a is sorted.
+	  
+	  If x is already in a, insert it to the right of the rightmost x.
+	  
+	  Optional args lo (default 0) and hi (default a.length) bound the slice
+	  of a to be searched.
+	   */
+
+	  insort = function(a, x, lo, hi, cmp) {
+	    var mid;
+	    if (lo == null) {
+	      lo = 0;
+	    }
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    if (lo < 0) {
+	      throw new Error('lo must be non-negative');
+	    }
+	    if (hi == null) {
+	      hi = a.length;
+	    }
+	    while (lo < hi) {
+	      mid = floor((lo + hi) / 2);
+	      if (cmp(x, a[mid]) < 0) {
+	        hi = mid;
+	      } else {
+	        lo = mid + 1;
+	      }
+	    }
+	    return ([].splice.apply(a, [lo, lo - lo].concat(x)), x);
+	  };
+
+
+	  /*
+	  Push item onto heap, maintaining the heap invariant.
+	   */
+
+	  heappush = function(array, item, cmp) {
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    array.push(item);
+	    return _siftdown(array, 0, array.length - 1, cmp);
+	  };
+
+
+	  /*
+	  Pop the smallest item off the heap, maintaining the heap invariant.
+	   */
+
+	  heappop = function(array, cmp) {
+	    var lastelt, returnitem;
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    lastelt = array.pop();
+	    if (array.length) {
+	      returnitem = array[0];
+	      array[0] = lastelt;
+	      _siftup(array, 0, cmp);
+	    } else {
+	      returnitem = lastelt;
+	    }
+	    return returnitem;
+	  };
+
+
+	  /*
+	  Pop and return the current smallest value, and add the new item.
+	  
+	  This is more efficient than heappop() followed by heappush(), and can be
+	  more appropriate when using a fixed size heap. Note that the value
+	  returned may be larger than item! That constrains reasonable use of
+	  this routine unless written as part of a conditional replacement:
+	      if item > array[0]
+	        item = heapreplace(array, item)
+	   */
+
+	  heapreplace = function(array, item, cmp) {
+	    var returnitem;
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    returnitem = array[0];
+	    array[0] = item;
+	    _siftup(array, 0, cmp);
+	    return returnitem;
+	  };
+
+
+	  /*
+	  Fast version of a heappush followed by a heappop.
+	   */
+
+	  heappushpop = function(array, item, cmp) {
+	    var _ref;
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    if (array.length && cmp(array[0], item) < 0) {
+	      _ref = [array[0], item], item = _ref[0], array[0] = _ref[1];
+	      _siftup(array, 0, cmp);
+	    }
+	    return item;
+	  };
+
+
+	  /*
+	  Transform list into a heap, in-place, in O(array.length) time.
+	   */
+
+	  heapify = function(array, cmp) {
+	    var i, _i, _j, _len, _ref, _ref1, _results, _results1;
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    _ref1 = (function() {
+	      _results1 = [];
+	      for (var _j = 0, _ref = floor(array.length / 2); 0 <= _ref ? _j < _ref : _j > _ref; 0 <= _ref ? _j++ : _j--){ _results1.push(_j); }
+	      return _results1;
+	    }).apply(this).reverse();
+	    _results = [];
+	    for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
+	      i = _ref1[_i];
+	      _results.push(_siftup(array, i, cmp));
+	    }
+	    return _results;
+	  };
+
+
+	  /*
+	  Update the position of the given item in the heap.
+	  This function should be called every time the item is being modified.
+	   */
+
+	  updateItem = function(array, item, cmp) {
+	    var pos;
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    pos = array.indexOf(item);
+	    if (pos === -1) {
+	      return;
+	    }
+	    _siftdown(array, 0, pos, cmp);
+	    return _siftup(array, pos, cmp);
+	  };
+
+
+	  /*
+	  Find the n largest elements in a dataset.
+	   */
+
+	  nlargest = function(array, n, cmp) {
+	    var elem, result, _i, _len, _ref;
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    result = array.slice(0, n);
+	    if (!result.length) {
+	      return result;
+	    }
+	    heapify(result, cmp);
+	    _ref = array.slice(n);
+	    for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	      elem = _ref[_i];
+	      heappushpop(result, elem, cmp);
+	    }
+	    return result.sort(cmp).reverse();
+	  };
+
+
+	  /*
+	  Find the n smallest elements in a dataset.
+	   */
+
+	  nsmallest = function(array, n, cmp) {
+	    var elem, i, los, result, _i, _j, _len, _ref, _ref1, _results;
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    if (n * 10 <= array.length) {
+	      result = array.slice(0, n).sort(cmp);
+	      if (!result.length) {
+	        return result;
+	      }
+	      los = result[result.length - 1];
+	      _ref = array.slice(n);
+	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+	        elem = _ref[_i];
+	        if (cmp(elem, los) < 0) {
+	          insort(result, elem, 0, null, cmp);
+	          result.pop();
+	          los = result[result.length - 1];
+	        }
+	      }
+	      return result;
+	    }
+	    heapify(array, cmp);
+	    _results = [];
+	    for (i = _j = 0, _ref1 = min(n, array.length); 0 <= _ref1 ? _j < _ref1 : _j > _ref1; i = 0 <= _ref1 ? ++_j : --_j) {
+	      _results.push(heappop(array, cmp));
+	    }
+	    return _results;
+	  };
+
+	  _siftdown = function(array, startpos, pos, cmp) {
+	    var newitem, parent, parentpos;
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    newitem = array[pos];
+	    while (pos > startpos) {
+	      parentpos = (pos - 1) >> 1;
+	      parent = array[parentpos];
+	      if (cmp(newitem, parent) < 0) {
+	        array[pos] = parent;
+	        pos = parentpos;
+	        continue;
+	      }
+	      break;
+	    }
+	    return array[pos] = newitem;
+	  };
+
+	  _siftup = function(array, pos, cmp) {
+	    var childpos, endpos, newitem, rightpos, startpos;
+	    if (cmp == null) {
+	      cmp = defaultCmp;
+	    }
+	    endpos = array.length;
+	    startpos = pos;
+	    newitem = array[pos];
+	    childpos = 2 * pos + 1;
+	    while (childpos < endpos) {
+	      rightpos = childpos + 1;
+	      if (rightpos < endpos && !(cmp(array[childpos], array[rightpos]) < 0)) {
+	        childpos = rightpos;
+	      }
+	      array[pos] = array[childpos];
+	      pos = childpos;
+	      childpos = 2 * pos + 1;
+	    }
+	    array[pos] = newitem;
+	    return _siftdown(array, startpos, pos, cmp);
+	  };
+
+	  Heap = (function() {
+	    Heap.push = heappush;
+
+	    Heap.pop = heappop;
+
+	    Heap.replace = heapreplace;
+
+	    Heap.pushpop = heappushpop;
+
+	    Heap.heapify = heapify;
+
+	    Heap.updateItem = updateItem;
+
+	    Heap.nlargest = nlargest;
+
+	    Heap.nsmallest = nsmallest;
+
+	    function Heap(cmp) {
+	      this.cmp = cmp != null ? cmp : defaultCmp;
+	      this.nodes = [];
+	    }
+
+	    Heap.prototype.push = function(x) {
+	      return heappush(this.nodes, x, this.cmp);
+	    };
+
+	    Heap.prototype.pop = function() {
+	      return heappop(this.nodes, this.cmp);
+	    };
+
+	    Heap.prototype.peek = function() {
+	      return this.nodes[0];
+	    };
+
+	    Heap.prototype.contains = function(x) {
+	      return this.nodes.indexOf(x) !== -1;
+	    };
+
+	    Heap.prototype.replace = function(x) {
+	      return heapreplace(this.nodes, x, this.cmp);
+	    };
+
+	    Heap.prototype.pushpop = function(x) {
+	      return heappushpop(this.nodes, x, this.cmp);
+	    };
+
+	    Heap.prototype.heapify = function() {
+	      return heapify(this.nodes, this.cmp);
+	    };
+
+	    Heap.prototype.updateItem = function(x) {
+	      return updateItem(this.nodes, x, this.cmp);
+	    };
+
+	    Heap.prototype.clear = function() {
+	      return this.nodes = [];
+	    };
+
+	    Heap.prototype.empty = function() {
+	      return this.nodes.length === 0;
+	    };
+
+	    Heap.prototype.size = function() {
+	      return this.nodes.length;
+	    };
+
+	    Heap.prototype.clone = function() {
+	      var heap;
+	      heap = new Heap();
+	      heap.nodes = this.nodes.slice(0);
+	      return heap;
+	    };
+
+	    Heap.prototype.toArray = function() {
+	      return this.nodes.slice(0);
+	    };
+
+	    Heap.prototype.insert = Heap.prototype.push;
+
+	    Heap.prototype.top = Heap.prototype.peek;
+
+	    Heap.prototype.front = Heap.prototype.peek;
+
+	    Heap.prototype.has = Heap.prototype.contains;
+
+	    Heap.prototype.copy = Heap.prototype.clone;
+
+	    return Heap;
+
+	  })();
+
+	  (function(root, factory) {
+	    if (true) {
+	      return !(__WEBPACK_AMD_DEFINE_ARRAY__ = [], __WEBPACK_AMD_DEFINE_FACTORY__ = (factory), __WEBPACK_AMD_DEFINE_RESULT__ = (typeof __WEBPACK_AMD_DEFINE_FACTORY__ === 'function' ? (__WEBPACK_AMD_DEFINE_FACTORY__.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__)) : __WEBPACK_AMD_DEFINE_FACTORY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	    } else if (typeof exports === 'object') {
+	      return module.exports = factory();
+	    } else {
+	      return root.Heap = factory();
+	    }
+	  })(this, function() {
+	    return Heap;
+	  });
+
+	}).call(this);
 
 
 /***/ },
@@ -15380,25 +15871,40 @@ return /******/ (function(modules) { // webpackBootstrap
 	var cachedSetTimeout;
 	var cachedClearTimeout;
 
+	function defaultSetTimout() {
+	    throw new Error('setTimeout has not been defined');
+	}
+	function defaultClearTimeout () {
+	    throw new Error('clearTimeout has not been defined');
+	}
 	(function () {
 	    try {
-	        cachedSetTimeout = setTimeout;
-	    } catch (e) {
-	        cachedSetTimeout = function () {
-	            throw new Error('setTimeout is not defined');
+	        if (typeof setTimeout === 'function') {
+	            cachedSetTimeout = setTimeout;
+	        } else {
+	            cachedSetTimeout = defaultSetTimout;
 	        }
+	    } catch (e) {
+	        cachedSetTimeout = defaultSetTimout;
 	    }
 	    try {
-	        cachedClearTimeout = clearTimeout;
-	    } catch (e) {
-	        cachedClearTimeout = function () {
-	            throw new Error('clearTimeout is not defined');
+	        if (typeof clearTimeout === 'function') {
+	            cachedClearTimeout = clearTimeout;
+	        } else {
+	            cachedClearTimeout = defaultClearTimeout;
 	        }
+	    } catch (e) {
+	        cachedClearTimeout = defaultClearTimeout;
 	    }
 	} ())
 	function runTimeout(fun) {
 	    if (cachedSetTimeout === setTimeout) {
 	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    // if setTimeout wasn't available but was latter defined
+	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+	        cachedSetTimeout = setTimeout;
 	        return setTimeout(fun, 0);
 	    }
 	    try {
@@ -15419,6 +15925,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	function runClearTimeout(marker) {
 	    if (cachedClearTimeout === clearTimeout) {
 	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    // if clearTimeout wasn't available but was latter defined
+	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+	        cachedClearTimeout = clearTimeout;
 	        return clearTimeout(marker);
 	    }
 	    try {
@@ -15578,10 +16089,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	'use strict';
 
 	var euclidean = __webpack_require__(47);
-	var ClusterLeaf = __webpack_require__(148);
-	var Cluster = __webpack_require__(149);
+	var ClusterLeaf = __webpack_require__(146);
+	var Cluster = __webpack_require__(147);
 
 	/**
+	 * @private
 	 * @param {Array <Array <number>>} cluster1
 	 * @param {Array <Array <number>>} cluster2
 	 * @param {function} disFun
@@ -15598,6 +16110,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
+	 * @private
 	 * @param {Array <Array <number>>} cluster1
 	 * @param {Array <Array <number>>} cluster2
 	 * @param {function} disFun
@@ -15614,6 +16127,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
+	 * @private
 	 * @param {Array <Array <number>>} cluster1
 	 * @param {Array <Array <number>>} cluster2
 	 * @param {function} disFun
@@ -15628,6 +16142,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
+	 * @private
 	 * @param {Array <Array <number>>} cluster1
 	 * @param {Array <Array <number>>} cluster2
 	 * @param {function} disFun
@@ -15654,6 +16169,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
+	 * @private
 	 * @param {Array <Array <number>>} cluster1
 	 * @param {Array <Array <number>>} cluster2
 	 * @param {function} disFun
@@ -15680,6 +16196,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 	/**
+	 * @private
 	 * Returns the most distant point and his distance
 	 * @param {Array <Array <number>>} splitting - Clusters to split
 	 * @param {Array <Array <number>>} data - Original data
@@ -15724,6 +16241,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 	/**
+	 * @private
 	 * Intra-cluster distance
 	 * @param {Array} index
 	 * @param {Array} data
