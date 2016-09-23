@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "node -p \"void(require('./'));console.log('OK')\"",
-    "build": "cheminfo build --root ML --no-uglify"
+    "build": "cheminfo build --root ML"
   },
   "repository": {
     "type": "git",
@@ -58,6 +58,6 @@
     "ml-xsadd": "^1.0.0"
   },
   "devDependencies": {
-    "cheminfo-tools": "^1.0.1"
+    "cheminfo-tools": "^1.10.0"
   }
 }
