@@ -5,7 +5,7 @@
   [![David deps][david-image]][david-url]
   [![npm download][download-image]][download-url]
 
-Machine learning tools
+Machine learning tools in JavaScript
 
 ## Introduction
 
