@@ -62,7 +62,8 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
     * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)
     * Pad array: [`ML.PadArray`](https://github.com/mljs/pad-array)
     * Regression: [`ML.Regression`](https://github.com/mljs/regression)
-    * Binary search: [`ML.BinarySearch`](https://github.com/mljs/binary-search)
+    * Binary search: [`ML.binarySearch`](https://github.com/darkskyapp/binary-search)
+    * Number comparison functions for sorting: [`ML.numSort`](https://github.com/sindresorhus/num-sort)
 * Math: `ML.Math`
     * Distance: [`ML.Math.Distance`](https://github.com/mljs/distance)
     * Similarity: [`ML.Math.Similarity`](https://github.com/mljs/distance)
@@ -71,7 +72,7 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
     * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)
     * Sparse matrix: [`ML.SparseMatrix`](https://github.com/mljs/sparse-matrix)
     * Kernels: [`ML.Kernel`](https://github.com/mljs/kernel)
-    * optimization: [`ML.Optimization`](https://github.com/mljs/optimization)
+    * Optimization: [`ML.Optimization`](https://github.com/mljs/optimization)
     * BellOptimizer: [`ML.BellOptimizer`](https://github.com/mljs/optimize-lorentzian)
 * Stat: [`ML.Stat`](https://github.com/mljs/stat)
     * Array: `ML.Stat.array`
