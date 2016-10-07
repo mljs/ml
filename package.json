@@ -29,7 +29,7 @@
   },
   "homepage": "https://github.com/mljs/ml",
   "dependencies": {
-    "ml-array-utils": "^0.2.4",
+    "ml-array-utils": "^0.3.0",
     "ml-binary-search": "^1.1.1",
     "ml-bit-array": "^1.0.0",
     "ml-cross-validation": "^1.0.1",
