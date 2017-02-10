@@ -70,11 +70,11 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
     * DistanceMatrix: [`ML.Math.DistanceMatrix`](https://github.com/mljs/distance-matrix)
     * Savitzky-Golay filter: [`ML.Math.SG`](https://github.com/mljs/savitzky-golay)
     * Savitzky-Golay generalized: [`ML.Math.SGG`](https://github.com/mljs/savitzky-golay-generalized)
-    * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)
-    * Sparse matrix: [`ML.SparseMatrix`](https://github.com/mljs/sparse-matrix)
-    * Kernels: [`ML.Kernel`](https://github.com/mljs/kernel)
-    * Optimization: [`ML.Optimization`](https://github.com/mljs/optimization)
-    * BellOptimizer: [`ML.BellOptimizer`](https://github.com/mljs/optimize-lorentzian)
+    * Matrix: [`ML.Math.Matrix`](https://github.com/mljs/matrix) (alias of `ML.Matrix`)
+    * Sparse matrix: [`ML.Math.SparseMatrix`](https://github.com/mljs/sparse-matrix)
+    * Kernels: [`ML.Math.Kernel`](https://github.com/mljs/kernel)
+    * Optimization: [`ML.Math.Optimization`](https://github.com/mljs/optimization)
+    * BellOptimizer: [`ML.Math.BellOptimizer`](https://github.com/mljs/optimize-lorentzian)
 * Stat: [`ML.Stat`](https://github.com/mljs/stat)
     * Array: `ML.Stat.array`
     * Matrix: `ML.Stat.matrix`
