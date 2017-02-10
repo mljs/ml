@@ -17,6 +17,7 @@ var Math = exports.Math = {};
 var distance = require('ml-distance');
 Math.Distance = distance.distance;
 Math.Similarity = distance.similarity;
+Math.DistanceMatrix = require('ml-distance-matrix');
 Math.SG = require('ml-savitzky-golay');
 Math.SGG = require('ml-savitzky-golay-generalized');
 Math.Matrix = exports.Matrix;

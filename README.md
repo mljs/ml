@@ -67,6 +67,7 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
 * Math: `ML.Math`
     * Distance: [`ML.Math.Distance`](https://github.com/mljs/distance)
     * Similarity: [`ML.Math.Similarity`](https://github.com/mljs/distance)
+    * DistanceMatrix: [`ML.Math.DistanceMatrix`](https://github.com/mljs/distance-matrix)
     * Savitzky-Golay filter: [`ML.Math.SG`](https://github.com/mljs/savitzky-golay)
     * Savitzky-Golay generalized: [`ML.Math.SGG`](https://github.com/mljs/savitzky-golay-generalized)
     * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)

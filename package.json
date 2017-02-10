@@ -35,6 +35,7 @@
     "ml-cross-validation": "^1.0.1",
     "ml-curve-fitting": "^0.0.7",
     "ml-distance": "^2.1.1",
+    "ml-distance-matrix": "^1.0.0",
     "ml-fnn": "^3.0.0",
     "ml-hash-table": "^0.2.0",
     "ml-hclust": "^1.2.0",
