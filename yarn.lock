@@ -3461,7 +3461,13 @@ ml-knn@^1.0.0:
   dependencies:
     ml-distance "^2.0.1"
 
-ml-matrix@^2.0.0, ml-matrix@^2.1.0:
+ml-levenberg-marquardt@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ml-levenberg-marquardt/-/ml-levenberg-marquardt-1.0.0.tgz#ea9e7ce6e5b5ebb38342fc811cb55db96d610331"
+  dependencies:
+    ml-matrix "^2.2.0"
+
+ml-matrix@^2.0.0, ml-matrix@^2.1.0, ml-matrix@^2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/ml-matrix/-/ml-matrix-2.2.0.tgz#a281681f9e6ee89bbec57e2266441d67f6660d79"
   dependencies:
