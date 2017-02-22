@@ -22,8 +22,6 @@ Math.SG = require('ml-savitzky-golay');
 Math.SGG = require('ml-savitzky-golay-generalized');
 Math.Matrix = exports.Matrix;
 Math.SparseMatrix = require('ml-sparse-matrix');
-Math.BellOptimizer = require('ml-optimize-lorentzian');
-Math.CurveFitting = require('ml-curve-fitting');
 Math.Kernel = require('ml-kernel');
 
 
@@ -35,6 +33,12 @@ Stat.matrix = require('ml-stat').matrix;
 Stat.PCA = require('ml-pca');
 Stat.Performance = require('ml-performance');
 
+// Math packages
+var Optimization = exports.Optimization = {};
+
+Optimization.BellOptimizer = require('ml-optimize-lorentzian');
+Optimization.CurveFitting = require('ml-curve-fitting');
+Optimization.LevenbergMarquardt = require('ml-levenberg-marquardt');
 
 // Random number generation
 var RNG = exports.RNG = {};

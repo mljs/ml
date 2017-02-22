@@ -73,13 +73,14 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
     * Matrix: [`ML.Math.Matrix`](https://github.com/mljs/matrix) (alias of `ML.Matrix`)
     * Sparse matrix: [`ML.Math.SparseMatrix`](https://github.com/mljs/sparse-matrix)
     * Kernels: [`ML.Math.Kernel`](https://github.com/mljs/kernel)
-    * Optimization: [`ML.Math.Optimization`](https://github.com/mljs/optimization)
-    * BellOptimizer: [`ML.Math.BellOptimizer`](https://github.com/mljs/optimize-lorentzian)
 * Stat: [`ML.Stat`](https://github.com/mljs/stat)
     * Array: `ML.Stat.array`
     * Matrix: `ML.Stat.matrix`
     * Principal component analysis (PCA): [`ML.Stat.PCA`](https://github.com/mljs/pca)
     * Performance: [`ML.Stat.Performance`](https://github.com/mljs/performance)
+* Optimization: `ML.Optimization`
+    * BellOptimizer: [`ML.Optimization.BellOptimizer`](https://github.com/mljs/optimize-lorentzian)
+    * LevenbergMarquardt: [`ML.Optimization.LevenbergMarquardt`](https://github.com/mljs/levenberg-marquardt)
 * Random number generation: `ML.RNG`
     * XORShift-add: [`ML.RNG.XSadd`](https://github.com/mljs/xsadd)
 * Clustering: `ML.Clust`
