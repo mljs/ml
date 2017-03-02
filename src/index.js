@@ -37,7 +37,6 @@ Stat.Performance = require('ml-performance');
 var Optimization = exports.Optimization = {};
 
 Optimization.BellOptimizer = require('ml-optimize-lorentzian');
-Optimization.CurveFitting = require('ml-curve-fitting');
 Optimization.LevenbergMarquardt = require('ml-levenberg-marquardt');
 
 // Random number generation
