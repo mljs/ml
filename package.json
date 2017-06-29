@@ -50,7 +50,7 @@
     "ml-pca": "^1.1.2",
     "ml-performance": "^0.2.0",
     "ml-pls": "^0.1.1",
-    "ml-regression": "^4.4.0",
+    "ml-regression": "^4.4.1",
     "ml-savitzky-golay": "^2.0.4",
     "ml-savitzky-golay-generalized": "^1.1.0",
     "ml-som": "^0.0.6",
