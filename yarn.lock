@@ -3762,11 +3762,16 @@ ml-combinations@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/ml-combinations/-/ml-combinations-1.0.1.tgz#12de0e538d7ed5ff4fcf209924878ea66a8ba451"
 
-ml-cross-validation@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/ml-cross-validation/-/ml-cross-validation-1.0.1.tgz#2ee48f0382326cdb6bb5913874122a4caa8142d0"
+ml-confusion-matrix@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/ml-confusion-matrix/-/ml-confusion-matrix-0.3.0.tgz#5cd7795015cd0ea7adac04f02dfb2a682109c9ae"
+
+ml-cross-validation@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/ml-cross-validation/-/ml-cross-validation-1.1.0.tgz#5a12e220b23ad1e061f5eb0619014a58ded30668"
   dependencies:
     ml-combinations "^1.0.1"
+    ml-confusion-matrix "^0.3.0"
 
 ml-curve-fitting@0.0.7, ml-curve-fitting@^0.0.7:
   version "0.0.7"
@@ -3782,7 +3787,7 @@ ml-distance-matrix@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/ml-distance-matrix/-/ml-distance-matrix-1.0.0.tgz#1d1ea4712b070c35407ba666ba8a38bc342ce7eb"
 
-ml-distance@^2.0.1, ml-distance@^2.1.1:
+ml-distance@^2.1.1:
   version "2.1.1"
   resolved "https://registry.yarnpkg.com/ml-distance/-/ml-distance-2.1.1.tgz#f6cc1f2970819cb42e68c68de363309ba3bd079f"
   dependencies:
@@ -3844,11 +3849,11 @@ ml-kmeans@^3.0.0:
     ml-distance-euclidean "^1.0.0"
     ml-nearest-vector "^1.0.0"
 
-ml-knn@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/ml-knn/-/ml-knn-1.0.0.tgz#6a98ea95db5b901db06d0b4220600153c2ef89d5"
+ml-knn@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/ml-knn/-/ml-knn-2.0.0.tgz#52a274fa8edb7a16609bc7b5cc57d2e959ff6a51"
   dependencies:
-    ml-distance "^2.0.1"
+    ml-distance-euclidean "^1.0.0"
 
 ml-levenberg-marquardt@^1.0.0:
   version "1.0.0"
