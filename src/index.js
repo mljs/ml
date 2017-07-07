@@ -49,6 +49,8 @@ var SL = exports.SL = {};
 
 SL.CV = require('ml-cross-validation');
 SL.CrossValidation = SL.CV; // Alias
+SL.CM = require('ml-confusion-matrix');
+SL.ConfusionMatrix = SL.CM; // Alias
 SL.SVM = require('ml-svm');
 SL.KNN = require('ml-knn');
 SL.NaiveBayes = require('ml-naivebayes');
