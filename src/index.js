@@ -1,10 +1,12 @@
 'use strict';
 
+const Matrix = require('ml-matrix');
+
 // Root packages
 exports.ArrayUtils = exports.AU = require('ml-array-utils');
 exports.BitArray = require('ml-bit-array');
 exports.HashTable = require('ml-hash-table');
-exports.Matrix = require('ml-matrix').default;
+exports.Matrix = Matrix.default;
 exports.PadArray = require('ml-pad-array');
 exports.Regression = require('ml-regression');
 exports.binarySearch = require('binary-search');
@@ -20,7 +22,7 @@ Math.Similarity = distance.similarity;
 Math.DistanceMatrix = require('ml-distance-matrix');
 Math.SG = require('ml-savitzky-golay');
 Math.SGG = require('ml-savitzky-golay-generalized');
-Math.Matrix = exports.Matrix;
+Math.Matrix = Matrix;
 Math.SparseMatrix = require('ml-sparse-matrix');
 Math.Kernel = require('ml-kernel');
 
