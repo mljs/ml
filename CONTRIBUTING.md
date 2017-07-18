@@ -30,7 +30,7 @@ Exception: class names must start with a capital letter.
 
 ### Use understandable names
 
-The API is the point of contact with the outside world. People that use it should remember what an
+The API is the point of contact with the outside world. People who use it should understand what an
 option or a function does without looking at the documentation.
 
 #### Good
@@ -48,34 +48,34 @@ option or a function does without looking at the documentation.
 Functions that take some input and directly return the result should always have the following signature:
 
 ```js
-function myFunction(param1, param2, ..., paramN, options) {}
+function myFunction(param1, param2, ..., paramN, options = {}) { ... }
 ```
 
-The `param1` to `paramN` arguments are reserved for __mandatory__ parameters. Anything else goes in an `options` object.
+The `param1` to `paramN` arguments are reserved for __mandatory__ parameters. Anything else goes in an `options` object.  
+The call should not fail if `options` is undefined.
 
-To handle default options, use [`Object.assign`](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Object/assign):
+To handle default options, use default parameters and object destructuring:
 
 ```js
-var defaultOptions = {
-    option1: 'value1',
-    option2: 'value2'
-};
-
-function myFunction(options) {
-    options = Object.assign({}, defaultOptions, options);
+function myFunction(options = {}) {
+    const {
+        option1 = 'value1',
+        option2 = 'value2'
+    } = options;
     ...
 }
 ```
 
 ## Predictors
 
-Predictors are classes which implement the following interface.
+Predictors are classes which implement the following interface:
 
-### new Predictor()
+### new Predictor([options])
 
-Creates the predictor. The constructor can take parameters or options to initialize the algorithm.
+Creates the predictor. The constructor can take parameters or options to initialize the algorithm.  
+Alternatively, if the predictor has no training phase, it can be instantiated like so: `new Predictor(features[[, labels], options])`
 
-### predictor.train(features, [labels])
+### predictor.train(features[[, labels], options])
 If the predictor has a training phase, it is executed here.
 
 ### predictor.predict(features)
@@ -89,7 +89,8 @@ It should return a value that represents the quality of a predictor.
 
 ### predictor.toJSON()
 
-This method should return plain JS Object that enables to reload the current predictor.
+This method should return plain JavaScript Object that enables to reload the current predictor
+and that can be serialized to a JSON string using `JSON.stringify`
 
 ### Predictor.load(json)
 
