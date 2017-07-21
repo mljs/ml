@@ -37,7 +37,7 @@
     "ml-curve-fitting": "^0.0.7",
     "ml-distance": "^2.1.1",
     "ml-distance-matrix": "^1.0.0",
-    "ml-fnn": "^3.0.0",
+    "ml-fnn": "^4.0.0",
     "ml-hash-table": "^0.2.1",
     "ml-hclust": "^1.3.0",
     "ml-kernel": "^2.3.3",
