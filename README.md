@@ -79,7 +79,6 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
     * Principal component analysis (PCA): [`ML.Stat.PCA`](https://github.com/mljs/pca)
     * Performance: [`ML.Stat.Performance`](https://github.com/mljs/performance)
 * Optimization: `ML.Optimization`
-    * BellOptimizer: [`ML.Optimization.BellOptimizer`](https://github.com/mljs/optimize-lorentzian)
     * LevenbergMarquardt: [`ML.Optimization.LevenbergMarquardt`](https://github.com/mljs/levenberg-marquardt)
 * Random number generation: `ML.RNG`
     * XORShift-add: [`ML.RNG.XSadd`](https://github.com/mljs/xsadd)
