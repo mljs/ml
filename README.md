@@ -53,48 +53,66 @@ require(['path/to/ml/dist/ml.min'], function (ML) {
 </script>
 ```
 
-## Tools
+## List of packages
 
-* Root packages
-    * Array Utils: [`ML.ArrayUtils`](https://github.com/mljs/array-utils)
-    * Bit array operations: [`ML.BitArray`](https://github.com/mljs/bit-array)
-    * Hash table: [`ML.HashTable`](https://github.com/mljs/hash-table)
-    * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix) (Matrix class)
-    * Pad array: [`ML.PadArray`](https://github.com/mljs/pad-array)
-    * Regression: [`ML.Regression`](https://github.com/mljs/regression)
-    * Binary search: [`ML.binarySearch`](https://github.com/darkskyapp/binary-search)
-    * Number comparison functions for sorting: [`ML.numSort`](https://github.com/sindresorhus/num-sort)
-* Math: `ML.Math`
-    * Distance: [`ML.Math.Distance`](https://github.com/mljs/distance)
-    * Similarity: [`ML.Math.Similarity`](https://github.com/mljs/distance)
-    * DistanceMatrix: [`ML.Math.DistanceMatrix`](https://github.com/mljs/distance-matrix)
-    * Savitzky-Golay filter: [`ML.Math.SG`](https://github.com/mljs/savitzky-golay)
-    * Savitzky-Golay generalized: [`ML.Math.SGG`](https://github.com/mljs/savitzky-golay-generalized)
-    * Matrix: [`ML.Math.Matrix`](https://github.com/mljs/matrix) (All exports of the `ml-matrix` package)
-    * Sparse matrix: [`ML.Math.SparseMatrix`](https://github.com/mljs/sparse-matrix)
-    * Kernels: [`ML.Math.Kernel`](https://github.com/mljs/kernel)
-* Stat: [`ML.Stat`](https://github.com/mljs/stat)
-    * Array: `ML.Stat.array`
-    * Matrix: `ML.Stat.matrix`
-    * Principal component analysis (PCA): [`ML.Stat.PCA`](https://github.com/mljs/pca)
-    * Performance: [`ML.Stat.Performance`](https://github.com/mljs/performance)
-* Optimization: `ML.Optimization`
-    * LevenbergMarquardt: [`ML.Optimization.LevenbergMarquardt`](https://github.com/mljs/levenberg-marquardt)
-* Random number generation: `ML.RNG`
-    * XORShift-add: [`ML.RNG.XSadd`](https://github.com/mljs/xsadd)
-* Clustering: `ML.Clust`
-    * Hierarchical clustering: [`ML.Clust.hclust`](https://github.com/mljs/hclust)
-    * K-means: [`ML.Clust.kmeans`](https://github.com/mljs/kmeans)
-* Supervised learning: `ML.SL`
-    * Support vector machines: [`ML.SL.SVM`](https://github.com/mljs/svm)
-    * Naive Bayes: [`ML.SL.NaiveBayes`](https://github.com/mljs/naive-bayes)
-    * K-Nearest Neighbor: [`ML.SL.KNN`](https://github.com/mljs/knn)
-    * Partial least squares (PLS): [`ML.SL.PLS`](https://github.com/mljs/pls)
-    * Cross-validation utility: [`ML.SL.CrossValidation`](https://github.com/mljs/cross-validation) (alias [`ML.SL.CV`](https://github.com/mljs/cross-validation))
-    * Confusion matrix utility [`ML.SL.ConfusionMatrix`](https://github.com/mljs/confusion-matrix) (alias [`ML.SL.CM`](https://github.com/mljs/confusion-matrix))
-* Neural networks: `ML.NN`
-    * Self-organizing map / Kohonen networks: [`ML.NN.SOM`](https://github.com/mljs/som)
-    * Feedforward Neural Networks: [`ML.NN.FNN`](https://github.com/mljs/feedforward-neural-networks)
+### Unsupervised learning
+
+#### Principal component analysis (PCA): [`ML.PCA`](https://github.com/mljs/pca)
+#### Hierarchical clustering: [`ML.hclust`](https://github.com/mljs/hclust)
+#### K-means: [`ML.kmeans`](https://github.com/mljs/kmeans)
+
+### Supervised learning
+
+#### Support vector machines: [`ML.SVM`](https://github.com/mljs/svm)
+#### Naive Bayes: [`ML.NaiveBayes`](https://github.com/mljs/naive-bayes)
+#### K-Nearest Neighbor (KNN): [`ML.KNN`](https://github.com/mljs/knn)
+#### Partial least squares (PLS): [`ML.PLS`](https://github.com/mljs/pls)
+#### Cross-validation: [`ML.CrossValidation`](https://github.com/mljs/cross-validation) (alias [`ML.SL.CV`](https://github.com/mljs/cross-validation))
+#### Confusion matrix: [`ML.ConfusionMatrix`](https://github.com/mljs/confusion-matrix) (alias [`ML.SL.CM`](https://github.com/mljs/confusion-matrix))
+
+### Artificial neural networks
+
+#### Self-organizing map / Kohonen networks: [`ML.SOM`](https://github.com/mljs/som)
+#### Feedforward Neural Networks: [`ML.FNN`](https://github.com/mljs/feedforward-neural-networks)
+
+### Regression
+
+#### Regression: [`ML.Regression`](https://github.com/mljs/regression)
+
+### Optimization
+
+#### LevenbergMarquardt: [`ML.LevenbergMarquardt`](https://github.com/mljs/levenberg-marquardt)
+
+### Math
+
+#### Matrix: [`ML.Matrix`](https://github.com/mljs/matrix)
+#### Sparse matrix: [`ML.SparseMatrix`](https://github.com/mljs/sparse-matrix)
+#### Kernels: [`ML.Kernel`](https://github.com/mljs/kernel)
+#### Distance: [`ML.Distance`](https://github.com/mljs/distance)
+#### Similarity: [`ML.Similarity`](https://github.com/mljs/distance)
+#### DistanceMatrix: [`ML.DistanceMatrix`](https://github.com/mljs/distance-matrix)
+#### XORShift-add RNG: [`ML.XSadd`](https://github.com/mljs/xsadd)
+
+### Statistics
+
+#### Array stats: [`ML.Stat.array`](https://github.com/mljs/stat)
+#### Matrix stats: [`ML.Stat.matrix`](https://github.com/mljs/stat)
+#### Performance: [`ML.Performance`](https://github.com/mljs/performance)
+
+### Data preprocessing
+
+#### Principal component analysis (PCA): [`ML.PCA`](https://github.com/mljs/pca)
+#### Savitzky-Golay filter: [`ML.Math.SG`](https://github.com/mljs/savitzky-golay)
+#### Savitzky-Golay generalized: [`ML.Math.SGG`](https://github.com/mljs/savitzky-golay-generalized)
+
+### Utility
+
+#### Array Utils: [`ML.ArrayUtils`](https://github.com/mljs/array-utils)
+#### Bit array operations: [`ML.BitArray`](https://github.com/mljs/bit-array)
+#### Hash table: [`ML.HashTable`](https://github.com/mljs/hash-table)
+#### Pad array: [`ML.PadArray`](https://github.com/mljs/pad-array)
+#### Binary search: [`ML.binarySearch`](https://github.com/darkskyapp/binary-search)
+#### Number comparison functions for sorting: [`ML.numSort`](https://github.com/sindresorhus/num-sort)
 
 ## License
 
