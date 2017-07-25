@@ -41,7 +41,7 @@ It will be available as the global `ML` variable. The package is in UMD format a
 
 ### Optimization
 
-** LevenbergMarquardt: [`ML.LevenbergMarquardt`](https://github.com/mljs/levenberg-marquardt)
+* LevenbergMarquardt: [`ML.LevenbergMarquardt`](https://github.com/mljs/levenberg-marquardt)
 
 ### Math
 
