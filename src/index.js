@@ -1,72 +1,57 @@
 'use strict';
 
-const Matrix = require('ml-matrix');
+const ML = exports;
 
-// Root packages
-exports.ArrayUtils = exports.AU = require('ml-array-utils');
-exports.BitArray = require('ml-bit-array');
-exports.HashTable = require('ml-hash-table');
-exports.Matrix = Matrix.default;
-exports.PadArray = require('ml-pad-array');
-exports.Regression = require('ml-regression');
-exports.binarySearch = require('binary-search');
-exports.numSort = require('num-sort');
+// Try to keep this list in the same structure as the README.
 
-
-// Math packages
-var Math = exports.Math = {};
-
-var distance = require('ml-distance');
-Math.Distance = distance.distance;
-Math.Similarity = distance.similarity;
-Math.DistanceMatrix = require('ml-distance-matrix');
-Math.SG = require('ml-savitzky-golay');
-Math.SGG = require('ml-savitzky-golay-generalized');
-Math.Matrix = Matrix;
-Math.SparseMatrix = require('ml-sparse-matrix');
-Math.Kernel = require('ml-kernel');
-
-
-// Statistics packages
-var Stat = exports.Stat = {};
-
-Stat.array = require('ml-stat').array;
-Stat.matrix = require('ml-stat').matrix;
-Stat.PCA = require('ml-pca');
-Stat.Performance = require('ml-performance');
-
-// Math packages
-var Optimization = exports.Optimization = {};
-
-Optimization.LevenbergMarquardt = require('ml-levenberg-marquardt');
-
-// Random number generation
-var RNG = exports.RNG = {};
-RNG.XSadd = require('ml-xsadd');
-
+// Unsupervised learning
+ML.PCA = require('ml-pca');
+ML.HClust = require('ml-hclust');
+ML.KMeans = require('ml-kmeans');
 
 // Supervised learning
-var SL = exports.SL = {};
+ML.SVM = require('ml-svm');
+ML.NaiveBayes = require('ml-naivebayes');
+ML.KNN = require('ml-knn');
+ML.PLS = require('ml-pls');
+ML.CrossValidation = require('ml-cross-validation');
+ML.ConfusionMatrix = require('ml-confusion-matrix');
 
-SL.CV = require('ml-cross-validation');
-SL.CrossValidation = SL.CV; // Alias
-SL.CM = require('ml-confusion-matrix');
-SL.ConfusionMatrix = SL.CM; // Alias
-SL.SVM = require('ml-svm');
-SL.KNN = require('ml-knn');
-SL.NaiveBayes = require('ml-naivebayes');
-SL.PLS = require('ml-pls');
+// Artificial neural networks
+ML.FNN = require('ml-fnn');
+ML.SOM = require('ml-som');
 
+// Regression
+ML.Regression = require('ml-regression');
 
-// Clustering
-var Clust = exports.Clust = {};
+// Optimization
+ML.LevenbergMarquardt = require('ml-levenberg-marquardt');
 
-Clust.kmeans = require('ml-kmeans');
-Clust.hclust = require('ml-hclust');
+// Math
+ML.Matrix = require('ml-matrix').Matrix;
+ML.MatrixUtil = require('ml-matrix');
+ML.SparseMatrix = require('ml-sparse-matrix');
+ML.Kernel = require('ml-kernel');
+ML.Distance = require('ml-distance').distance;
+ML.Similarity = require('ml-distance').similarity;
+ML.DistanceMatrix = require('ml-distance-matrix');
+ML.XSadd = require('ml-xsadd');
 
+// Statistics
+ML.ArrayStat = require('ml-stat').array;
+ML.MatrixStat = require('ml-stat').matrix;
+ML.Performance = require('ml-performance');
 
-// Neural networks
-var NN = exports.NN = exports.nn = {};
+// Data preprocessing
+ML.SavitzkyGolay = require('ml-savitzky-golay');
+ML.SavitzkyGolayGeneralized = require('ml-savitzky-golay-generalized');
 
-NN.SOM = require('ml-som');
-NN.FNN = require('ml-fnn');
+// Utility
+ML.BitArray = require('ml-bit-array');
+ML.HashTable = require('ml-hash-table');
+ML.padArray = require('ml-pad-array');
+ML.binarySearch = require('binary-search');
+ML.numSort = require('num-sort');
+
+// Undocumented/deprecated packages
+ML.ArrayUtils = require('ml-array-utils');
