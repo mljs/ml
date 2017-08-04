@@ -37,34 +37,31 @@ It will be available as the global `ML` variable. The package is in UMD format a
 
 ### Regression
 
-* Regression: [`ML.Regression`](https://github.com/mljs/regression)
+* TBD
 
 ### Optimization
 
-* LevenbergMarquardt: [`ML.LevenbergMarquardt`](https://github.com/mljs/levenberg-marquardt)
+* Levenberg-Marquardt: [`ML.levenbergMarquardt`](https://github.com/mljs/levenberg-marquardt)
 
 ### Math
 
 * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix) (Matrix class)
-* Matrix decompositions and utilities: [`ML.MatrixUtil`](https://github.com/mljs/matrix)
 * Sparse matrix: [`ML.SparseMatrix`](https://github.com/mljs/sparse-matrix)
 * Kernels: [`ML.Kernel`](https://github.com/mljs/kernel)
 * Distance functions: [`ML.Distance`](https://github.com/mljs/distance)
 * Similarity functions: [`ML.Similarity`](https://github.com/mljs/distance)
-* DistanceMatrix: [`ML.DistanceMatrix`](https://github.com/mljs/distance-matrix)
+* Distance matrix: [`ML.distanceMatrix`](https://github.com/mljs/distance-matrix)
 * XORShift-add RNG: [`ML.XSadd`](https://github.com/mljs/xsadd)
 
 ### Statistics
 
-* Array stat: [`ML.ArrayStat`](https://github.com/mljs/stat)
-* Matrix stat: [`ML.MatrixStat`](https://github.com/mljs/stat)
 * Performance (ROC curve): [`ML.Performance`](https://github.com/mljs/performance)
 
 ### Data preprocessing
 
 * Principal component analysis (PCA): [`ML.PCA`](https://github.com/mljs/pca)
-* Savitzky-Golay filter: [`ML.SavitzkyGolay`](https://github.com/mljs/savitzky-golay)
-* Savitzky-Golay generalized: [`ML.SavitzkyGolayGeneralized`](https://github.com/mljs/savitzky-golay-generalized)
+* Savitzky-Golay filter: [`ML.savitzkyGolay`](https://github.com/mljs/savitzky-golay)
+* Savitzky-Golay generalized: [`ML.savitzkyGolayGeneralized`](https://github.com/mljs/savitzky-golay-generalized)
 
 ### Utility
 
