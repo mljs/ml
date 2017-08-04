@@ -22,29 +22,25 @@ ML.FNN = require('ml-fnn');
 ML.SOM = require('ml-som');
 
 // Regression
-ML.Regression = require('ml-regression');
 
 // Optimization
-ML.LevenbergMarquardt = require('ml-levenberg-marquardt');
+ML.levenbergMarquardt = require('ml-levenberg-marquardt');
 
 // Math
 ML.Matrix = require('ml-matrix').Matrix;
-ML.MatrixUtil = require('ml-matrix');
 ML.SparseMatrix = require('ml-sparse-matrix');
 ML.Kernel = require('ml-kernel');
 ML.Distance = require('ml-distance').distance;
 ML.Similarity = require('ml-distance').similarity;
-ML.DistanceMatrix = require('ml-distance-matrix');
+ML.distanceMatrix = require('ml-distance-matrix');
 ML.XSadd = require('ml-xsadd');
 
 // Statistics
-ML.ArrayStat = require('ml-stat').array;
-ML.MatrixStat = require('ml-stat').matrix;
 ML.Performance = require('ml-performance');
 
 // Data preprocessing
-ML.SavitzkyGolay = require('ml-savitzky-golay');
-ML.SavitzkyGolayGeneralized = require('ml-savitzky-golay-generalized');
+ML.savitzkyGolay = require('ml-savitzky-golay');
+ML.savitzkyGolayGeneralized = require('ml-savitzky-golay-generalized');
 
 // Utility
 ML.BitArray = require('ml-bit-array');
@@ -55,3 +51,7 @@ ML.numSort = require('num-sort');
 
 // Undocumented/deprecated packages
 ML.ArrayUtils = require('ml-array-utils');
+ML.Regression = require('ml-regression');
+ML.MatrixUtil = require('ml-matrix');
+ML.ArrayStat = require('ml-stat').array;
+ML.MatrixStat = require('ml-stat').matrix;
