@@ -1,11 +1,7 @@
 {
-  "name": "UCI credit card",
+  "name": "examples of classification",
   "version": "1.0.0",
   "description": "use methods of mljs on a dataset from UCI",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
   "keywords": [
     "SVM",
     "KNN",

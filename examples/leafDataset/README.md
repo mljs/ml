@@ -1,7 +1,7 @@
 Introduction to classification with mljs
 ========================================
 
-This tutorial will solve a problem of Machine Learning called classification. Classification is the problem of identifying to which of a set of categories a new observation belongs (Wikipedia).
+This tutorial will solve a problem of Machine Learning called classification. Classification is the problem of identifying to which of a set of categories a new observation belongs ([Wikipedia](https://en.wikipedia.org/wiki/Statistical_classification)).
 
 We will use methods of supervised learning. Supervised learning is the machine learnin task of inferring a function fom labeled training data. What it means is that we will use data with labels to train our models, and next we will try to predict the labels of other data (called test data).
 
@@ -480,7 +480,7 @@ function shuffleArray(array) {
 ```
 
 Logistic regression
-------------------------------------------------
+--------------------
 ```javascript
 const LogisticRegression = require('ml-logistic-regression');
 const csv = require('csvtojson');
@@ -564,10 +564,10 @@ function shuffleArray(array) {
 }
 ```
 
-Bonus 2 : dimensionality reduction
-----------------------------------
+Bonus : dimensionality reduction
+--------------------------------
 
-Here, each data has 30 features. We can reduce the number of features of the dataset by using different algorithms (PCA, Isomap, etc.). The goal ? The less dimensions you will have, the speeder the computation will be and if you reduce the dimensionality to 2 or 3, you can plot the data (it can be very practice).
+Here, each data has 30 features. We can reduce the number of features of the dataset by using different algorithms (PCA, Isomap, etc.). The goal ? The fewer dimensions you will have, the faster the computation will be and if you reduce the dimensionality to 2 or 3, you can plot the data (it can be very practical).
 I give you an example with the PCA. Below, the source code using a PCA :
 ```javascript
 const KNN = require('ml-knn');
