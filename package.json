@@ -44,7 +44,7 @@
     "ml-knn": "^2.0.0",
     "ml-levenberg-marquardt": "^1.0.0",
     "ml-matrix": "^5.0.0",
-    "ml-naivebayes": "^2.0.0",
+    "ml-naivebayes": "^3.0.0",
     "ml-pad-array": "^1.0.0",
     "ml-pca": "^2.0.0",
     "ml-performance": "^0.2.0",
