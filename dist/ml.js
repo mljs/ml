@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v3.0.0
+ * @version v3.1.0
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 46);
+/******/ 	return __webpack_require__(__webpack_require__.s = 48);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -114,7 +114,7 @@ Object.defineProperty(exports, 'abstractMatrix', {
   }
 });
 
-var _wrap = __webpack_require__(61);
+var _wrap = __webpack_require__(64);
 
 Object.defineProperty(exports, 'wrap', {
   enumerable: true,
@@ -141,7 +141,7 @@ Object.defineProperty(exports, 'WrapperMatrix1D', {
   }
 });
 
-var _decompositions = __webpack_require__(62);
+var _decompositions = __webpack_require__(65);
 
 Object.defineProperty(exports, 'solve', {
   enumerable: true,
@@ -171,7 +171,7 @@ Object.defineProperty(exports, 'SVD', {
   }
 });
 
-var _evd = __webpack_require__(63);
+var _evd = __webpack_require__(66);
 
 Object.defineProperty(exports, 'EigenvalueDecomposition', {
   enumerable: true,
@@ -186,7 +186,7 @@ Object.defineProperty(exports, 'EVD', {
   }
 });
 
-var _cholesky = __webpack_require__(64);
+var _cholesky = __webpack_require__(67);
 
 Object.defineProperty(exports, 'CholeskyDecomposition', {
   enumerable: true,
@@ -266,7 +266,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _maybeToPrecision = __webpack_require__(105);
+var _maybeToPrecision = __webpack_require__(111);
 
 Object.defineProperty(exports, 'maybeToPrecision', {
     enumerable: true,
@@ -275,7 +275,7 @@ Object.defineProperty(exports, 'maybeToPrecision', {
     }
 });
 
-var _checkArrayLength = __webpack_require__(106);
+var _checkArrayLength = __webpack_require__(112);
 
 Object.defineProperty(exports, 'checkArrayLength', {
     enumerable: true,
@@ -413,7 +413,7 @@ exports.default = BaseView;
 "use strict";
 
 
-exports.array = __webpack_require__(19);
+exports.array = __webpack_require__(21);
 exports.matrix = __webpack_require__(8);
 
 /***/ }),
@@ -611,7 +611,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-__webpack_require__(48);
+__webpack_require__(51);
 
 var _abstractMatrix = __webpack_require__(7);
 
@@ -763,45 +763,45 @@ var _svd = __webpack_require__(10);
 
 var _svd2 = _interopRequireDefault(_svd);
 
-var _mlArrayRescale = __webpack_require__(49);
+var _mlArrayRescale = __webpack_require__(52);
 
 var _mlArrayRescale2 = _interopRequireDefault(_mlArrayRescale);
 
 var _util = __webpack_require__(5);
 
-var _transpose = __webpack_require__(52);
+var _transpose = __webpack_require__(55);
 
 var _transpose2 = _interopRequireDefault(_transpose);
 
-var _row = __webpack_require__(53);
+var _row = __webpack_require__(56);
 
 var _row2 = _interopRequireDefault(_row);
 
-var _sub = __webpack_require__(54);
+var _sub = __webpack_require__(57);
 
 var _sub2 = _interopRequireDefault(_sub);
 
-var _selection = __webpack_require__(55);
+var _selection = __webpack_require__(58);
 
 var _selection2 = _interopRequireDefault(_selection);
 
-var _rowSelection = __webpack_require__(56);
+var _rowSelection = __webpack_require__(59);
 
 var _rowSelection2 = _interopRequireDefault(_rowSelection);
 
-var _columnSelection = __webpack_require__(57);
+var _columnSelection = __webpack_require__(60);
 
 var _columnSelection2 = _interopRequireDefault(_columnSelection);
 
-var _column = __webpack_require__(58);
+var _column = __webpack_require__(61);
 
 var _column2 = _interopRequireDefault(_column);
 
-var _flipRow = __webpack_require__(59);
+var _flipRow = __webpack_require__(62);
 
 var _flipRow2 = _interopRequireDefault(_flipRow);
 
-var _flipColumn = __webpack_require__(60);
+var _flipColumn = __webpack_require__(63);
 
 var _flipColumn2 = _interopRequireDefault(_flipColumn);
 
@@ -2648,7 +2648,7 @@ function AbstractMatrix(superCtor) {
 "use strict";
 
 
-var arrayStat = __webpack_require__(19);
+var arrayStat = __webpack_require__(21);
 
 function compareNumbers(a, b) {
     return a - b;
@@ -4145,7 +4145,7 @@ function getFilled2DArray(rows, columns, value) {
 "use strict";
 
 
-var Heap = __webpack_require__(67);
+var Heap = __webpack_require__(73);
 
 function Cluster() {
     this.children = [];
@@ -4234,16 +4234,16 @@ module.exports = Cluster;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var GaussianKernel = __webpack_require__(81);
-var PolynomialKernel = __webpack_require__(82);
-var ANOVAKernel = __webpack_require__(83);
-var CauchyKernel = __webpack_require__(84);
-var ExponentialKernel = __webpack_require__(85);
-var HistogramKernel = __webpack_require__(86);
-var LaplacianKernel = __webpack_require__(87);
-var MultiquadraticKernel = __webpack_require__(88);
-var RationalKernel = __webpack_require__(89);
-var SigmoidKernel = __webpack_require__(90);
+var GaussianKernel = __webpack_require__(87);
+var PolynomialKernel = __webpack_require__(88);
+var ANOVAKernel = __webpack_require__(89);
+var CauchyKernel = __webpack_require__(90);
+var ExponentialKernel = __webpack_require__(91);
+var HistogramKernel = __webpack_require__(92);
+var LaplacianKernel = __webpack_require__(93);
+var MultiquadraticKernel = __webpack_require__(94);
+var RationalKernel = __webpack_require__(95);
+var SigmoidKernel = __webpack_require__(96);
 
 var kernelType = {
     gaussian: GaussianKernel,
@@ -4807,6 +4807,286 @@ exports.default = QrDecomposition;
 "use strict";
 
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _mlMatrix = __webpack_require__(0);
+
+var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
+
+var _utils = __webpack_require__(68);
+
+var Utils = _interopRequireWildcard(_utils);
+
+var _mlArrayMean = __webpack_require__(20);
+
+var _mlArrayMean2 = _interopRequireDefault(_mlArrayMean);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var gainFunctions = {
+    gini: Utils.giniGain,
+    regression: Utils.regressionError
+};
+
+var splitFunctions = {
+    mean: Utils.mean
+};
+
+class TreeNode {
+
+    /**
+     * @private
+     * Constructor for a tree node given the options received on the main classes (DecisionTreeClassifier, DecisionTreeRegression)
+     * @param {object|TreeNode} options for loading
+     * @constructor
+     */
+    constructor(options) {
+        // options parameters
+        this.kind = options.kind;
+        this.gainFunction = options.gainFunction;
+        this.splitFunction = options.splitFunction;
+        this.minNumSamples = options.minNumSamples;
+        this.maxDepth = options.maxDepth;
+    }
+
+    /**
+     * @private
+     * Function that retrieve the best feature to make the split.
+     * @param {Matrix} XTranspose - Training set transposed
+     * @param {Array} y - labels or values (depending of the decision tree)
+     * @return {object} - return tree values, the best gain, column and the split value.
+     */
+    bestSplit(XTranspose, y) {
+
+        // Depending in the node tree class, we set the variables to check information gain (to classify)
+        // or error (for regression)
+
+        var bestGain = this.kind === 'classifier' ? -Infinity : Infinity;
+        var check = this.kind === 'classifier' ? (a, b) => a > b : (a, b) => a < b;
+
+        var maxColumn;
+        var maxValue;
+
+        for (var i = 0; i < XTranspose.rows; ++i) {
+            var currentFeature = XTranspose[i];
+            var splitValues = this.featureSplit(currentFeature, y);
+            for (var j = 0; j < splitValues.length; ++j) {
+                var currentSplitVal = splitValues[j];
+                var splitted = this.split(currentFeature, y, currentSplitVal);
+
+                var gain = gainFunctions[this.gainFunction](y, splitted);
+                if (check(gain, bestGain)) {
+                    maxColumn = i;
+                    maxValue = currentSplitVal;
+                    bestGain = gain;
+                }
+            }
+        }
+
+        return {
+            maxGain: bestGain,
+            maxColumn: maxColumn,
+            maxValue: maxValue
+        };
+    }
+
+    /**
+     * @private
+     * Makes the split of the training labels or values from the training set feature given a split value.
+     * @param {Array} x - Training set feature
+     * @param {Array} y - Training set value or label
+     * @param {number} splitValue
+     * @return {object}
+     */
+
+    split(x, y, splitValue) {
+        var lesser = [];
+        var greater = [];
+
+        for (var i = 0; i < x.length; ++i) {
+            if (x[i] < splitValue) {
+                lesser.push(y[i]);
+            } else {
+                greater.push(y[i]);
+            }
+        }
+
+        return {
+            greater: greater,
+            lesser: lesser
+        };
+    }
+
+    /**
+     * @private
+     * Calculates the possible points to split over the tree given a training set feature and corresponding labels or values.
+     * @param {Array} x - Training set feature
+     * @param {Array} y - Training set value or label
+     * @return {Array} possible split values.
+     */
+    featureSplit(x, y) {
+        var splitValues = [];
+        var arr = Utils.zip(x, y);
+        arr.sort(function (a, b) {
+            return a[0] - b[0];
+        });
+
+        for (var i = 1; i < arr.length; ++i) {
+            if (arr[i - 1][1] !== arr[i][1]) {
+                splitValues.push(splitFunctions[this.splitFunction](arr[i - 1][0], arr[i][0]));
+            }
+        }
+
+        return splitValues;
+    }
+
+    /**
+     * @private
+     * Calculate the predictions of a leaf tree node given the training labels or values
+     * @param {Array} y
+     */
+    calculatePrediction(y) {
+        if (this.kind === 'classifier') {
+            this.distribution = Utils.toDiscreteDistribution(y, Utils.getNumberOfClasses(y));
+            if (this.distribution.columns === 0) {
+                throw new TypeError('Error on calculate the prediction');
+            }
+        } else {
+            this.distribution = (0, _mlArrayMean2.default)(y);
+        }
+    }
+
+    /**
+     * @private
+     * Train a node given the training set and labels, because it trains recursively, it also receive
+     * the current depth of the node, parent gain to avoid infinite recursion and boolean value to check if
+     * the training set is transposed.
+     * @param {Matrix} X - Training set (could be transposed or not given transposed).
+     * @param {Array} y - Training labels or values.
+     * @param {number} currentDepth - Current depth of the node.
+     * @param {number} parentGain - parent node gain or error.
+     */
+    train(X, y, currentDepth, parentGain) {
+        if (X.rows <= this.minNumSamples) {
+            this.calculatePrediction(y);
+            return;
+        }
+        if (parentGain === undefined) parentGain = 0.0;
+
+        var XTranspose = X.transpose();
+        var split = this.bestSplit(XTranspose, y);
+
+        this.splitValue = split.maxValue;
+        this.splitColumn = split.maxColumn;
+        this.gain = split.maxGain;
+
+        var splittedMatrix = Utils.matrixSplitter(X, y, this.splitColumn, this.splitValue);
+
+        if (currentDepth < this.maxDepth && this.gain > 0.01 && this.gain !== parentGain && splittedMatrix.lesserX.length > 0 && splittedMatrix.greaterX.length > 0) {
+            this.left = new TreeNode(this);
+            this.right = new TreeNode(this);
+
+            var lesserX = new _mlMatrix2.default(splittedMatrix.lesserX);
+            var greaterX = new _mlMatrix2.default(splittedMatrix.greaterX);
+
+            this.left.train(lesserX, splittedMatrix.lesserY, currentDepth + 1, this.gain);
+            this.right.train(greaterX, splittedMatrix.greaterY, currentDepth + 1, this.gain);
+        } else {
+            this.calculatePrediction(y);
+        }
+    }
+
+    /**
+     * @private
+     * Calculates the prediction of a given element.
+     * @param {Array} row
+     * @return {number|Array} prediction
+     *          * if a node is a classifier returns an array of probabilities of each class.
+     *          * if a node is for regression returns a number with the prediction.
+     */
+    classify(row) {
+        if (this.right && this.left) {
+            if (row[this.splitColumn] < this.splitValue) {
+                return this.left.classify(row);
+            } else {
+                return this.right.classify(row);
+            }
+        }
+
+        return this.distribution;
+    }
+
+    /**
+     * @private
+     * Set the parameter of the current node and their children.
+     * @param {object} node - parameters of the current node and the children.
+     */
+    setNodeParameters(node) {
+        if (node.distribution !== undefined) {
+            this.distribution = node.distribution.constructor === Array ? new _mlMatrix2.default(node.distribution) : node.distribution;
+        } else {
+            this.distribution = undefined;
+            this.splitValue = node.splitValue;
+            this.splitColumn = node.splitColumn;
+            this.gain = node.gain;
+
+            this.left = new TreeNode(this);
+            this.right = new TreeNode(this);
+
+            if (node.left !== {}) {
+                this.left.setNodeParameters(node.left);
+            }
+            if (node.right !== {}) {
+                this.right.setNodeParameters(node.right);
+            }
+        }
+    }
+}
+exports.default = TreeNode;
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = mean;
+/**
+ * Computes the mean of the given values
+ * @param {Array<number>} input
+ * @return {number}
+ */
+function mean(input) {
+    if (!Array.isArray(input)) {
+        throw new Error('input must be an array');
+    }
+
+    if (input.length === 0) {
+        throw new Error('input must not be empty');
+    }
+
+    var sum = 0;
+    for (var i = 0; i < input.length; i++) {
+        sum += input[i];
+    }
+    return sum / input.length;
+}
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 function compareNumbers(a, b) {
     return a - b;
 }
@@ -5291,14 +5571,14 @@ exports.cumulativeSum = function cumulativeSum(array) {
 };
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var Cluster = __webpack_require__(12);
-var util = __webpack_require__(69);
+var util = __webpack_require__(75);
 
 function ClusterLeaf(index) {
     Cluster.call(this);
@@ -5312,7 +5592,7 @@ util.inherits(ClusterLeaf, Cluster);
 module.exports = ClusterLeaf;
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5350,13 +5630,13 @@ function distanceMatrix(data, distanceFn) {
 module.exports = distanceMatrix;
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var nearestVector = __webpack_require__(76);
+var nearestVector = __webpack_require__(82);
 
 /**
  * Calculates the distance matrix for a given array of points
@@ -5462,7 +5742,7 @@ exports.calculateDistanceMatrix = calculateDistanceMatrix;
 exports.converged = converged;
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5512,7 +5792,7 @@ function separateClasses(X, y) {
 }
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5598,7 +5878,7 @@ function initializeMatrices(array, isMatrix) {
 }
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5991,7 +6271,7 @@ class ConfusionMatrix {
 module.exports = ConfusionMatrix;
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5999,8 +6279,8 @@ module.exports = ConfusionMatrix;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var Utils = __webpack_require__(27);
-var ACTIVATION_FUNCTIONS = __webpack_require__(28);
+var Utils = __webpack_require__(29);
+var ACTIVATION_FUNCTIONS = __webpack_require__(30);
 
 class Layer {
     /**
@@ -6125,7 +6405,7 @@ class Layer {
 module.exports = Layer;
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6197,7 +6477,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6291,7 +6571,7 @@ var ACTIVATION_FUNCTIONS = {
 module.exports = ACTIVATION_FUNCTIONS;
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6402,7 +6682,7 @@ NodeSquare.prototype.getPosition = function getPosition(element) {
 module.exports = NodeSquare;
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6428,7 +6708,7 @@ Object.defineProperty(exports, 'SLR', {
     }
 });
 
-var _mlRegressionPolynomial = __webpack_require__(31);
+var _mlRegressionPolynomial = __webpack_require__(33);
 
 Object.defineProperty(exports, 'PolynomialRegression', {
     enumerable: true,
@@ -6437,7 +6717,7 @@ Object.defineProperty(exports, 'PolynomialRegression', {
     }
 });
 
-var _mlRegressionExponential = __webpack_require__(107);
+var _mlRegressionExponential = __webpack_require__(113);
 
 Object.defineProperty(exports, 'ExponentialRegression', {
     enumerable: true,
@@ -6446,7 +6726,7 @@ Object.defineProperty(exports, 'ExponentialRegression', {
     }
 });
 
-var _mlRegressionPower = __webpack_require__(108);
+var _mlRegressionPower = __webpack_require__(114);
 
 Object.defineProperty(exports, 'PowerRegression', {
     enumerable: true,
@@ -6455,7 +6735,7 @@ Object.defineProperty(exports, 'PowerRegression', {
     }
 });
 
-var _mlRegressionMultivariateLinear = __webpack_require__(109);
+var _mlRegressionMultivariateLinear = __webpack_require__(115);
 
 Object.defineProperty(exports, 'MultivariateLinearRegression', {
     enumerable: true,
@@ -6464,7 +6744,7 @@ Object.defineProperty(exports, 'MultivariateLinearRegression', {
     }
 });
 
-var _kernelRidgeRegression = __webpack_require__(110);
+var _kernelRidgeRegression = __webpack_require__(116);
 
 Object.defineProperty(exports, 'KernelRidgeRegression', {
     enumerable: true,
@@ -6479,7 +6759,7 @@ Object.defineProperty(exports, 'KRR', {
     }
 });
 
-var _polyFitRegression2d = __webpack_require__(111);
+var _polyFitRegression2d = __webpack_require__(117);
 
 Object.defineProperty(exports, 'PolinomialFitting2D', {
     enumerable: true,
@@ -6488,7 +6768,7 @@ Object.defineProperty(exports, 'PolinomialFitting2D', {
     }
 });
 
-var _mlRegressionTheilSen = __webpack_require__(112);
+var _mlRegressionTheilSen = __webpack_require__(118);
 
 Object.defineProperty(exports, 'TheilSenRegression', {
     enumerable: true,
@@ -6497,7 +6777,7 @@ Object.defineProperty(exports, 'TheilSenRegression', {
     }
 });
 
-var _mlRegressionRobustPolynomial = __webpack_require__(113);
+var _mlRegressionRobustPolynomial = __webpack_require__(119);
 
 Object.defineProperty(exports, 'RobustPolynomialRegression', {
     enumerable: true,
@@ -6506,7 +6786,7 @@ Object.defineProperty(exports, 'RobustPolynomialRegression', {
     }
 });
 
-var _potentialRegression = __webpack_require__(114);
+var _potentialRegression = __webpack_require__(120);
 
 var _potentialRegression2 = _interopRequireDefault(_potentialRegression);
 
@@ -6519,7 +6799,7 @@ exports.NLR = NLR;
 exports.NonLinearRegression = NLR;
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6661,15 +6941,15 @@ function regress(pr, x, y, degree) {
 }
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var newArray = __webpack_require__(117);
+var newArray = __webpack_require__(123);
 
-var primeFinder = __webpack_require__(118);
+var primeFinder = __webpack_require__(124);
 var nextPrime = primeFinder.nextPrime;
 var largestPrime = primeFinder.largestPrime;
 
@@ -6969,7 +7249,7 @@ function chooseShrinkCapacity(size, minLoad, maxLoad) {
 }
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7009,13 +7289,13 @@ module.exports = function (haystack, needle, comparator, low, high) {
 };
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var numberIsNan = __webpack_require__(119);
+var numberIsNan = __webpack_require__(125);
 
 function assertNum(x) {
 	if (typeof x !== 'number' || numberIsNan(x)) {
@@ -7036,17 +7316,17 @@ exports.desc = function (a, b) {
 };
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.distance = __webpack_require__(120);
-exports.similarity = __webpack_require__(157);
+exports.distance = __webpack_require__(126);
+exports.similarity = __webpack_require__(163);
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7063,7 +7343,7 @@ module.exports = function czekanowskiSimilarity(a, b) {
 };
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7083,7 +7363,7 @@ module.exports = function dice(a, b) {
 };
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7099,7 +7379,7 @@ module.exports = function intersection(a, b) {
 };
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7121,7 +7401,7 @@ module.exports = function jaccard(a, b) {
 };
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7139,7 +7419,7 @@ module.exports = function kulczynski(a, b) {
 };
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7157,7 +7437,7 @@ module.exports = function motyka(a, b) {
 };
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7173,7 +7453,7 @@ module.exports = function squaredChord(a, b) {
 };
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7204,7 +7484,7 @@ module.exports = function tanimoto(a, b, bitvector) {
 };
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7224,7 +7504,7 @@ module.exports = function cosine(a, b) {
 };
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7318,35 +7598,38 @@ function padArray(data, options) {
 module.exports = padArray;
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
+
+var mlCart = __webpack_require__(49);
 
 var ML = exports;
 
 // Try to keep this list in the same structure as the README.
 
 // Unsupervised learning
-ML.PCA = __webpack_require__(47);
-ML.HClust = __webpack_require__(65);
-ML.KMeans = __webpack_require__(75);
+ML.PCA = __webpack_require__(70);
+ML.HClust = __webpack_require__(71);
+ML.KMeans = __webpack_require__(81);
 
 // Supervised learning
-ML.SVM = __webpack_require__(80);
-ML.NaiveBayes = __webpack_require__(91);
-ML.KNN = __webpack_require__(94);
-ML.PLS = __webpack_require__(96);
-ML.CrossValidation = __webpack_require__(99);
-ML.ConfusionMatrix = __webpack_require__(25);
+ML.SVM = __webpack_require__(86);
+ML.NaiveBayes = __webpack_require__(97);
+ML.KNN = __webpack_require__(100);
+ML.PLS = __webpack_require__(102);
+ML.CrossValidation = __webpack_require__(105);
+ML.ConfusionMatrix = __webpack_require__(27);
+ML.DecisionTreeClassifier = mlCart.DecisionTreeClassifier;
 
 // Artificial neural networks
-ML.FNN = __webpack_require__(101);
-ML.SOM = __webpack_require__(103);
+ML.FNN = __webpack_require__(107);
+ML.SOM = __webpack_require__(109);
 
 // Regression
-var Regression = __webpack_require__(30);
+var Regression = __webpack_require__(32);
 ML.SimpleLinearRegression = Regression.SimpleLinearRegression;
 ML.PolynomialRegression = Regression.PolynomialRegression;
 ML.MultivariateLinearRegression = Regression.MultivariateLinearRegression;
@@ -7354,9 +7637,10 @@ ML.PowerRegression = Regression.PowerRegression;
 ML.ExponentialRegression = Regression.ExponentialRegression;
 ML.TheilSenRegression = Regression.TheilSenRegression;
 ML.RobustPolynomialRegression = Regression.RobustPolynomialRegression;
+ML.DesisionTreeRegression = mlCart.DesisionTreeRegression;
 
 // Optimization
-ML.levenbergMarquardt = __webpack_require__(115);
+ML.levenbergMarquardt = __webpack_require__(121);
 
 // Math
 var Matrix = __webpack_require__(0);
@@ -7367,264 +7651,171 @@ ML.CholeskyDecomposition = Matrix.CholeskyDecomposition;
 ML.LuDecomposition = Matrix.LuDecomposition;
 ML.QrDecomposition = Matrix.QrDecomposition;
 
-ML.SparseMatrix = __webpack_require__(116);
+ML.SparseMatrix = __webpack_require__(122);
 ML.Kernel = __webpack_require__(13);
-ML.Distance = __webpack_require__(35).distance;
-ML.Similarity = __webpack_require__(35).similarity;
-ML.distanceMatrix = __webpack_require__(21);
-ML.XSadd = __webpack_require__(165);
+ML.Distance = __webpack_require__(37).distance;
+ML.Similarity = __webpack_require__(37).similarity;
+ML.distanceMatrix = __webpack_require__(23);
+ML.XSadd = __webpack_require__(171);
 
 // Statistics
-ML.Performance = __webpack_require__(166);
+ML.Performance = __webpack_require__(172);
 
 // Data preprocessing
-ML.savitzkyGolay = __webpack_require__(168);
-ML.savitzkyGolayGeneralized = __webpack_require__(169);
+ML.savitzkyGolay = __webpack_require__(174);
+ML.savitzkyGolayGeneralized = __webpack_require__(175);
 
 // Utility
-ML.BitArray = __webpack_require__(170);
-ML.HashTable = __webpack_require__(32);
-ML.padArray = __webpack_require__(45);
-ML.binarySearch = __webpack_require__(33);
-ML.numSort = __webpack_require__(34);
+ML.BitArray = __webpack_require__(176);
+ML.HashTable = __webpack_require__(34);
+ML.padArray = __webpack_require__(47);
+ML.binarySearch = __webpack_require__(35);
+ML.numSort = __webpack_require__(36);
 
 // Undocumented/deprecated packages
-ML.ArrayUtils = __webpack_require__(172);
-ML.Regression = __webpack_require__(30);
+ML.ArrayUtils = __webpack_require__(178);
+ML.Regression = __webpack_require__(32);
 ML.MatrixUtil = __webpack_require__(0);
 ML.ArrayStat = __webpack_require__(4).array;
 ML.MatrixStat = __webpack_require__(4).matrix;
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var matrixLib = __webpack_require__(0);
-var Matrix = matrixLib.Matrix;
-var EVD = matrixLib.EVD;
-var SVD = matrixLib.SVD;
-var Stat = __webpack_require__(8);
-var mean = Stat.mean;
-var stdev = Stat.standardDeviation;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _DecisionTreeClassifier = __webpack_require__(50);
+
+Object.defineProperty(exports, 'DecisionTreeClassifier', {
+  enumerable: true,
+  get: function get() {
+    return _DecisionTreeClassifier.DecisionTreeClassifier;
+  }
+});
+
+var _DecisionTreeRegression = __webpack_require__(69);
+
+Object.defineProperty(exports, 'DecisionTreeRegression', {
+  enumerable: true,
+  get: function get() {
+    return _DecisionTreeRegression.DecisionTreeRegression;
+  }
+});
+
+/***/ }),
+/* 50 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.DecisionTreeClassifier = undefined;
+
+var _mlMatrix = __webpack_require__(0);
+
+var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
+
+var _TreeNode = __webpack_require__(19);
+
+var _TreeNode2 = _interopRequireDefault(_TreeNode);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var defaultOptions = {
-    isCovarianceMatrix: false,
-    center: true,
-    scale: false
+    gainFunction: 'gini',
+    splitFunction: 'mean',
+    minNumSamples: 3,
+    maxDepth: Infinity
 };
 
-/**
- * Creates new PCA (Principal Component Analysis) from the dataset
- * @param {Matrix} dataset - dataset or covariance matrix
- * @param {Object} options
- * @param {boolean} [options.isCovarianceMatrix=false] - true if the dataset is a covariance matrix
- * @param {boolean} [options.center=true] - should the data be centered (subtract the mean)
- * @param {boolean} [options.scale=false] - should the data be scaled (divide by the standard deviation)
- * */
-class PCA {
-    constructor(dataset, options) {
-        if (dataset === true) {
-            var model = options;
-            this.center = model.center;
-            this.scale = model.scale;
-            this.means = model.means;
-            this.stdevs = model.stdevs;
-            this.U = Matrix.checkMatrix(model.U);
-            this.S = model.S;
-            return;
-        }
+class DecisionTreeClassifier {
 
-        options = Object.assign({}, defaultOptions, options);
-
-        this.center = false;
-        this.scale = false;
-        this.means = null;
-        this.stdevs = null;
-
-        if (options.isCovarianceMatrix) {
-            // user provided a covariance matrix instead of dataset
-            this._computeFromCovarianceMatrix(dataset);
-            return;
-        }
-
-        var useCovarianceMatrix;
-        if (typeof options.useCovarianceMatrix === 'boolean') {
-            useCovarianceMatrix = options.useCovarianceMatrix;
+    /**
+     * Create new Decision Tree Classifier with CART implementation with the given options
+     * @param {object} options
+     * @param {string} [options.gainFunction="gini"] - gain function to get the best split, "gini" the only one supported.
+     * @param {string} [options.splitFunction="mean"] - given two integers from a split feature, get the value to split, "mean" the only one supported.
+     * @param {number} [options.minNumSamples=3] - minimum number of samples to create a leaf node to decide a class.
+     * @param {number} [options.maxDepth=Infinity] - Max depth of the tree.
+     * @param {object} model - for load purposes.
+     * @constructor
+     */
+    constructor(options, model) {
+        if (options === true) {
+            this.options = model.options;
+            this.root = new _TreeNode2.default(model.options);
+            this.root.setNodeParameters(model.root);
         } else {
-            useCovarianceMatrix = dataset.length > dataset[0].length;
-        }
-
-        if (useCovarianceMatrix) {
-            // user provided a dataset but wants us to compute and use the covariance matrix
-            dataset = this._adjust(dataset, options);
-            var covarianceMatrix = dataset.transposeView().mmul(dataset).div(dataset.rows - 1);
-            this._computeFromCovarianceMatrix(covarianceMatrix);
-        } else {
-            dataset = this._adjust(dataset, options);
-            var svd = new SVD(dataset, {
-                computeLeftSingularVectors: false,
-                computeRightSingularVectors: true,
-                autoTranspose: true
-            });
-
-            this.U = svd.rightSingularVectors;
-
-            var singularValues = svd.diagonal;
-            var eigenvalues = new Array(singularValues.length);
-            for (var i = 0; i < singularValues.length; i++) {
-                eigenvalues[i] = singularValues[i] * singularValues[i] / (dataset.length - 1);
-            }
-            this.S = eigenvalues;
+            this.options = Object.assign({}, defaultOptions, options);
+            this.options.kind = 'classifier';
         }
     }
 
     /**
-     * Load a PCA model from JSON
-     * @param {Object} model
-     * @return {PCA}
+     * Train the decision tree with the given training set and labels.
+     * @param {Matrix|MatrixTransposeView|Array} trainingSet
+     * @param {Array} trainingLabels
      */
-    static load(model) {
-        if (model.name !== 'PCA') throw new RangeError('Invalid model: ' + model.name);
-        return new PCA(true, model);
+    train(trainingSet, trainingLabels) {
+        this.root = new _TreeNode2.default(this.options);
+        trainingSet = _mlMatrix2.default.checkMatrix(trainingSet);
+        this.root.train(trainingSet, trainingLabels, 0, null);
     }
 
     /**
-     * Project the dataset into the PCA space
-     * @param {Matrix} dataset
-     * @param {Object} options
-     * @return {Matrix} dataset projected in the PCA space
+     * Predicts the output given the matrix to predict.
+     * @param {Matrix|MatrixTransposeView|Array} toPredict
+     * @return {Array} predictions
      */
-    predict(dataset, options = {}) {
-        var _options$nComponents = options.nComponents,
-            nComponents = _options$nComponents === undefined ? this.U.columns : _options$nComponents;
+    predict(toPredict) {
+        toPredict = _mlMatrix2.default.checkMatrix(toPredict);
+        var predictions = new Array(toPredict.rows);
 
-
-        dataset = new Matrix(dataset);
-        if (this.center) {
-            dataset.subRowVector(this.means);
-            if (this.scale) {
-                dataset.divRowVector(this.stdevs);
-            }
+        for (var i = 0; i < toPredict.rows; ++i) {
+            predictions[i] = this.root.classify(toPredict.getRow(i)).maxRowIndex(0)[1];
         }
 
-        var predictions = dataset.mmul(this.U);
-        return predictions.subMatrix(0, predictions.rows - 1, 0, nComponents - 1);
+        return predictions;
     }
 
     /**
-     * Returns the proportion of variance for each component
-     * @return {[number]}
-     */
-    getExplainedVariance() {
-        var sum = 0;
-        for (var i = 0; i < this.S.length; i++) {
-            sum += this.S[i];
-        }
-        return this.S.map(value => value / sum);
-    }
-
-    /**
-     * Returns the cumulative proportion of variance
-     * @return {[number]}
-     */
-    getCumulativeVariance() {
-        var explained = this.getExplainedVariance();
-        for (var i = 1; i < explained.length; i++) {
-            explained[i] += explained[i - 1];
-        }
-        return explained;
-    }
-
-    /**
-     * Returns the Eigenvectors of the covariance matrix
-     * @returns {Matrix}
-     */
-    getEigenvectors() {
-        return this.U;
-    }
-
-    /**
-     * Returns the Eigenvalues (on the diagonal)
-     * @returns {[number]}
-     */
-    getEigenvalues() {
-        return this.S;
-    }
-
-    /**
-     * Returns the standard deviations of the principal components
-     * @returns {[number]}
-     */
-    getStandardDeviations() {
-        return this.S.map(x => Math.sqrt(x));
-    }
-
-    /**
-     * Returns the loadings matrix
-     * @return {Matrix}
-     */
-    getLoadings() {
-        return this.U.transpose();
-    }
-
-    /**
-     * Export the current model to a JSON object
-     * @return {Object} model
+     * Export the current model to JSON.
+     * @return {object} - Current model.
      */
     toJSON() {
         return {
-            name: 'PCA',
-            center: this.center,
-            scale: this.scale,
-            means: this.means,
-            stdevs: this.stdevs,
-            U: this.U,
-            S: this.S
+            options: this.options,
+            root: this.root,
+            name: 'DTClassifier'
         };
     }
 
-    _adjust(dataset, options) {
-        this.center = !!options.center;
-        this.scale = !!options.scale;
-
-        dataset = new Matrix(dataset);
-
-        if (this.center) {
-            var means = mean(dataset);
-            var stdevs = this.scale ? stdev(dataset, means, true) : null;
-            this.means = means;
-            dataset.subRowVector(means);
-            if (this.scale) {
-                for (var i = 0; i < stdevs.length; i++) {
-                    if (stdevs[i] === 0) {
-                        throw new RangeError('Cannot scale the dataset (standard deviation is zero at index ' + i);
-                    }
-                }
-                this.stdevs = stdevs;
-                dataset.divRowVector(stdevs);
-            }
+    /**
+     * Load a Decision tree classifier with the given model.
+     * @param {object} model
+     * @return {DecisionTreeClassifier}
+     */
+    static load(model) {
+        if (model.name !== 'DTClassifier') {
+            throw new RangeError('Invalid model: ' + model.name);
         }
 
-        return dataset;
-    }
-
-    _computeFromCovarianceMatrix(dataset) {
-        var evd = new EVD(dataset, { assumeSymmetric: true });
-        this.U = evd.eigenvectorMatrix;
-        for (var i = 0; i < this.U.length; i++) {
-            this.U[i].reverse();
-        }
-        this.S = evd.realEigenvalues.reverse();
+        return new DecisionTreeClassifier(true, model);
     }
 }
-
-module.exports = PCA;
+exports.DecisionTreeClassifier = DecisionTreeClassifier;
 
 /***/ }),
-/* 48 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7635,7 +7826,7 @@ if (!Symbol.species) {
 }
 
 /***/ }),
-/* 49 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7646,11 +7837,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = rescale;
 
-var _mlArrayMax = __webpack_require__(50);
+var _mlArrayMax = __webpack_require__(53);
 
 var _mlArrayMax2 = _interopRequireDefault(_mlArrayMax);
 
-var _mlArrayMin = __webpack_require__(51);
+var _mlArrayMin = __webpack_require__(54);
 
 var _mlArrayMin2 = _interopRequireDefault(_mlArrayMin);
 
@@ -7699,7 +7890,7 @@ function rescale(input, options = {}) {
 }
 
 /***/ }),
-/* 50 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7731,7 +7922,7 @@ function max(input) {
 }
 
 /***/ }),
-/* 51 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7763,7 +7954,7 @@ function min(input) {
 }
 
 /***/ }),
-/* 52 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7796,7 +7987,7 @@ class MatrixTransposeView extends _base2.default {
 exports.default = MatrixTransposeView;
 
 /***/ }),
-/* 53 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7830,7 +8021,7 @@ class MatrixRowView extends _base2.default {
 exports.default = MatrixRowView;
 
 /***/ }),
-/* 54 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7868,7 +8059,7 @@ class MatrixSubView extends _base2.default {
 exports.default = MatrixSubView;
 
 /***/ }),
-/* 55 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7906,7 +8097,7 @@ class MatrixSelectionView extends _base2.default {
 exports.default = MatrixSelectionView;
 
 /***/ }),
-/* 56 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7943,7 +8134,7 @@ class MatrixRowSelectionView extends _base2.default {
 exports.default = MatrixRowSelectionView;
 
 /***/ }),
-/* 57 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7980,7 +8171,7 @@ class MatrixColumnSelectionView extends _base2.default {
 exports.default = MatrixColumnSelectionView;
 
 /***/ }),
-/* 58 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8014,7 +8205,7 @@ class MatrixColumnView extends _base2.default {
 exports.default = MatrixColumnView;
 
 /***/ }),
-/* 59 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8047,7 +8238,7 @@ class MatrixFlipRowView extends _base2.default {
 exports.default = MatrixFlipRowView;
 
 /***/ }),
-/* 60 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8080,7 +8271,7 @@ class MatrixFlipColumnView extends _base2.default {
 exports.default = MatrixFlipColumnView;
 
 /***/ }),
-/* 61 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8120,7 +8311,7 @@ function wrap(array, options) {
 }
 
 /***/ }),
-/* 62 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8181,7 +8372,7 @@ function solve(leftHandSide, rightHandSide, useSVD = false) {
 }
 
 /***/ }),
-/* 63 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8984,7 +9175,7 @@ function cdiv(xr, xi, yr, yi) {
 }
 
 /***/ }),
-/* 64 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9094,29 +9285,566 @@ class CholeskyDecomposition {
 exports.default = CholeskyDecomposition;
 
 /***/ }),
-/* 65 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.agnes = __webpack_require__(66);
-exports.diana = __webpack_require__(74);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.toDiscreteDistribution = toDiscreteDistribution;
+exports.giniImpurity = giniImpurity;
+exports.getNumberOfClasses = getNumberOfClasses;
+exports.giniGain = giniGain;
+exports.squaredError = squaredError;
+exports.regressionError = regressionError;
+exports.matrixSplitter = matrixSplitter;
+exports.mean = mean;
+exports.zip = zip;
+
+var _mlMatrix = __webpack_require__(0);
+
+var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
+
+var _mlArrayMean = __webpack_require__(20);
+
+var _mlArrayMean2 = _interopRequireDefault(_mlArrayMean);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * @private
+ * return an array of probabilities of each class
+ * @param {Array} array - contains the classes
+ * @param {number} numberOfClasses
+ * @return {Matrix} - rowVector of probabilities.
+ */
+function toDiscreteDistribution(array, numberOfClasses) {
+    var counts = new Array(numberOfClasses).fill(0);
+    for (var i = 0; i < array.length; ++i) {
+        counts[array[i]] += 1 / array.length;
+    }
+
+    return _mlMatrix2.default.rowVector(counts);
+}
+
+/**
+ * @private
+ * Retrieves the impurity of array of predictions
+ * @param {Array} array - predictions.
+ * @return {number} Gini impurity
+ */
+function giniImpurity(array) {
+    if (array.length === 0) {
+        return 0;
+    }
+
+    var probabilities = toDiscreteDistribution(array, getNumberOfClasses(array))[0];
+
+    var sum = 0.0;
+    for (var i = 0; i < probabilities.length; ++i) {
+        sum += probabilities[i] * probabilities[i];
+    }
+
+    return 1 - sum;
+}
+
+/**
+ * @private
+ * Return the number of classes given the array of predictions.
+ * @param {Array} array - predictions.
+ * @return {number} Number of classes.
+ */
+function getNumberOfClasses(array) {
+    return array.filter(function (val, i, arr) {
+        return arr.indexOf(val) === i;
+    }).length;
+}
+
+/**
+ * @private
+ * Calculates the Gini Gain of an array of predictions and those predictions splitted by a feature.
+ * @para {Array} array - Predictions
+ * @param {object} splitted - Object with elements "greater" and "lesser" that contains an array of predictions splitted.
+ * @return {number} - Gini Gain.
+ */
+
+function giniGain(array, splitted) {
+    var splitsImpurity = 0.0;
+    var splits = ['greater', 'lesser'];
+
+    for (var i = 0; i < splits.length; ++i) {
+        var currentSplit = splitted[splits[i]];
+        splitsImpurity += giniImpurity(currentSplit) * currentSplit.length / array.length;
+    }
+
+    return giniImpurity(array) - splitsImpurity;
+}
+
+/**
+ * @private
+ * Calculates the squared error of a predictions values.
+ * @param {Array} array - predictions values
+ * @return {number} squared error.
+ */
+function squaredError(array) {
+    var l = array.length;
+
+    var m = (0, _mlArrayMean2.default)(array);
+    var squaredError = 0.0;
+
+    for (var i = 0; i < l; ++i) {
+        var currentElement = array[i];
+        squaredError += (currentElement - m) * (currentElement - m);
+    }
+
+    return squaredError;
+}
+
+/**
+ * @private
+ * Calculates the sum of squared error of the two arrays that contains the splitted values.
+ * @param {Array} array - this argument is no necessary but is used to fit with the main interface.
+ * @param {object} splitted - Object with elements "greater" and "lesser" that contains an array of predictions splitted.
+ * @return {number} - sum of squared errors.
+ */
+function regressionError(array, splitted) {
+    var error = 0.0;
+    var splits = ['greater', 'lesser'];
+
+    for (var i = 0; i < splits.length; ++i) {
+        var currentSplit = splitted[splits[i]];
+        error += squaredError(currentSplit);
+    }
+    return error;
+}
+
+/**
+ * @private
+ * Split the training set and values from a given column of the training set if is less than a value
+ * @param {Matrix} X - Training set.
+ * @param {Array} y - Training values.
+ * @param {number} column - Column to split.
+ * @param {number} value - value to split the Training set and values.
+ * @return {object} - Object that contains the splitted values.
+ */
+function matrixSplitter(X, y, column, value) {
+    var lesserX = [];
+    var greaterX = [];
+    var lesserY = [];
+    var greaterY = [];
+
+    for (var i = 0; i < X.rows; ++i) {
+        if (X[i][column] < value) {
+            lesserX.push(X[i]);
+            lesserY.push(y[i]);
+        } else {
+            greaterX.push(X[i]);
+            greaterY.push(y[i]);
+        }
+    }
+
+    return {
+        greaterX: greaterX,
+        greaterY: greaterY,
+        lesserX: lesserX,
+        lesserY: lesserY
+    };
+}
+
+/**
+ * @private
+ * Calculates the mean between two values
+ * @param {number} a
+ * @param {number} b
+ * @return {number}
+ */
+function mean(a, b) {
+    return (a + b) / 2;
+}
+
+/**
+ * @private
+ * Returns a list of tuples that contains the i-th element of each array.
+ * @param {Array} a
+ * @param {Array} b
+ * @return {Array} list of tuples.
+ */
+function zip(a, b) {
+    if (a.length !== b.length) {
+        throw new TypeError('Error on zip: the size of a: ' + a.length + ' is different from b: ' + b.length);
+    }
+
+    var ret = new Array(a.length);
+    for (var i = 0; i < a.length; ++i) {
+        ret[i] = [a[i], b[i]];
+    }
+
+    return ret;
+}
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.DecisionTreeRegression = undefined;
+
+var _mlMatrix = __webpack_require__(0);
+
+var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
+
+var _TreeNode = __webpack_require__(19);
+
+var _TreeNode2 = _interopRequireDefault(_TreeNode);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var defaultOptions = {
+    gainFunction: 'regression',
+    splitFunction: 'mean',
+    minNumSamples: 3,
+    maxDepth: Infinity
+};
+
+class DecisionTreeRegression {
+
+    /**
+     * Create new Decision Tree Regression with CART implementation with the given options.
+     * @param {object} options
+     * @param {string} [options.gainFunction="regression"] - gain function to get the best split, "regression" the only one supported.
+     * @param {string} [options.splitFunction="mean"] - given two integers from a split feature, get the value to split, "mean" the only one supported.
+     * @param {number} [options.minNumSamples=3] - minimum number of samples to create a leaf node to decide a class.
+     * @param {number} [options.maxDepth=Infinity] - Max depth of the tree.
+     * @param {object} model - for load purposes.
+     */
+    constructor(options, model) {
+        if (options === true) {
+            this.options = model.options;
+            this.root = new _TreeNode2.default(model.options);
+            this.root.setNodeParameters(model.root);
+        } else {
+            this.options = Object.assign({}, defaultOptions, options);
+            this.options.kind = 'regression';
+        }
+    }
+
+    /**
+     * Train the decision tree with the given training set and values.
+     * @param {Matrix|MatrixTransposeView|Array} trainingSet
+     * @param {Array} trainingValues
+     */
+    train(trainingSet, trainingValues) {
+        this.root = new _TreeNode2.default(this.options);
+
+        if (trainingSet[0].length === undefined) trainingSet = _mlMatrix2.default.columnVector(trainingSet);
+        trainingSet = _mlMatrix2.default.checkMatrix(trainingSet);
+        this.root.train(trainingSet, trainingValues, 0);
+    }
+
+    /**
+     * Predicts the values given the matrix to predict.
+     * @param {Matrix|MatrixTransposeView|Array} toPredict
+     * @return {Array} predictions
+     */
+    predict(toPredict) {
+        if (toPredict[0] !== undefined && toPredict[0].length === undefined) toPredict = _mlMatrix2.default.columnVector(toPredict);
+        toPredict = _mlMatrix2.default.checkMatrix(toPredict);
+
+        var predictions = new Array(toPredict.rows);
+        for (var i = 0; i < toPredict.rows; ++i) {
+            predictions[i] = this.root.classify(toPredict.getRow(i));
+        }
+
+        return predictions;
+    }
+
+    /**
+     * Export the current model to JSON.
+     * @return {object} - Current model.
+     */
+    toJSON() {
+        return {
+            options: this.options,
+            root: this.root,
+            name: 'DTRegression'
+        };
+    }
+
+    /**
+     * Load a Decision tree regression with the given model.
+     * @param {object} model
+     * @return {DecisionTreeRegression}
+     */
+    static load(model) {
+        if (model.name !== 'DTRegression') {
+            throw new RangeError('Invalid model:' + model.name);
+        }
+
+        return new DecisionTreeRegression(true, model);
+    }
+}
+exports.DecisionTreeRegression = DecisionTreeRegression;
+
+/***/ }),
+/* 70 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var matrixLib = __webpack_require__(0);
+var Matrix = matrixLib.Matrix;
+var EVD = matrixLib.EVD;
+var SVD = matrixLib.SVD;
+var Stat = __webpack_require__(8);
+var mean = Stat.mean;
+var stdev = Stat.standardDeviation;
+
+var defaultOptions = {
+    isCovarianceMatrix: false,
+    center: true,
+    scale: false
+};
+
+/**
+ * Creates new PCA (Principal Component Analysis) from the dataset
+ * @param {Matrix} dataset - dataset or covariance matrix
+ * @param {Object} options
+ * @param {boolean} [options.isCovarianceMatrix=false] - true if the dataset is a covariance matrix
+ * @param {boolean} [options.center=true] - should the data be centered (subtract the mean)
+ * @param {boolean} [options.scale=false] - should the data be scaled (divide by the standard deviation)
+ * */
+class PCA {
+    constructor(dataset, options) {
+        if (dataset === true) {
+            var model = options;
+            this.center = model.center;
+            this.scale = model.scale;
+            this.means = model.means;
+            this.stdevs = model.stdevs;
+            this.U = Matrix.checkMatrix(model.U);
+            this.S = model.S;
+            return;
+        }
+
+        options = Object.assign({}, defaultOptions, options);
+
+        this.center = false;
+        this.scale = false;
+        this.means = null;
+        this.stdevs = null;
+
+        if (options.isCovarianceMatrix) {
+            // user provided a covariance matrix instead of dataset
+            this._computeFromCovarianceMatrix(dataset);
+            return;
+        }
+
+        var useCovarianceMatrix;
+        if (typeof options.useCovarianceMatrix === 'boolean') {
+            useCovarianceMatrix = options.useCovarianceMatrix;
+        } else {
+            useCovarianceMatrix = dataset.length > dataset[0].length;
+        }
+
+        if (useCovarianceMatrix) {
+            // user provided a dataset but wants us to compute and use the covariance matrix
+            dataset = this._adjust(dataset, options);
+            var covarianceMatrix = dataset.transposeView().mmul(dataset).div(dataset.rows - 1);
+            this._computeFromCovarianceMatrix(covarianceMatrix);
+        } else {
+            dataset = this._adjust(dataset, options);
+            var svd = new SVD(dataset, {
+                computeLeftSingularVectors: false,
+                computeRightSingularVectors: true,
+                autoTranspose: true
+            });
+
+            this.U = svd.rightSingularVectors;
+
+            var singularValues = svd.diagonal;
+            var eigenvalues = new Array(singularValues.length);
+            for (var i = 0; i < singularValues.length; i++) {
+                eigenvalues[i] = singularValues[i] * singularValues[i] / (dataset.length - 1);
+            }
+            this.S = eigenvalues;
+        }
+    }
+
+    /**
+     * Load a PCA model from JSON
+     * @param {Object} model
+     * @return {PCA}
+     */
+    static load(model) {
+        if (model.name !== 'PCA') throw new RangeError('Invalid model: ' + model.name);
+        return new PCA(true, model);
+    }
+
+    /**
+     * Project the dataset into the PCA space
+     * @param {Matrix} dataset
+     * @param {Object} options
+     * @return {Matrix} dataset projected in the PCA space
+     */
+    predict(dataset, options = {}) {
+        var _options$nComponents = options.nComponents,
+            nComponents = _options$nComponents === undefined ? this.U.columns : _options$nComponents;
+
+
+        dataset = new Matrix(dataset);
+        if (this.center) {
+            dataset.subRowVector(this.means);
+            if (this.scale) {
+                dataset.divRowVector(this.stdevs);
+            }
+        }
+
+        var predictions = dataset.mmul(this.U);
+        return predictions.subMatrix(0, predictions.rows - 1, 0, nComponents - 1);
+    }
+
+    /**
+     * Returns the proportion of variance for each component
+     * @return {[number]}
+     */
+    getExplainedVariance() {
+        var sum = 0;
+        for (var i = 0; i < this.S.length; i++) {
+            sum += this.S[i];
+        }
+        return this.S.map(value => value / sum);
+    }
+
+    /**
+     * Returns the cumulative proportion of variance
+     * @return {[number]}
+     */
+    getCumulativeVariance() {
+        var explained = this.getExplainedVariance();
+        for (var i = 1; i < explained.length; i++) {
+            explained[i] += explained[i - 1];
+        }
+        return explained;
+    }
+
+    /**
+     * Returns the Eigenvectors of the covariance matrix
+     * @returns {Matrix}
+     */
+    getEigenvectors() {
+        return this.U;
+    }
+
+    /**
+     * Returns the Eigenvalues (on the diagonal)
+     * @returns {[number]}
+     */
+    getEigenvalues() {
+        return this.S;
+    }
+
+    /**
+     * Returns the standard deviations of the principal components
+     * @returns {[number]}
+     */
+    getStandardDeviations() {
+        return this.S.map(x => Math.sqrt(x));
+    }
+
+    /**
+     * Returns the loadings matrix
+     * @return {Matrix}
+     */
+    getLoadings() {
+        return this.U.transpose();
+    }
+
+    /**
+     * Export the current model to a JSON object
+     * @return {Object} model
+     */
+    toJSON() {
+        return {
+            name: 'PCA',
+            center: this.center,
+            scale: this.scale,
+            means: this.means,
+            stdevs: this.stdevs,
+            U: this.U,
+            S: this.S
+        };
+    }
+
+    _adjust(dataset, options) {
+        this.center = !!options.center;
+        this.scale = !!options.scale;
+
+        dataset = new Matrix(dataset);
+
+        if (this.center) {
+            var means = mean(dataset);
+            var stdevs = this.scale ? stdev(dataset, means, true) : null;
+            this.means = means;
+            dataset.subRowVector(means);
+            if (this.scale) {
+                for (var i = 0; i < stdevs.length; i++) {
+                    if (stdevs[i] === 0) {
+                        throw new RangeError('Cannot scale the dataset (standard deviation is zero at index ' + i);
+                    }
+                }
+                this.stdevs = stdevs;
+                dataset.divRowVector(stdevs);
+            }
+        }
+
+        return dataset;
+    }
+
+    _computeFromCovarianceMatrix(dataset) {
+        var evd = new EVD(dataset, { assumeSymmetric: true });
+        this.U = evd.eigenvectorMatrix;
+        for (var i = 0; i < this.U.length; i++) {
+            this.U[i].reverse();
+        }
+        this.S = evd.realEigenvalues.reverse();
+    }
+}
+
+module.exports = PCA;
+
+/***/ }),
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.agnes = __webpack_require__(72);
+exports.diana = __webpack_require__(80);
 //exports.birch = require('./birch');
 //exports.cure = require('./cure');
 //exports.chameleon = require('./chameleon');
 
 /***/ }),
-/* 66 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var euclidean = __webpack_require__(1);
-var ClusterLeaf = __webpack_require__(20);
+var ClusterLeaf = __webpack_require__(22);
 var Cluster = __webpack_require__(12);
-var distanceMatrix = __webpack_require__(21);
+var distanceMatrix = __webpack_require__(23);
 
 /**
  * @private
@@ -9354,16 +10082,16 @@ function agnes(data, options) {
 module.exports = agnes;
 
 /***/ }),
-/* 67 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(68);
+module.exports = __webpack_require__(74);
 
 /***/ }),
-/* 68 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9739,7 +10467,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 }).call(undefined);
 
 /***/ }),
-/* 69 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10235,7 +10963,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(72);
+exports.isBuffer = __webpack_require__(78);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -10272,7 +11000,7 @@ exports.log = function () {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(73);
+exports.inherits = __webpack_require__(79);
 
 exports._extend = function (origin, add) {
   // Don't do anything if add isn't an object
@@ -10289,10 +11017,10 @@ exports._extend = function (origin, add) {
 function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(70), __webpack_require__(71)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(76), __webpack_require__(77)))
 
 /***/ }),
-/* 70 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10320,7 +11048,7 @@ try {
 module.exports = g;
 
 /***/ }),
-/* 71 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10513,7 +11241,7 @@ process.umask = function () {
 };
 
 /***/ }),
-/* 72 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10524,7 +11252,7 @@ module.exports = function isBuffer(arg) {
 };
 
 /***/ }),
-/* 73 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10555,14 +11283,14 @@ if (typeof Object.create === 'function') {
 }
 
 /***/ }),
-/* 74 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var euclidean = __webpack_require__(1);
-var ClusterLeaf = __webpack_require__(20);
+var ClusterLeaf = __webpack_require__(22);
 var Cluster = __webpack_require__(12);
 
 /**
@@ -10863,15 +11591,15 @@ function diana(data, options) {
 module.exports = diana;
 
 /***/ }),
-/* 75 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(22);
-var init = __webpack_require__(77);
-var KMeansResult = __webpack_require__(79);
+var utils = __webpack_require__(24);
+var init = __webpack_require__(83);
+var KMeansResult = __webpack_require__(85);
 var squaredDistance = __webpack_require__(1).squared;
 
 var defaultOptions = {
@@ -10989,7 +11717,7 @@ function kmeans(data, K, options) {
 module.exports = kmeans;
 
 /***/ }),
-/* 76 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11056,13 +11784,13 @@ function nearestVector(listVectors, vector, options) {
 module.exports = nearestVector;
 
 /***/ }),
-/* 77 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Picker = __webpack_require__(78).Picker;
+var Picker = __webpack_require__(84).Picker;
 
 /**
  * Choose K different random points from the original data
@@ -11140,7 +11868,7 @@ exports.random = random;
 exports.mostDistant = mostDistant;
 
 /***/ }),
-/* 78 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11201,13 +11929,13 @@ exports.mostDistant = mostDistant;
 }).call(undefined);
 
 /***/ }),
-/* 79 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(22);
+var utils = __webpack_require__(24);
 var distanceSymbol = Symbol('distance');
 
 /**
@@ -11270,7 +11998,7 @@ KMeansResult.prototype.computeInformation = function (data) {
 module.exports = KMeansResult;
 
 /***/ }),
-/* 80 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11601,7 +12329,7 @@ SVM.prototype._applyWhitening = function (features) {
 module.exports = SVM;
 
 /***/ }),
-/* 81 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11629,7 +12357,7 @@ class GaussianKernel {
 module.exports = GaussianKernel;
 
 /***/ }),
-/* 82 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11662,7 +12390,7 @@ class PolynomialKernel {
 module.exports = PolynomialKernel;
 
 /***/ }),
-/* 83 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11693,7 +12421,7 @@ class ANOVAKernel {
 module.exports = ANOVAKernel;
 
 /***/ }),
-/* 84 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11719,7 +12447,7 @@ class CauchyKernel {
 module.exports = CauchyKernel;
 
 /***/ }),
-/* 85 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11747,7 +12475,7 @@ class ExponentialKernel {
 module.exports = ExponentialKernel;
 
 /***/ }),
-/* 86 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11768,7 +12496,7 @@ class HistogramIntersectionKernel {
 module.exports = HistogramIntersectionKernel;
 
 /***/ }),
-/* 87 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11795,7 +12523,7 @@ class LaplacianKernel {
 module.exports = LaplacianKernel;
 
 /***/ }),
-/* 88 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11821,7 +12549,7 @@ class MultiquadraticKernel {
 module.exports = MultiquadraticKernel;
 
 /***/ }),
-/* 89 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11848,7 +12576,7 @@ class RationalQuadraticKernel {
 module.exports = RationalQuadraticKernel;
 
 /***/ }),
-/* 90 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11878,7 +12606,7 @@ class SigmoidKernel {
 module.exports = SigmoidKernel;
 
 /***/ }),
-/* 91 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11888,7 +12616,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _GaussianNB = __webpack_require__(92);
+var _GaussianNB = __webpack_require__(98);
 
 Object.defineProperty(exports, 'GaussianNB', {
   enumerable: true,
@@ -11897,7 +12625,7 @@ Object.defineProperty(exports, 'GaussianNB', {
   }
 });
 
-var _MultinomialNB = __webpack_require__(93);
+var _MultinomialNB = __webpack_require__(99);
 
 Object.defineProperty(exports, 'MultinomialNB', {
   enumerable: true,
@@ -11907,7 +12635,7 @@ Object.defineProperty(exports, 'MultinomialNB', {
 });
 
 /***/ }),
-/* 92 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11926,7 +12654,7 @@ var _mlStat = __webpack_require__(4);
 
 var _mlStat2 = _interopRequireDefault(_mlStat);
 
-var _utils = __webpack_require__(23);
+var _utils = __webpack_require__(25);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12081,7 +12809,7 @@ function calculateLogProbability(value, mean, C1, C2) {
 }
 
 /***/ }),
-/* 93 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12096,7 +12824,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _utils = __webpack_require__(23);
+var _utils = __webpack_require__(25);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12195,7 +12923,7 @@ function matrixLog(i, j) {
 }
 
 /***/ }),
-/* 94 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12205,7 +12933,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _KDTree = __webpack_require__(95);
+var _KDTree = __webpack_require__(101);
 
 var _KDTree2 = _interopRequireDefault(_KDTree);
 
@@ -12336,7 +13064,7 @@ function getSinglePrediction(knn, currentCase) {
 }
 
 /***/ }),
-/* 95 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12624,7 +13352,7 @@ class BinaryHeap {
 }
 
 /***/ }),
-/* 96 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12634,7 +13362,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _pls = __webpack_require__(97);
+var _pls = __webpack_require__(103);
 
 Object.defineProperty(exports, 'PLS', {
   enumerable: true,
@@ -12643,7 +13371,7 @@ Object.defineProperty(exports, 'PLS', {
   }
 });
 
-var _kopls = __webpack_require__(98);
+var _kopls = __webpack_require__(104);
 
 Object.defineProperty(exports, 'KOPLS', {
   enumerable: true,
@@ -12653,7 +13381,7 @@ Object.defineProperty(exports, 'KOPLS', {
 });
 
 /***/ }),
-/* 97 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12672,7 +13400,7 @@ var _matrix = __webpack_require__(8);
 
 var _matrix2 = _interopRequireDefault(_matrix);
 
-var _utils = __webpack_require__(24);
+var _utils = __webpack_require__(26);
 
 var Utils = _interopRequireWildcard(_utils);
 
@@ -12908,7 +13636,7 @@ function maxSumColIndex(data) {
 }
 
 /***/ }),
-/* 98 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12921,7 +13649,7 @@ exports.KOPLS = undefined;
 
 var _mlMatrix = __webpack_require__(0);
 
-var _utils = __webpack_require__(24);
+var _utils = __webpack_require__(26);
 
 /**
  * @class KOPLS
@@ -13150,16 +13878,16 @@ class KOPLS {
 exports.KOPLS = KOPLS;
 
 /***/ }),
-/* 99 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ConfusionMatrix = __webpack_require__(25);
+var ConfusionMatrix = __webpack_require__(27);
 
 var CV = {};
-var combinations = __webpack_require__(100);
+var combinations = __webpack_require__(106);
 
 /**
  * Performs a leave-one-out cross-validation (LOO-CV) of the given samples. In LOO-CV, 1 observation is used as the
@@ -13370,7 +14098,7 @@ function getTrainTest(features, labels, testIdx, trainIdx) {
 module.exports = CV;
 
 /***/ }),
-/* 100 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13465,7 +14193,7 @@ module.exports = function* (M, N, options) {
 };
 
 /***/ }),
-/* 101 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13473,10 +14201,10 @@ module.exports = function* (M, N, options) {
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var Layer = __webpack_require__(26);
-var OutputLayer = __webpack_require__(102);
-var Utils = __webpack_require__(27);
-var ACTIVATION_FUNCTIONS = __webpack_require__(28);
+var Layer = __webpack_require__(28);
+var OutputLayer = __webpack_require__(108);
+var Utils = __webpack_require__(29);
+var ACTIVATION_FUNCTIONS = __webpack_require__(30);
 
 class FeedForwardNeuralNetworks {
 
@@ -13688,13 +14416,13 @@ class FeedForwardNeuralNetworks {
 module.exports = FeedForwardNeuralNetworks;
 
 /***/ }),
-/* 102 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Layer = __webpack_require__(26);
+var Layer = __webpack_require__(28);
 
 class OutputLayer extends Layer {
     constructor(options) {
@@ -13717,14 +14445,14 @@ class OutputLayer extends Layer {
 module.exports = OutputLayer;
 
 /***/ }),
-/* 103 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var NodeSquare = __webpack_require__(29),
-    NodeHexagonal = __webpack_require__(104);
+var NodeSquare = __webpack_require__(31),
+    NodeHexagonal = __webpack_require__(110);
 
 var defaultOptions = {
     fields: 3,
@@ -14146,13 +14874,13 @@ function getMaxDistance(distance, numWeights) {
 module.exports = SOM;
 
 /***/ }),
-/* 104 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var NodeSquare = __webpack_require__(29);
+var NodeSquare = __webpack_require__(31);
 
 function NodeHexagonal(x, y, weights, som) {
 
@@ -14183,7 +14911,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 module.exports = NodeHexagonal;
 
 /***/ }),
-/* 105 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14211,7 +14939,7 @@ function maybeToPrecision(value, digits) {
 }
 
 /***/ }),
-/* 106 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14231,7 +14959,7 @@ function checkArraySize(x, y) {
 }
 
 /***/ }),
-/* 107 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14309,7 +15037,7 @@ function regress(er, x, y) {
 }
 
 /***/ }),
-/* 108 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14390,7 +15118,7 @@ function regress(pr, x, y) {
 }
 
 /***/ }),
-/* 109 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14517,7 +15245,7 @@ class MultivariateLinearRegression extends _mlRegressionBase2.default {
 exports.default = MultivariateLinearRegression;
 
 /***/ }),
-/* 110 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14598,7 +15326,7 @@ class KernelRidgeRegression extends _mlRegressionBase2.default {
 exports.default = KernelRidgeRegression;
 
 /***/ }),
-/* 111 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14799,7 +15527,7 @@ function abs(i, j) {
 }
 
 /***/ }),
-/* 112 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14912,7 +15640,7 @@ function theilSen(regression, x, y) {
 }
 
 /***/ }),
-/* 113 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15128,7 +15856,7 @@ function residualsMedian(residuals) {
 }
 
 /***/ }),
-/* 114 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15142,7 +15870,7 @@ var _mlRegressionBase = __webpack_require__(2);
 
 var _mlRegressionBase2 = _interopRequireDefault(_mlRegressionBase);
 
-var _mlRegressionPolynomial = __webpack_require__(31);
+var _mlRegressionPolynomial = __webpack_require__(33);
 
 var _mlRegressionPolynomial2 = _interopRequireDefault(_mlRegressionPolynomial);
 
@@ -15216,7 +15944,7 @@ class PotentialRegression extends _mlRegressionBase2.default {
 exports.default = PotentialRegression;
 
 /***/ }),
-/* 115 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15382,7 +16110,7 @@ function levenbergMarquardt(data, parameterizedFunction, options = {}) {
 module.exports = levenbergMarquardt;
 
 /***/ }),
-/* 116 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15393,7 +16121,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.SparseMatrix = undefined;
 
-var _mlHashTable = __webpack_require__(32);
+var _mlHashTable = __webpack_require__(34);
 
 var _mlHashTable2 = _interopRequireDefault(_mlHashTable);
 
@@ -15715,7 +16443,7 @@ function fillTemplateFunction(template, values) {
 }
 
 /***/ }),
-/* 117 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15733,14 +16461,14 @@ function newArray(n, value) {
 }
 
 /***/ }),
-/* 118 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var binarySearch = __webpack_require__(33);
-var sortAsc = __webpack_require__(34).asc;
+var binarySearch = __webpack_require__(35);
+var sortAsc = __webpack_require__(36).asc;
 
 var largestPrime = 0x7fffffff;
 
@@ -15801,7 +16529,7 @@ exports.nextPrime = nextPrime;
 exports.largestPrime = largestPrime;
 
 /***/ }),
-/* 119 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15812,59 +16540,59 @@ module.exports = Number.isNaN || function (x) {
 };
 
 /***/ }),
-/* 120 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.additiveSymmetric = __webpack_require__(121);
-exports.avg = __webpack_require__(122);
-exports.bhattacharyya = __webpack_require__(123);
-exports.canberra = __webpack_require__(124);
-exports.chebyshev = __webpack_require__(125);
-exports.clark = __webpack_require__(126);
-exports.czekanowski = __webpack_require__(127);
-exports.dice = __webpack_require__(37);
-exports.divergence = __webpack_require__(128);
+exports.additiveSymmetric = __webpack_require__(127);
+exports.avg = __webpack_require__(128);
+exports.bhattacharyya = __webpack_require__(129);
+exports.canberra = __webpack_require__(130);
+exports.chebyshev = __webpack_require__(131);
+exports.clark = __webpack_require__(132);
+exports.czekanowski = __webpack_require__(133);
+exports.dice = __webpack_require__(39);
+exports.divergence = __webpack_require__(134);
 exports.euclidean = __webpack_require__(1);
-exports.fidelity = __webpack_require__(129);
-exports.gower = __webpack_require__(130);
-exports.harmonicMean = __webpack_require__(131);
-exports.hellinger = __webpack_require__(132);
-exports.innerProduct = __webpack_require__(133);
-exports.intersection = __webpack_require__(38);
-exports.jaccard = __webpack_require__(39);
-exports.jeffreys = __webpack_require__(134);
-exports.jensenDifference = __webpack_require__(135);
-exports.jensenShannon = __webpack_require__(136);
-exports.kdivergence = __webpack_require__(137);
-exports.kulczynski = __webpack_require__(40);
-exports.kullbackLeibler = __webpack_require__(138);
-exports.kumarHassebrook = __webpack_require__(139);
-exports.kumarJohnson = __webpack_require__(140);
-exports.lorentzian = __webpack_require__(141);
-exports.manhattan = __webpack_require__(142);
-exports.matusita = __webpack_require__(143);
-exports.minkowski = __webpack_require__(144);
-exports.motyka = __webpack_require__(41);
-exports.neyman = __webpack_require__(145);
-exports.pearson = __webpack_require__(146);
-exports.probabilisticSymmetric = __webpack_require__(147);
-exports.ruzicka = __webpack_require__(148);
-exports.soergel = __webpack_require__(149);
-exports.sorensen = __webpack_require__(150);
-exports.squared = __webpack_require__(151);
-exports.squaredChord = __webpack_require__(42);
+exports.fidelity = __webpack_require__(135);
+exports.gower = __webpack_require__(136);
+exports.harmonicMean = __webpack_require__(137);
+exports.hellinger = __webpack_require__(138);
+exports.innerProduct = __webpack_require__(139);
+exports.intersection = __webpack_require__(40);
+exports.jaccard = __webpack_require__(41);
+exports.jeffreys = __webpack_require__(140);
+exports.jensenDifference = __webpack_require__(141);
+exports.jensenShannon = __webpack_require__(142);
+exports.kdivergence = __webpack_require__(143);
+exports.kulczynski = __webpack_require__(42);
+exports.kullbackLeibler = __webpack_require__(144);
+exports.kumarHassebrook = __webpack_require__(145);
+exports.kumarJohnson = __webpack_require__(146);
+exports.lorentzian = __webpack_require__(147);
+exports.manhattan = __webpack_require__(148);
+exports.matusita = __webpack_require__(149);
+exports.minkowski = __webpack_require__(150);
+exports.motyka = __webpack_require__(43);
+exports.neyman = __webpack_require__(151);
+exports.pearson = __webpack_require__(152);
+exports.probabilisticSymmetric = __webpack_require__(153);
+exports.ruzicka = __webpack_require__(154);
+exports.soergel = __webpack_require__(155);
+exports.sorensen = __webpack_require__(156);
+exports.squared = __webpack_require__(157);
+exports.squaredChord = __webpack_require__(44);
 exports.squaredEuclidean = __webpack_require__(1).squared;
-exports.taneja = __webpack_require__(152);
-exports.tanimoto = __webpack_require__(153);
-exports.topsoe = __webpack_require__(154);
-exports.tree = __webpack_require__(155);
-exports.waveHedges = __webpack_require__(156);
+exports.taneja = __webpack_require__(158);
+exports.tanimoto = __webpack_require__(159);
+exports.topsoe = __webpack_require__(160);
+exports.tree = __webpack_require__(161);
+exports.waveHedges = __webpack_require__(162);
 
 /***/ }),
-/* 121 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15881,7 +16609,7 @@ module.exports = function additiveSymmetric(a, b) {
 };
 
 /***/ }),
-/* 122 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15903,7 +16631,7 @@ module.exports = function avg(a, b) {
 };
 
 /***/ }),
-/* 123 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15919,7 +16647,7 @@ module.exports = function bhattacharyya(a, b) {
 };
 
 /***/ }),
-/* 124 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15935,7 +16663,7 @@ module.exports = function canberra(a, b) {
 };
 
 /***/ }),
-/* 125 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15955,7 +16683,7 @@ module.exports = function chebyshev(a, b) {
 };
 
 /***/ }),
-/* 126 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15972,20 +16700,20 @@ module.exports = function clark(a, b) {
 };
 
 /***/ }),
-/* 127 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var czekanowskiSimilarity = __webpack_require__(36);
+var czekanowskiSimilarity = __webpack_require__(38);
 
 module.exports = function czekanowskiDistance(a, b) {
     return 1 - czekanowskiSimilarity(a, b);
 };
 
 /***/ }),
-/* 128 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16002,7 +16730,7 @@ module.exports = function divergence(a, b) {
 };
 
 /***/ }),
-/* 129 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16018,7 +16746,7 @@ module.exports = function fidelity(a, b) {
 };
 
 /***/ }),
-/* 130 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16034,7 +16762,7 @@ module.exports = function gower(a, b) {
 };
 
 /***/ }),
-/* 131 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16050,7 +16778,7 @@ module.exports = function harmonicMean(a, b) {
 };
 
 /***/ }),
-/* 132 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16066,7 +16794,7 @@ module.exports = function hellinger(a, b) {
 };
 
 /***/ }),
-/* 133 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16082,7 +16810,7 @@ module.exports = function innerProduct(a, b) {
 };
 
 /***/ }),
-/* 134 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16098,7 +16826,7 @@ module.exports = function jeffreys(a, b) {
 };
 
 /***/ }),
-/* 135 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16114,7 +16842,7 @@ module.exports = function jensenDifference(a, b) {
 };
 
 /***/ }),
-/* 136 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16132,7 +16860,7 @@ module.exports = function jensenShannon(a, b) {
 };
 
 /***/ }),
-/* 137 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16148,7 +16876,7 @@ module.exports = function kdivergence(a, b) {
 };
 
 /***/ }),
-/* 138 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16164,7 +16892,7 @@ module.exports = function kullbackLeibler(a, b) {
 };
 
 /***/ }),
-/* 139 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16184,7 +16912,7 @@ module.exports = function kumarHassebrook(a, b) {
 };
 
 /***/ }),
-/* 140 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16200,7 +16928,7 @@ module.exports = function kumarJohnson(a, b) {
 };
 
 /***/ }),
-/* 141 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16216,7 +16944,7 @@ module.exports = function lorentzian(a, b) {
 };
 
 /***/ }),
-/* 142 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16233,7 +16961,7 @@ module.exports = function manhattan(a, b) {
 };
 
 /***/ }),
-/* 143 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16249,7 +16977,7 @@ module.exports = function matusita(a, b) {
 };
 
 /***/ }),
-/* 144 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16266,7 +16994,7 @@ module.exports = function minkowski(a, b, p) {
 };
 
 /***/ }),
-/* 145 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16283,7 +17011,7 @@ module.exports = function neyman(a, b) {
 };
 
 /***/ }),
-/* 146 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16300,7 +17028,7 @@ module.exports = function pearson(a, b) {
 };
 
 /***/ }),
-/* 147 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16317,7 +17045,7 @@ module.exports = function probabilisticSymmetric(a, b) {
 };
 
 /***/ }),
-/* 148 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16335,7 +17063,7 @@ module.exports = function ruzicka(a, b) {
 };
 
 /***/ }),
-/* 149 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16353,7 +17081,7 @@ module.exports = function soergel(a, b) {
 };
 
 /***/ }),
-/* 150 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16371,7 +17099,7 @@ module.exports = function sorensen(a, b) {
 };
 
 /***/ }),
-/* 151 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16388,7 +17116,7 @@ module.exports = function squared(a, b) {
 };
 
 /***/ }),
-/* 152 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16404,13 +17132,13 @@ module.exports = function taneja(a, b) {
 };
 
 /***/ }),
-/* 153 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var tanimotoS = __webpack_require__(43);
+var tanimotoS = __webpack_require__(45);
 
 module.exports = function tanimoto(a, b, bitvector) {
     if (bitvector) return 1 - tanimotoS(a, b, bitvector);else {
@@ -16428,7 +17156,7 @@ module.exports = function tanimoto(a, b, bitvector) {
 };
 
 /***/ }),
-/* 154 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16444,7 +17172,7 @@ module.exports = function topsoe(a, b) {
 };
 
 /***/ }),
-/* 155 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16556,7 +17284,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 156 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16572,97 +17300,97 @@ module.exports = function waveHedges(a, b) {
 };
 
 /***/ }),
-/* 157 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.cosine = __webpack_require__(44);
-exports.czekanowski = __webpack_require__(36);
-exports.dice = __webpack_require__(158);
-exports.intersection = __webpack_require__(159);
-exports.jaccard = __webpack_require__(160);
-exports.kulczynski = __webpack_require__(161);
-exports.motyka = __webpack_require__(162);
-exports.pearson = __webpack_require__(163);
-exports.squaredChord = __webpack_require__(164);
-exports.tanimoto = __webpack_require__(43);
-
-/***/ }),
-/* 158 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var diceD = __webpack_require__(37);
-
-module.exports = function dice(a, b) {
-    return 1 - diceD(a, b);
-};
-
-/***/ }),
-/* 159 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var intersectionD = __webpack_require__(38);
-
-module.exports = function intersection(a, b) {
-    return 1 - intersectionD(a, b);
-};
-
-/***/ }),
-/* 160 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var jaccardD = __webpack_require__(39);
-
-module.exports = function jaccard(a, b) {
-    return 1 - jaccardD(a, b);
-};
-
-/***/ }),
-/* 161 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var kulczynskiD = __webpack_require__(40);
-
-module.exports = function kulczynski(a, b) {
-    return 1 / kulczynskiD(a, b);
-};
-
-/***/ }),
-/* 162 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var motykaD = __webpack_require__(41);
-
-module.exports = function motyka(a, b) {
-    return 1 - motykaD(a, b);
-};
-
-/***/ }),
 /* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+exports.cosine = __webpack_require__(46);
+exports.czekanowski = __webpack_require__(38);
+exports.dice = __webpack_require__(164);
+exports.intersection = __webpack_require__(165);
+exports.jaccard = __webpack_require__(166);
+exports.kulczynski = __webpack_require__(167);
+exports.motyka = __webpack_require__(168);
+exports.pearson = __webpack_require__(169);
+exports.squaredChord = __webpack_require__(170);
+exports.tanimoto = __webpack_require__(45);
+
+/***/ }),
+/* 164 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var diceD = __webpack_require__(39);
+
+module.exports = function dice(a, b) {
+    return 1 - diceD(a, b);
+};
+
+/***/ }),
+/* 165 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var intersectionD = __webpack_require__(40);
+
+module.exports = function intersection(a, b) {
+    return 1 - intersectionD(a, b);
+};
+
+/***/ }),
+/* 166 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var jaccardD = __webpack_require__(41);
+
+module.exports = function jaccard(a, b) {
+    return 1 - jaccardD(a, b);
+};
+
+/***/ }),
+/* 167 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var kulczynskiD = __webpack_require__(42);
+
+module.exports = function kulczynski(a, b) {
+    return 1 / kulczynskiD(a, b);
+};
+
+/***/ }),
+/* 168 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var motykaD = __webpack_require__(43);
+
+module.exports = function motyka(a, b) {
+    return 1 - motykaD(a, b);
+};
+
+/***/ }),
+/* 169 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var stat = __webpack_require__(4).array;
-var cosine = __webpack_require__(44);
+var cosine = __webpack_require__(46);
 
 module.exports = function pearson(a, b) {
     var avgA = stat.mean(a);
@@ -16679,20 +17407,20 @@ module.exports = function pearson(a, b) {
 };
 
 /***/ }),
-/* 164 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var squaredChordD = __webpack_require__(42);
+var squaredChordD = __webpack_require__(44);
 
 module.exports = function squaredChord(a, b) {
     return 1 - squaredChordD(a, b);
 };
 
 /***/ }),
-/* 165 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16813,13 +17541,13 @@ function next_state(xsadd) {
 module.exports = exports["default"];
 
 /***/ }),
-/* 166 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var measures = __webpack_require__(167);
+var measures = __webpack_require__(173);
 
 class Performance {
     /**
@@ -17047,7 +17775,7 @@ Performance.names = {
 module.exports = Performance;
 
 /***/ }),
-/* 167 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17192,7 +17920,7 @@ exports.threshold = pred => {
 };
 
 /***/ }),
-/* 168 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17201,7 +17929,7 @@ exports.threshold = pred => {
 var matrixLib = __webpack_require__(0);
 var Matrix = matrixLib.Matrix;
 var inverse = matrixLib.inverse;
-var padArray = __webpack_require__(45);
+var padArray = __webpack_require__(47);
 var extend = __webpack_require__(15);
 
 var defaultOptions = {
@@ -17274,7 +18002,7 @@ function SavitzkyGolay(data, h, options) {
 module.exports = SavitzkyGolay;
 
 /***/ }),
-/* 169 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17437,13 +18165,13 @@ function guessWindowSize(data, h){
 module.exports = SavitzkyGolay;
 
 /***/ }),
-/* 170 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var eightBits = __webpack_require__(171);
+var eightBits = __webpack_require__(177);
 
 /**
  * Count the number of true values in an array
@@ -17625,7 +18353,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 171 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17647,19 +18375,19 @@ for (var i = 0; i < 256; i++) {
 module.exports = ans;
 
 /***/ }),
-/* 172 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = exports = __webpack_require__(173);
+module.exports = exports = __webpack_require__(179);
 
-exports.getEquallySpacedData = __webpack_require__(174).getEquallySpacedData;
-exports.SNV = __webpack_require__(175).SNV;
+exports.getEquallySpacedData = __webpack_require__(180).getEquallySpacedData;
+exports.SNV = __webpack_require__(181).SNV;
 
 /***/ }),
-/* 173 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17887,7 +18615,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 174 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18155,7 +18883,7 @@ exports.getEquallySpacedData = getEquallySpacedData;
 exports.integral = integral;
 
 /***/ }),
-/* 175 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
