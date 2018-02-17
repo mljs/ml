@@ -10,12 +10,10 @@ We prefix all our npm package names with `ml-` (eg. ml-matrix) so they are easy 
 To include the ml.js library in a web page:
 
 ```html
-<script src="https://www.lactame.com/lib/ml/2.2.0/ml.min.js"></script>
+<script src="https://www.lactame.com/lib/ml/3.0.0/ml.min.js"></script>
 ```
 
 It will be available as the global `ML` variable. The package is in UMD format and can be "required" within webpack or requireJS.
-
-:warning: The structure in which the libraries are organized has changed significantly on master If you are using v2.2, please refer to https://github.com/mljs/ml/tree/v2.2.0
 
 ## List of included libraries
 
