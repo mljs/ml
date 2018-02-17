@@ -22,12 +22,27 @@ ML.FNN = require('ml-fnn');
 ML.SOM = require('ml-som');
 
 // Regression
+const Regression = require('ml-regression');
+ML.SimpleLinearRegression = Regression.SimpleLinearRegression;
+ML.PolynomialRegression = Regression.PolynomialRegression;
+ML.MultivariateLinearRegression = Regression.MultivariateLinearRegression;
+ML.PowerRegression = Regression.PowerRegression;
+ML.ExponentialRegression = Regression.ExponentialRegression;
+ML.TheilSenRegression = Regression.TheilSenRegression;
+ML.RobustPolynomialRegression = Regression.RobustPolynomialRegression;
 
 // Optimization
 ML.levenbergMarquardt = require('ml-levenberg-marquardt');
 
 // Math
-ML.Matrix = require('ml-matrix').Matrix;
+const Matrix = require('ml-matrix');
+ML.Matrix = Matrix.Matrix;
+ML.SVD = Matrix.SVD;
+ML.EVD = Matrix.EVD;
+ML.CholeskyDecomposition = Matrix.CholeskyDecomposition;
+ML.LuDecomposition = Matrix.LuDecomposition;
+ML.QrDecomposition = Matrix.QrDecomposition;
+
 ML.SparseMatrix = require('ml-sparse-matrix');
 ML.Kernel = require('ml-kernel');
 ML.Distance = require('ml-distance').distance;

@@ -8,9 +8,11 @@ to your dependencies only the libraries that you need, as they are usually publi
 We prefix all our npm package names with `ml-` (eg. ml-matrix) so they are easy to find.
 
 To include the ml.js library in a web page:
+
 ```html
 <script src="https://www.lactame.com/lib/ml/2.2.0/ml.min.js"></script>
 ```
+
 It will be available as the global `ML` variable. The package is in UMD format and can be "required" within webpack or requireJS.
 
 :warning: The structure in which the libraries are organized has changed significantly on master If you are using v2.2, please refer to https://github.com/mljs/ml/tree/v2.2.0
@@ -39,7 +41,13 @@ It will be available as the global `ML` variable. The package is in UMD format a
 
 ### Regression
 
-* TBD
+* Simple linear regression: [`ML.SimpleLinearRegression`](https://github.com/mljs/regression-simple-linear)
+* Polynomial regression: [`ML.PolynomialRegression`](https://github.com/mljs/regression-polynomial)
+* Multivariate linear regression: [`ML.MultivariateLinearRegression`](https://github.com/mljs/regression-multivariate-linear)
+* Power regression: [`ML.PowerRegression`](https://github.com/mljs/regression-power)
+* Exponential regression: [`ML.ExponentialRegression`](https://github.com/mljs/regression-exponential)
+* Theil-Sen regression: [`ML.TheilSenRegression`](https://github.com/mljs/regression-theil-sen)
+* Robust polynomial regression: [`ML.RobustPolynomialRegression`](https://github.com/mljs/regression-robust-polynomial)
 
 ### Optimization
 
@@ -48,6 +56,11 @@ It will be available as the global `ML` variable. The package is in UMD format a
 ### Math
 
 * Matrix: [`ML.Matrix`](https://github.com/mljs/matrix) (Matrix class)
+* Singular value decomposition (SVD): [`ML.SVD`](https://github.com/mljs/matrix)
+* Eigenvalue decomposition (EVD): [`ML.EVD`](https://github.com/mljs/matrix)
+* Cholesky decomposition: [`ML.CholeskyDecomposition`](https://github.com/mljs/matrix)
+* Lu decomposition: [`ML.LuDecomposition`](https://github.com/mljs/matrix)
+* Qr decomposition: [`ML.QrDecomposition`](https://github.com/mljs/matrix)
 * Sparse matrix: [`ML.SparseMatrix`](https://github.com/mljs/sparse-matrix)
 * Kernels: [`ML.Kernel`](https://github.com/mljs/kernel)
 * Distance functions: [`ML.Distance`](https://github.com/mljs/distance)
@@ -61,7 +74,7 @@ It will be available as the global `ML` variable. The package is in UMD format a
 
 ### Data preprocessing
 
-* Principal component analysis (PCA): [`ML.PCA`](https://github.com/mljs/pca)
+* Principal component analysis (PCA): [`ML.PrincipalComponentAnalysis`](https://github.com/mljs/pca)
 * Savitzky-Golay filter: [`ML.savitzkyGolay`](https://github.com/mljs/savitzky-golay)
 * Savitzky-Golay generalized: [`ML.savitzkyGolayGeneralized`](https://github.com/mljs/savitzky-golay-generalized)
 
@@ -75,4 +88,4 @@ It will be available as the global `ML` variable. The package is in UMD format a
 
 ## License
 
-  [MIT](./LICENSE)
+[MIT](./LICENSE)
