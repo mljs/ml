@@ -35,6 +35,7 @@
     "binary-search": "^1.3.2",
     "ml-array-utils": "^0.4.0",
     "ml-bit-array": "^1.0.0",
+    "ml-cart": "^1.0.8",
     "ml-confusion-matrix": "^0.3.0",
     "ml-cross-validation": "^1.1.0",
     "ml-distance": "^2.1.1",

@@ -1,5 +1,7 @@
 'use strict';
 
+const mlCart = require('ml-cart');
+
 const ML = exports;
 
 // Try to keep this list in the same structure as the README.
@@ -16,6 +18,7 @@ ML.KNN = require('ml-knn');
 ML.PLS = require('ml-pls');
 ML.CrossValidation = require('ml-cross-validation');
 ML.ConfusionMatrix = require('ml-confusion-matrix');
+ML.DecisionTreeClassifier = mlCart.DecisionTreeClassifier;
 
 // Artificial neural networks
 ML.FNN = require('ml-fnn');
@@ -30,6 +33,7 @@ ML.PowerRegression = Regression.PowerRegression;
 ML.ExponentialRegression = Regression.ExponentialRegression;
 ML.TheilSenRegression = Regression.TheilSenRegression;
 ML.RobustPolynomialRegression = Regression.RobustPolynomialRegression;
+ML.DesisionTreeRegression = mlCart.DesisionTreeRegression;
 
 // Optimization
 ML.levenbergMarquardt = require('ml-levenberg-marquardt');
