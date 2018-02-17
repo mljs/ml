@@ -7,17 +7,12 @@
     "test": "node -p \"void(require('./'));console.log('OK')\"",
     "build": "cheminfo build --root ML"
   },
+  "files": ["src"],
   "repository": {
     "type": "git",
     "url": "https://github.com/mljs/ml.git"
   },
-  "keywords": [
-    "machine",
-    "learning",
-    "data",
-    "mining",
-    "datamining"
-  ],
+  "keywords": ["machine", "learning", "data", "mining", "datamining"],
   "author": "Michaël Zasso",
   "contributors": [
     "Miguel Asencio <maasencioh@gmail.com> (https://github.com/maasencioh)",
