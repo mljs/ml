@@ -33,7 +33,7 @@ It will be available as the global `ML` variable. The package is in UMD format a
 * Confusion matrix: [`ML.ConfusionMatrix`](https://github.com/mljs/confusion-matrix)
 * Decision tree classifier: [`ML.DecisionTreeClassifier`](https://github.com/mljs/decision-tree-cart)
 
-  ### Artificial neural networks (ANN)
+### Artificial neural networks (ANN)
 
 * Feedforward Neural Networks: [`ML.FNN`](https://github.com/mljs/feedforward-neural-networks)
 * Self-organizing map / Kohonen networks: [`ML.SOM`](https://github.com/mljs/som)
