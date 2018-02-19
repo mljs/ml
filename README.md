@@ -32,6 +32,7 @@ It will be available as the global `ML` variable. The package is in UMD format a
 * Cross-validation: [`ML.CrossValidation`](https://github.com/mljs/cross-validation)
 * Confusion matrix: [`ML.ConfusionMatrix`](https://github.com/mljs/confusion-matrix)
 * Decision tree classifier: [`ML.DecisionTreeClassifier`](https://github.com/mljs/decision-tree-cart)
+* Random forest classifier: [`ML.RandomForestClassifier`](https://github.com/mljs/random-forest)
 
 ### Artificial neural networks (ANN)
 
@@ -48,6 +49,7 @@ It will be available as the global `ML` variable. The package is in UMD format a
 * Theil-Sen regression: [`ML.TheilSenRegression`](https://github.com/mljs/regression-theil-sen)
 * Robust polynomial regression: [`ML.RobustPolynomialRegression`](https://github.com/mljs/regression-robust-polynomial)
 * Decision tree regression: [`ML.DecisionTreeRegression`](https://github.com/mljs/decision-tree-cart)
+* Random forest regression: [`ML.RandomForestRegression`](https://github.com/mljs/random-forest)
 
 ### Optimization
 
