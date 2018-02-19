@@ -1,6 +1,7 @@
 'use strict';
 
 const mlCart = require('ml-cart');
+const mlRandomForest = require('ml-random-forest');
 
 const ML = exports;
 
@@ -19,6 +20,7 @@ ML.PLS = require('ml-pls');
 ML.CrossValidation = require('ml-cross-validation');
 ML.ConfusionMatrix = require('ml-confusion-matrix');
 ML.DecisionTreeClassifier = mlCart.DecisionTreeClassifier;
+ML.RandomForestClassifier = mlRandomForest.RandomForestClassifier;
 
 // Artificial neural networks
 ML.FNN = require('ml-fnn');
@@ -34,6 +36,7 @@ ML.ExponentialRegression = Regression.ExponentialRegression;
 ML.TheilSenRegression = Regression.TheilSenRegression;
 ML.RobustPolynomialRegression = Regression.RobustPolynomialRegression;
 ML.DesisionTreeRegression = mlCart.DesisionTreeRegression;
+ML.RandomForestRegression = mlRandomForest.RandomForestRegression;
 
 // Optimization
 ML.levenbergMarquardt = require('ml-levenberg-marquardt');
