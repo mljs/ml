@@ -65,6 +65,9 @@
     "num-sort": "^1.0.0"
   },
   "devDependencies": {
+    "babel-plugin-remove-comments": "^2.0.0",
+    "babel-preset-babili": "^0.1.4",
+    "babel-preset-es2015": "^6.24.1",
     "cheminfo-tools": "^1.19.2"
   }
 }
