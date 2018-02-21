@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v3.1.0
+ * @version v3.2.0
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 48);
+/******/ 	return __webpack_require__(__webpack_require__.s = 50);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -114,7 +114,7 @@ Object.defineProperty(exports, 'abstractMatrix', {
   }
 });
 
-var _wrap = __webpack_require__(64);
+var _wrap = __webpack_require__(65);
 
 Object.defineProperty(exports, 'wrap', {
   enumerable: true,
@@ -123,7 +123,7 @@ Object.defineProperty(exports, 'wrap', {
   }
 });
 
-var _WrapperMatrix2D = __webpack_require__(17);
+var _WrapperMatrix2D = __webpack_require__(19);
 
 Object.defineProperty(exports, 'WrapperMatrix2D', {
   enumerable: true,
@@ -132,7 +132,7 @@ Object.defineProperty(exports, 'WrapperMatrix2D', {
   }
 });
 
-var _WrapperMatrix1D = __webpack_require__(16);
+var _WrapperMatrix1D = __webpack_require__(18);
 
 Object.defineProperty(exports, 'WrapperMatrix1D', {
   enumerable: true,
@@ -141,7 +141,7 @@ Object.defineProperty(exports, 'WrapperMatrix1D', {
   }
 });
 
-var _decompositions = __webpack_require__(65);
+var _decompositions = __webpack_require__(66);
 
 Object.defineProperty(exports, 'solve', {
   enumerable: true,
@@ -171,7 +171,7 @@ Object.defineProperty(exports, 'SVD', {
   }
 });
 
-var _evd = __webpack_require__(66);
+var _evd = __webpack_require__(67);
 
 Object.defineProperty(exports, 'EigenvalueDecomposition', {
   enumerable: true,
@@ -186,7 +186,7 @@ Object.defineProperty(exports, 'EVD', {
   }
 });
 
-var _cholesky = __webpack_require__(67);
+var _cholesky = __webpack_require__(68);
 
 Object.defineProperty(exports, 'CholeskyDecomposition', {
   enumerable: true,
@@ -216,7 +216,7 @@ Object.defineProperty(exports, 'LU', {
   }
 });
 
-var _qr = __webpack_require__(18);
+var _qr = __webpack_require__(20);
 
 Object.defineProperty(exports, 'QrDecomposition', {
   enumerable: true,
@@ -266,7 +266,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _maybeToPrecision = __webpack_require__(111);
+var _maybeToPrecision = __webpack_require__(119);
 
 Object.defineProperty(exports, 'maybeToPrecision', {
     enumerable: true,
@@ -275,7 +275,7 @@ Object.defineProperty(exports, 'maybeToPrecision', {
     }
 });
 
-var _checkArrayLength = __webpack_require__(112);
+var _checkArrayLength = __webpack_require__(120);
 
 Object.defineProperty(exports, 'checkArrayLength', {
     enumerable: true,
@@ -413,7 +413,7 @@ exports.default = BaseView;
 "use strict";
 
 
-exports.array = __webpack_require__(21);
+exports.array = __webpack_require__(23);
 exports.matrix = __webpack_require__(8);
 
 /***/ }),
@@ -611,7 +611,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-__webpack_require__(51);
+__webpack_require__(52);
 
 var _abstractMatrix = __webpack_require__(7);
 
@@ -763,45 +763,45 @@ var _svd = __webpack_require__(10);
 
 var _svd2 = _interopRequireDefault(_svd);
 
-var _mlArrayRescale = __webpack_require__(52);
+var _mlArrayRescale = __webpack_require__(53);
 
 var _mlArrayRescale2 = _interopRequireDefault(_mlArrayRescale);
 
 var _util = __webpack_require__(5);
 
-var _transpose = __webpack_require__(55);
+var _transpose = __webpack_require__(56);
 
 var _transpose2 = _interopRequireDefault(_transpose);
 
-var _row = __webpack_require__(56);
+var _row = __webpack_require__(57);
 
 var _row2 = _interopRequireDefault(_row);
 
-var _sub = __webpack_require__(57);
+var _sub = __webpack_require__(58);
 
 var _sub2 = _interopRequireDefault(_sub);
 
-var _selection = __webpack_require__(58);
+var _selection = __webpack_require__(59);
 
 var _selection2 = _interopRequireDefault(_selection);
 
-var _rowSelection = __webpack_require__(59);
+var _rowSelection = __webpack_require__(60);
 
 var _rowSelection2 = _interopRequireDefault(_rowSelection);
 
-var _columnSelection = __webpack_require__(60);
+var _columnSelection = __webpack_require__(61);
 
 var _columnSelection2 = _interopRequireDefault(_columnSelection);
 
-var _column = __webpack_require__(61);
+var _column = __webpack_require__(62);
 
 var _column2 = _interopRequireDefault(_column);
 
-var _flipRow = __webpack_require__(62);
+var _flipRow = __webpack_require__(63);
 
 var _flipRow2 = _interopRequireDefault(_flipRow);
 
-var _flipColumn = __webpack_require__(63);
+var _flipColumn = __webpack_require__(64);
 
 var _flipColumn2 = _interopRequireDefault(_flipColumn);
 
@@ -2648,7 +2648,7 @@ function AbstractMatrix(superCtor) {
 "use strict";
 
 
-var arrayStat = __webpack_require__(21);
+var arrayStat = __webpack_require__(23);
 
 function compareNumbers(a, b) {
     return a - b;
@@ -4145,7 +4145,39 @@ function getFilled2DArray(rows, columns, value) {
 "use strict";
 
 
-var Heap = __webpack_require__(73);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = mean;
+/**
+ * Computes the mean of the given values
+ * @param {Array<number>} input
+ * @return {number}
+ */
+function mean(input) {
+    if (!Array.isArray(input)) {
+        throw new Error('input must be an array');
+    }
+
+    if (input.length === 0) {
+        throw new Error('input must not be empty');
+    }
+
+    var sum = 0;
+    for (var i = 0; i < input.length; i++) {
+        sum += input[i];
+    }
+    return sum / input.length;
+}
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var Heap = __webpack_require__(81);
 
 function Cluster() {
     this.children = [];
@@ -4226,7 +4258,7 @@ Cluster.prototype.traverse = function (cb) {
 module.exports = Cluster;
 
 /***/ }),
-/* 13 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4234,16 +4266,16 @@ module.exports = Cluster;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var GaussianKernel = __webpack_require__(87);
-var PolynomialKernel = __webpack_require__(88);
-var ANOVAKernel = __webpack_require__(89);
-var CauchyKernel = __webpack_require__(90);
-var ExponentialKernel = __webpack_require__(91);
-var HistogramKernel = __webpack_require__(92);
-var LaplacianKernel = __webpack_require__(93);
-var MultiquadraticKernel = __webpack_require__(94);
-var RationalKernel = __webpack_require__(95);
-var SigmoidKernel = __webpack_require__(96);
+var GaussianKernel = __webpack_require__(95);
+var PolynomialKernel = __webpack_require__(96);
+var ANOVAKernel = __webpack_require__(97);
+var CauchyKernel = __webpack_require__(98);
+var ExponentialKernel = __webpack_require__(99);
+var HistogramKernel = __webpack_require__(100);
+var LaplacianKernel = __webpack_require__(101);
+var MultiquadraticKernel = __webpack_require__(102);
+var RationalKernel = __webpack_require__(103);
+var SigmoidKernel = __webpack_require__(104);
 
 var kernelType = {
     gaussian: GaussianKernel,
@@ -4316,7 +4348,7 @@ class Kernel {
 module.exports = Kernel;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4412,7 +4444,7 @@ function regress(slr, x, y) {
 }
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4504,7 +4536,36 @@ module.exports = function extend() {
 };
 
 /***/ }),
-/* 16 */
+/* 17 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _DecisionTreeClassifier = __webpack_require__(51);
+
+Object.defineProperty(exports, 'DecisionTreeClassifier', {
+  enumerable: true,
+  get: function get() {
+    return _DecisionTreeClassifier.DecisionTreeClassifier;
+  }
+});
+
+var _DecisionTreeRegression = __webpack_require__(70);
+
+Object.defineProperty(exports, 'DecisionTreeRegression', {
+  enumerable: true,
+  get: function get() {
+    return _DecisionTreeRegression.DecisionTreeRegression;
+  }
+});
+
+/***/ }),
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4567,7 +4628,7 @@ class WrapperMatrix1D extends (0, _abstractMatrix2.default)() {
 exports.default = WrapperMatrix1D;
 
 /***/ }),
-/* 17 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4615,7 +4676,7 @@ class WrapperMatrix2D extends (0, _abstractMatrix2.default)() {
 exports.default = WrapperMatrix2D;
 
 /***/ }),
-/* 18 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4801,7 +4862,7 @@ class QrDecomposition {
 exports.default = QrDecomposition;
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4815,11 +4876,11 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _utils = __webpack_require__(68);
+var _utils = __webpack_require__(69);
 
 var Utils = _interopRequireWildcard(_utils);
 
-var _mlArrayMean = __webpack_require__(20);
+var _mlArrayMean = __webpack_require__(12);
 
 var _mlArrayMean2 = _interopRequireDefault(_mlArrayMean);
 
@@ -5049,7 +5110,7 @@ class TreeNode {
 exports.default = TreeNode;
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5058,30 +5119,166 @@ exports.default = TreeNode;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = mean;
+exports.RandomForestBase = undefined;
+
+var _mlCart = __webpack_require__(17);
+
+var _utils = __webpack_require__(73);
+
+var Utils = _interopRequireWildcard(_utils);
+
+var _mlMatrix = __webpack_require__(0);
+
+function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
+
 /**
- * Computes the mean of the given values
- * @param {Array<number>} input
- * @return {number}
+ * @class RandomForestBase
  */
-function mean(input) {
-    if (!Array.isArray(input)) {
-        throw new Error('input must be an array');
+class RandomForestBase {
+
+    /**
+     * Create a new base random forest for a classifier or regression model.
+     * @constructor
+     * @param {object} options
+     * @param {number|String} [options.maxFeatures] - the number of features used on each estimator.
+     *        * if is an integer it selects maxFeatures elements over the sample features.
+     *        * if is a float between (0, 1), it takes the percentage of features.
+     * @param {boolean} [options.replacement] - use replacement over the sample features.
+     * @param {number} [options.seed] - seed for feature and samples selection, must be a 32-bit integer.
+     * @param {number} [options.nEstimators] - number of estimator to use.
+     * @param {object} [options.treeOptions] - options for the tree classifier, see [ml-cart]{@link https://mljs.github.io/decision-tree-cart/}
+     * @param {boolean} [options.isClassifier] - boolean to check if is a classifier or regression model (used by subclasses).
+     * @param {boolean} [options.useSampleBagging] - use bagging over training samples.
+     * @param {object} model - for load purposes.
+     */
+    constructor(options, model) {
+        if (options === true) {
+            this.replacement = model.replacement;
+            this.maxFeatures = model.maxFeatures;
+            this.nEstimators = model.nEstimators;
+            this.treeOptions = model.treeOptions;
+            this.isClassifier = model.isClassifier;
+            this.seed = model.seed;
+            this.n = model.n;
+            this.indexes = model.indexes;
+            this.useSampleBagging = model.useSampleBagging;
+
+            var Estimator = this.isClassifier ? _mlCart.DecisionTreeClassifier : _mlCart.DecisionTreeRegression;
+            this.estimators = model.estimators.map(est => Estimator.load(est));
+        } else {
+            this.replacement = options.replacement;
+            this.maxFeatures = options.maxFeatures;
+            this.nEstimators = options.nEstimators;
+            this.treeOptions = options.treeOptions;
+            this.isClassifier = options.isClassifier;
+            this.seed = options.seed;
+            this.useSampleBagging = options.useSampleBagging;
+        }
     }
 
-    if (input.length === 0) {
-        throw new Error('input must not be empty');
+    /**
+     * Train the decision tree with the given training set and labels.
+     * @param {Matrix|Array} trainingSet
+     * @param {Array} trainingValues
+     */
+    train(trainingSet, trainingValues) {
+        trainingSet = _mlMatrix.Matrix.checkMatrix(trainingSet);
+
+        this.maxFeatures = this.maxFeatures || trainingSet.columns;
+
+        if (Utils.checkFloat(this.maxFeatures)) {
+            this.n = Math.floor(trainingSet.columns * this.maxFeatures);
+        } else if (Number.isInteger(this.maxFeatures)) {
+            if (this.maxFeatures > trainingSet.columns) {
+                throw new RangeError('The maxFeatures parameter should be less than ' + trainingSet.columns);
+            } else {
+                this.n = this.maxFeatures;
+            }
+        } else {
+            throw new RangeError('Cannot process the maxFeatures parameter ' + this.maxFeatures);
+        }
+
+        if (this.isClassifier) {
+            var Estimator = _mlCart.DecisionTreeClassifier;
+        } else {
+            Estimator = _mlCart.DecisionTreeRegression;
+        }
+
+        this.estimators = new Array(this.nEstimators);
+        this.indexes = new Array(this.nEstimators);
+
+        for (var i = 0; i < this.nEstimators; ++i) {
+            var res = this.useSampleBagging ? Utils.examplesBaggingWithReplacement(trainingSet, trainingValues, this.seed) : { X: trainingSet, y: trainingValues };
+            var X = res.X;
+            var y = res.y;
+
+            res = Utils.featureBagging(X, this.n, this.replacement, this.seed);
+            X = res.X;
+
+            this.indexes[i] = res.usedIndex;
+            this.estimators[i] = new Estimator(this.treeOptions);
+            this.estimators[i].train(X, y);
+        }
     }
 
-    var sum = 0;
-    for (var i = 0; i < input.length; i++) {
-        sum += input[i];
+    /**
+     * Method that returns the way the algorithm generates the predictions, for example, in classification
+     * you can return the mode of all predictions retrieved by the trees, or in case of regression you can
+     * use the mean or the median.
+     * @abstract
+     * @param {Array} values - predictions of the estimators.
+     * @return {number} prediction.
+     */
+    // eslint-disable-next-line no-unused-vars
+    selection(values) {
+        throw new Error('Abstract method \'selection\' not implemented!');
     }
-    return sum / input.length;
+
+    /**
+     * Predicts the output given the matrix to predict.
+     * @param {Matrix|Array} toPredict
+     * @return {Array} predictions
+     */
+    predict(toPredict) {
+        var predictionValues = new Array(this.nEstimators);
+        toPredict = _mlMatrix.Matrix.checkMatrix(toPredict);
+        for (var i = 0; i < this.nEstimators; ++i) {
+            var X = toPredict.columnSelectionView(this.indexes[i]); // get features for estimator
+            predictionValues[i] = this.estimators[i].predict(X);
+        }
+
+        predictionValues = new _mlMatrix.WrapperMatrix2D(predictionValues).transposeView();
+        var predictions = new Array(predictionValues.rows);
+        for (i = 0; i < predictionValues.rows; ++i) {
+            predictions[i] = this.selection(predictionValues.getRow(i));
+        }
+
+        return predictions;
+    }
+
+    /**
+     * Export the current model to JSON.
+     * @return {object} - Current model.
+     */
+    toJSON() {
+        return {
+            indexes: this.indexes,
+            n: this.n,
+            replacement: this.replacement,
+            maxFeatures: this.maxFeatures,
+            nEstimators: this.nEstimators,
+            treeOptions: this.treeOptions,
+            isClassifier: this.isClassifier,
+            seed: this.seed,
+            estimators: this.estimators,
+            useSampleBagging: this.useSampleBagging
+        };
+    }
 }
+exports.RandomForestBase = RandomForestBase;
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5571,14 +5768,14 @@ exports.cumulativeSum = function cumulativeSum(array) {
 };
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cluster = __webpack_require__(12);
-var util = __webpack_require__(75);
+var Cluster = __webpack_require__(13);
+var util = __webpack_require__(83);
 
 function ClusterLeaf(index) {
     Cluster.call(this);
@@ -5592,7 +5789,7 @@ util.inherits(ClusterLeaf, Cluster);
 module.exports = ClusterLeaf;
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5630,13 +5827,13 @@ function distanceMatrix(data, distanceFn) {
 module.exports = distanceMatrix;
 
 /***/ }),
-/* 24 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var nearestVector = __webpack_require__(82);
+var nearestVector = __webpack_require__(90);
 
 /**
  * Calculates the distance matrix for a given array of points
@@ -5742,7 +5939,7 @@ exports.calculateDistanceMatrix = calculateDistanceMatrix;
 exports.converged = converged;
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5792,7 +5989,7 @@ function separateClasses(X, y) {
 }
 
 /***/ }),
-/* 26 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5878,7 +6075,7 @@ function initializeMatrices(array, isMatrix) {
 }
 
 /***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6271,7 +6468,7 @@ class ConfusionMatrix {
 module.exports = ConfusionMatrix;
 
 /***/ }),
-/* 28 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6279,8 +6476,8 @@ module.exports = ConfusionMatrix;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var Utils = __webpack_require__(29);
-var ACTIVATION_FUNCTIONS = __webpack_require__(30);
+var Utils = __webpack_require__(31);
+var ACTIVATION_FUNCTIONS = __webpack_require__(32);
 
 class Layer {
     /**
@@ -6405,7 +6602,7 @@ class Layer {
 module.exports = Layer;
 
 /***/ }),
-/* 29 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6477,7 +6674,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 30 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6571,7 +6768,7 @@ var ACTIVATION_FUNCTIONS = {
 module.exports = ACTIVATION_FUNCTIONS;
 
 /***/ }),
-/* 31 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6682,7 +6879,7 @@ NodeSquare.prototype.getPosition = function getPosition(element) {
 module.exports = NodeSquare;
 
 /***/ }),
-/* 32 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6693,7 +6890,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RobustPolynomialRegression = exports.TheilSenRegression = exports.PolinomialFitting2D = exports.KRR = exports.KernelRidgeRegression = exports.NonLinearRegression = exports.NLR = exports.MultivariateLinearRegression = exports.PowerRegression = exports.ExponentialRegression = exports.PolynomialRegression = exports.SLR = exports.SimpleLinearRegression = undefined;
 
-var _mlRegressionSimpleLinear = __webpack_require__(14);
+var _mlRegressionSimpleLinear = __webpack_require__(15);
 
 Object.defineProperty(exports, 'SimpleLinearRegression', {
     enumerable: true,
@@ -6708,7 +6905,7 @@ Object.defineProperty(exports, 'SLR', {
     }
 });
 
-var _mlRegressionPolynomial = __webpack_require__(33);
+var _mlRegressionPolynomial = __webpack_require__(35);
 
 Object.defineProperty(exports, 'PolynomialRegression', {
     enumerable: true,
@@ -6717,7 +6914,7 @@ Object.defineProperty(exports, 'PolynomialRegression', {
     }
 });
 
-var _mlRegressionExponential = __webpack_require__(113);
+var _mlRegressionExponential = __webpack_require__(121);
 
 Object.defineProperty(exports, 'ExponentialRegression', {
     enumerable: true,
@@ -6726,7 +6923,7 @@ Object.defineProperty(exports, 'ExponentialRegression', {
     }
 });
 
-var _mlRegressionPower = __webpack_require__(114);
+var _mlRegressionPower = __webpack_require__(122);
 
 Object.defineProperty(exports, 'PowerRegression', {
     enumerable: true,
@@ -6735,7 +6932,7 @@ Object.defineProperty(exports, 'PowerRegression', {
     }
 });
 
-var _mlRegressionMultivariateLinear = __webpack_require__(115);
+var _mlRegressionMultivariateLinear = __webpack_require__(123);
 
 Object.defineProperty(exports, 'MultivariateLinearRegression', {
     enumerable: true,
@@ -6744,7 +6941,7 @@ Object.defineProperty(exports, 'MultivariateLinearRegression', {
     }
 });
 
-var _kernelRidgeRegression = __webpack_require__(116);
+var _kernelRidgeRegression = __webpack_require__(124);
 
 Object.defineProperty(exports, 'KernelRidgeRegression', {
     enumerable: true,
@@ -6759,7 +6956,7 @@ Object.defineProperty(exports, 'KRR', {
     }
 });
 
-var _polyFitRegression2d = __webpack_require__(117);
+var _polyFitRegression2d = __webpack_require__(125);
 
 Object.defineProperty(exports, 'PolinomialFitting2D', {
     enumerable: true,
@@ -6768,7 +6965,7 @@ Object.defineProperty(exports, 'PolinomialFitting2D', {
     }
 });
 
-var _mlRegressionTheilSen = __webpack_require__(118);
+var _mlRegressionTheilSen = __webpack_require__(126);
 
 Object.defineProperty(exports, 'TheilSenRegression', {
     enumerable: true,
@@ -6777,7 +6974,7 @@ Object.defineProperty(exports, 'TheilSenRegression', {
     }
 });
 
-var _mlRegressionRobustPolynomial = __webpack_require__(119);
+var _mlRegressionRobustPolynomial = __webpack_require__(127);
 
 Object.defineProperty(exports, 'RobustPolynomialRegression', {
     enumerable: true,
@@ -6786,7 +6983,7 @@ Object.defineProperty(exports, 'RobustPolynomialRegression', {
     }
 });
 
-var _potentialRegression = __webpack_require__(120);
+var _potentialRegression = __webpack_require__(128);
 
 var _potentialRegression2 = _interopRequireDefault(_potentialRegression);
 
@@ -6799,7 +6996,7 @@ exports.NLR = NLR;
 exports.NonLinearRegression = NLR;
 
 /***/ }),
-/* 33 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6941,15 +7138,15 @@ function regress(pr, x, y, degree) {
 }
 
 /***/ }),
-/* 34 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var newArray = __webpack_require__(123);
+var newArray = __webpack_require__(131);
 
-var primeFinder = __webpack_require__(124);
+var primeFinder = __webpack_require__(132);
 var nextPrime = primeFinder.nextPrime;
 var largestPrime = primeFinder.largestPrime;
 
@@ -7249,7 +7446,7 @@ function chooseShrinkCapacity(size, minLoad, maxLoad) {
 }
 
 /***/ }),
-/* 35 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7289,13 +7486,13 @@ module.exports = function (haystack, needle, comparator, low, high) {
 };
 
 /***/ }),
-/* 36 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var numberIsNan = __webpack_require__(125);
+var numberIsNan = __webpack_require__(133);
 
 function assertNum(x) {
 	if (typeof x !== 'number' || numberIsNan(x)) {
@@ -7316,17 +7513,17 @@ exports.desc = function (a, b) {
 };
 
 /***/ }),
-/* 37 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.distance = __webpack_require__(126);
-exports.similarity = __webpack_require__(163);
+exports.distance = __webpack_require__(134);
+exports.similarity = __webpack_require__(171);
 
 /***/ }),
-/* 38 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7343,7 +7540,7 @@ module.exports = function czekanowskiSimilarity(a, b) {
 };
 
 /***/ }),
-/* 39 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7363,7 +7560,7 @@ module.exports = function dice(a, b) {
 };
 
 /***/ }),
-/* 40 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7379,7 +7576,7 @@ module.exports = function intersection(a, b) {
 };
 
 /***/ }),
-/* 41 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7401,7 +7598,7 @@ module.exports = function jaccard(a, b) {
 };
 
 /***/ }),
-/* 42 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7419,7 +7616,7 @@ module.exports = function kulczynski(a, b) {
 };
 
 /***/ }),
-/* 43 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7437,7 +7634,7 @@ module.exports = function motyka(a, b) {
 };
 
 /***/ }),
-/* 44 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7453,7 +7650,7 @@ module.exports = function squaredChord(a, b) {
 };
 
 /***/ }),
-/* 45 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7484,7 +7681,7 @@ module.exports = function tanimoto(a, b, bitvector) {
 };
 
 /***/ }),
-/* 46 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7504,13 +7701,13 @@ module.exports = function cosine(a, b) {
 };
 
 /***/ }),
-/* 47 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var extend = __webpack_require__(15);
+var extend = __webpack_require__(16);
 
 var defaultOptions = {
     size: 1,
@@ -7598,38 +7795,40 @@ function padArray(data, options) {
 module.exports = padArray;
 
 /***/ }),
-/* 48 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var mlCart = __webpack_require__(49);
+var mlCart = __webpack_require__(17);
+var mlRandomForest = __webpack_require__(71);
 
 var ML = exports;
 
 // Try to keep this list in the same structure as the README.
 
 // Unsupervised learning
-ML.PCA = __webpack_require__(70);
-ML.HClust = __webpack_require__(71);
-ML.KMeans = __webpack_require__(81);
+ML.PCA = __webpack_require__(78);
+ML.HClust = __webpack_require__(79);
+ML.KMeans = __webpack_require__(89);
 
 // Supervised learning
-ML.SVM = __webpack_require__(86);
-ML.NaiveBayes = __webpack_require__(97);
-ML.KNN = __webpack_require__(100);
-ML.PLS = __webpack_require__(102);
-ML.CrossValidation = __webpack_require__(105);
-ML.ConfusionMatrix = __webpack_require__(27);
+ML.SVM = __webpack_require__(94);
+ML.NaiveBayes = __webpack_require__(105);
+ML.KNN = __webpack_require__(108);
+ML.PLS = __webpack_require__(110);
+ML.CrossValidation = __webpack_require__(113);
+ML.ConfusionMatrix = __webpack_require__(29);
 ML.DecisionTreeClassifier = mlCart.DecisionTreeClassifier;
+ML.RandomForestClassifier = mlRandomForest.RandomForestClassifier;
 
 // Artificial neural networks
-ML.FNN = __webpack_require__(107);
-ML.SOM = __webpack_require__(109);
+ML.FNN = __webpack_require__(115);
+ML.SOM = __webpack_require__(117);
 
 // Regression
-var Regression = __webpack_require__(32);
+var Regression = __webpack_require__(34);
 ML.SimpleLinearRegression = Regression.SimpleLinearRegression;
 ML.PolynomialRegression = Regression.PolynomialRegression;
 ML.MultivariateLinearRegression = Regression.MultivariateLinearRegression;
@@ -7638,9 +7837,10 @@ ML.ExponentialRegression = Regression.ExponentialRegression;
 ML.TheilSenRegression = Regression.TheilSenRegression;
 ML.RobustPolynomialRegression = Regression.RobustPolynomialRegression;
 ML.DesisionTreeRegression = mlCart.DesisionTreeRegression;
+ML.RandomForestRegression = mlRandomForest.RandomForestRegression;
 
 // Optimization
-ML.levenbergMarquardt = __webpack_require__(121);
+ML.levenbergMarquardt = __webpack_require__(129);
 
 // Math
 var Matrix = __webpack_require__(0);
@@ -7651,65 +7851,36 @@ ML.CholeskyDecomposition = Matrix.CholeskyDecomposition;
 ML.LuDecomposition = Matrix.LuDecomposition;
 ML.QrDecomposition = Matrix.QrDecomposition;
 
-ML.SparseMatrix = __webpack_require__(122);
-ML.Kernel = __webpack_require__(13);
-ML.Distance = __webpack_require__(37).distance;
-ML.Similarity = __webpack_require__(37).similarity;
-ML.distanceMatrix = __webpack_require__(23);
-ML.XSadd = __webpack_require__(171);
+ML.SparseMatrix = __webpack_require__(130);
+ML.Kernel = __webpack_require__(14);
+ML.Distance = __webpack_require__(39).distance;
+ML.Similarity = __webpack_require__(39).similarity;
+ML.distanceMatrix = __webpack_require__(25);
+ML.XSadd = __webpack_require__(179);
 
 // Statistics
-ML.Performance = __webpack_require__(172);
+ML.Performance = __webpack_require__(180);
 
 // Data preprocessing
-ML.savitzkyGolay = __webpack_require__(174);
-ML.savitzkyGolayGeneralized = __webpack_require__(175);
+ML.savitzkyGolay = __webpack_require__(182);
+ML.savitzkyGolayGeneralized = __webpack_require__(183);
 
 // Utility
-ML.BitArray = __webpack_require__(176);
-ML.HashTable = __webpack_require__(34);
-ML.padArray = __webpack_require__(47);
-ML.binarySearch = __webpack_require__(35);
-ML.numSort = __webpack_require__(36);
+ML.BitArray = __webpack_require__(184);
+ML.HashTable = __webpack_require__(36);
+ML.padArray = __webpack_require__(49);
+ML.binarySearch = __webpack_require__(37);
+ML.numSort = __webpack_require__(38);
 
 // Undocumented/deprecated packages
-ML.ArrayUtils = __webpack_require__(178);
-ML.Regression = __webpack_require__(32);
+ML.ArrayUtils = __webpack_require__(186);
+ML.Regression = __webpack_require__(34);
 ML.MatrixUtil = __webpack_require__(0);
 ML.ArrayStat = __webpack_require__(4).array;
 ML.MatrixStat = __webpack_require__(4).matrix;
 
 /***/ }),
-/* 49 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _DecisionTreeClassifier = __webpack_require__(50);
-
-Object.defineProperty(exports, 'DecisionTreeClassifier', {
-  enumerable: true,
-  get: function get() {
-    return _DecisionTreeClassifier.DecisionTreeClassifier;
-  }
-});
-
-var _DecisionTreeRegression = __webpack_require__(69);
-
-Object.defineProperty(exports, 'DecisionTreeRegression', {
-  enumerable: true,
-  get: function get() {
-    return _DecisionTreeRegression.DecisionTreeRegression;
-  }
-});
-
-/***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7724,7 +7895,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _TreeNode = __webpack_require__(19);
+var _TreeNode = __webpack_require__(21);
 
 var _TreeNode2 = _interopRequireDefault(_TreeNode);
 
@@ -7815,7 +7986,7 @@ class DecisionTreeClassifier {
 exports.DecisionTreeClassifier = DecisionTreeClassifier;
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7826,7 +7997,7 @@ if (!Symbol.species) {
 }
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7837,11 +8008,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = rescale;
 
-var _mlArrayMax = __webpack_require__(53);
+var _mlArrayMax = __webpack_require__(54);
 
 var _mlArrayMax2 = _interopRequireDefault(_mlArrayMax);
 
-var _mlArrayMin = __webpack_require__(54);
+var _mlArrayMin = __webpack_require__(55);
 
 var _mlArrayMin2 = _interopRequireDefault(_mlArrayMin);
 
@@ -7890,7 +8061,7 @@ function rescale(input, options = {}) {
 }
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7922,7 +8093,7 @@ function max(input) {
 }
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7954,7 +8125,7 @@ function min(input) {
 }
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7987,7 +8158,7 @@ class MatrixTransposeView extends _base2.default {
 exports.default = MatrixTransposeView;
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8021,7 +8192,7 @@ class MatrixRowView extends _base2.default {
 exports.default = MatrixRowView;
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8059,7 +8230,7 @@ class MatrixSubView extends _base2.default {
 exports.default = MatrixSubView;
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8097,7 +8268,7 @@ class MatrixSelectionView extends _base2.default {
 exports.default = MatrixSelectionView;
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8134,7 +8305,7 @@ class MatrixRowSelectionView extends _base2.default {
 exports.default = MatrixRowSelectionView;
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8171,7 +8342,7 @@ class MatrixColumnSelectionView extends _base2.default {
 exports.default = MatrixColumnSelectionView;
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8205,7 +8376,7 @@ class MatrixColumnView extends _base2.default {
 exports.default = MatrixColumnView;
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8238,7 +8409,7 @@ class MatrixFlipRowView extends _base2.default {
 exports.default = MatrixFlipRowView;
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8271,7 +8442,7 @@ class MatrixFlipColumnView extends _base2.default {
 exports.default = MatrixFlipColumnView;
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8282,11 +8453,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.wrap = wrap;
 
-var _WrapperMatrix1D = __webpack_require__(16);
+var _WrapperMatrix1D = __webpack_require__(18);
 
 var _WrapperMatrix1D2 = _interopRequireDefault(_WrapperMatrix1D);
 
-var _WrapperMatrix2D = __webpack_require__(17);
+var _WrapperMatrix2D = __webpack_require__(19);
 
 var _WrapperMatrix2D2 = _interopRequireDefault(_WrapperMatrix2D);
 
@@ -8311,7 +8482,7 @@ function wrap(array, options) {
 }
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8329,7 +8500,7 @@ var _lu = __webpack_require__(9);
 
 var _lu2 = _interopRequireDefault(_lu);
 
-var _qr = __webpack_require__(18);
+var _qr = __webpack_require__(20);
 
 var _qr2 = _interopRequireDefault(_qr);
 
@@ -8372,7 +8543,7 @@ function solve(leftHandSide, rightHandSide, useSVD = false) {
 }
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9175,7 +9346,7 @@ function cdiv(xr, xi, yr, yi) {
 }
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9285,7 +9456,7 @@ class CholeskyDecomposition {
 exports.default = CholeskyDecomposition;
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9308,7 +9479,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _mlArrayMean = __webpack_require__(20);
+var _mlArrayMean = __webpack_require__(12);
 
 var _mlArrayMean2 = _interopRequireDefault(_mlArrayMean);
 
@@ -9486,7 +9657,7 @@ function zip(a, b) {
 }
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9501,7 +9672,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _TreeNode = __webpack_require__(19);
+var _TreeNode = __webpack_require__(21);
 
 var _TreeNode2 = _interopRequireDefault(_TreeNode);
 
@@ -9594,7 +9765,1108 @@ class DecisionTreeRegression {
 exports.DecisionTreeRegression = DecisionTreeRegression;
 
 /***/ }),
-/* 70 */
+/* 71 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _RandomForestClassifier = __webpack_require__(72);
+
+Object.defineProperty(exports, 'RandomForestClassifier', {
+  enumerable: true,
+  get: function get() {
+    return _RandomForestClassifier.RandomForestClassifier;
+  }
+});
+
+var _RandomForestRegression = __webpack_require__(75);
+
+Object.defineProperty(exports, 'RandomForestRegression', {
+  enumerable: true,
+  get: function get() {
+    return _RandomForestRegression.RandomForestRegression;
+  }
+});
+
+/***/ }),
+/* 72 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.RandomForestClassifier = undefined;
+
+var _RandomForestBase = __webpack_require__(22);
+
+var defaultOptions = {
+    maxFeatures: 1.0,
+    replacement: true,
+    nEstimators: 10,
+    seed: 42,
+    useSampleBagging: false
+};
+
+/**
+ * @class RandomForestClassifier
+ * @augments RandomForestBase
+ */
+class RandomForestClassifier extends _RandomForestBase.RandomForestBase {
+
+    /**
+     * Create a new base random forest for a classifier or regression model.
+     * @constructor
+     * @param {object} options
+     * @param {number} [options.maxFeatures=1.0] - the number of features used on each estimator.
+     *        * if is an integer it selects maxFeatures elements over the sample features.
+     *        * if is a float between (0, 1), it takes the percentage of features.
+     * @param {boolean} [options.replacement=true] - use replacement over the sample features.
+     * @param {number} [options.seed=42] - seed for feature and samples selection, must be a 32-bit integer.
+     * @param {number} [options.nEstimators=10] - number of estimator to use.
+     * @param {object} [options.treeOptions={}] - options for the tree classifier, see [ml-cart]{@link https://mljs.github.io/decision-tree-cart/}
+     * @param {boolean} [options.useSampleBagging=false] - use bagging over training samples.
+     * @param {object} model - for load purposes.
+     */
+    constructor(options, model) {
+        if (options === true) {
+            super(true, model.baseModel);
+        } else {
+            options = Object.assign({}, defaultOptions, options);
+            options.isClassifier = true;
+            super(options);
+        }
+    }
+
+    /**
+     * retrieve the prediction given the selection method.
+     * @param {Array} values - predictions of the estimators.
+     * @return {number} prediction
+     */
+    selection(values) {
+        return mode(values);
+    }
+
+    /**
+     * Export the current model to JSON.
+     * @return {object} - Current model.
+     */
+    toJSON() {
+        var baseModel = super.toJSON();
+        return {
+            baseModel: baseModel,
+            name: 'RFClassifier'
+        };
+    }
+
+    /**
+     * Load a Decision tree classifier with the given model.
+     * @param {object} model
+     * @return {RandomForestClassifier}
+     */
+    static load(model) {
+        if (model.name !== 'RFClassifier') {
+            throw new RangeError('Invalid model: ' + model.name);
+        }
+
+        return new RandomForestClassifier(true, model);
+    }
+}
+
+exports.RandomForestClassifier = RandomForestClassifier; /**
+                                                          * Return the most repeated element on the array.
+                                                          * @param {Array} arr
+                                                          * @return {number} mode
+                                                          */
+
+function mode(arr) {
+    return arr.sort((a, b) => arr.filter(v => v === a).length - arr.filter(v => v === b).length).pop();
+}
+
+/***/ }),
+/* 73 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.checkFloat = checkFloat;
+exports.examplesBaggingWithReplacement = examplesBaggingWithReplacement;
+exports.featureBagging = featureBagging;
+
+var _randomJs = __webpack_require__(74);
+
+var _randomJs2 = _interopRequireDefault(_randomJs);
+
+var _mlMatrix = __webpack_require__(0);
+
+var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function checkFloat(n) {
+    return n > 0.0 && n <= 1.0;
+}
+
+/**
+ * Select n with replacement elements on the training set and values, where n is the size of the training set.
+ * @ignore
+ * @param {Matrix} trainingSet
+ * @param {Array} trainingValue
+ * @param {number} seed - seed for the random selection, must be a 32-bit integer.
+ * @return {object} with new X and y.
+ */
+function examplesBaggingWithReplacement(trainingSet, trainingValue, seed) {
+    var engine = _randomJs2.default.engines.mt19937();
+    var distribution = _randomJs2.default.integer(0, trainingSet.rows - 1);
+    if (seed === undefined) {
+        engine = engine.autoSeed();
+    } else if (Number.isInteger(seed)) {
+        engine = engine.seed(seed);
+    } else {
+        throw new RangeError('Expected seed must be undefined or integer not ' + seed);
+    }
+
+    var Xr = new Array(trainingSet.rows);
+    var yr = new Array(trainingSet.rows);
+
+    for (var i = 0; i < trainingSet.rows; ++i) {
+        var index = distribution(engine);
+        Xr[i] = trainingSet[index];
+        yr[i] = trainingValue[index];
+    }
+
+    return {
+        X: new _mlMatrix2.default(Xr),
+        y: yr
+    };
+}
+
+/**
+ * selects n features from the training set with or without replacement, returns the new training set and the indexes used.
+ * @ignore
+ * @param {Matrix} trainingSet
+ * @param {number} n - features.
+ * @param {boolean} replacement
+ * @param {number} seed - seed for the random selection, must be a 32-bit integer.
+ * @return {object}
+ */
+function featureBagging(trainingSet, n, replacement, seed) {
+    if (trainingSet.columns < n) {
+        throw new RangeError('N should be less or equal to the number of columns of X');
+    }
+
+    var distribution = _randomJs2.default.integer(0, trainingSet.columns - 1);
+    var engine = _randomJs2.default.engines.mt19937();
+    if (seed === undefined) {
+        engine = engine.autoSeed();
+    } else if (Number.isInteger(seed)) {
+        engine = engine.seed(seed);
+    } else {
+        throw new RangeError('Expected seed must be undefined or integer not ' + seed);
+    }
+
+    var toRet = new _mlMatrix2.default(trainingSet.rows, n);
+
+    if (replacement) {
+        var usedIndex = new Array(n);
+        for (var i = 0; i < n; ++i) {
+            var index = distribution(engine);
+            usedIndex[i] = index;
+            toRet.setColumn(i, trainingSet.getColumn(index));
+        }
+    } else {
+        usedIndex = new Set();
+        index = distribution(engine);
+        for (i = 0; i < n; ++i) {
+            while (usedIndex.has(index)) {
+                index = distribution(engine);
+            }
+            toRet.setColumn(i, trainingSet.getColumn(index));
+            usedIndex.add(index);
+        }
+        usedIndex = Array.from(usedIndex);
+    }
+
+    return {
+        X: toRet,
+        usedIndex: usedIndex
+    };
+}
+
+/***/ }),
+/* 74 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+var __WEBPACK_AMD_DEFINE_RESULT__;
+
+/*jshint eqnull:true*/
+(function (root) {
+  "use strict";
+
+  var GLOBAL_KEY = "Random";
+
+  var imul = typeof Math.imul !== "function" || Math.imul(0xffffffff, 5) !== -5 ? function (a, b) {
+    var ah = a >>> 16 & 0xffff;
+    var al = a & 0xffff;
+    var bh = b >>> 16 & 0xffff;
+    var bl = b & 0xffff;
+    // the shift by 0 fixes the sign on the high part
+    // the final |0 converts the unsigned value into a signed value
+    return al * bl + (ah * bl + al * bh << 16 >>> 0) | 0;
+  } : Math.imul;
+
+  var stringRepeat = typeof String.prototype.repeat === "function" && "x".repeat(3) === "xxx" ? function (x, y) {
+    return x.repeat(y);
+  } : function (pattern, count) {
+    var result = "";
+    while (count > 0) {
+      if (count & 1) {
+        result += pattern;
+      }
+      count >>= 1;
+      pattern += pattern;
+    }
+    return result;
+  };
+
+  function Random(engine) {
+    if (!(this instanceof Random)) {
+      return new Random(engine);
+    }
+
+    if (engine == null) {
+      engine = Random.engines.nativeMath;
+    } else if (typeof engine !== "function") {
+      throw new TypeError("Expected engine to be a function, got " + typeof engine);
+    }
+    this.engine = engine;
+  }
+  var proto = Random.prototype;
+
+  Random.engines = {
+    nativeMath: function nativeMath() {
+      return Math.random() * 0x100000000 | 0;
+    },
+    mt19937: function (Int32Array) {
+      // http://en.wikipedia.org/wiki/Mersenne_twister
+      function refreshData(data) {
+        var k = 0;
+        var tmp = 0;
+        for (; (k | 0) < 227; k = k + 1 | 0) {
+          tmp = data[k] & 0x80000000 | data[k + 1 | 0] & 0x7fffffff;
+          data[k] = data[k + 397 | 0] ^ tmp >>> 1 ^ (tmp & 0x1 ? 0x9908b0df : 0);
+        }
+
+        for (; (k | 0) < 623; k = k + 1 | 0) {
+          tmp = data[k] & 0x80000000 | data[k + 1 | 0] & 0x7fffffff;
+          data[k] = data[k - 227 | 0] ^ tmp >>> 1 ^ (tmp & 0x1 ? 0x9908b0df : 0);
+        }
+
+        tmp = data[623] & 0x80000000 | data[0] & 0x7fffffff;
+        data[623] = data[396] ^ tmp >>> 1 ^ (tmp & 0x1 ? 0x9908b0df : 0);
+      }
+
+      function temper(value) {
+        value ^= value >>> 11;
+        value ^= value << 7 & 0x9d2c5680;
+        value ^= value << 15 & 0xefc60000;
+        return value ^ value >>> 18;
+      }
+
+      function seedWithArray(data, source) {
+        var i = 1;
+        var j = 0;
+        var sourceLength = source.length;
+        var k = Math.max(sourceLength, 624) | 0;
+        var previous = data[0] | 0;
+        for (; (k | 0) > 0; --k) {
+          data[i] = previous = (data[i] ^ imul(previous ^ previous >>> 30, 0x0019660d)) + (source[j] | 0) + (j | 0) | 0;
+          i = i + 1 | 0;
+          ++j;
+          if ((i | 0) > 623) {
+            data[0] = data[623];
+            i = 1;
+          }
+          if (j >= sourceLength) {
+            j = 0;
+          }
+        }
+        for (k = 623; (k | 0) > 0; --k) {
+          data[i] = previous = (data[i] ^ imul(previous ^ previous >>> 30, 0x5d588b65)) - i | 0;
+          i = i + 1 | 0;
+          if ((i | 0) > 623) {
+            data[0] = data[623];
+            i = 1;
+          }
+        }
+        data[0] = 0x80000000;
+      }
+
+      function mt19937() {
+        var data = new Int32Array(624);
+        var index = 0;
+        var uses = 0;
+
+        function next() {
+          if ((index | 0) >= 624) {
+            refreshData(data);
+            index = 0;
+          }
+
+          var value = data[index];
+          index = index + 1 | 0;
+          uses += 1;
+          return temper(value) | 0;
+        }
+        next.getUseCount = function () {
+          return uses;
+        };
+        next.discard = function (count) {
+          uses += count;
+          if ((index | 0) >= 624) {
+            refreshData(data);
+            index = 0;
+          }
+          while (count - index > 624) {
+            count -= 624 - index;
+            refreshData(data);
+            index = 0;
+          }
+          index = index + count | 0;
+          return next;
+        };
+        next.seed = function (initial) {
+          var previous = 0;
+          data[0] = previous = initial | 0;
+
+          for (var i = 1; i < 624; i = i + 1 | 0) {
+            data[i] = previous = imul(previous ^ previous >>> 30, 0x6c078965) + i | 0;
+          }
+          index = 624;
+          uses = 0;
+          return next;
+        };
+        next.seedWithArray = function (source) {
+          next.seed(0x012bd6aa);
+          seedWithArray(data, source);
+          return next;
+        };
+        next.autoSeed = function () {
+          return next.seedWithArray(Random.generateEntropyArray());
+        };
+        return next;
+      }
+
+      return mt19937;
+    }(typeof Int32Array === "function" ? Int32Array : Array),
+    browserCrypto: typeof crypto !== "undefined" && typeof crypto.getRandomValues === "function" && typeof Int32Array === "function" ? function () {
+      var data = null;
+      var index = 128;
+
+      return function () {
+        if (index >= 128) {
+          if (data === null) {
+            data = new Int32Array(128);
+          }
+          crypto.getRandomValues(data);
+          index = 0;
+        }
+
+        return data[index++] | 0;
+      };
+    }() : null
+  };
+
+  Random.generateEntropyArray = function () {
+    var array = [];
+    var engine = Random.engines.nativeMath;
+    for (var i = 0; i < 16; ++i) {
+      array[i] = engine() | 0;
+    }
+    array.push(new Date().getTime() | 0);
+    return array;
+  };
+
+  function returnValue(value) {
+    return function () {
+      return value;
+    };
+  }
+
+  // [-0x80000000, 0x7fffffff]
+  Random.int32 = function (engine) {
+    return engine() | 0;
+  };
+  proto.int32 = function () {
+    return Random.int32(this.engine);
+  };
+
+  // [0, 0xffffffff]
+  Random.uint32 = function (engine) {
+    return engine() >>> 0;
+  };
+  proto.uint32 = function () {
+    return Random.uint32(this.engine);
+  };
+
+  // [0, 0x1fffffffffffff]
+  Random.uint53 = function (engine) {
+    var high = engine() & 0x1fffff;
+    var low = engine() >>> 0;
+    return high * 0x100000000 + low;
+  };
+  proto.uint53 = function () {
+    return Random.uint53(this.engine);
+  };
+
+  // [0, 0x20000000000000]
+  Random.uint53Full = function (engine) {
+    while (true) {
+      var high = engine() | 0;
+      if (high & 0x200000) {
+        if ((high & 0x3fffff) === 0x200000 && (engine() | 0) === 0) {
+          return 0x20000000000000;
+        }
+      } else {
+        var low = engine() >>> 0;
+        return (high & 0x1fffff) * 0x100000000 + low;
+      }
+    }
+  };
+  proto.uint53Full = function () {
+    return Random.uint53Full(this.engine);
+  };
+
+  // [-0x20000000000000, 0x1fffffffffffff]
+  Random.int53 = function (engine) {
+    var high = engine() | 0;
+    var low = engine() >>> 0;
+    return (high & 0x1fffff) * 0x100000000 + low + (high & 0x200000 ? -0x20000000000000 : 0);
+  };
+  proto.int53 = function () {
+    return Random.int53(this.engine);
+  };
+
+  // [-0x20000000000000, 0x20000000000000]
+  Random.int53Full = function (engine) {
+    while (true) {
+      var high = engine() | 0;
+      if (high & 0x400000) {
+        if ((high & 0x7fffff) === 0x400000 && (engine() | 0) === 0) {
+          return 0x20000000000000;
+        }
+      } else {
+        var low = engine() >>> 0;
+        return (high & 0x1fffff) * 0x100000000 + low + (high & 0x200000 ? -0x20000000000000 : 0);
+      }
+    }
+  };
+  proto.int53Full = function () {
+    return Random.int53Full(this.engine);
+  };
+
+  function add(generate, addend) {
+    if (addend === 0) {
+      return generate;
+    } else {
+      return function (engine) {
+        return generate(engine) + addend;
+      };
+    }
+  }
+
+  Random.integer = function () {
+    function isPowerOfTwoMinusOne(value) {
+      return (value + 1 & value) === 0;
+    }
+
+    function bitmask(masking) {
+      return function (engine) {
+        return engine() & masking;
+      };
+    }
+
+    function downscaleToLoopCheckedRange(range) {
+      var extendedRange = range + 1;
+      var maximum = extendedRange * Math.floor(0x100000000 / extendedRange);
+      return function (engine) {
+        var value = 0;
+        do {
+          value = engine() >>> 0;
+        } while (value >= maximum);
+        return value % extendedRange;
+      };
+    }
+
+    function downscaleToRange(range) {
+      if (isPowerOfTwoMinusOne(range)) {
+        return bitmask(range);
+      } else {
+        return downscaleToLoopCheckedRange(range);
+      }
+    }
+
+    function isEvenlyDivisibleByMaxInt32(value) {
+      return (value | 0) === 0;
+    }
+
+    function upscaleWithHighMasking(masking) {
+      return function (engine) {
+        var high = engine() & masking;
+        var low = engine() >>> 0;
+        return high * 0x100000000 + low;
+      };
+    }
+
+    function upscaleToLoopCheckedRange(extendedRange) {
+      var maximum = extendedRange * Math.floor(0x20000000000000 / extendedRange);
+      return function (engine) {
+        var ret = 0;
+        do {
+          var high = engine() & 0x1fffff;
+          var low = engine() >>> 0;
+          ret = high * 0x100000000 + low;
+        } while (ret >= maximum);
+        return ret % extendedRange;
+      };
+    }
+
+    function upscaleWithinU53(range) {
+      var extendedRange = range + 1;
+      if (isEvenlyDivisibleByMaxInt32(extendedRange)) {
+        var highRange = (extendedRange / 0x100000000 | 0) - 1;
+        if (isPowerOfTwoMinusOne(highRange)) {
+          return upscaleWithHighMasking(highRange);
+        }
+      }
+      return upscaleToLoopCheckedRange(extendedRange);
+    }
+
+    function upscaleWithinI53AndLoopCheck(min, max) {
+      return function (engine) {
+        var ret = 0;
+        do {
+          var high = engine() | 0;
+          var low = engine() >>> 0;
+          ret = (high & 0x1fffff) * 0x100000000 + low + (high & 0x200000 ? -0x20000000000000 : 0);
+        } while (ret < min || ret > max);
+        return ret;
+      };
+    }
+
+    return function (min, max) {
+      min = Math.floor(min);
+      max = Math.floor(max);
+      if (min < -0x20000000000000 || !isFinite(min)) {
+        throw new RangeError("Expected min to be at least " + -0x20000000000000);
+      } else if (max > 0x20000000000000 || !isFinite(max)) {
+        throw new RangeError("Expected max to be at most " + 0x20000000000000);
+      }
+
+      var range = max - min;
+      if (range <= 0 || !isFinite(range)) {
+        return returnValue(min);
+      } else if (range === 0xffffffff) {
+        if (min === 0) {
+          return Random.uint32;
+        } else {
+          return add(Random.int32, min + 0x80000000);
+        }
+      } else if (range < 0xffffffff) {
+        return add(downscaleToRange(range), min);
+      } else if (range === 0x1fffffffffffff) {
+        return add(Random.uint53, min);
+      } else if (range < 0x1fffffffffffff) {
+        return add(upscaleWithinU53(range), min);
+      } else if (max - 1 - min === 0x1fffffffffffff) {
+        return add(Random.uint53Full, min);
+      } else if (min === -0x20000000000000 && max === 0x20000000000000) {
+        return Random.int53Full;
+      } else if (min === -0x20000000000000 && max === 0x1fffffffffffff) {
+        return Random.int53;
+      } else if (min === -0x1fffffffffffff && max === 0x20000000000000) {
+        return add(Random.int53, 1);
+      } else if (max === 0x20000000000000) {
+        return add(upscaleWithinI53AndLoopCheck(min - 1, max - 1), 1);
+      } else {
+        return upscaleWithinI53AndLoopCheck(min, max);
+      }
+    };
+  }();
+  proto.integer = function (min, max) {
+    return Random.integer(min, max)(this.engine);
+  };
+
+  // [0, 1] (floating point)
+  Random.realZeroToOneInclusive = function (engine) {
+    return Random.uint53Full(engine) / 0x20000000000000;
+  };
+  proto.realZeroToOneInclusive = function () {
+    return Random.realZeroToOneInclusive(this.engine);
+  };
+
+  // [0, 1) (floating point)
+  Random.realZeroToOneExclusive = function (engine) {
+    return Random.uint53(engine) / 0x20000000000000;
+  };
+  proto.realZeroToOneExclusive = function () {
+    return Random.realZeroToOneExclusive(this.engine);
+  };
+
+  Random.real = function () {
+    function multiply(generate, multiplier) {
+      if (multiplier === 1) {
+        return generate;
+      } else if (multiplier === 0) {
+        return function () {
+          return 0;
+        };
+      } else {
+        return function (engine) {
+          return generate(engine) * multiplier;
+        };
+      }
+    }
+
+    return function (left, right, inclusive) {
+      if (!isFinite(left)) {
+        throw new RangeError("Expected left to be a finite number");
+      } else if (!isFinite(right)) {
+        throw new RangeError("Expected right to be a finite number");
+      }
+      return add(multiply(inclusive ? Random.realZeroToOneInclusive : Random.realZeroToOneExclusive, right - left), left);
+    };
+  }();
+  proto.real = function (min, max, inclusive) {
+    return Random.real(min, max, inclusive)(this.engine);
+  };
+
+  Random.bool = function () {
+    function isLeastBitTrue(engine) {
+      return (engine() & 1) === 1;
+    }
+
+    function lessThan(generate, value) {
+      return function (engine) {
+        return generate(engine) < value;
+      };
+    }
+
+    function probability(percentage) {
+      if (percentage <= 0) {
+        return returnValue(false);
+      } else if (percentage >= 1) {
+        return returnValue(true);
+      } else {
+        var scaled = percentage * 0x100000000;
+        if (scaled % 1 === 0) {
+          return lessThan(Random.int32, scaled - 0x80000000 | 0);
+        } else {
+          return lessThan(Random.uint53, Math.round(percentage * 0x20000000000000));
+        }
+      }
+    }
+
+    return function (numerator, denominator) {
+      if (denominator == null) {
+        if (numerator == null) {
+          return isLeastBitTrue;
+        }
+        return probability(numerator);
+      } else {
+        if (numerator <= 0) {
+          return returnValue(false);
+        } else if (numerator >= denominator) {
+          return returnValue(true);
+        }
+        return lessThan(Random.integer(0, denominator - 1), numerator);
+      }
+    };
+  }();
+  proto.bool = function (numerator, denominator) {
+    return Random.bool(numerator, denominator)(this.engine);
+  };
+
+  function toInteger(value) {
+    var number = +value;
+    if (number < 0) {
+      return Math.ceil(number);
+    } else {
+      return Math.floor(number);
+    }
+  }
+
+  function convertSliceArgument(value, length) {
+    if (value < 0) {
+      return Math.max(value + length, 0);
+    } else {
+      return Math.min(value, length);
+    }
+  }
+  Random.pick = function (engine, array, begin, end) {
+    var length = array.length;
+    var start = begin == null ? 0 : convertSliceArgument(toInteger(begin), length);
+    var finish = end === void 0 ? length : convertSliceArgument(toInteger(end), length);
+    if (start >= finish) {
+      return void 0;
+    }
+    var distribution = Random.integer(start, finish - 1);
+    return array[distribution(engine)];
+  };
+  proto.pick = function (array, begin, end) {
+    return Random.pick(this.engine, array, begin, end);
+  };
+
+  function returnUndefined() {
+    return void 0;
+  }
+  var slice = Array.prototype.slice;
+  Random.picker = function (array, begin, end) {
+    var clone = slice.call(array, begin, end);
+    if (!clone.length) {
+      return returnUndefined;
+    }
+    var distribution = Random.integer(0, clone.length - 1);
+    return function (engine) {
+      return clone[distribution(engine)];
+    };
+  };
+
+  Random.shuffle = function (engine, array, downTo) {
+    var length = array.length;
+    if (length) {
+      if (downTo == null) {
+        downTo = 0;
+      }
+      for (var i = length - 1 >>> 0; i > downTo; --i) {
+        var distribution = Random.integer(0, i);
+        var j = distribution(engine);
+        if (i !== j) {
+          var tmp = array[i];
+          array[i] = array[j];
+          array[j] = tmp;
+        }
+      }
+    }
+    return array;
+  };
+  proto.shuffle = function (array) {
+    return Random.shuffle(this.engine, array);
+  };
+
+  Random.sample = function (engine, population, sampleSize) {
+    if (sampleSize < 0 || sampleSize > population.length || !isFinite(sampleSize)) {
+      throw new RangeError("Expected sampleSize to be within 0 and the length of the population");
+    }
+
+    if (sampleSize === 0) {
+      return [];
+    }
+
+    var clone = slice.call(population);
+    var length = clone.length;
+    if (length === sampleSize) {
+      return Random.shuffle(engine, clone, 0);
+    }
+    var tailLength = length - sampleSize;
+    return Random.shuffle(engine, clone, tailLength - 1).slice(tailLength);
+  };
+  proto.sample = function (population, sampleSize) {
+    return Random.sample(this.engine, population, sampleSize);
+  };
+
+  Random.die = function (sideCount) {
+    return Random.integer(1, sideCount);
+  };
+  proto.die = function (sideCount) {
+    return Random.die(sideCount)(this.engine);
+  };
+
+  Random.dice = function (sideCount, dieCount) {
+    var distribution = Random.die(sideCount);
+    return function (engine) {
+      var result = [];
+      result.length = dieCount;
+      for (var i = 0; i < dieCount; ++i) {
+        result[i] = distribution(engine);
+      }
+      return result;
+    };
+  };
+  proto.dice = function (sideCount, dieCount) {
+    return Random.dice(sideCount, dieCount)(this.engine);
+  };
+
+  // http://en.wikipedia.org/wiki/Universally_unique_identifier
+  Random.uuid4 = function () {
+    function zeroPad(string, zeroCount) {
+      return stringRepeat("0", zeroCount - string.length) + string;
+    }
+
+    return function (engine) {
+      var a = engine() >>> 0;
+      var b = engine() | 0;
+      var c = engine() | 0;
+      var d = engine() >>> 0;
+
+      return zeroPad(a.toString(16), 8) + "-" + zeroPad((b & 0xffff).toString(16), 4) + "-" + zeroPad((b >> 4 & 0x0fff | 0x4000).toString(16), 4) + "-" + zeroPad((c & 0x3fff | 0x8000).toString(16), 4) + "-" + zeroPad((c >> 4 & 0xffff).toString(16), 4) + zeroPad(d.toString(16), 8);
+    };
+  }();
+  proto.uuid4 = function () {
+    return Random.uuid4(this.engine);
+  };
+
+  Random.string = function () {
+    // has 2**x chars, for faster uniform distribution
+    var DEFAULT_STRING_POOL = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
+
+    return function (pool) {
+      if (pool == null) {
+        pool = DEFAULT_STRING_POOL;
+      }
+
+      var length = pool.length;
+      if (!length) {
+        throw new Error("Expected pool not to be an empty string");
+      }
+
+      var distribution = Random.integer(0, length - 1);
+      return function (engine, length) {
+        var result = "";
+        for (var i = 0; i < length; ++i) {
+          var j = distribution(engine);
+          result += pool.charAt(j);
+        }
+        return result;
+      };
+    };
+  }();
+  proto.string = function (length, pool) {
+    return Random.string(pool)(this.engine, length);
+  };
+
+  Random.hex = function () {
+    var LOWER_HEX_POOL = "0123456789abcdef";
+    var lowerHex = Random.string(LOWER_HEX_POOL);
+    var upperHex = Random.string(LOWER_HEX_POOL.toUpperCase());
+
+    return function (upper) {
+      if (upper) {
+        return upperHex;
+      } else {
+        return lowerHex;
+      }
+    };
+  }();
+  proto.hex = function (length, upper) {
+    return Random.hex(upper)(this.engine, length);
+  };
+
+  Random.date = function (start, end) {
+    if (!(start instanceof Date)) {
+      throw new TypeError("Expected start to be a Date, got " + typeof start);
+    } else if (!(end instanceof Date)) {
+      throw new TypeError("Expected end to be a Date, got " + typeof end);
+    }
+    var distribution = Random.integer(start.getTime(), end.getTime());
+    return function (engine) {
+      return new Date(distribution(engine));
+    };
+  };
+  proto.date = function (start, end) {
+    return Random.date(start, end)(this.engine);
+  };
+
+  if (true) {
+    !(__WEBPACK_AMD_DEFINE_RESULT__ = (function () {
+      return Random;
+    }).call(exports, __webpack_require__, exports, module),
+				__WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+  } else if (typeof module !== "undefined" && typeof require === "function") {
+    module.exports = Random;
+  } else {
+    (function () {
+      var oldGlobal = root[GLOBAL_KEY];
+      Random.noConflict = function () {
+        root[GLOBAL_KEY] = oldGlobal;
+        return this;
+      };
+    })();
+    root[GLOBAL_KEY] = Random;
+  }
+})(undefined);
+
+/***/ }),
+/* 75 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.RandomForestRegression = undefined;
+
+var _RandomForestBase = __webpack_require__(22);
+
+var _mlArrayMean = __webpack_require__(12);
+
+var _mlArrayMean2 = _interopRequireDefault(_mlArrayMean);
+
+var _mlArrayMedian = __webpack_require__(76);
+
+var _mlArrayMedian2 = _interopRequireDefault(_mlArrayMedian);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var selectionMethods = {
+    mean: _mlArrayMean2.default,
+    median: _mlArrayMedian2.default
+};
+
+var defaultOptions = {
+    maxFeatures: 1.0,
+    replacement: false,
+    nEstimators: 10,
+    treeOptions: {},
+    selectionMethod: 'mean',
+    seed: 42,
+    useSampleBagging: false
+};
+
+/**
+ * @class RandomForestRegression
+ * @augments RandomForestBase
+ */
+class RandomForestRegression extends _RandomForestBase.RandomForestBase {
+
+    /**
+     * Create a new base random forest for a classifier or regression model.
+     * @constructor
+     * @param {object} options
+     * @param {number} [options.maxFeatures=1.0] - the number of features used on each estimator.
+     *        * if is an integer it selects maxFeatures elements over the sample features.
+     *        * if is a float between (0, 1), it takes the percentage of features.
+     * @param {boolean} [options.replacement=true] - use replacement over the sample features.
+     * @param {number} [options.seed=42] - seed for feature and samples selection, must be a 32-bit integer.
+     * @param {number} [options.nEstimators=10] - number of estimator to use.
+     * @param {object} [options.treeOptions={}] - options for the tree classifier, see [ml-cart]{@link https://mljs.github.io/decision-tree-cart/}
+     * @param {string} [options.selectionMethod="mean"] - the way to calculate the prediction from estimators, "mean" and "median" are supported.
+     * @param {boolean} [options.useSampleBagging=false] - use bagging over training samples.
+     * @param {object} model - for load purposes.
+     */
+    constructor(options, model) {
+        if (options === true) {
+            super(true, model.baseModel);
+            this.selectionMethod = model.selectionMethod;
+        } else {
+            options = Object.assign({}, defaultOptions, options);
+
+            if (!(options.selectionMethod === 'mean' || options.selectionMethod === 'median')) {
+                throw new RangeError('Unsupported selection method ' + options.selectionMethod);
+            }
+
+            options.isClassifier = false;
+
+            super(options);
+            this.selectionMethod = options.selectionMethod;
+        }
+    }
+
+    /**
+     * retrieve the prediction given the selection method.
+     * @param {Array} values - predictions of the estimators.
+     * @return {number} prediction
+     */
+    selection(values) {
+        return selectionMethods[this.selectionMethod](values);
+    }
+
+    /**
+     * Export the current model to JSON.
+     * @return {object} - Current model.
+     */
+    toJSON() {
+        var baseModel = super.toJSON();
+        return {
+            baseModel: baseModel,
+            selectionMethod: this.selectionMethod,
+            name: 'RFRegression'
+        };
+    }
+
+    /**
+     * Load a Decision tree classifier with the given model.
+     * @param {object} model
+     * @return {RandomForestRegression}
+     */
+    static load(model) {
+        if (model.name !== 'RFRegression') {
+            throw new RangeError('Invalid model: ' + model.name);
+        }
+
+        return new RandomForestRegression(true, model);
+    }
+}
+exports.RandomForestRegression = RandomForestRegression;
+
+/***/ }),
+/* 76 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = median;
+
+var _medianQuickselect = __webpack_require__(77);
+
+var _medianQuickselect2 = _interopRequireDefault(_medianQuickselect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Computes the median of the given values
+ * @param {Array<number>} input
+ * @return {number}
+ */
+function median(input) {
+    if (!Array.isArray(input)) {
+        throw new Error('input must be an array');
+    }
+
+    if (input.length === 0) {
+        throw new Error('input must not be empty');
+    }
+
+    return (0, _medianQuickselect2.default)(input.slice());
+}
+
+/***/ }),
+/* 77 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+(function(){function d(c){for(var d=0,e=c.length-1,f=void 0,g=void 0,h=void 0,i=b(d,e);;){if(e<=d)return c[i];if(e==d+1)return c[d]>c[e]&&a(c,d,e),c[i];for(f=b(d,e),c[f]>c[e]&&a(c,f,e),c[d]>c[e]&&a(c,d,e),c[f]>c[d]&&a(c,f,d),a(c,f,d+1),g=d+1,h=e;;){do g++;while(c[d]>c[g]);do h--;while(c[h]>c[d]);if(h<g)break;a(c,g,h)}a(c,d,h),h<=i&&(d=g),h>=i&&(e=h-1)}}var a=function(a,b,c){var d;return d=[a[c],a[b]],a[b]=d[0],a[c]=d[1],d},b=function(a,b){return~~((a+b)/2)};'undefined'!=typeof module&&module.exports?module.exports=d:window.median=d})();
+
+/***/ }),
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9822,29 +11094,29 @@ class PCA {
 module.exports = PCA;
 
 /***/ }),
-/* 71 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.agnes = __webpack_require__(72);
-exports.diana = __webpack_require__(80);
+exports.agnes = __webpack_require__(80);
+exports.diana = __webpack_require__(88);
 //exports.birch = require('./birch');
 //exports.cure = require('./cure');
 //exports.chameleon = require('./chameleon');
 
 /***/ }),
-/* 72 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var euclidean = __webpack_require__(1);
-var ClusterLeaf = __webpack_require__(22);
-var Cluster = __webpack_require__(12);
-var distanceMatrix = __webpack_require__(23);
+var ClusterLeaf = __webpack_require__(24);
+var Cluster = __webpack_require__(13);
+var distanceMatrix = __webpack_require__(25);
 
 /**
  * @private
@@ -10082,16 +11354,16 @@ function agnes(data, options) {
 module.exports = agnes;
 
 /***/ }),
-/* 73 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(74);
+module.exports = __webpack_require__(82);
 
 /***/ }),
-/* 74 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10467,7 +11739,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 }).call(undefined);
 
 /***/ }),
-/* 75 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10963,7 +12235,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(78);
+exports.isBuffer = __webpack_require__(86);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -11000,7 +12272,7 @@ exports.log = function () {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(79);
+exports.inherits = __webpack_require__(87);
 
 exports._extend = function (origin, add) {
   // Don't do anything if add isn't an object
@@ -11017,10 +12289,10 @@ exports._extend = function (origin, add) {
 function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(76), __webpack_require__(77)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(84), __webpack_require__(85)))
 
 /***/ }),
-/* 76 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11048,7 +12320,7 @@ try {
 module.exports = g;
 
 /***/ }),
-/* 77 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11241,7 +12513,7 @@ process.umask = function () {
 };
 
 /***/ }),
-/* 78 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11252,7 +12524,7 @@ module.exports = function isBuffer(arg) {
 };
 
 /***/ }),
-/* 79 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11283,15 +12555,15 @@ if (typeof Object.create === 'function') {
 }
 
 /***/ }),
-/* 80 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var euclidean = __webpack_require__(1);
-var ClusterLeaf = __webpack_require__(22);
-var Cluster = __webpack_require__(12);
+var ClusterLeaf = __webpack_require__(24);
+var Cluster = __webpack_require__(13);
 
 /**
  * @private
@@ -11591,15 +12863,15 @@ function diana(data, options) {
 module.exports = diana;
 
 /***/ }),
-/* 81 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(24);
-var init = __webpack_require__(83);
-var KMeansResult = __webpack_require__(85);
+var utils = __webpack_require__(26);
+var init = __webpack_require__(91);
+var KMeansResult = __webpack_require__(93);
 var squaredDistance = __webpack_require__(1).squared;
 
 var defaultOptions = {
@@ -11717,7 +12989,7 @@ function kmeans(data, K, options) {
 module.exports = kmeans;
 
 /***/ }),
-/* 82 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11784,13 +13056,13 @@ function nearestVector(listVectors, vector, options) {
 module.exports = nearestVector;
 
 /***/ }),
-/* 83 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Picker = __webpack_require__(84).Picker;
+var Picker = __webpack_require__(92).Picker;
 
 /**
  * Choose K different random points from the original data
@@ -11868,7 +13140,7 @@ exports.random = random;
 exports.mostDistant = mostDistant;
 
 /***/ }),
-/* 84 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11929,13 +13201,13 @@ exports.mostDistant = mostDistant;
 }).call(undefined);
 
 /***/ }),
-/* 85 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(24);
+var utils = __webpack_require__(26);
 var distanceSymbol = Symbol('distance');
 
 /**
@@ -11998,13 +13270,13 @@ KMeansResult.prototype.computeInformation = function (data) {
 module.exports = KMeansResult;
 
 /***/ }),
-/* 86 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Kernel = __webpack_require__(13);
+var Kernel = __webpack_require__(14);
 var stat = __webpack_require__(4).array;
 
 var defaultOptions = {
@@ -12329,7 +13601,7 @@ SVM.prototype._applyWhitening = function (features) {
 module.exports = SVM;
 
 /***/ }),
-/* 87 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12357,7 +13629,7 @@ class GaussianKernel {
 module.exports = GaussianKernel;
 
 /***/ }),
-/* 88 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12390,7 +13662,7 @@ class PolynomialKernel {
 module.exports = PolynomialKernel;
 
 /***/ }),
-/* 89 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12421,7 +13693,7 @@ class ANOVAKernel {
 module.exports = ANOVAKernel;
 
 /***/ }),
-/* 90 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12447,7 +13719,7 @@ class CauchyKernel {
 module.exports = CauchyKernel;
 
 /***/ }),
-/* 91 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12475,7 +13747,7 @@ class ExponentialKernel {
 module.exports = ExponentialKernel;
 
 /***/ }),
-/* 92 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12496,7 +13768,7 @@ class HistogramIntersectionKernel {
 module.exports = HistogramIntersectionKernel;
 
 /***/ }),
-/* 93 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12523,7 +13795,7 @@ class LaplacianKernel {
 module.exports = LaplacianKernel;
 
 /***/ }),
-/* 94 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12549,7 +13821,7 @@ class MultiquadraticKernel {
 module.exports = MultiquadraticKernel;
 
 /***/ }),
-/* 95 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12576,7 +13848,7 @@ class RationalQuadraticKernel {
 module.exports = RationalQuadraticKernel;
 
 /***/ }),
-/* 96 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12606,7 +13878,7 @@ class SigmoidKernel {
 module.exports = SigmoidKernel;
 
 /***/ }),
-/* 97 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12616,7 +13888,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _GaussianNB = __webpack_require__(98);
+var _GaussianNB = __webpack_require__(106);
 
 Object.defineProperty(exports, 'GaussianNB', {
   enumerable: true,
@@ -12625,7 +13897,7 @@ Object.defineProperty(exports, 'GaussianNB', {
   }
 });
 
-var _MultinomialNB = __webpack_require__(99);
+var _MultinomialNB = __webpack_require__(107);
 
 Object.defineProperty(exports, 'MultinomialNB', {
   enumerable: true,
@@ -12635,7 +13907,7 @@ Object.defineProperty(exports, 'MultinomialNB', {
 });
 
 /***/ }),
-/* 98 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12654,7 +13926,7 @@ var _mlStat = __webpack_require__(4);
 
 var _mlStat2 = _interopRequireDefault(_mlStat);
 
-var _utils = __webpack_require__(25);
+var _utils = __webpack_require__(27);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12809,7 +14081,7 @@ function calculateLogProbability(value, mean, C1, C2) {
 }
 
 /***/ }),
-/* 99 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12824,7 +14096,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _utils = __webpack_require__(25);
+var _utils = __webpack_require__(27);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12923,7 +14195,7 @@ function matrixLog(i, j) {
 }
 
 /***/ }),
-/* 100 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12933,7 +14205,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _KDTree = __webpack_require__(101);
+var _KDTree = __webpack_require__(109);
 
 var _KDTree2 = _interopRequireDefault(_KDTree);
 
@@ -13064,7 +14336,7 @@ function getSinglePrediction(knn, currentCase) {
 }
 
 /***/ }),
-/* 101 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13352,7 +14624,7 @@ class BinaryHeap {
 }
 
 /***/ }),
-/* 102 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13362,7 +14634,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _pls = __webpack_require__(103);
+var _pls = __webpack_require__(111);
 
 Object.defineProperty(exports, 'PLS', {
   enumerable: true,
@@ -13371,7 +14643,7 @@ Object.defineProperty(exports, 'PLS', {
   }
 });
 
-var _kopls = __webpack_require__(104);
+var _kopls = __webpack_require__(112);
 
 Object.defineProperty(exports, 'KOPLS', {
   enumerable: true,
@@ -13381,7 +14653,7 @@ Object.defineProperty(exports, 'KOPLS', {
 });
 
 /***/ }),
-/* 103 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13400,7 +14672,7 @@ var _matrix = __webpack_require__(8);
 
 var _matrix2 = _interopRequireDefault(_matrix);
 
-var _utils = __webpack_require__(26);
+var _utils = __webpack_require__(28);
 
 var Utils = _interopRequireWildcard(_utils);
 
@@ -13636,7 +14908,7 @@ function maxSumColIndex(data) {
 }
 
 /***/ }),
-/* 104 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13649,7 +14921,7 @@ exports.KOPLS = undefined;
 
 var _mlMatrix = __webpack_require__(0);
 
-var _utils = __webpack_require__(26);
+var _utils = __webpack_require__(28);
 
 /**
  * @class KOPLS
@@ -13878,16 +15150,16 @@ class KOPLS {
 exports.KOPLS = KOPLS;
 
 /***/ }),
-/* 105 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ConfusionMatrix = __webpack_require__(27);
+var ConfusionMatrix = __webpack_require__(29);
 
 var CV = {};
-var combinations = __webpack_require__(106);
+var combinations = __webpack_require__(114);
 
 /**
  * Performs a leave-one-out cross-validation (LOO-CV) of the given samples. In LOO-CV, 1 observation is used as the
@@ -14098,7 +15370,7 @@ function getTrainTest(features, labels, testIdx, trainIdx) {
 module.exports = CV;
 
 /***/ }),
-/* 106 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14193,7 +15465,7 @@ module.exports = function* (M, N, options) {
 };
 
 /***/ }),
-/* 107 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14201,10 +15473,10 @@ module.exports = function* (M, N, options) {
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var Layer = __webpack_require__(28);
-var OutputLayer = __webpack_require__(108);
-var Utils = __webpack_require__(29);
-var ACTIVATION_FUNCTIONS = __webpack_require__(30);
+var Layer = __webpack_require__(30);
+var OutputLayer = __webpack_require__(116);
+var Utils = __webpack_require__(31);
+var ACTIVATION_FUNCTIONS = __webpack_require__(32);
 
 class FeedForwardNeuralNetworks {
 
@@ -14416,13 +15688,13 @@ class FeedForwardNeuralNetworks {
 module.exports = FeedForwardNeuralNetworks;
 
 /***/ }),
-/* 108 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Layer = __webpack_require__(28);
+var Layer = __webpack_require__(30);
 
 class OutputLayer extends Layer {
     constructor(options) {
@@ -14445,14 +15717,14 @@ class OutputLayer extends Layer {
 module.exports = OutputLayer;
 
 /***/ }),
-/* 109 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var NodeSquare = __webpack_require__(31),
-    NodeHexagonal = __webpack_require__(110);
+var NodeSquare = __webpack_require__(33),
+    NodeHexagonal = __webpack_require__(118);
 
 var defaultOptions = {
     fields: 3,
@@ -14874,13 +16146,13 @@ function getMaxDistance(distance, numWeights) {
 module.exports = SOM;
 
 /***/ }),
-/* 110 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var NodeSquare = __webpack_require__(31);
+var NodeSquare = __webpack_require__(33);
 
 function NodeHexagonal(x, y, weights, som) {
 
@@ -14911,7 +16183,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 module.exports = NodeHexagonal;
 
 /***/ }),
-/* 111 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14939,7 +16211,7 @@ function maybeToPrecision(value, digits) {
 }
 
 /***/ }),
-/* 112 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14959,7 +16231,7 @@ function checkArraySize(x, y) {
 }
 
 /***/ }),
-/* 113 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14973,7 +16245,7 @@ var _mlRegressionBase = __webpack_require__(2);
 
 var _mlRegressionBase2 = _interopRequireDefault(_mlRegressionBase);
 
-var _mlRegressionSimpleLinear = __webpack_require__(14);
+var _mlRegressionSimpleLinear = __webpack_require__(15);
 
 var _mlRegressionSimpleLinear2 = _interopRequireDefault(_mlRegressionSimpleLinear);
 
@@ -15037,7 +16309,7 @@ function regress(er, x, y) {
 }
 
 /***/ }),
-/* 114 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15051,7 +16323,7 @@ var _mlRegressionBase = __webpack_require__(2);
 
 var _mlRegressionBase2 = _interopRequireDefault(_mlRegressionBase);
 
-var _mlRegressionSimpleLinear = __webpack_require__(14);
+var _mlRegressionSimpleLinear = __webpack_require__(15);
 
 var _mlRegressionSimpleLinear2 = _interopRequireDefault(_mlRegressionSimpleLinear);
 
@@ -15118,7 +16390,7 @@ function regress(pr, x, y) {
 }
 
 /***/ }),
-/* 115 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15245,7 +16517,7 @@ class MultivariateLinearRegression extends _mlRegressionBase2.default {
 exports.default = MultivariateLinearRegression;
 
 /***/ }),
-/* 116 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15257,7 +16529,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _mlMatrix = __webpack_require__(0);
 
-var _mlKernel = __webpack_require__(13);
+var _mlKernel = __webpack_require__(14);
 
 var _mlKernel2 = _interopRequireDefault(_mlKernel);
 
@@ -15326,7 +16598,7 @@ class KernelRidgeRegression extends _mlRegressionBase2.default {
 exports.default = KernelRidgeRegression;
 
 /***/ }),
-/* 117 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15527,7 +16799,7 @@ function abs(i, j) {
 }
 
 /***/ }),
-/* 118 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15640,7 +16912,7 @@ function theilSen(regression, x, y) {
 }
 
 /***/ }),
-/* 119 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15856,7 +17128,7 @@ function residualsMedian(residuals) {
 }
 
 /***/ }),
-/* 120 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15870,7 +17142,7 @@ var _mlRegressionBase = __webpack_require__(2);
 
 var _mlRegressionBase2 = _interopRequireDefault(_mlRegressionBase);
 
-var _mlRegressionPolynomial = __webpack_require__(33);
+var _mlRegressionPolynomial = __webpack_require__(35);
 
 var _mlRegressionPolynomial2 = _interopRequireDefault(_mlRegressionPolynomial);
 
@@ -15944,7 +17216,7 @@ class PotentialRegression extends _mlRegressionBase2.default {
 exports.default = PotentialRegression;
 
 /***/ }),
-/* 121 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16110,7 +17382,7 @@ function levenbergMarquardt(data, parameterizedFunction, options = {}) {
 module.exports = levenbergMarquardt;
 
 /***/ }),
-/* 122 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16121,7 +17393,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.SparseMatrix = undefined;
 
-var _mlHashTable = __webpack_require__(34);
+var _mlHashTable = __webpack_require__(36);
 
 var _mlHashTable2 = _interopRequireDefault(_mlHashTable);
 
@@ -16443,7 +17715,7 @@ function fillTemplateFunction(template, values) {
 }
 
 /***/ }),
-/* 123 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16461,14 +17733,14 @@ function newArray(n, value) {
 }
 
 /***/ }),
-/* 124 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var binarySearch = __webpack_require__(35);
-var sortAsc = __webpack_require__(36).asc;
+var binarySearch = __webpack_require__(37);
+var sortAsc = __webpack_require__(38).asc;
 
 var largestPrime = 0x7fffffff;
 
@@ -16529,7 +17801,7 @@ exports.nextPrime = nextPrime;
 exports.largestPrime = largestPrime;
 
 /***/ }),
-/* 125 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16540,59 +17812,59 @@ module.exports = Number.isNaN || function (x) {
 };
 
 /***/ }),
-/* 126 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.additiveSymmetric = __webpack_require__(127);
-exports.avg = __webpack_require__(128);
-exports.bhattacharyya = __webpack_require__(129);
-exports.canberra = __webpack_require__(130);
-exports.chebyshev = __webpack_require__(131);
-exports.clark = __webpack_require__(132);
-exports.czekanowski = __webpack_require__(133);
-exports.dice = __webpack_require__(39);
-exports.divergence = __webpack_require__(134);
+exports.additiveSymmetric = __webpack_require__(135);
+exports.avg = __webpack_require__(136);
+exports.bhattacharyya = __webpack_require__(137);
+exports.canberra = __webpack_require__(138);
+exports.chebyshev = __webpack_require__(139);
+exports.clark = __webpack_require__(140);
+exports.czekanowski = __webpack_require__(141);
+exports.dice = __webpack_require__(41);
+exports.divergence = __webpack_require__(142);
 exports.euclidean = __webpack_require__(1);
-exports.fidelity = __webpack_require__(135);
-exports.gower = __webpack_require__(136);
-exports.harmonicMean = __webpack_require__(137);
-exports.hellinger = __webpack_require__(138);
-exports.innerProduct = __webpack_require__(139);
-exports.intersection = __webpack_require__(40);
-exports.jaccard = __webpack_require__(41);
-exports.jeffreys = __webpack_require__(140);
-exports.jensenDifference = __webpack_require__(141);
-exports.jensenShannon = __webpack_require__(142);
-exports.kdivergence = __webpack_require__(143);
-exports.kulczynski = __webpack_require__(42);
-exports.kullbackLeibler = __webpack_require__(144);
-exports.kumarHassebrook = __webpack_require__(145);
-exports.kumarJohnson = __webpack_require__(146);
-exports.lorentzian = __webpack_require__(147);
-exports.manhattan = __webpack_require__(148);
-exports.matusita = __webpack_require__(149);
-exports.minkowski = __webpack_require__(150);
-exports.motyka = __webpack_require__(43);
-exports.neyman = __webpack_require__(151);
-exports.pearson = __webpack_require__(152);
-exports.probabilisticSymmetric = __webpack_require__(153);
-exports.ruzicka = __webpack_require__(154);
-exports.soergel = __webpack_require__(155);
-exports.sorensen = __webpack_require__(156);
-exports.squared = __webpack_require__(157);
-exports.squaredChord = __webpack_require__(44);
+exports.fidelity = __webpack_require__(143);
+exports.gower = __webpack_require__(144);
+exports.harmonicMean = __webpack_require__(145);
+exports.hellinger = __webpack_require__(146);
+exports.innerProduct = __webpack_require__(147);
+exports.intersection = __webpack_require__(42);
+exports.jaccard = __webpack_require__(43);
+exports.jeffreys = __webpack_require__(148);
+exports.jensenDifference = __webpack_require__(149);
+exports.jensenShannon = __webpack_require__(150);
+exports.kdivergence = __webpack_require__(151);
+exports.kulczynski = __webpack_require__(44);
+exports.kullbackLeibler = __webpack_require__(152);
+exports.kumarHassebrook = __webpack_require__(153);
+exports.kumarJohnson = __webpack_require__(154);
+exports.lorentzian = __webpack_require__(155);
+exports.manhattan = __webpack_require__(156);
+exports.matusita = __webpack_require__(157);
+exports.minkowski = __webpack_require__(158);
+exports.motyka = __webpack_require__(45);
+exports.neyman = __webpack_require__(159);
+exports.pearson = __webpack_require__(160);
+exports.probabilisticSymmetric = __webpack_require__(161);
+exports.ruzicka = __webpack_require__(162);
+exports.soergel = __webpack_require__(163);
+exports.sorensen = __webpack_require__(164);
+exports.squared = __webpack_require__(165);
+exports.squaredChord = __webpack_require__(46);
 exports.squaredEuclidean = __webpack_require__(1).squared;
-exports.taneja = __webpack_require__(158);
-exports.tanimoto = __webpack_require__(159);
-exports.topsoe = __webpack_require__(160);
-exports.tree = __webpack_require__(161);
-exports.waveHedges = __webpack_require__(162);
+exports.taneja = __webpack_require__(166);
+exports.tanimoto = __webpack_require__(167);
+exports.topsoe = __webpack_require__(168);
+exports.tree = __webpack_require__(169);
+exports.waveHedges = __webpack_require__(170);
 
 /***/ }),
-/* 127 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16609,7 +17881,7 @@ module.exports = function additiveSymmetric(a, b) {
 };
 
 /***/ }),
-/* 128 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16631,7 +17903,7 @@ module.exports = function avg(a, b) {
 };
 
 /***/ }),
-/* 129 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16647,7 +17919,7 @@ module.exports = function bhattacharyya(a, b) {
 };
 
 /***/ }),
-/* 130 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16663,7 +17935,7 @@ module.exports = function canberra(a, b) {
 };
 
 /***/ }),
-/* 131 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16683,7 +17955,7 @@ module.exports = function chebyshev(a, b) {
 };
 
 /***/ }),
-/* 132 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16700,20 +17972,20 @@ module.exports = function clark(a, b) {
 };
 
 /***/ }),
-/* 133 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var czekanowskiSimilarity = __webpack_require__(38);
+var czekanowskiSimilarity = __webpack_require__(40);
 
 module.exports = function czekanowskiDistance(a, b) {
     return 1 - czekanowskiSimilarity(a, b);
 };
 
 /***/ }),
-/* 134 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16730,7 +18002,7 @@ module.exports = function divergence(a, b) {
 };
 
 /***/ }),
-/* 135 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16746,7 +18018,7 @@ module.exports = function fidelity(a, b) {
 };
 
 /***/ }),
-/* 136 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16762,7 +18034,7 @@ module.exports = function gower(a, b) {
 };
 
 /***/ }),
-/* 137 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16778,7 +18050,7 @@ module.exports = function harmonicMean(a, b) {
 };
 
 /***/ }),
-/* 138 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16794,7 +18066,7 @@ module.exports = function hellinger(a, b) {
 };
 
 /***/ }),
-/* 139 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16810,7 +18082,7 @@ module.exports = function innerProduct(a, b) {
 };
 
 /***/ }),
-/* 140 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16826,7 +18098,7 @@ module.exports = function jeffreys(a, b) {
 };
 
 /***/ }),
-/* 141 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16842,7 +18114,7 @@ module.exports = function jensenDifference(a, b) {
 };
 
 /***/ }),
-/* 142 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16860,7 +18132,7 @@ module.exports = function jensenShannon(a, b) {
 };
 
 /***/ }),
-/* 143 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16876,7 +18148,7 @@ module.exports = function kdivergence(a, b) {
 };
 
 /***/ }),
-/* 144 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16892,7 +18164,7 @@ module.exports = function kullbackLeibler(a, b) {
 };
 
 /***/ }),
-/* 145 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16912,7 +18184,7 @@ module.exports = function kumarHassebrook(a, b) {
 };
 
 /***/ }),
-/* 146 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16928,7 +18200,7 @@ module.exports = function kumarJohnson(a, b) {
 };
 
 /***/ }),
-/* 147 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16944,7 +18216,7 @@ module.exports = function lorentzian(a, b) {
 };
 
 /***/ }),
-/* 148 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16961,7 +18233,7 @@ module.exports = function manhattan(a, b) {
 };
 
 /***/ }),
-/* 149 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16977,7 +18249,7 @@ module.exports = function matusita(a, b) {
 };
 
 /***/ }),
-/* 150 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16994,7 +18266,7 @@ module.exports = function minkowski(a, b, p) {
 };
 
 /***/ }),
-/* 151 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17011,7 +18283,7 @@ module.exports = function neyman(a, b) {
 };
 
 /***/ }),
-/* 152 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17028,7 +18300,7 @@ module.exports = function pearson(a, b) {
 };
 
 /***/ }),
-/* 153 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17045,7 +18317,7 @@ module.exports = function probabilisticSymmetric(a, b) {
 };
 
 /***/ }),
-/* 154 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17063,7 +18335,7 @@ module.exports = function ruzicka(a, b) {
 };
 
 /***/ }),
-/* 155 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17081,7 +18353,7 @@ module.exports = function soergel(a, b) {
 };
 
 /***/ }),
-/* 156 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17099,7 +18371,7 @@ module.exports = function sorensen(a, b) {
 };
 
 /***/ }),
-/* 157 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17116,7 +18388,7 @@ module.exports = function squared(a, b) {
 };
 
 /***/ }),
-/* 158 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17132,13 +18404,13 @@ module.exports = function taneja(a, b) {
 };
 
 /***/ }),
-/* 159 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var tanimotoS = __webpack_require__(45);
+var tanimotoS = __webpack_require__(47);
 
 module.exports = function tanimoto(a, b, bitvector) {
     if (bitvector) return 1 - tanimotoS(a, b, bitvector);else {
@@ -17156,7 +18428,7 @@ module.exports = function tanimoto(a, b, bitvector) {
 };
 
 /***/ }),
-/* 160 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17172,7 +18444,7 @@ module.exports = function topsoe(a, b) {
 };
 
 /***/ }),
-/* 161 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17284,7 +18556,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 162 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17300,97 +18572,97 @@ module.exports = function waveHedges(a, b) {
 };
 
 /***/ }),
-/* 163 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.cosine = __webpack_require__(46);
-exports.czekanowski = __webpack_require__(38);
-exports.dice = __webpack_require__(164);
-exports.intersection = __webpack_require__(165);
-exports.jaccard = __webpack_require__(166);
-exports.kulczynski = __webpack_require__(167);
-exports.motyka = __webpack_require__(168);
-exports.pearson = __webpack_require__(169);
-exports.squaredChord = __webpack_require__(170);
-exports.tanimoto = __webpack_require__(45);
+exports.cosine = __webpack_require__(48);
+exports.czekanowski = __webpack_require__(40);
+exports.dice = __webpack_require__(172);
+exports.intersection = __webpack_require__(173);
+exports.jaccard = __webpack_require__(174);
+exports.kulczynski = __webpack_require__(175);
+exports.motyka = __webpack_require__(176);
+exports.pearson = __webpack_require__(177);
+exports.squaredChord = __webpack_require__(178);
+exports.tanimoto = __webpack_require__(47);
 
 /***/ }),
-/* 164 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var diceD = __webpack_require__(39);
+var diceD = __webpack_require__(41);
 
 module.exports = function dice(a, b) {
     return 1 - diceD(a, b);
 };
 
 /***/ }),
-/* 165 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var intersectionD = __webpack_require__(40);
+var intersectionD = __webpack_require__(42);
 
 module.exports = function intersection(a, b) {
     return 1 - intersectionD(a, b);
 };
 
 /***/ }),
-/* 166 */
+/* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var jaccardD = __webpack_require__(41);
+var jaccardD = __webpack_require__(43);
 
 module.exports = function jaccard(a, b) {
     return 1 - jaccardD(a, b);
 };
 
 /***/ }),
-/* 167 */
+/* 175 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var kulczynskiD = __webpack_require__(42);
+var kulczynskiD = __webpack_require__(44);
 
 module.exports = function kulczynski(a, b) {
     return 1 / kulczynskiD(a, b);
 };
 
 /***/ }),
-/* 168 */
+/* 176 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var motykaD = __webpack_require__(43);
+var motykaD = __webpack_require__(45);
 
 module.exports = function motyka(a, b) {
     return 1 - motykaD(a, b);
 };
 
 /***/ }),
-/* 169 */
+/* 177 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var stat = __webpack_require__(4).array;
-var cosine = __webpack_require__(46);
+var cosine = __webpack_require__(48);
 
 module.exports = function pearson(a, b) {
     var avgA = stat.mean(a);
@@ -17407,20 +18679,20 @@ module.exports = function pearson(a, b) {
 };
 
 /***/ }),
-/* 170 */
+/* 178 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var squaredChordD = __webpack_require__(44);
+var squaredChordD = __webpack_require__(46);
 
 module.exports = function squaredChord(a, b) {
     return 1 - squaredChordD(a, b);
 };
 
 /***/ }),
-/* 171 */
+/* 179 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17541,13 +18813,13 @@ function next_state(xsadd) {
 module.exports = exports["default"];
 
 /***/ }),
-/* 172 */
+/* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var measures = __webpack_require__(173);
+var measures = __webpack_require__(181);
 
 class Performance {
     /**
@@ -17775,7 +19047,7 @@ Performance.names = {
 module.exports = Performance;
 
 /***/ }),
-/* 173 */
+/* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17920,7 +19192,7 @@ exports.threshold = pred => {
 };
 
 /***/ }),
-/* 174 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17929,8 +19201,8 @@ exports.threshold = pred => {
 var matrixLib = __webpack_require__(0);
 var Matrix = matrixLib.Matrix;
 var inverse = matrixLib.inverse;
-var padArray = __webpack_require__(47);
-var extend = __webpack_require__(15);
+var padArray = __webpack_require__(49);
+var extend = __webpack_require__(16);
 
 var defaultOptions = {
     windowSize: 5,
@@ -18002,14 +19274,14 @@ function SavitzkyGolay(data, h, options) {
 module.exports = SavitzkyGolay;
 
 /***/ }),
-/* 175 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 //Code translate from Pascal source in http://pubs.acs.org/doi/pdf/10.1021/ac00205a007
-var extend = __webpack_require__(15);
+var extend = __webpack_require__(16);
 var stat = __webpack_require__(4);
 
 var defaultOptions = {
@@ -18165,13 +19437,13 @@ function guessWindowSize(data, h){
 module.exports = SavitzkyGolay;
 
 /***/ }),
-/* 176 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var eightBits = __webpack_require__(177);
+var eightBits = __webpack_require__(185);
 
 /**
  * Count the number of true values in an array
@@ -18353,7 +19625,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 177 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18375,19 +19647,19 @@ for (var i = 0; i < 256; i++) {
 module.exports = ans;
 
 /***/ }),
-/* 178 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = exports = __webpack_require__(179);
+module.exports = exports = __webpack_require__(187);
 
-exports.getEquallySpacedData = __webpack_require__(180).getEquallySpacedData;
-exports.SNV = __webpack_require__(181).SNV;
+exports.getEquallySpacedData = __webpack_require__(188).getEquallySpacedData;
+exports.SNV = __webpack_require__(189).SNV;
 
 /***/ }),
-/* 179 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18615,7 +19887,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 180 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18883,7 +20155,7 @@ exports.getEquallySpacedData = getEquallySpacedData;
 exports.integral = integral;
 
 /***/ }),
-/* 181 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
