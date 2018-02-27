@@ -35,7 +35,7 @@ ML.PowerRegression = Regression.PowerRegression;
 ML.ExponentialRegression = Regression.ExponentialRegression;
 ML.TheilSenRegression = Regression.TheilSenRegression;
 ML.RobustPolynomialRegression = Regression.RobustPolynomialRegression;
-ML.DesisionTreeRegression = mlCart.DesisionTreeRegression;
+ML.DecisionTreeRegression = mlCart.DecisionTreeRegression;
 ML.RandomForestRegression = mlRandomForest.RandomForestRegression;
 
 // Optimization
