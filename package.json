@@ -44,7 +44,7 @@
     "ml-hash-table": "^0.2.1",
     "ml-hclust": "^1.3.0",
     "ml-kernel": "^2.3.3",
-    "ml-kmeans": "^3.0.0",
+    "ml-kmeans": "^4.0.0",
     "ml-knn": "^2.0.0",
     "ml-levenberg-marquardt": "^1.0.0",
     "ml-matrix": "^5.0.0",
