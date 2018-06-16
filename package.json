@@ -8,7 +8,8 @@
     "build": "cheminfo build --root ML"
   },
   "files": [
-    "src"
+    "src",
+    "dist"
   ],
   "repository": {
     "type": "git",
