@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v3.2.0
+ * @version v3.3.0
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 50);
+/******/ 	return __webpack_require__(__webpack_require__.s = 53);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -90,7 +90,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _matrix = __webpack_require__(6);
+var _matrix = __webpack_require__(5);
 
 Object.defineProperty(exports, 'default', {
   enumerable: true,
@@ -114,7 +114,7 @@ Object.defineProperty(exports, 'abstractMatrix', {
   }
 });
 
-var _wrap = __webpack_require__(65);
+var _wrap = __webpack_require__(66);
 
 Object.defineProperty(exports, 'wrap', {
   enumerable: true,
@@ -123,7 +123,7 @@ Object.defineProperty(exports, 'wrap', {
   }
 });
 
-var _WrapperMatrix2D = __webpack_require__(19);
+var _WrapperMatrix2D = __webpack_require__(20);
 
 Object.defineProperty(exports, 'WrapperMatrix2D', {
   enumerable: true,
@@ -132,7 +132,7 @@ Object.defineProperty(exports, 'WrapperMatrix2D', {
   }
 });
 
-var _WrapperMatrix1D = __webpack_require__(18);
+var _WrapperMatrix1D = __webpack_require__(19);
 
 Object.defineProperty(exports, 'WrapperMatrix1D', {
   enumerable: true,
@@ -141,7 +141,7 @@ Object.defineProperty(exports, 'WrapperMatrix1D', {
   }
 });
 
-var _decompositions = __webpack_require__(66);
+var _decompositions = __webpack_require__(67);
 
 Object.defineProperty(exports, 'solve', {
   enumerable: true,
@@ -156,7 +156,16 @@ Object.defineProperty(exports, 'inverse', {
   }
 });
 
-var _svd = __webpack_require__(10);
+var _linearDependencies = __webpack_require__(68);
+
+Object.defineProperty(exports, 'linearDependencies', {
+  enumerable: true,
+  get: function get() {
+    return _linearDependencies.linearDependencies;
+  }
+});
+
+var _svd = __webpack_require__(8);
 
 Object.defineProperty(exports, 'SingularValueDecomposition', {
   enumerable: true,
@@ -171,7 +180,7 @@ Object.defineProperty(exports, 'SVD', {
   }
 });
 
-var _evd = __webpack_require__(67);
+var _evd = __webpack_require__(69);
 
 Object.defineProperty(exports, 'EigenvalueDecomposition', {
   enumerable: true,
@@ -186,7 +195,7 @@ Object.defineProperty(exports, 'EVD', {
   }
 });
 
-var _cholesky = __webpack_require__(68);
+var _cholesky = __webpack_require__(70);
 
 Object.defineProperty(exports, 'CholeskyDecomposition', {
   enumerable: true,
@@ -201,7 +210,7 @@ Object.defineProperty(exports, 'CHO', {
   }
 });
 
-var _lu = __webpack_require__(9);
+var _lu = __webpack_require__(10);
 
 Object.defineProperty(exports, 'LuDecomposition', {
   enumerable: true,
@@ -216,7 +225,7 @@ Object.defineProperty(exports, 'LU', {
   }
 });
 
-var _qr = __webpack_require__(20);
+var _qr = __webpack_require__(21);
 
 Object.defineProperty(exports, 'QrDecomposition', {
   enumerable: true,
@@ -266,7 +275,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _maybeToPrecision = __webpack_require__(119);
+var _maybeToPrecision = __webpack_require__(121);
 
 Object.defineProperty(exports, 'maybeToPrecision', {
     enumerable: true,
@@ -275,7 +284,7 @@ Object.defineProperty(exports, 'maybeToPrecision', {
     }
 });
 
-var _checkArrayLength = __webpack_require__(120);
+var _checkArrayLength = __webpack_require__(122);
 
 Object.defineProperty(exports, 'checkArrayLength', {
     enumerable: true,
@@ -379,30 +388,30 @@ exports.default = BaseRegression;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _abstractMatrix = __webpack_require__(7);
 
 var _abstractMatrix2 = _interopRequireDefault(_abstractMatrix);
 
-var _matrix = __webpack_require__(6);
+var _matrix = __webpack_require__(5);
 
 var _matrix2 = _interopRequireDefault(_matrix);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class BaseView extends (0, _abstractMatrix2.default)() {
-    constructor(matrix, rows, columns) {
-        super();
-        this.matrix = matrix;
-        this.rows = rows;
-        this.columns = columns;
-    }
+  constructor(matrix, rows, columns) {
+    super();
+    this.matrix = matrix;
+    this.rows = rows;
+    this.columns = columns;
+  }
 
-    static get [Symbol.species]() {
-        return _matrix2.default;
-    }
+  static get [Symbol.species]() {
+    return _matrix2.default;
+  }
 }
 exports.default = BaseView;
 
@@ -413,8 +422,8 @@ exports.default = BaseView;
 "use strict";
 
 
-exports.array = __webpack_require__(23);
-exports.matrix = __webpack_require__(8);
+exports.array = __webpack_require__(24);
+exports.matrix = __webpack_require__(9);
 
 /***/ }),
 /* 5 */
@@ -424,7 +433,148 @@ exports.matrix = __webpack_require__(8);
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
+});
+
+var _abstractMatrix = __webpack_require__(7);
+
+var _abstractMatrix2 = _interopRequireDefault(_abstractMatrix);
+
+var _util = __webpack_require__(6);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class Matrix extends (0, _abstractMatrix2.default)(Array) {
+  constructor(nRows, nColumns) {
+    var i;
+    if (arguments.length === 1 && typeof nRows === 'number') {
+      return new Array(nRows);
+    }
+    if (Matrix.isMatrix(nRows)) {
+      return nRows.clone();
+    } else if (Number.isInteger(nRows) && nRows > 0) {
+      // Create an empty matrix
+      super(nRows);
+      if (Number.isInteger(nColumns) && nColumns > 0) {
+        for (i = 0; i < nRows; i++) {
+          this[i] = new Array(nColumns);
+        }
+      } else {
+        throw new TypeError('nColumns must be a positive integer');
+      }
+    } else if (Array.isArray(nRows)) {
+      // Copy the values from the 2D array
+      var matrix = nRows;
+      nRows = matrix.length;
+      nColumns = matrix[0].length;
+      if (typeof nColumns !== 'number' || nColumns === 0) {
+        throw new TypeError('Data must be a 2D array with at least one element');
+      }
+      super(nRows);
+      for (i = 0; i < nRows; i++) {
+        if (matrix[i].length !== nColumns) {
+          throw new RangeError('Inconsistent array dimensions');
+        }
+        this[i] = [].concat(matrix[i]);
+      }
+    } else {
+      throw new TypeError('First argument must be a positive number or an array');
+    }
+    this.rows = nRows;
+    this.columns = nColumns;
+    return this;
+  }
+
+  set(rowIndex, columnIndex, value) {
+    this[rowIndex][columnIndex] = value;
+    return this;
+  }
+
+  get(rowIndex, columnIndex) {
+    return this[rowIndex][columnIndex];
+  }
+
+  /**
+   * Removes a row from the given index
+   * @param {number} index - Row index
+   * @return {Matrix} this
+   */
+  removeRow(index) {
+    (0, _util.checkRowIndex)(this, index);
+    if (this.rows === 1) {
+      throw new RangeError('A matrix cannot have less than one row');
+    }
+    this.splice(index, 1);
+    this.rows -= 1;
+    return this;
+  }
+
+  /**
+   * Adds a row at the given index
+   * @param {number} [index = this.rows] - Row index
+   * @param {Array|Matrix} array - Array or vector
+   * @return {Matrix} this
+   */
+  addRow(index, array) {
+    if (array === undefined) {
+      array = index;
+      index = this.rows;
+    }
+    (0, _util.checkRowIndex)(this, index, true);
+    array = (0, _util.checkRowVector)(this, array, true);
+    this.splice(index, 0, array);
+    this.rows += 1;
+    return this;
+  }
+
+  /**
+   * Removes a column from the given index
+   * @param {number} index - Column index
+   * @return {Matrix} this
+   */
+  removeColumn(index) {
+    (0, _util.checkColumnIndex)(this, index);
+    if (this.columns === 1) {
+      throw new RangeError('A matrix cannot have less than one column');
+    }
+    for (var i = 0; i < this.rows; i++) {
+      this[i].splice(index, 1);
+    }
+    this.columns -= 1;
+    return this;
+  }
+
+  /**
+   * Adds a column at the given index
+   * @param {number} [index = this.columns] - Column index
+   * @param {Array|Matrix} array - Array or vector
+   * @return {Matrix} this
+   */
+  addColumn(index, array) {
+    if (typeof array === 'undefined') {
+      array = index;
+      index = this.columns;
+    }
+    (0, _util.checkColumnIndex)(this, index, true);
+    array = (0, _util.checkColumnVector)(this, array);
+    for (var i = 0; i < this.rows; i++) {
+      this[i].splice(index, 0, array[i]);
+    }
+    this.columns += 1;
+    return this;
+  }
+}
+exports.default = Matrix;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
 exports.checkRowIndex = checkRowIndex;
 exports.checkColumnIndex = checkColumnIndex;
@@ -439,7 +589,7 @@ exports.sumByRow = sumByRow;
 exports.sumByColumn = sumByColumn;
 exports.sumAll = sumAll;
 
-var _matrix = __webpack_require__(6);
+var _matrix = __webpack_require__(5);
 
 var _matrix2 = _interopRequireDefault(_matrix);
 
@@ -453,10 +603,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @param {boolean} [outer]
  */
 function checkRowIndex(matrix, index, outer) {
-    var max = outer ? matrix.rows : matrix.rows - 1;
-    if (index < 0 || index > max) {
-        throw new RangeError('Row index out of range');
-    }
+  var max = outer ? matrix.rows : matrix.rows - 1;
+  if (index < 0 || index > max) {
+    throw new RangeError('Row index out of range');
+  }
 }
 
 /**
@@ -467,10 +617,10 @@ function checkRowIndex(matrix, index, outer) {
  * @param {boolean} [outer]
  */
 function checkColumnIndex(matrix, index, outer) {
-    var max = outer ? matrix.columns : matrix.columns - 1;
-    if (index < 0 || index > max) {
-        throw new RangeError('Column index out of range');
-    }
+  var max = outer ? matrix.columns : matrix.columns - 1;
+  if (index < 0 || index > max) {
+    throw new RangeError('Column index out of range');
+  }
 }
 
 /**
@@ -482,13 +632,13 @@ function checkColumnIndex(matrix, index, outer) {
  * @throws {RangeError}
  */
 function checkRowVector(matrix, vector) {
-    if (vector.to1DArray) {
-        vector = vector.to1DArray();
-    }
-    if (vector.length !== matrix.columns) {
-        throw new RangeError('vector size must be the same as the number of columns');
-    }
-    return vector;
+  if (vector.to1DArray) {
+    vector = vector.to1DArray();
+  }
+  if (vector.length !== matrix.columns) {
+    throw new RangeError('vector size must be the same as the number of columns');
+  }
+  return vector;
 }
 
 /**
@@ -500,248 +650,113 @@ function checkRowVector(matrix, vector) {
  * @throws {RangeError}
  */
 function checkColumnVector(matrix, vector) {
-    if (vector.to1DArray) {
-        vector = vector.to1DArray();
-    }
-    if (vector.length !== matrix.rows) {
-        throw new RangeError('vector size must be the same as the number of rows');
-    }
-    return vector;
+  if (vector.to1DArray) {
+    vector = vector.to1DArray();
+  }
+  if (vector.length !== matrix.rows) {
+    throw new RangeError('vector size must be the same as the number of rows');
+  }
+  return vector;
 }
 
 function checkIndices(matrix, rowIndices, columnIndices) {
-    return {
-        row: checkRowIndices(matrix, rowIndices),
-        column: checkColumnIndices(matrix, columnIndices)
-    };
+  return {
+    row: checkRowIndices(matrix, rowIndices),
+    column: checkColumnIndices(matrix, columnIndices)
+  };
 }
 
 function checkRowIndices(matrix, rowIndices) {
-    if (typeof rowIndices !== 'object') {
-        throw new TypeError('unexpected type for row indices');
-    }
+  if (typeof rowIndices !== 'object') {
+    throw new TypeError('unexpected type for row indices');
+  }
 
-    var rowOut = rowIndices.some(r => {
-        return r < 0 || r >= matrix.rows;
-    });
+  var rowOut = rowIndices.some(r => {
+    return r < 0 || r >= matrix.rows;
+  });
 
-    if (rowOut) {
-        throw new RangeError('row indices are out of range');
-    }
+  if (rowOut) {
+    throw new RangeError('row indices are out of range');
+  }
 
-    if (!Array.isArray(rowIndices)) rowIndices = Array.from(rowIndices);
+  if (!Array.isArray(rowIndices)) rowIndices = Array.from(rowIndices);
 
-    return rowIndices;
+  return rowIndices;
 }
 
 function checkColumnIndices(matrix, columnIndices) {
-    if (typeof columnIndices !== 'object') {
-        throw new TypeError('unexpected type for column indices');
-    }
+  if (typeof columnIndices !== 'object') {
+    throw new TypeError('unexpected type for column indices');
+  }
 
-    var columnOut = columnIndices.some(c => {
-        return c < 0 || c >= matrix.columns;
-    });
+  var columnOut = columnIndices.some(c => {
+    return c < 0 || c >= matrix.columns;
+  });
 
-    if (columnOut) {
-        throw new RangeError('column indices are out of range');
-    }
-    if (!Array.isArray(columnIndices)) columnIndices = Array.from(columnIndices);
+  if (columnOut) {
+    throw new RangeError('column indices are out of range');
+  }
+  if (!Array.isArray(columnIndices)) columnIndices = Array.from(columnIndices);
 
-    return columnIndices;
+  return columnIndices;
 }
 
 function checkRange(matrix, startRow, endRow, startColumn, endColumn) {
-    if (arguments.length !== 5) throw new TypeError('Invalid argument type');
-    var notAllNumbers = Array.from(arguments).slice(1).some(function (arg) {
-        return typeof arg !== 'number';
-    });
-    if (notAllNumbers) throw new TypeError('Invalid argument type');
-    if (startRow > endRow || startColumn > endColumn || startRow < 0 || startRow >= matrix.rows || endRow < 0 || endRow >= matrix.rows || startColumn < 0 || startColumn >= matrix.columns || endColumn < 0 || endColumn >= matrix.columns) {
-        throw new RangeError('Submatrix indices are out of range');
-    }
+  if (arguments.length !== 5) {
+    throw new RangeError('expected 4 arguments');
+  }
+  checkNumber('startRow', startRow);
+  checkNumber('endRow', endRow);
+  checkNumber('startColumn', startColumn);
+  checkNumber('endColumn', endColumn);
+  if (startRow > endRow || startColumn > endColumn || startRow < 0 || startRow >= matrix.rows || endRow < 0 || endRow >= matrix.rows || startColumn < 0 || startColumn >= matrix.columns || endColumn < 0 || endColumn >= matrix.columns) {
+    throw new RangeError('Submatrix indices are out of range');
+  }
 }
 
 function getRange(from, to) {
-    var arr = new Array(to - from + 1);
-    for (var i = 0; i < arr.length; i++) {
-        arr[i] = from + i;
-    }
-    return arr;
+  var arr = new Array(to - from + 1);
+  for (var i = 0; i < arr.length; i++) {
+    arr[i] = from + i;
+  }
+  return arr;
 }
 
 function sumByRow(matrix) {
-    var sum = _matrix2.default.zeros(matrix.rows, 1);
-    for (var i = 0; i < matrix.rows; ++i) {
-        for (var j = 0; j < matrix.columns; ++j) {
-            sum.set(i, 0, sum.get(i, 0) + matrix.get(i, j));
-        }
+  var sum = _matrix2.default.zeros(matrix.rows, 1);
+  for (var i = 0; i < matrix.rows; ++i) {
+    for (var j = 0; j < matrix.columns; ++j) {
+      sum.set(i, 0, sum.get(i, 0) + matrix.get(i, j));
     }
-    return sum;
+  }
+  return sum;
 }
 
 function sumByColumn(matrix) {
-    var sum = _matrix2.default.zeros(1, matrix.columns);
-    for (var i = 0; i < matrix.rows; ++i) {
-        for (var j = 0; j < matrix.columns; ++j) {
-            sum.set(0, j, sum.get(0, j) + matrix.get(i, j));
-        }
+  var sum = _matrix2.default.zeros(1, matrix.columns);
+  for (var i = 0; i < matrix.rows; ++i) {
+    for (var j = 0; j < matrix.columns; ++j) {
+      sum.set(0, j, sum.get(0, j) + matrix.get(i, j));
     }
-    return sum;
+  }
+  return sum;
 }
 
 function sumAll(matrix) {
-    var v = 0;
-    for (var i = 0; i < matrix.rows; i++) {
-        for (var j = 0; j < matrix.columns; j++) {
-            v += matrix.get(i, j);
-        }
+  var v = 0;
+  for (var i = 0; i < matrix.rows; i++) {
+    for (var j = 0; j < matrix.columns; j++) {
+      v += matrix.get(i, j);
     }
-    return v;
+  }
+  return v;
 }
 
-/***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-__webpack_require__(52);
-
-var _abstractMatrix = __webpack_require__(7);
-
-var _abstractMatrix2 = _interopRequireDefault(_abstractMatrix);
-
-var _util = __webpack_require__(5);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-class Matrix extends (0, _abstractMatrix2.default)(Array) {
-    constructor(nRows, nColumns) {
-        var i;
-        if (arguments.length === 1 && typeof nRows === 'number') {
-            return new Array(nRows);
-        }
-        if (Matrix.isMatrix(nRows)) {
-            return nRows.clone();
-        } else if (Number.isInteger(nRows) && nRows > 0) {
-            // Create an empty matrix
-            super(nRows);
-            if (Number.isInteger(nColumns) && nColumns > 0) {
-                for (i = 0; i < nRows; i++) {
-                    this[i] = new Array(nColumns);
-                }
-            } else {
-                throw new TypeError('nColumns must be a positive integer');
-            }
-        } else if (Array.isArray(nRows)) {
-            // Copy the values from the 2D array
-            var matrix = nRows;
-            nRows = matrix.length;
-            nColumns = matrix[0].length;
-            if (typeof nColumns !== 'number' || nColumns === 0) {
-                throw new TypeError('Data must be a 2D array with at least one element');
-            }
-            super(nRows);
-            for (i = 0; i < nRows; i++) {
-                if (matrix[i].length !== nColumns) {
-                    throw new RangeError('Inconsistent array dimensions');
-                }
-                this[i] = [].concat(matrix[i]);
-            }
-        } else {
-            throw new TypeError('First argument must be a positive number or an array');
-        }
-        this.rows = nRows;
-        this.columns = nColumns;
-        return this;
-    }
-
-    set(rowIndex, columnIndex, value) {
-        this[rowIndex][columnIndex] = value;
-        return this;
-    }
-
-    get(rowIndex, columnIndex) {
-        return this[rowIndex][columnIndex];
-    }
-
-    /**
-     * Removes a row from the given index
-     * @param {number} index - Row index
-     * @return {Matrix} this
-     */
-    removeRow(index) {
-        (0, _util.checkRowIndex)(this, index);
-        if (this.rows === 1) {
-            throw new RangeError('A matrix cannot have less than one row');
-        }
-        this.splice(index, 1);
-        this.rows -= 1;
-        return this;
-    }
-
-    /**
-     * Adds a row at the given index
-     * @param {number} [index = this.rows] - Row index
-     * @param {Array|Matrix} array - Array or vector
-     * @return {Matrix} this
-     */
-    addRow(index, array) {
-        if (array === undefined) {
-            array = index;
-            index = this.rows;
-        }
-        (0, _util.checkRowIndex)(this, index, true);
-        array = (0, _util.checkRowVector)(this, array, true);
-        this.splice(index, 0, array);
-        this.rows += 1;
-        return this;
-    }
-
-    /**
-     * Removes a column from the given index
-     * @param {number} index - Column index
-     * @return {Matrix} this
-     */
-    removeColumn(index) {
-        (0, _util.checkColumnIndex)(this, index);
-        if (this.columns === 1) {
-            throw new RangeError('A matrix cannot have less than one column');
-        }
-        for (var i = 0; i < this.rows; i++) {
-            this[i].splice(index, 1);
-        }
-        this.columns -= 1;
-        return this;
-    }
-
-    /**
-     * Adds a column at the given index
-     * @param {number} [index = this.columns] - Column index
-     * @param {Array|Matrix} array - Array or vector
-     * @return {Matrix} this
-     */
-    addColumn(index, array) {
-        if (typeof array === 'undefined') {
-            array = index;
-            index = this.columns;
-        }
-        (0, _util.checkColumnIndex)(this, index, true);
-        array = (0, _util.checkColumnVector)(this, array);
-        for (var i = 0; i < this.rows; i++) {
-            this[i].splice(index, 0, array[i]);
-        }
-        this.columns += 1;
-        return this;
-    }
+function checkNumber(name, value) {
+  if (typeof value !== 'number') {
+    throw new TypeError(`${name} must be a number`);
+  }
 }
-exports.default = Matrix;
 
 /***/ }),
 /* 7 */
@@ -751,173 +766,173 @@ exports.default = Matrix;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.default = AbstractMatrix;
 
-var _lu = __webpack_require__(9);
-
-var _lu2 = _interopRequireDefault(_lu);
-
-var _svd = __webpack_require__(10);
-
-var _svd2 = _interopRequireDefault(_svd);
-
-var _mlArrayRescale = __webpack_require__(53);
+var _mlArrayRescale = __webpack_require__(55);
 
 var _mlArrayRescale2 = _interopRequireDefault(_mlArrayRescale);
 
-var _util = __webpack_require__(5);
+var _lu = __webpack_require__(10);
 
-var _transpose = __webpack_require__(56);
+var _lu2 = _interopRequireDefault(_lu);
+
+var _svd = __webpack_require__(8);
+
+var _svd2 = _interopRequireDefault(_svd);
+
+var _util = __webpack_require__(6);
+
+var _transpose = __webpack_require__(57);
 
 var _transpose2 = _interopRequireDefault(_transpose);
 
-var _row = __webpack_require__(57);
+var _row = __webpack_require__(58);
 
 var _row2 = _interopRequireDefault(_row);
 
-var _sub = __webpack_require__(58);
+var _sub = __webpack_require__(59);
 
 var _sub2 = _interopRequireDefault(_sub);
 
-var _selection = __webpack_require__(59);
+var _selection = __webpack_require__(60);
 
 var _selection2 = _interopRequireDefault(_selection);
 
-var _rowSelection = __webpack_require__(60);
+var _rowSelection = __webpack_require__(61);
 
 var _rowSelection2 = _interopRequireDefault(_rowSelection);
 
-var _columnSelection = __webpack_require__(61);
+var _columnSelection = __webpack_require__(62);
 
 var _columnSelection2 = _interopRequireDefault(_columnSelection);
 
-var _column = __webpack_require__(62);
+var _column = __webpack_require__(63);
 
 var _column2 = _interopRequireDefault(_column);
 
-var _flipRow = __webpack_require__(63);
+var _flipRow = __webpack_require__(64);
 
 var _flipRow2 = _interopRequireDefault(_flipRow);
 
-var _flipColumn = __webpack_require__(64);
+var _flipColumn = __webpack_require__(65);
 
 var _flipColumn2 = _interopRequireDefault(_flipColumn);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function AbstractMatrix(superCtor) {
-    if (superCtor === undefined) superCtor = Object;
+  if (superCtor === undefined) superCtor = Object;
+
+  /**
+   * Real matrix
+   * @class Matrix
+   * @param {number|Array|Matrix} nRows - Number of rows of the new matrix,
+   * 2D array containing the data or Matrix instance to clone
+   * @param {number} [nColumns] - Number of columns of the new matrix
+   */
+  class Matrix extends superCtor {
+    static get [Symbol.species]() {
+      return this;
+    }
 
     /**
-     * Real matrix
-     * @class Matrix
-     * @param {number|Array|Matrix} nRows - Number of rows of the new matrix,
-     * 2D array containing the data or Matrix instance to clone
-     * @param {number} [nColumns] - Number of columns of the new matrix
+     * Constructs a Matrix with the chosen dimensions from a 1D array
+     * @param {number} newRows - Number of rows
+     * @param {number} newColumns - Number of columns
+     * @param {Array} newData - A 1D array containing data for the matrix
+     * @return {Matrix} - The new matrix
      */
-    class Matrix extends superCtor {
-        static get [Symbol.species]() {
-            return this;
+    static from1DArray(newRows, newColumns, newData) {
+      var length = newRows * newColumns;
+      if (length !== newData.length) {
+        throw new RangeError('Data length does not match given dimensions');
+      }
+      var newMatrix = new this(newRows, newColumns);
+      for (var row = 0; row < newRows; row++) {
+        for (var column = 0; column < newColumns; column++) {
+          newMatrix.set(row, column, newData[row * newColumns + column]);
         }
+      }
+      return newMatrix;
+    }
 
-        /**
-         * Constructs a Matrix with the chosen dimensions from a 1D array
-         * @param {number} newRows - Number of rows
-         * @param {number} newColumns - Number of columns
-         * @param {Array} newData - A 1D array containing data for the matrix
-         * @return {Matrix} - The new matrix
-         */
-        static from1DArray(newRows, newColumns, newData) {
-            var length = newRows * newColumns;
-            if (length !== newData.length) {
-                throw new RangeError('Data length does not match given dimensions');
-            }
-            var newMatrix = new this(newRows, newColumns);
-            for (var row = 0; row < newRows; row++) {
-                for (var column = 0; column < newColumns; column++) {
-                    newMatrix.set(row, column, newData[row * newColumns + column]);
-                }
-            }
-            return newMatrix;
-        }
-
-        /**
+    /**
          * Creates a row vector, a matrix with only one row.
          * @param {Array} newData - A 1D array containing data for the vector
          * @return {Matrix} - The new matrix
          */
-        static rowVector(newData) {
-            var vector = new this(1, newData.length);
-            for (var i = 0; i < newData.length; i++) {
-                vector.set(0, i, newData[i]);
-            }
-            return vector;
-        }
+    static rowVector(newData) {
+      var vector = new this(1, newData.length);
+      for (var i = 0; i < newData.length; i++) {
+        vector.set(0, i, newData[i]);
+      }
+      return vector;
+    }
 
-        /**
+    /**
          * Creates a column vector, a matrix with only one column.
          * @param {Array} newData - A 1D array containing data for the vector
          * @return {Matrix} - The new matrix
          */
-        static columnVector(newData) {
-            var vector = new this(newData.length, 1);
-            for (var i = 0; i < newData.length; i++) {
-                vector.set(i, 0, newData[i]);
-            }
-            return vector;
-        }
+    static columnVector(newData) {
+      var vector = new this(newData.length, 1);
+      for (var i = 0; i < newData.length; i++) {
+        vector.set(i, 0, newData[i]);
+      }
+      return vector;
+    }
 
-        /**
+    /**
          * Creates an empty matrix with the given dimensions. Values will be undefined. Same as using new Matrix(rows, columns).
          * @param {number} rows - Number of rows
          * @param {number} columns - Number of columns
          * @return {Matrix} - The new matrix
          */
-        static empty(rows, columns) {
-            return new this(rows, columns);
-        }
+    static empty(rows, columns) {
+      return new this(rows, columns);
+    }
 
-        /**
+    /**
          * Creates a matrix with the given dimensions. Values will be set to zero.
          * @param {number} rows - Number of rows
          * @param {number} columns - Number of columns
          * @return {Matrix} - The new matrix
          */
-        static zeros(rows, columns) {
-            return this.empty(rows, columns).fill(0);
-        }
+    static zeros(rows, columns) {
+      return this.empty(rows, columns).fill(0);
+    }
 
-        /**
+    /**
          * Creates a matrix with the given dimensions. Values will be set to one.
          * @param {number} rows - Number of rows
          * @param {number} columns - Number of columns
          * @return {Matrix} - The new matrix
          */
-        static ones(rows, columns) {
-            return this.empty(rows, columns).fill(1);
-        }
+    static ones(rows, columns) {
+      return this.empty(rows, columns).fill(1);
+    }
 
-        /**
+    /**
          * Creates a matrix with the given dimensions. Values will be randomly set.
          * @param {number} rows - Number of rows
          * @param {number} columns - Number of columns
          * @param {function} [rng=Math.random] - Random number generator
          * @return {Matrix} The new matrix
          */
-        static rand(rows, columns, rng) {
-            if (rng === undefined) rng = Math.random;
-            var matrix = this.empty(rows, columns);
-            for (var i = 0; i < rows; i++) {
-                for (var j = 0; j < columns; j++) {
-                    matrix.set(i, j, rng());
-                }
-            }
-            return matrix;
+    static rand(rows, columns, rng) {
+      if (rng === undefined) rng = Math.random;
+      var matrix = this.empty(rows, columns);
+      for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < columns; j++) {
+          matrix.set(i, j, rng());
         }
+      }
+      return matrix;
+    }
 
-        /**
+    /**
          * Creates a matrix with the given dimensions. Values will be random integers.
          * @param {number} rows - Number of rows
          * @param {number} columns - Number of columns
@@ -925,215 +940,215 @@ function AbstractMatrix(superCtor) {
          * @param {function} [rng=Math.random] - Random number generator
          * @return {Matrix} The new matrix
          */
-        static randInt(rows, columns, maxValue, rng) {
-            if (maxValue === undefined) maxValue = 1000;
-            if (rng === undefined) rng = Math.random;
-            var matrix = this.empty(rows, columns);
-            for (var i = 0; i < rows; i++) {
-                for (var j = 0; j < columns; j++) {
-                    var value = Math.floor(rng() * maxValue);
-                    matrix.set(i, j, value);
-                }
-            }
-            return matrix;
+    static randInt(rows, columns, maxValue, rng) {
+      if (maxValue === undefined) maxValue = 1000;
+      if (rng === undefined) rng = Math.random;
+      var matrix = this.empty(rows, columns);
+      for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < columns; j++) {
+          var value = Math.floor(rng() * maxValue);
+          matrix.set(i, j, value);
         }
+      }
+      return matrix;
+    }
 
-        /**
+    /**
          * Creates an identity matrix with the given dimension. Values of the diagonal will be 1 and others will be 0.
          * @param {number} rows - Number of rows
          * @param {number} [columns=rows] - Number of columns
          * @param {number} [value=1] - Value to fill the diagonal with
          * @return {Matrix} - The new identity matrix
          */
-        static eye(rows, columns, value) {
-            if (columns === undefined) columns = rows;
-            if (value === undefined) value = 1;
-            var min = Math.min(rows, columns);
-            var matrix = this.zeros(rows, columns);
-            for (var i = 0; i < min; i++) {
-                matrix.set(i, i, value);
-            }
-            return matrix;
-        }
+    static eye(rows, columns, value) {
+      if (columns === undefined) columns = rows;
+      if (value === undefined) value = 1;
+      var min = Math.min(rows, columns);
+      var matrix = this.zeros(rows, columns);
+      for (var i = 0; i < min; i++) {
+        matrix.set(i, i, value);
+      }
+      return matrix;
+    }
 
-        /**
+    /**
          * Creates a diagonal matrix based on the given array.
          * @param {Array} data - Array containing the data for the diagonal
          * @param {number} [rows] - Number of rows (Default: data.length)
          * @param {number} [columns] - Number of columns (Default: rows)
          * @return {Matrix} - The new diagonal matrix
          */
-        static diag(data, rows, columns) {
-            var l = data.length;
-            if (rows === undefined) rows = l;
-            if (columns === undefined) columns = rows;
-            var min = Math.min(l, rows, columns);
-            var matrix = this.zeros(rows, columns);
-            for (var i = 0; i < min; i++) {
-                matrix.set(i, i, data[i]);
-            }
-            return matrix;
-        }
+    static diag(data, rows, columns) {
+      var l = data.length;
+      if (rows === undefined) rows = l;
+      if (columns === undefined) columns = rows;
+      var min = Math.min(l, rows, columns);
+      var matrix = this.zeros(rows, columns);
+      for (var i = 0; i < min; i++) {
+        matrix.set(i, i, data[i]);
+      }
+      return matrix;
+    }
 
-        /**
+    /**
          * Returns a matrix whose elements are the minimum between matrix1 and matrix2
          * @param {Matrix} matrix1
          * @param {Matrix} matrix2
          * @return {Matrix}
          */
-        static min(matrix1, matrix2) {
-            matrix1 = this.checkMatrix(matrix1);
-            matrix2 = this.checkMatrix(matrix2);
-            var rows = matrix1.rows;
-            var columns = matrix1.columns;
-            var result = new this(rows, columns);
-            for (var i = 0; i < rows; i++) {
-                for (var j = 0; j < columns; j++) {
-                    result.set(i, j, Math.min(matrix1.get(i, j), matrix2.get(i, j)));
-                }
-            }
-            return result;
+    static min(matrix1, matrix2) {
+      matrix1 = this.checkMatrix(matrix1);
+      matrix2 = this.checkMatrix(matrix2);
+      var rows = matrix1.rows;
+      var columns = matrix1.columns;
+      var result = new this(rows, columns);
+      for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < columns; j++) {
+          result.set(i, j, Math.min(matrix1.get(i, j), matrix2.get(i, j)));
         }
+      }
+      return result;
+    }
 
-        /**
+    /**
          * Returns a matrix whose elements are the maximum between matrix1 and matrix2
          * @param {Matrix} matrix1
          * @param {Matrix} matrix2
          * @return {Matrix}
          */
-        static max(matrix1, matrix2) {
-            matrix1 = this.checkMatrix(matrix1);
-            matrix2 = this.checkMatrix(matrix2);
-            var rows = matrix1.rows;
-            var columns = matrix1.columns;
-            var result = new this(rows, columns);
-            for (var i = 0; i < rows; i++) {
-                for (var j = 0; j < columns; j++) {
-                    result.set(i, j, Math.max(matrix1.get(i, j), matrix2.get(i, j)));
-                }
-            }
-            return result;
+    static max(matrix1, matrix2) {
+      matrix1 = this.checkMatrix(matrix1);
+      matrix2 = this.checkMatrix(matrix2);
+      var rows = matrix1.rows;
+      var columns = matrix1.columns;
+      var result = new this(rows, columns);
+      for (var i = 0; i < rows; i++) {
+        for (var j = 0; j < columns; j++) {
+          result.set(i, j, Math.max(matrix1.get(i, j), matrix2.get(i, j)));
         }
+      }
+      return result;
+    }
 
-        /**
+    /**
          * Check that the provided value is a Matrix and tries to instantiate one if not
          * @param {*} value - The value to check
          * @return {Matrix}
          */
-        static checkMatrix(value) {
-            return Matrix.isMatrix(value) ? value : new this(value);
-        }
+    static checkMatrix(value) {
+      return Matrix.isMatrix(value) ? value : new this(value);
+    }
 
-        /**
+    /**
          * Returns true if the argument is a Matrix, false otherwise
          * @param {*} value - The value to check
          * @return {boolean}
          */
-        static isMatrix(value) {
-            return value != null && value.klass === 'Matrix';
-        }
+    static isMatrix(value) {
+      return value != null && value.klass === 'Matrix';
+    }
 
-        /**
+    /**
          * @prop {number} size - The number of elements in the matrix.
          */
-        get size() {
-            return this.rows * this.columns;
-        }
+    get size() {
+      return this.rows * this.columns;
+    }
 
-        /**
+    /**
          * Applies a callback for each element of the matrix. The function is called in the matrix (this) context.
          * @param {function} callback - Function that will be called with two parameters : i (row) and j (column)
          * @return {Matrix} this
          */
-        apply(callback) {
-            if (typeof callback !== 'function') {
-                throw new TypeError('callback must be a function');
-            }
-            var ii = this.rows;
-            var jj = this.columns;
-            for (var i = 0; i < ii; i++) {
-                for (var j = 0; j < jj; j++) {
-                    callback.call(this, i, j);
-                }
-            }
-            return this;
+    apply(callback) {
+      if (typeof callback !== 'function') {
+        throw new TypeError('callback must be a function');
+      }
+      var ii = this.rows;
+      var jj = this.columns;
+      for (var i = 0; i < ii; i++) {
+        for (var j = 0; j < jj; j++) {
+          callback.call(this, i, j);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Returns a new 1D array filled row by row with the matrix values
          * @return {Array}
          */
-        to1DArray() {
-            var array = new Array(this.size);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    array[i * this.columns + j] = this.get(i, j);
-                }
-            }
-            return array;
+    to1DArray() {
+      var array = new Array(this.size);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          array[i * this.columns + j] = this.get(i, j);
         }
+      }
+      return array;
+    }
 
-        /**
+    /**
          * Returns a 2D array containing a copy of the data
          * @return {Array}
          */
-        to2DArray() {
-            var copy = new Array(this.rows);
-            for (var i = 0; i < this.rows; i++) {
-                copy[i] = new Array(this.columns);
-                for (var j = 0; j < this.columns; j++) {
-                    copy[i][j] = this.get(i, j);
-                }
-            }
-            return copy;
+    to2DArray() {
+      var copy = new Array(this.rows);
+      for (var i = 0; i < this.rows; i++) {
+        copy[i] = new Array(this.columns);
+        for (var j = 0; j < this.columns; j++) {
+          copy[i][j] = this.get(i, j);
         }
+      }
+      return copy;
+    }
 
-        /**
+    /**
          * @return {boolean} true if the matrix has one row
          */
-        isRowVector() {
-            return this.rows === 1;
-        }
+    isRowVector() {
+      return this.rows === 1;
+    }
 
-        /**
+    /**
          * @return {boolean} true if the matrix has one column
          */
-        isColumnVector() {
-            return this.columns === 1;
-        }
+    isColumnVector() {
+      return this.columns === 1;
+    }
 
-        /**
+    /**
          * @return {boolean} true if the matrix has one row or one column
          */
-        isVector() {
-            return this.rows === 1 || this.columns === 1;
-        }
+    isVector() {
+      return this.rows === 1 || this.columns === 1;
+    }
 
-        /**
+    /**
          * @return {boolean} true if the matrix has the same number of rows and columns
          */
-        isSquare() {
-            return this.rows === this.columns;
-        }
+    isSquare() {
+      return this.rows === this.columns;
+    }
 
-        /**
+    /**
          * @return {boolean} true if the matrix is square and has the same values on both sides of the diagonal
          */
-        isSymmetric() {
-            if (this.isSquare()) {
-                for (var i = 0; i < this.rows; i++) {
-                    for (var j = 0; j <= i; j++) {
-                        if (this.get(i, j) !== this.get(j, i)) {
-                            return false;
-                        }
-                    }
-                }
-                return true;
+    isSymmetric() {
+      if (this.isSquare()) {
+        for (var i = 0; i < this.rows; i++) {
+          for (var j = 0; j <= i; j++) {
+            if (this.get(i, j) !== this.get(j, i)) {
+              return false;
             }
-            return false;
+          }
         }
+        return true;
+      }
+      return false;
+    }
 
-        /**
+    /**
          * Sets a given element of the matrix. mat.set(3,4,1) is equivalent to mat[3][4]=1
          * @abstract
          * @param {number} rowIndex - Index of the row
@@ -1141,24 +1156,24 @@ function AbstractMatrix(superCtor) {
          * @param {number} value - The new value for the element
          * @return {Matrix} this
          */
-        set(rowIndex, columnIndex, value) {
-            // eslint-disable-line no-unused-vars
-            throw new Error('set method is unimplemented');
-        }
+    set(rowIndex, columnIndex, value) {
+      // eslint-disable-line no-unused-vars
+      throw new Error('set method is unimplemented');
+    }
 
-        /**
+    /**
          * Returns the given element of the matrix. mat.get(3,4) is equivalent to matrix[3][4]
          * @abstract
          * @param {number} rowIndex - Index of the row
          * @param {number} columnIndex - Index of the column
          * @return {number}
          */
-        get(rowIndex, columnIndex) {
-            // eslint-disable-line no-unused-vars
-            throw new Error('get method is unimplemented');
-        }
+    get(rowIndex, columnIndex) {
+      // eslint-disable-line no-unused-vars
+      throw new Error('get method is unimplemented');
+    }
 
-        /**
+    /**
          * Creates a new matrix that is a repetition of the current matrix. New matrix has rowRep times the number of
          * rows of the matrix, and colRep times the number of columns of the matrix
          * @param {number} rowRep - Number of times the rows should be repeated
@@ -1168,872 +1183,872 @@ function AbstractMatrix(superCtor) {
          * var matrix = new Matrix([[1,2]]);
          * matrix.repeat(2); // [[1,2],[1,2]]
          */
-        repeat(rowRep, colRep) {
-            rowRep = rowRep || 1;
-            colRep = colRep || 1;
-            var matrix = new this.constructor[Symbol.species](this.rows * rowRep, this.columns * colRep);
-            for (var i = 0; i < rowRep; i++) {
-                for (var j = 0; j < colRep; j++) {
-                    matrix.setSubMatrix(this, this.rows * i, this.columns * j);
-                }
-            }
-            return matrix;
+    repeat(rowRep, colRep) {
+      rowRep = rowRep || 1;
+      colRep = colRep || 1;
+      var matrix = new this.constructor[Symbol.species](this.rows * rowRep, this.columns * colRep);
+      for (var i = 0; i < rowRep; i++) {
+        for (var j = 0; j < colRep; j++) {
+          matrix.setSubMatrix(this, this.rows * i, this.columns * j);
         }
+      }
+      return matrix;
+    }
 
-        /**
+    /**
          * Fills the matrix with a given value. All elements will be set to this value.
          * @param {number} value - New value
          * @return {Matrix} this
          */
-        fill(value) {
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    this.set(i, j, value);
-                }
-            }
-            return this;
+    fill(value) {
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          this.set(i, j, value);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Negates the matrix. All elements will be multiplied by (-1)
          * @return {Matrix} this
          */
-        neg() {
-            return this.mulS(-1);
-        }
+    neg() {
+      return this.mulS(-1);
+    }
 
-        /**
+    /**
          * Returns a new array from the given row index
          * @param {number} index - Row index
          * @return {Array}
          */
-        getRow(index) {
-            (0, _util.checkRowIndex)(this, index);
-            var row = new Array(this.columns);
-            for (var i = 0; i < this.columns; i++) {
-                row[i] = this.get(index, i);
-            }
-            return row;
-        }
+    getRow(index) {
+      (0, _util.checkRowIndex)(this, index);
+      var row = new Array(this.columns);
+      for (var i = 0; i < this.columns; i++) {
+        row[i] = this.get(index, i);
+      }
+      return row;
+    }
 
-        /**
+    /**
          * Returns a new row vector from the given row index
          * @param {number} index - Row index
          * @return {Matrix}
          */
-        getRowVector(index) {
-            return this.constructor.rowVector(this.getRow(index));
-        }
+    getRowVector(index) {
+      return this.constructor.rowVector(this.getRow(index));
+    }
 
-        /**
+    /**
          * Sets a row at the given index
          * @param {number} index - Row index
          * @param {Array|Matrix} array - Array or vector
          * @return {Matrix} this
          */
-        setRow(index, array) {
-            (0, _util.checkRowIndex)(this, index);
-            array = (0, _util.checkRowVector)(this, array);
-            for (var i = 0; i < this.columns; i++) {
-                this.set(index, i, array[i]);
-            }
-            return this;
-        }
+    setRow(index, array) {
+      (0, _util.checkRowIndex)(this, index);
+      array = (0, _util.checkRowVector)(this, array);
+      for (var i = 0; i < this.columns; i++) {
+        this.set(index, i, array[i]);
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Swaps two rows
          * @param {number} row1 - First row index
          * @param {number} row2 - Second row index
          * @return {Matrix} this
          */
-        swapRows(row1, row2) {
-            (0, _util.checkRowIndex)(this, row1);
-            (0, _util.checkRowIndex)(this, row2);
-            for (var i = 0; i < this.columns; i++) {
-                var temp = this.get(row1, i);
-                this.set(row1, i, this.get(row2, i));
-                this.set(row2, i, temp);
-            }
-            return this;
-        }
+    swapRows(row1, row2) {
+      (0, _util.checkRowIndex)(this, row1);
+      (0, _util.checkRowIndex)(this, row2);
+      for (var i = 0; i < this.columns; i++) {
+        var temp = this.get(row1, i);
+        this.set(row1, i, this.get(row2, i));
+        this.set(row2, i, temp);
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Returns a new array from the given column index
          * @param {number} index - Column index
          * @return {Array}
          */
-        getColumn(index) {
-            (0, _util.checkColumnIndex)(this, index);
-            var column = new Array(this.rows);
-            for (var i = 0; i < this.rows; i++) {
-                column[i] = this.get(i, index);
-            }
-            return column;
-        }
+    getColumn(index) {
+      (0, _util.checkColumnIndex)(this, index);
+      var column = new Array(this.rows);
+      for (var i = 0; i < this.rows; i++) {
+        column[i] = this.get(i, index);
+      }
+      return column;
+    }
 
-        /**
+    /**
          * Returns a new column vector from the given column index
          * @param {number} index - Column index
          * @return {Matrix}
          */
-        getColumnVector(index) {
-            return this.constructor.columnVector(this.getColumn(index));
-        }
+    getColumnVector(index) {
+      return this.constructor.columnVector(this.getColumn(index));
+    }
 
-        /**
+    /**
          * Sets a column at the given index
          * @param {number} index - Column index
          * @param {Array|Matrix} array - Array or vector
          * @return {Matrix} this
          */
-        setColumn(index, array) {
-            (0, _util.checkColumnIndex)(this, index);
-            array = (0, _util.checkColumnVector)(this, array);
-            for (var i = 0; i < this.rows; i++) {
-                this.set(i, index, array[i]);
-            }
-            return this;
-        }
+    setColumn(index, array) {
+      (0, _util.checkColumnIndex)(this, index);
+      array = (0, _util.checkColumnVector)(this, array);
+      for (var i = 0; i < this.rows; i++) {
+        this.set(i, index, array[i]);
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Swaps two columns
          * @param {number} column1 - First column index
          * @param {number} column2 - Second column index
          * @return {Matrix} this
          */
-        swapColumns(column1, column2) {
-            (0, _util.checkColumnIndex)(this, column1);
-            (0, _util.checkColumnIndex)(this, column2);
-            for (var i = 0; i < this.rows; i++) {
-                var temp = this.get(i, column1);
-                this.set(i, column1, this.get(i, column2));
-                this.set(i, column2, temp);
-            }
-            return this;
-        }
+    swapColumns(column1, column2) {
+      (0, _util.checkColumnIndex)(this, column1);
+      (0, _util.checkColumnIndex)(this, column2);
+      for (var i = 0; i < this.rows; i++) {
+        var temp = this.get(i, column1);
+        this.set(i, column1, this.get(i, column2));
+        this.set(i, column2, temp);
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Adds the values of a vector to each row
          * @param {Array|Matrix} vector - Array or vector
          * @return {Matrix} this
          */
-        addRowVector(vector) {
-            vector = (0, _util.checkRowVector)(this, vector);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    this.set(i, j, this.get(i, j) + vector[j]);
-                }
-            }
-            return this;
+    addRowVector(vector) {
+      vector = (0, _util.checkRowVector)(this, vector);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          this.set(i, j, this.get(i, j) + vector[j]);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Subtracts the values of a vector from each row
          * @param {Array|Matrix} vector - Array or vector
          * @return {Matrix} this
          */
-        subRowVector(vector) {
-            vector = (0, _util.checkRowVector)(this, vector);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    this.set(i, j, this.get(i, j) - vector[j]);
-                }
-            }
-            return this;
+    subRowVector(vector) {
+      vector = (0, _util.checkRowVector)(this, vector);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          this.set(i, j, this.get(i, j) - vector[j]);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Multiplies the values of a vector with each row
          * @param {Array|Matrix} vector - Array or vector
          * @return {Matrix} this
          */
-        mulRowVector(vector) {
-            vector = (0, _util.checkRowVector)(this, vector);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    this.set(i, j, this.get(i, j) * vector[j]);
-                }
-            }
-            return this;
+    mulRowVector(vector) {
+      vector = (0, _util.checkRowVector)(this, vector);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          this.set(i, j, this.get(i, j) * vector[j]);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Divides the values of each row by those of a vector
          * @param {Array|Matrix} vector - Array or vector
          * @return {Matrix} this
          */
-        divRowVector(vector) {
-            vector = (0, _util.checkRowVector)(this, vector);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    this.set(i, j, this.get(i, j) / vector[j]);
-                }
-            }
-            return this;
+    divRowVector(vector) {
+      vector = (0, _util.checkRowVector)(this, vector);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          this.set(i, j, this.get(i, j) / vector[j]);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Adds the values of a vector to each column
          * @param {Array|Matrix} vector - Array or vector
          * @return {Matrix} this
          */
-        addColumnVector(vector) {
-            vector = (0, _util.checkColumnVector)(this, vector);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    this.set(i, j, this.get(i, j) + vector[i]);
-                }
-            }
-            return this;
+    addColumnVector(vector) {
+      vector = (0, _util.checkColumnVector)(this, vector);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          this.set(i, j, this.get(i, j) + vector[i]);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Subtracts the values of a vector from each column
          * @param {Array|Matrix} vector - Array or vector
          * @return {Matrix} this
          */
-        subColumnVector(vector) {
-            vector = (0, _util.checkColumnVector)(this, vector);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    this.set(i, j, this.get(i, j) - vector[i]);
-                }
-            }
-            return this;
+    subColumnVector(vector) {
+      vector = (0, _util.checkColumnVector)(this, vector);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          this.set(i, j, this.get(i, j) - vector[i]);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Multiplies the values of a vector with each column
          * @param {Array|Matrix} vector - Array or vector
          * @return {Matrix} this
          */
-        mulColumnVector(vector) {
-            vector = (0, _util.checkColumnVector)(this, vector);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    this.set(i, j, this.get(i, j) * vector[i]);
-                }
-            }
-            return this;
+    mulColumnVector(vector) {
+      vector = (0, _util.checkColumnVector)(this, vector);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          this.set(i, j, this.get(i, j) * vector[i]);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Divides the values of each column by those of a vector
          * @param {Array|Matrix} vector - Array or vector
          * @return {Matrix} this
          */
-        divColumnVector(vector) {
-            vector = (0, _util.checkColumnVector)(this, vector);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    this.set(i, j, this.get(i, j) / vector[i]);
-                }
-            }
-            return this;
+    divColumnVector(vector) {
+      vector = (0, _util.checkColumnVector)(this, vector);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          this.set(i, j, this.get(i, j) / vector[i]);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Multiplies the values of a row with a scalar
          * @param {number} index - Row index
          * @param {number} value
          * @return {Matrix} this
          */
-        mulRow(index, value) {
-            (0, _util.checkRowIndex)(this, index);
-            for (var i = 0; i < this.columns; i++) {
-                this.set(index, i, this.get(index, i) * value);
-            }
-            return this;
-        }
+    mulRow(index, value) {
+      (0, _util.checkRowIndex)(this, index);
+      for (var i = 0; i < this.columns; i++) {
+        this.set(index, i, this.get(index, i) * value);
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Multiplies the values of a column with a scalar
          * @param {number} index - Column index
          * @param {number} value
          * @return {Matrix} this
          */
-        mulColumn(index, value) {
-            (0, _util.checkColumnIndex)(this, index);
-            for (var i = 0; i < this.rows; i++) {
-                this.set(i, index, this.get(i, index) * value);
-            }
-            return this;
-        }
+    mulColumn(index, value) {
+      (0, _util.checkColumnIndex)(this, index);
+      for (var i = 0; i < this.rows; i++) {
+        this.set(i, index, this.get(i, index) * value);
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Returns the maximum value of the matrix
          * @return {number}
          */
-        max() {
-            var v = this.get(0, 0);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    if (this.get(i, j) > v) {
-                        v = this.get(i, j);
-                    }
-                }
-            }
-            return v;
+    max() {
+      var v = this.get(0, 0);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          if (this.get(i, j) > v) {
+            v = this.get(i, j);
+          }
         }
+      }
+      return v;
+    }
 
-        /**
+    /**
          * Returns the index of the maximum value
          * @return {Array}
          */
-        maxIndex() {
-            var v = this.get(0, 0);
-            var idx = [0, 0];
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    if (this.get(i, j) > v) {
-                        v = this.get(i, j);
-                        idx[0] = i;
-                        idx[1] = j;
-                    }
-                }
-            }
-            return idx;
+    maxIndex() {
+      var v = this.get(0, 0);
+      var idx = [0, 0];
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          if (this.get(i, j) > v) {
+            v = this.get(i, j);
+            idx[0] = i;
+            idx[1] = j;
+          }
         }
+      }
+      return idx;
+    }
 
-        /**
+    /**
          * Returns the minimum value of the matrix
          * @return {number}
          */
-        min() {
-            var v = this.get(0, 0);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    if (this.get(i, j) < v) {
-                        v = this.get(i, j);
-                    }
-                }
-            }
-            return v;
+    min() {
+      var v = this.get(0, 0);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          if (this.get(i, j) < v) {
+            v = this.get(i, j);
+          }
         }
+      }
+      return v;
+    }
 
-        /**
+    /**
          * Returns the index of the minimum value
          * @return {Array}
          */
-        minIndex() {
-            var v = this.get(0, 0);
-            var idx = [0, 0];
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    if (this.get(i, j) < v) {
-                        v = this.get(i, j);
-                        idx[0] = i;
-                        idx[1] = j;
-                    }
-                }
-            }
-            return idx;
+    minIndex() {
+      var v = this.get(0, 0);
+      var idx = [0, 0];
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          if (this.get(i, j) < v) {
+            v = this.get(i, j);
+            idx[0] = i;
+            idx[1] = j;
+          }
         }
+      }
+      return idx;
+    }
 
-        /**
+    /**
          * Returns the maximum value of one row
          * @param {number} row - Row index
          * @return {number}
          */
-        maxRow(row) {
-            (0, _util.checkRowIndex)(this, row);
-            var v = this.get(row, 0);
-            for (var i = 1; i < this.columns; i++) {
-                if (this.get(row, i) > v) {
-                    v = this.get(row, i);
-                }
-            }
-            return v;
+    maxRow(row) {
+      (0, _util.checkRowIndex)(this, row);
+      var v = this.get(row, 0);
+      for (var i = 1; i < this.columns; i++) {
+        if (this.get(row, i) > v) {
+          v = this.get(row, i);
         }
+      }
+      return v;
+    }
 
-        /**
+    /**
          * Returns the index of the maximum value of one row
          * @param {number} row - Row index
          * @return {Array}
          */
-        maxRowIndex(row) {
-            (0, _util.checkRowIndex)(this, row);
-            var v = this.get(row, 0);
-            var idx = [row, 0];
-            for (var i = 1; i < this.columns; i++) {
-                if (this.get(row, i) > v) {
-                    v = this.get(row, i);
-                    idx[1] = i;
-                }
-            }
-            return idx;
+    maxRowIndex(row) {
+      (0, _util.checkRowIndex)(this, row);
+      var v = this.get(row, 0);
+      var idx = [row, 0];
+      for (var i = 1; i < this.columns; i++) {
+        if (this.get(row, i) > v) {
+          v = this.get(row, i);
+          idx[1] = i;
         }
+      }
+      return idx;
+    }
 
-        /**
+    /**
          * Returns the minimum value of one row
          * @param {number} row - Row index
          * @return {number}
          */
-        minRow(row) {
-            (0, _util.checkRowIndex)(this, row);
-            var v = this.get(row, 0);
-            for (var i = 1; i < this.columns; i++) {
-                if (this.get(row, i) < v) {
-                    v = this.get(row, i);
-                }
-            }
-            return v;
+    minRow(row) {
+      (0, _util.checkRowIndex)(this, row);
+      var v = this.get(row, 0);
+      for (var i = 1; i < this.columns; i++) {
+        if (this.get(row, i) < v) {
+          v = this.get(row, i);
         }
+      }
+      return v;
+    }
 
-        /**
+    /**
          * Returns the index of the maximum value of one row
          * @param {number} row - Row index
          * @return {Array}
          */
-        minRowIndex(row) {
-            (0, _util.checkRowIndex)(this, row);
-            var v = this.get(row, 0);
-            var idx = [row, 0];
-            for (var i = 1; i < this.columns; i++) {
-                if (this.get(row, i) < v) {
-                    v = this.get(row, i);
-                    idx[1] = i;
-                }
-            }
-            return idx;
+    minRowIndex(row) {
+      (0, _util.checkRowIndex)(this, row);
+      var v = this.get(row, 0);
+      var idx = [row, 0];
+      for (var i = 1; i < this.columns; i++) {
+        if (this.get(row, i) < v) {
+          v = this.get(row, i);
+          idx[1] = i;
         }
+      }
+      return idx;
+    }
 
-        /**
+    /**
          * Returns the maximum value of one column
          * @param {number} column - Column index
          * @return {number}
          */
-        maxColumn(column) {
-            (0, _util.checkColumnIndex)(this, column);
-            var v = this.get(0, column);
-            for (var i = 1; i < this.rows; i++) {
-                if (this.get(i, column) > v) {
-                    v = this.get(i, column);
-                }
-            }
-            return v;
+    maxColumn(column) {
+      (0, _util.checkColumnIndex)(this, column);
+      var v = this.get(0, column);
+      for (var i = 1; i < this.rows; i++) {
+        if (this.get(i, column) > v) {
+          v = this.get(i, column);
         }
+      }
+      return v;
+    }
 
-        /**
+    /**
          * Returns the index of the maximum value of one column
          * @param {number} column - Column index
          * @return {Array}
          */
-        maxColumnIndex(column) {
-            (0, _util.checkColumnIndex)(this, column);
-            var v = this.get(0, column);
-            var idx = [0, column];
-            for (var i = 1; i < this.rows; i++) {
-                if (this.get(i, column) > v) {
-                    v = this.get(i, column);
-                    idx[0] = i;
-                }
-            }
-            return idx;
+    maxColumnIndex(column) {
+      (0, _util.checkColumnIndex)(this, column);
+      var v = this.get(0, column);
+      var idx = [0, column];
+      for (var i = 1; i < this.rows; i++) {
+        if (this.get(i, column) > v) {
+          v = this.get(i, column);
+          idx[0] = i;
         }
+      }
+      return idx;
+    }
 
-        /**
+    /**
          * Returns the minimum value of one column
          * @param {number} column - Column index
          * @return {number}
          */
-        minColumn(column) {
-            (0, _util.checkColumnIndex)(this, column);
-            var v = this.get(0, column);
-            for (var i = 1; i < this.rows; i++) {
-                if (this.get(i, column) < v) {
-                    v = this.get(i, column);
-                }
-            }
-            return v;
+    minColumn(column) {
+      (0, _util.checkColumnIndex)(this, column);
+      var v = this.get(0, column);
+      for (var i = 1; i < this.rows; i++) {
+        if (this.get(i, column) < v) {
+          v = this.get(i, column);
         }
+      }
+      return v;
+    }
 
-        /**
+    /**
          * Returns the index of the minimum value of one column
          * @param {number} column - Column index
          * @return {Array}
          */
-        minColumnIndex(column) {
-            (0, _util.checkColumnIndex)(this, column);
-            var v = this.get(0, column);
-            var idx = [0, column];
-            for (var i = 1; i < this.rows; i++) {
-                if (this.get(i, column) < v) {
-                    v = this.get(i, column);
-                    idx[0] = i;
-                }
-            }
-            return idx;
+    minColumnIndex(column) {
+      (0, _util.checkColumnIndex)(this, column);
+      var v = this.get(0, column);
+      var idx = [0, column];
+      for (var i = 1; i < this.rows; i++) {
+        if (this.get(i, column) < v) {
+          v = this.get(i, column);
+          idx[0] = i;
         }
+      }
+      return idx;
+    }
 
-        /**
+    /**
          * Returns an array containing the diagonal values of the matrix
          * @return {Array}
          */
-        diag() {
-            var min = Math.min(this.rows, this.columns);
-            var diag = new Array(min);
-            for (var i = 0; i < min; i++) {
-                diag[i] = this.get(i, i);
-            }
-            return diag;
-        }
+    diag() {
+      var min = Math.min(this.rows, this.columns);
+      var diag = new Array(min);
+      for (var i = 0; i < min; i++) {
+        diag[i] = this.get(i, i);
+      }
+      return diag;
+    }
 
-        /**
+    /**
          * Returns the sum by the argument given, if no argument given,
          * it returns the sum of all elements of the matrix.
          * @param {string} by - sum by 'row' or 'column'.
          * @return {Matrix|number}
          */
-        sum(by) {
-            switch (by) {
-                case 'row':
-                    return (0, _util.sumByRow)(this);
-                case 'column':
-                    return (0, _util.sumByColumn)(this);
-                default:
-                    return (0, _util.sumAll)(this);
-            }
-        }
+    sum(by) {
+      switch (by) {
+        case 'row':
+          return (0, _util.sumByRow)(this);
+        case 'column':
+          return (0, _util.sumByColumn)(this);
+        default:
+          return (0, _util.sumAll)(this);
+      }
+    }
 
-        /**
+    /**
          * Returns the mean of all elements of the matrix
          * @return {number}
          */
-        mean() {
-            return this.sum() / this.size;
-        }
+    mean() {
+      return this.sum() / this.size;
+    }
 
-        /**
+    /**
          * Returns the product of all elements of the matrix
          * @return {number}
          */
-        prod() {
-            var prod = 1;
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    prod *= this.get(i, j);
-                }
-            }
-            return prod;
+    prod() {
+      var prod = 1;
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          prod *= this.get(i, j);
         }
+      }
+      return prod;
+    }
 
-        /**
+    /**
          * Returns the norm of a matrix.
          * @param {string} type - "frobenius" (default) or "max" return resp. the Frobenius norm and the max norm.
          * @return {number}
          */
-        norm(type = 'frobenius') {
-            var result = 0;
-            if (type === 'max') {
-                return this.max();
-            } else if (type === 'frobenius') {
-                for (var i = 0; i < this.rows; i++) {
-                    for (var j = 0; j < this.columns; j++) {
-                        result = result + this.get(i, j) * this.get(i, j);
-                    }
-                }
-                return Math.sqrt(result);
-            } else {
-                throw new RangeError(`unknown norm type: ${type}`);
-            }
+    norm(type = 'frobenius') {
+      var result = 0;
+      if (type === 'max') {
+        return this.max();
+      } else if (type === 'frobenius') {
+        for (var i = 0; i < this.rows; i++) {
+          for (var j = 0; j < this.columns; j++) {
+            result = result + this.get(i, j) * this.get(i, j);
+          }
         }
+        return Math.sqrt(result);
+      } else {
+        throw new RangeError(`unknown norm type: ${type}`);
+      }
+    }
 
-        /**
+    /**
          * Computes the cumulative sum of the matrix elements (in place, row by row)
          * @return {Matrix} this
          */
-        cumulativeSum() {
-            var sum = 0;
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    sum += this.get(i, j);
-                    this.set(i, j, sum);
-                }
-            }
-            return this;
+    cumulativeSum() {
+      var sum = 0;
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          sum += this.get(i, j);
+          this.set(i, j, sum);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Computes the dot (scalar) product between the matrix and another
          * @param {Matrix} vector2 vector
          * @return {number}
          */
-        dot(vector2) {
-            if (Matrix.isMatrix(vector2)) vector2 = vector2.to1DArray();
-            var vector1 = this.to1DArray();
-            if (vector1.length !== vector2.length) {
-                throw new RangeError('vectors do not have the same size');
-            }
-            var dot = 0;
-            for (var i = 0; i < vector1.length; i++) {
-                dot += vector1[i] * vector2[i];
-            }
-            return dot;
-        }
+    dot(vector2) {
+      if (Matrix.isMatrix(vector2)) vector2 = vector2.to1DArray();
+      var vector1 = this.to1DArray();
+      if (vector1.length !== vector2.length) {
+        throw new RangeError('vectors do not have the same size');
+      }
+      var dot = 0;
+      for (var i = 0; i < vector1.length; i++) {
+        dot += vector1[i] * vector2[i];
+      }
+      return dot;
+    }
 
-        /**
+    /**
          * Returns the matrix product between this and other
          * @param {Matrix} other
          * @return {Matrix}
          */
-        mmul(other) {
-            other = this.constructor.checkMatrix(other);
-            if (this.columns !== other.rows) {
-                // eslint-disable-next-line no-console
-                console.warn('Number of columns of left matrix are not equal to number of rows of right matrix.');
-            }
+    mmul(other) {
+      other = this.constructor.checkMatrix(other);
+      if (this.columns !== other.rows) {
+        // eslint-disable-next-line no-console
+        console.warn('Number of columns of left matrix are not equal to number of rows of right matrix.');
+      }
 
-            var m = this.rows;
-            var n = this.columns;
-            var p = other.columns;
+      var m = this.rows;
+      var n = this.columns;
+      var p = other.columns;
 
-            var result = new this.constructor[Symbol.species](m, p);
+      var result = new this.constructor[Symbol.species](m, p);
 
-            var Bcolj = new Array(n);
-            for (var j = 0; j < p; j++) {
-                for (var k = 0; k < n; k++) {
-                    Bcolj[k] = other.get(k, j);
-                }
-
-                for (var i = 0; i < m; i++) {
-                    var s = 0;
-                    for (k = 0; k < n; k++) {
-                        s += this.get(i, k) * Bcolj[k];
-                    }
-
-                    result.set(i, j, s);
-                }
-            }
-            return result;
+      var Bcolj = new Array(n);
+      for (var j = 0; j < p; j++) {
+        for (var k = 0; k < n; k++) {
+          Bcolj[k] = other.get(k, j);
         }
 
-        strassen2x2(other) {
-            var result = new this.constructor[Symbol.species](2, 2);
-            var a11 = this.get(0, 0);
-            var b11 = other.get(0, 0);
-            var a12 = this.get(0, 1);
-            var b12 = other.get(0, 1);
-            var a21 = this.get(1, 0);
-            var b21 = other.get(1, 0);
-            var a22 = this.get(1, 1);
-            var b22 = other.get(1, 1);
+        for (var i = 0; i < m; i++) {
+          var s = 0;
+          for (k = 0; k < n; k++) {
+            s += this.get(i, k) * Bcolj[k];
+          }
 
-            // Compute intermediate values.
-            var m1 = (a11 + a22) * (b11 + b22);
-            var m2 = (a21 + a22) * b11;
-            var m3 = a11 * (b12 - b22);
-            var m4 = a22 * (b21 - b11);
-            var m5 = (a11 + a12) * b22;
-            var m6 = (a21 - a11) * (b11 + b12);
-            var m7 = (a12 - a22) * (b21 + b22);
-
-            // Combine intermediate values into the output.
-            var c00 = m1 + m4 - m5 + m7;
-            var c01 = m3 + m5;
-            var c10 = m2 + m4;
-            var c11 = m1 - m2 + m3 + m6;
-
-            result.set(0, 0, c00);
-            result.set(0, 1, c01);
-            result.set(1, 0, c10);
-            result.set(1, 1, c11);
-            return result;
+          result.set(i, j, s);
         }
+      }
+      return result;
+    }
 
-        strassen3x3(other) {
-            var result = new this.constructor[Symbol.species](3, 3);
+    strassen2x2(other) {
+      var result = new this.constructor[Symbol.species](2, 2);
+      var a11 = this.get(0, 0);
+      var b11 = other.get(0, 0);
+      var a12 = this.get(0, 1);
+      var b12 = other.get(0, 1);
+      var a21 = this.get(1, 0);
+      var b21 = other.get(1, 0);
+      var a22 = this.get(1, 1);
+      var b22 = other.get(1, 1);
 
-            var a00 = this.get(0, 0);
-            var a01 = this.get(0, 1);
-            var a02 = this.get(0, 2);
-            var a10 = this.get(1, 0);
-            var a11 = this.get(1, 1);
-            var a12 = this.get(1, 2);
-            var a20 = this.get(2, 0);
-            var a21 = this.get(2, 1);
-            var a22 = this.get(2, 2);
+      // Compute intermediate values.
+      var m1 = (a11 + a22) * (b11 + b22);
+      var m2 = (a21 + a22) * b11;
+      var m3 = a11 * (b12 - b22);
+      var m4 = a22 * (b21 - b11);
+      var m5 = (a11 + a12) * b22;
+      var m6 = (a21 - a11) * (b11 + b12);
+      var m7 = (a12 - a22) * (b21 + b22);
 
-            var b00 = other.get(0, 0);
-            var b01 = other.get(0, 1);
-            var b02 = other.get(0, 2);
-            var b10 = other.get(1, 0);
-            var b11 = other.get(1, 1);
-            var b12 = other.get(1, 2);
-            var b20 = other.get(2, 0);
-            var b21 = other.get(2, 1);
-            var b22 = other.get(2, 2);
+      // Combine intermediate values into the output.
+      var c00 = m1 + m4 - m5 + m7;
+      var c01 = m3 + m5;
+      var c10 = m2 + m4;
+      var c11 = m1 - m2 + m3 + m6;
 
-            var m1 = (a00 + a01 + a02 - a10 - a11 - a21 - a22) * b11;
-            var m2 = (a00 - a10) * (-b01 + b11);
-            var m3 = a11 * (-b00 + b01 + b10 - b11 - b12 - b20 + b22);
-            var m4 = (-a00 + a10 + a11) * (b00 - b01 + b11);
-            var m5 = (a10 + a11) * (-b00 + b01);
-            var m6 = a00 * b00;
-            var m7 = (-a00 + a20 + a21) * (b00 - b02 + b12);
-            var m8 = (-a00 + a20) * (b02 - b12);
-            var m9 = (a20 + a21) * (-b00 + b02);
-            var m10 = (a00 + a01 + a02 - a11 - a12 - a20 - a21) * b12;
-            var m11 = a21 * (-b00 + b02 + b10 - b11 - b12 - b20 + b21);
-            var m12 = (-a02 + a21 + a22) * (b11 + b20 - b21);
-            var m13 = (a02 - a22) * (b11 - b21);
-            var m14 = a02 * b20;
-            var m15 = (a21 + a22) * (-b20 + b21);
-            var m16 = (-a02 + a11 + a12) * (b12 + b20 - b22);
-            var m17 = (a02 - a12) * (b12 - b22);
-            var m18 = (a11 + a12) * (-b20 + b22);
-            var m19 = a01 * b10;
-            var m20 = a12 * b21;
-            var m21 = a10 * b02;
-            var m22 = a20 * b01;
-            var m23 = a22 * b22;
+      result.set(0, 0, c00);
+      result.set(0, 1, c01);
+      result.set(1, 0, c10);
+      result.set(1, 1, c11);
+      return result;
+    }
 
-            var c00 = m6 + m14 + m19;
-            var c01 = m1 + m4 + m5 + m6 + m12 + m14 + m15;
-            var c02 = m6 + m7 + m9 + m10 + m14 + m16 + m18;
-            var c10 = m2 + m3 + m4 + m6 + m14 + m16 + m17;
-            var c11 = m2 + m4 + m5 + m6 + m20;
-            var c12 = m14 + m16 + m17 + m18 + m21;
-            var c20 = m6 + m7 + m8 + m11 + m12 + m13 + m14;
-            var c21 = m12 + m13 + m14 + m15 + m22;
-            var c22 = m6 + m7 + m8 + m9 + m23;
+    strassen3x3(other) {
+      var result = new this.constructor[Symbol.species](3, 3);
 
-            result.set(0, 0, c00);
-            result.set(0, 1, c01);
-            result.set(0, 2, c02);
-            result.set(1, 0, c10);
-            result.set(1, 1, c11);
-            result.set(1, 2, c12);
-            result.set(2, 0, c20);
-            result.set(2, 1, c21);
-            result.set(2, 2, c22);
-            return result;
-        }
+      var a00 = this.get(0, 0);
+      var a01 = this.get(0, 1);
+      var a02 = this.get(0, 2);
+      var a10 = this.get(1, 0);
+      var a11 = this.get(1, 1);
+      var a12 = this.get(1, 2);
+      var a20 = this.get(2, 0);
+      var a21 = this.get(2, 1);
+      var a22 = this.get(2, 2);
 
-        /**
+      var b00 = other.get(0, 0);
+      var b01 = other.get(0, 1);
+      var b02 = other.get(0, 2);
+      var b10 = other.get(1, 0);
+      var b11 = other.get(1, 1);
+      var b12 = other.get(1, 2);
+      var b20 = other.get(2, 0);
+      var b21 = other.get(2, 1);
+      var b22 = other.get(2, 2);
+
+      var m1 = (a00 + a01 + a02 - a10 - a11 - a21 - a22) * b11;
+      var m2 = (a00 - a10) * (-b01 + b11);
+      var m3 = a11 * (-b00 + b01 + b10 - b11 - b12 - b20 + b22);
+      var m4 = (-a00 + a10 + a11) * (b00 - b01 + b11);
+      var m5 = (a10 + a11) * (-b00 + b01);
+      var m6 = a00 * b00;
+      var m7 = (-a00 + a20 + a21) * (b00 - b02 + b12);
+      var m8 = (-a00 + a20) * (b02 - b12);
+      var m9 = (a20 + a21) * (-b00 + b02);
+      var m10 = (a00 + a01 + a02 - a11 - a12 - a20 - a21) * b12;
+      var m11 = a21 * (-b00 + b02 + b10 - b11 - b12 - b20 + b21);
+      var m12 = (-a02 + a21 + a22) * (b11 + b20 - b21);
+      var m13 = (a02 - a22) * (b11 - b21);
+      var m14 = a02 * b20;
+      var m15 = (a21 + a22) * (-b20 + b21);
+      var m16 = (-a02 + a11 + a12) * (b12 + b20 - b22);
+      var m17 = (a02 - a12) * (b12 - b22);
+      var m18 = (a11 + a12) * (-b20 + b22);
+      var m19 = a01 * b10;
+      var m20 = a12 * b21;
+      var m21 = a10 * b02;
+      var m22 = a20 * b01;
+      var m23 = a22 * b22;
+
+      var c00 = m6 + m14 + m19;
+      var c01 = m1 + m4 + m5 + m6 + m12 + m14 + m15;
+      var c02 = m6 + m7 + m9 + m10 + m14 + m16 + m18;
+      var c10 = m2 + m3 + m4 + m6 + m14 + m16 + m17;
+      var c11 = m2 + m4 + m5 + m6 + m20;
+      var c12 = m14 + m16 + m17 + m18 + m21;
+      var c20 = m6 + m7 + m8 + m11 + m12 + m13 + m14;
+      var c21 = m12 + m13 + m14 + m15 + m22;
+      var c22 = m6 + m7 + m8 + m9 + m23;
+
+      result.set(0, 0, c00);
+      result.set(0, 1, c01);
+      result.set(0, 2, c02);
+      result.set(1, 0, c10);
+      result.set(1, 1, c11);
+      result.set(1, 2, c12);
+      result.set(2, 0, c20);
+      result.set(2, 1, c21);
+      result.set(2, 2, c22);
+      return result;
+    }
+
+    /**
          * Returns the matrix product between x and y. More efficient than mmul(other) only when we multiply squared matrix and when the size of the matrix is > 1000.
          * @param {Matrix} y
          * @return {Matrix}
          */
-        mmulStrassen(y) {
-            var x = this.clone();
-            var r1 = x.rows;
-            var c1 = x.columns;
-            var r2 = y.rows;
-            var c2 = y.columns;
-            if (c1 !== r2) {
-                // eslint-disable-next-line no-console
-                console.warn(`Multiplying ${r1} x ${c1} and ${r2} x ${c2} matrix: dimensions do not match.`);
-            }
+    mmulStrassen(y) {
+      var x = this.clone();
+      var r1 = x.rows;
+      var c1 = x.columns;
+      var r2 = y.rows;
+      var c2 = y.columns;
+      if (c1 !== r2) {
+        // eslint-disable-next-line no-console
+        console.warn(`Multiplying ${r1} x ${c1} and ${r2} x ${c2} matrix: dimensions do not match.`);
+      }
 
-            // Put a matrix into the top left of a matrix of zeros.
-            // `rows` and `cols` are the dimensions of the output matrix.
-            function embed(mat, rows, cols) {
-                var r = mat.rows;
-                var c = mat.columns;
-                if (r === rows && c === cols) {
-                    return mat;
-                } else {
-                    var resultat = Matrix.zeros(rows, cols);
-                    resultat = resultat.setSubMatrix(mat, 0, 0);
-                    return resultat;
-                }
-            }
+      // Put a matrix into the top left of a matrix of zeros.
+      // `rows` and `cols` are the dimensions of the output matrix.
+      function embed(mat, rows, cols) {
+        var r = mat.rows;
+        var c = mat.columns;
+        if (r === rows && c === cols) {
+          return mat;
+        } else {
+          var resultat = Matrix.zeros(rows, cols);
+          resultat = resultat.setSubMatrix(mat, 0, 0);
+          return resultat;
+        }
+      }
 
-            // Make sure both matrices are the same size.
-            // This is exclusively for simplicity:
-            // this algorithm can be implemented with matrices of different sizes.
+      // Make sure both matrices are the same size.
+      // This is exclusively for simplicity:
+      // this algorithm can be implemented with matrices of different sizes.
 
-            var r = Math.max(r1, r2);
-            var c = Math.max(c1, c2);
-            x = embed(x, r, c);
-            y = embed(y, r, c);
+      var r = Math.max(r1, r2);
+      var c = Math.max(c1, c2);
+      x = embed(x, r, c);
+      y = embed(y, r, c);
 
-            // Our recursive multiplication function.
-            function blockMult(a, b, rows, cols) {
-                // For small matrices, resort to naive multiplication.
-                if (rows <= 512 || cols <= 512) {
-                    return a.mmul(b); // a is equivalent to this
-                }
-
-                // Apply dynamic padding.
-                if (rows % 2 === 1 && cols % 2 === 1) {
-                    a = embed(a, rows + 1, cols + 1);
-                    b = embed(b, rows + 1, cols + 1);
-                } else if (rows % 2 === 1) {
-                    a = embed(a, rows + 1, cols);
-                    b = embed(b, rows + 1, cols);
-                } else if (cols % 2 === 1) {
-                    a = embed(a, rows, cols + 1);
-                    b = embed(b, rows, cols + 1);
-                }
-
-                var halfRows = parseInt(a.rows / 2);
-                var halfCols = parseInt(a.columns / 2);
-                // Subdivide input matrices.
-                var a11 = a.subMatrix(0, halfRows - 1, 0, halfCols - 1);
-                var b11 = b.subMatrix(0, halfRows - 1, 0, halfCols - 1);
-
-                var a12 = a.subMatrix(0, halfRows - 1, halfCols, a.columns - 1);
-                var b12 = b.subMatrix(0, halfRows - 1, halfCols, b.columns - 1);
-
-                var a21 = a.subMatrix(halfRows, a.rows - 1, 0, halfCols - 1);
-                var b21 = b.subMatrix(halfRows, b.rows - 1, 0, halfCols - 1);
-
-                var a22 = a.subMatrix(halfRows, a.rows - 1, halfCols, a.columns - 1);
-                var b22 = b.subMatrix(halfRows, b.rows - 1, halfCols, b.columns - 1);
-
-                // Compute intermediate values.
-                var m1 = blockMult(Matrix.add(a11, a22), Matrix.add(b11, b22), halfRows, halfCols);
-                var m2 = blockMult(Matrix.add(a21, a22), b11, halfRows, halfCols);
-                var m3 = blockMult(a11, Matrix.sub(b12, b22), halfRows, halfCols);
-                var m4 = blockMult(a22, Matrix.sub(b21, b11), halfRows, halfCols);
-                var m5 = blockMult(Matrix.add(a11, a12), b22, halfRows, halfCols);
-                var m6 = blockMult(Matrix.sub(a21, a11), Matrix.add(b11, b12), halfRows, halfCols);
-                var m7 = blockMult(Matrix.sub(a12, a22), Matrix.add(b21, b22), halfRows, halfCols);
-
-                // Combine intermediate values into the output.
-                var c11 = Matrix.add(m1, m4);
-                c11.sub(m5);
-                c11.add(m7);
-                var c12 = Matrix.add(m3, m5);
-                var c21 = Matrix.add(m2, m4);
-                var c22 = Matrix.sub(m1, m2);
-                c22.add(m3);
-                c22.add(m6);
-
-                //Crop output to the desired size (undo dynamic padding).
-                var resultat = Matrix.zeros(2 * c11.rows, 2 * c11.columns);
-                resultat = resultat.setSubMatrix(c11, 0, 0);
-                resultat = resultat.setSubMatrix(c12, c11.rows, 0);
-                resultat = resultat.setSubMatrix(c21, 0, c11.columns);
-                resultat = resultat.setSubMatrix(c22, c11.rows, c11.columns);
-                return resultat.subMatrix(0, rows - 1, 0, cols - 1);
-            }
-            return blockMult(x, y, r, c);
+      // Our recursive multiplication function.
+      function blockMult(a, b, rows, cols) {
+        // For small matrices, resort to naive multiplication.
+        if (rows <= 512 || cols <= 512) {
+          return a.mmul(b); // a is equivalent to this
         }
 
-        /**
+        // Apply dynamic padding.
+        if (rows % 2 === 1 && cols % 2 === 1) {
+          a = embed(a, rows + 1, cols + 1);
+          b = embed(b, rows + 1, cols + 1);
+        } else if (rows % 2 === 1) {
+          a = embed(a, rows + 1, cols);
+          b = embed(b, rows + 1, cols);
+        } else if (cols % 2 === 1) {
+          a = embed(a, rows, cols + 1);
+          b = embed(b, rows, cols + 1);
+        }
+
+        var halfRows = parseInt(a.rows / 2, 10);
+        var halfCols = parseInt(a.columns / 2, 10);
+        // Subdivide input matrices.
+        var a11 = a.subMatrix(0, halfRows - 1, 0, halfCols - 1);
+        var b11 = b.subMatrix(0, halfRows - 1, 0, halfCols - 1);
+
+        var a12 = a.subMatrix(0, halfRows - 1, halfCols, a.columns - 1);
+        var b12 = b.subMatrix(0, halfRows - 1, halfCols, b.columns - 1);
+
+        var a21 = a.subMatrix(halfRows, a.rows - 1, 0, halfCols - 1);
+        var b21 = b.subMatrix(halfRows, b.rows - 1, 0, halfCols - 1);
+
+        var a22 = a.subMatrix(halfRows, a.rows - 1, halfCols, a.columns - 1);
+        var b22 = b.subMatrix(halfRows, b.rows - 1, halfCols, b.columns - 1);
+
+        // Compute intermediate values.
+        var m1 = blockMult(Matrix.add(a11, a22), Matrix.add(b11, b22), halfRows, halfCols);
+        var m2 = blockMult(Matrix.add(a21, a22), b11, halfRows, halfCols);
+        var m3 = blockMult(a11, Matrix.sub(b12, b22), halfRows, halfCols);
+        var m4 = blockMult(a22, Matrix.sub(b21, b11), halfRows, halfCols);
+        var m5 = blockMult(Matrix.add(a11, a12), b22, halfRows, halfCols);
+        var m6 = blockMult(Matrix.sub(a21, a11), Matrix.add(b11, b12), halfRows, halfCols);
+        var m7 = blockMult(Matrix.sub(a12, a22), Matrix.add(b21, b22), halfRows, halfCols);
+
+        // Combine intermediate values into the output.
+        var c11 = Matrix.add(m1, m4);
+        c11.sub(m5);
+        c11.add(m7);
+        var c12 = Matrix.add(m3, m5);
+        var c21 = Matrix.add(m2, m4);
+        var c22 = Matrix.sub(m1, m2);
+        c22.add(m3);
+        c22.add(m6);
+
+        // Crop output to the desired size (undo dynamic padding).
+        var resultat = Matrix.zeros(2 * c11.rows, 2 * c11.columns);
+        resultat = resultat.setSubMatrix(c11, 0, 0);
+        resultat = resultat.setSubMatrix(c12, c11.rows, 0);
+        resultat = resultat.setSubMatrix(c21, 0, c11.columns);
+        resultat = resultat.setSubMatrix(c22, c11.rows, c11.columns);
+        return resultat.subMatrix(0, rows - 1, 0, cols - 1);
+      }
+      return blockMult(x, y, r, c);
+    }
+
+    /**
          * Returns a row-by-row scaled matrix
          * @param {number} [min=0] - Minimum scaled value
          * @param {number} [max=1] - Maximum scaled value
          * @return {Matrix} - The scaled matrix
          */
-        scaleRows(min, max) {
-            min = min === undefined ? 0 : min;
-            max = max === undefined ? 1 : max;
-            if (min >= max) {
-                throw new RangeError('min should be strictly smaller than max');
-            }
-            var newMatrix = this.constructor.empty(this.rows, this.columns);
-            for (var i = 0; i < this.rows; i++) {
-                var scaled = (0, _mlArrayRescale2.default)(this.getRow(i), { min, max });
-                newMatrix.setRow(i, scaled);
-            }
-            return newMatrix;
-        }
+    scaleRows(min, max) {
+      min = min === undefined ? 0 : min;
+      max = max === undefined ? 1 : max;
+      if (min >= max) {
+        throw new RangeError('min should be strictly smaller than max');
+      }
+      var newMatrix = this.constructor.empty(this.rows, this.columns);
+      for (var i = 0; i < this.rows; i++) {
+        var scaled = (0, _mlArrayRescale2.default)(this.getRow(i), { min, max });
+        newMatrix.setRow(i, scaled);
+      }
+      return newMatrix;
+    }
 
-        /**
+    /**
          * Returns a new column-by-column scaled matrix
          * @param {number} [min=0] - Minimum scaled value
          * @param {number} [max=1] - Maximum scaled value
@@ -2042,91 +2057,91 @@ function AbstractMatrix(superCtor) {
          * var matrix = new Matrix([[1,2],[-1,0]]);
          * var scaledMatrix = matrix.scaleColumns(); // [[1,1],[0,0]]
          */
-        scaleColumns(min, max) {
-            min = min === undefined ? 0 : min;
-            max = max === undefined ? 1 : max;
-            if (min >= max) {
-                throw new RangeError('min should be strictly smaller than max');
-            }
-            var newMatrix = this.constructor.empty(this.rows, this.columns);
-            for (var i = 0; i < this.columns; i++) {
-                var scaled = (0, _mlArrayRescale2.default)(this.getColumn(i), {
-                    min: min,
-                    max: max
-                });
-                newMatrix.setColumn(i, scaled);
-            }
-            return newMatrix;
-        }
+    scaleColumns(min, max) {
+      min = min === undefined ? 0 : min;
+      max = max === undefined ? 1 : max;
+      if (min >= max) {
+        throw new RangeError('min should be strictly smaller than max');
+      }
+      var newMatrix = this.constructor.empty(this.rows, this.columns);
+      for (var i = 0; i < this.columns; i++) {
+        var scaled = (0, _mlArrayRescale2.default)(this.getColumn(i), {
+          min: min,
+          max: max
+        });
+        newMatrix.setColumn(i, scaled);
+      }
+      return newMatrix;
+    }
 
-        /**
+    /**
          * Returns the Kronecker product (also known as tensor product) between this and other
          * See https://en.wikipedia.org/wiki/Kronecker_product
          * @param {Matrix} other
          * @return {Matrix}
          */
-        kroneckerProduct(other) {
-            other = this.constructor.checkMatrix(other);
+    kroneckerProduct(other) {
+      other = this.constructor.checkMatrix(other);
 
-            var m = this.rows;
-            var n = this.columns;
-            var p = other.rows;
-            var q = other.columns;
+      var m = this.rows;
+      var n = this.columns;
+      var p = other.rows;
+      var q = other.columns;
 
-            var result = new this.constructor[Symbol.species](m * p, n * q);
-            for (var i = 0; i < m; i++) {
-                for (var j = 0; j < n; j++) {
-                    for (var k = 0; k < p; k++) {
-                        for (var l = 0; l < q; l++) {
-                            result[p * i + k][q * j + l] = this.get(i, j) * other.get(k, l);
-                        }
-                    }
-                }
+      var result = new this.constructor[Symbol.species](m * p, n * q);
+      for (var i = 0; i < m; i++) {
+        for (var j = 0; j < n; j++) {
+          for (var k = 0; k < p; k++) {
+            for (var l = 0; l < q; l++) {
+              result[p * i + k][q * j + l] = this.get(i, j) * other.get(k, l);
             }
-            return result;
+          }
         }
+      }
+      return result;
+    }
 
-        /**
+    /**
          * Transposes the matrix and returns a new one containing the result
          * @return {Matrix}
          */
-        transpose() {
-            var result = new this.constructor[Symbol.species](this.columns, this.rows);
-            for (var i = 0; i < this.rows; i++) {
-                for (var j = 0; j < this.columns; j++) {
-                    result.set(j, i, this.get(i, j));
-                }
-            }
-            return result;
+    transpose() {
+      var result = new this.constructor[Symbol.species](this.columns, this.rows);
+      for (var i = 0; i < this.rows; i++) {
+        for (var j = 0; j < this.columns; j++) {
+          result.set(j, i, this.get(i, j));
         }
+      }
+      return result;
+    }
 
-        /**
+    /**
          * Sorts the rows (in place)
          * @param {function} compareFunction - usual Array.prototype.sort comparison function
          * @return {Matrix} this
          */
-        sortRows(compareFunction) {
-            if (compareFunction === undefined) compareFunction = compareNumbers;
-            for (var i = 0; i < this.rows; i++) {
-                this.setRow(i, this.getRow(i).sort(compareFunction));
-            }
-            return this;
-        }
+    sortRows(compareFunction) {
+      if (compareFunction === undefined) compareFunction = compareNumbers;
+      for (var i = 0; i < this.rows; i++) {
+        this.setRow(i, this.getRow(i).sort(compareFunction));
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Sorts the columns (in place)
          * @param {function} compareFunction - usual Array.prototype.sort comparison function
          * @return {Matrix} this
          */
-        sortColumns(compareFunction) {
-            if (compareFunction === undefined) compareFunction = compareNumbers;
-            for (var i = 0; i < this.columns; i++) {
-                this.setColumn(i, this.getColumn(i).sort(compareFunction));
-            }
-            return this;
-        }
+    sortColumns(compareFunction) {
+      if (compareFunction === undefined) compareFunction = compareNumbers;
+      for (var i = 0; i < this.columns; i++) {
+        this.setColumn(i, this.getColumn(i).sort(compareFunction));
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Returns a subset of the matrix
          * @param {number} startRow - First row index
          * @param {number} endRow - Last row index
@@ -2134,170 +2149,170 @@ function AbstractMatrix(superCtor) {
          * @param {number} endColumn - Last column index
          * @return {Matrix}
          */
-        subMatrix(startRow, endRow, startColumn, endColumn) {
-            (0, _util.checkRange)(this, startRow, endRow, startColumn, endColumn);
-            var newMatrix = new this.constructor[Symbol.species](endRow - startRow + 1, endColumn - startColumn + 1);
-            for (var i = startRow; i <= endRow; i++) {
-                for (var j = startColumn; j <= endColumn; j++) {
-                    newMatrix[i - startRow][j - startColumn] = this.get(i, j);
-                }
-            }
-            return newMatrix;
+    subMatrix(startRow, endRow, startColumn, endColumn) {
+      (0, _util.checkRange)(this, startRow, endRow, startColumn, endColumn);
+      var newMatrix = new this.constructor[Symbol.species](endRow - startRow + 1, endColumn - startColumn + 1);
+      for (var i = startRow; i <= endRow; i++) {
+        for (var j = startColumn; j <= endColumn; j++) {
+          newMatrix[i - startRow][j - startColumn] = this.get(i, j);
         }
+      }
+      return newMatrix;
+    }
 
-        /**
+    /**
          * Returns a subset of the matrix based on an array of row indices
          * @param {Array} indices - Array containing the row indices
          * @param {number} [startColumn = 0] - First column index
          * @param {number} [endColumn = this.columns-1] - Last column index
          * @return {Matrix}
          */
-        subMatrixRow(indices, startColumn, endColumn) {
-            if (startColumn === undefined) startColumn = 0;
-            if (endColumn === undefined) endColumn = this.columns - 1;
-            if (startColumn > endColumn || startColumn < 0 || startColumn >= this.columns || endColumn < 0 || endColumn >= this.columns) {
-                throw new RangeError('Argument out of range');
-            }
+    subMatrixRow(indices, startColumn, endColumn) {
+      if (startColumn === undefined) startColumn = 0;
+      if (endColumn === undefined) endColumn = this.columns - 1;
+      if (startColumn > endColumn || startColumn < 0 || startColumn >= this.columns || endColumn < 0 || endColumn >= this.columns) {
+        throw new RangeError('Argument out of range');
+      }
 
-            var newMatrix = new this.constructor[Symbol.species](indices.length, endColumn - startColumn + 1);
-            for (var i = 0; i < indices.length; i++) {
-                for (var j = startColumn; j <= endColumn; j++) {
-                    if (indices[i] < 0 || indices[i] >= this.rows) {
-                        throw new RangeError('Row index out of range: ' + indices[i]);
-                    }
-                    newMatrix.set(i, j - startColumn, this.get(indices[i], j));
-                }
-            }
-            return newMatrix;
+      var newMatrix = new this.constructor[Symbol.species](indices.length, endColumn - startColumn + 1);
+      for (var i = 0; i < indices.length; i++) {
+        for (var j = startColumn; j <= endColumn; j++) {
+          if (indices[i] < 0 || indices[i] >= this.rows) {
+            throw new RangeError(`Row index out of range: ${indices[i]}`);
+          }
+          newMatrix.set(i, j - startColumn, this.get(indices[i], j));
         }
+      }
+      return newMatrix;
+    }
 
-        /**
+    /**
          * Returns a subset of the matrix based on an array of column indices
          * @param {Array} indices - Array containing the column indices
          * @param {number} [startRow = 0] - First row index
          * @param {number} [endRow = this.rows-1] - Last row index
          * @return {Matrix}
          */
-        subMatrixColumn(indices, startRow, endRow) {
-            if (startRow === undefined) startRow = 0;
-            if (endRow === undefined) endRow = this.rows - 1;
-            if (startRow > endRow || startRow < 0 || startRow >= this.rows || endRow < 0 || endRow >= this.rows) {
-                throw new RangeError('Argument out of range');
-            }
+    subMatrixColumn(indices, startRow, endRow) {
+      if (startRow === undefined) startRow = 0;
+      if (endRow === undefined) endRow = this.rows - 1;
+      if (startRow > endRow || startRow < 0 || startRow >= this.rows || endRow < 0 || endRow >= this.rows) {
+        throw new RangeError('Argument out of range');
+      }
 
-            var newMatrix = new this.constructor[Symbol.species](endRow - startRow + 1, indices.length);
-            for (var i = 0; i < indices.length; i++) {
-                for (var j = startRow; j <= endRow; j++) {
-                    if (indices[i] < 0 || indices[i] >= this.columns) {
-                        throw new RangeError('Column index out of range: ' + indices[i]);
-                    }
-                    newMatrix.set(j - startRow, i, this.get(j, indices[i]));
-                }
-            }
-            return newMatrix;
+      var newMatrix = new this.constructor[Symbol.species](endRow - startRow + 1, indices.length);
+      for (var i = 0; i < indices.length; i++) {
+        for (var j = startRow; j <= endRow; j++) {
+          if (indices[i] < 0 || indices[i] >= this.columns) {
+            throw new RangeError(`Column index out of range: ${indices[i]}`);
+          }
+          newMatrix.set(j - startRow, i, this.get(j, indices[i]));
         }
+      }
+      return newMatrix;
+    }
 
-        /**
+    /**
          * Set a part of the matrix to the given sub-matrix
          * @param {Matrix|Array< Array >} matrix - The source matrix from which to extract values.
          * @param {number} startRow - The index of the first row to set
          * @param {number} startColumn - The index of the first column to set
          * @return {Matrix}
          */
-        setSubMatrix(matrix, startRow, startColumn) {
-            matrix = this.constructor.checkMatrix(matrix);
-            var endRow = startRow + matrix.rows - 1;
-            var endColumn = startColumn + matrix.columns - 1;
-            (0, _util.checkRange)(this, startRow, endRow, startColumn, endColumn);
-            for (var i = 0; i < matrix.rows; i++) {
-                for (var j = 0; j < matrix.columns; j++) {
-                    this[startRow + i][startColumn + j] = matrix.get(i, j);
-                }
-            }
-            return this;
+    setSubMatrix(matrix, startRow, startColumn) {
+      matrix = this.constructor.checkMatrix(matrix);
+      var endRow = startRow + matrix.rows - 1;
+      var endColumn = startColumn + matrix.columns - 1;
+      (0, _util.checkRange)(this, startRow, endRow, startColumn, endColumn);
+      for (var i = 0; i < matrix.rows; i++) {
+        for (var j = 0; j < matrix.columns; j++) {
+          this[startRow + i][startColumn + j] = matrix.get(i, j);
         }
+      }
+      return this;
+    }
 
-        /**
+    /**
          * Return a new matrix based on a selection of rows and columns
          * @param {Array<number>} rowIndices - The row indices to select. Order matters and an index can be more than once.
          * @param {Array<number>} columnIndices - The column indices to select. Order matters and an index can be use more than once.
          * @return {Matrix} The new matrix
          */
-        selection(rowIndices, columnIndices) {
-            var indices = (0, _util.checkIndices)(this, rowIndices, columnIndices);
-            var newMatrix = new this.constructor[Symbol.species](rowIndices.length, columnIndices.length);
-            for (var i = 0; i < indices.row.length; i++) {
-                var rowIndex = indices.row[i];
-                for (var j = 0; j < indices.column.length; j++) {
-                    var columnIndex = indices.column[j];
-                    newMatrix[i][j] = this.get(rowIndex, columnIndex);
-                }
-            }
-            return newMatrix;
+    selection(rowIndices, columnIndices) {
+      var indices = (0, _util.checkIndices)(this, rowIndices, columnIndices);
+      var newMatrix = new this.constructor[Symbol.species](rowIndices.length, columnIndices.length);
+      for (var i = 0; i < indices.row.length; i++) {
+        var rowIndex = indices.row[i];
+        for (var j = 0; j < indices.column.length; j++) {
+          var columnIndex = indices.column[j];
+          newMatrix[i][j] = this.get(rowIndex, columnIndex);
         }
+      }
+      return newMatrix;
+    }
 
-        /**
+    /**
          * Returns the trace of the matrix (sum of the diagonal elements)
          * @return {number}
          */
-        trace() {
-            var min = Math.min(this.rows, this.columns);
-            var trace = 0;
-            for (var i = 0; i < min; i++) {
-                trace += this.get(i, i);
-            }
-            return trace;
-        }
+    trace() {
+      var min = Math.min(this.rows, this.columns);
+      var trace = 0;
+      for (var i = 0; i < min; i++) {
+        trace += this.get(i, i);
+      }
+      return trace;
+    }
 
-        /*
+    /*
          Matrix views
          */
 
-        /**
+    /**
          * Returns a view of the transposition of the matrix
          * @return {MatrixTransposeView}
          */
-        transposeView() {
-            return new _transpose2.default(this);
-        }
+    transposeView() {
+      return new _transpose2.default(this);
+    }
 
-        /**
+    /**
          * Returns a view of the row vector with the given index
          * @param {number} row - row index of the vector
          * @return {MatrixRowView}
          */
-        rowView(row) {
-            (0, _util.checkRowIndex)(this, row);
-            return new _row2.default(this, row);
-        }
+    rowView(row) {
+      (0, _util.checkRowIndex)(this, row);
+      return new _row2.default(this, row);
+    }
 
-        /**
+    /**
          * Returns a view of the column vector with the given index
          * @param {number} column - column index of the vector
          * @return {MatrixColumnView}
          */
-        columnView(column) {
-            (0, _util.checkColumnIndex)(this, column);
-            return new _column2.default(this, column);
-        }
+    columnView(column) {
+      (0, _util.checkColumnIndex)(this, column);
+      return new _column2.default(this, column);
+    }
 
-        /**
+    /**
          * Returns a view of the matrix flipped in the row axis
          * @return {MatrixFlipRowView}
          */
-        flipRowView() {
-            return new _flipRow2.default(this);
-        }
+    flipRowView() {
+      return new _flipRow2.default(this);
+    }
 
-        /**
+    /**
          * Returns a view of the matrix flipped in the column axis
          * @return {MatrixFlipColumnView}
          */
-        flipColumnView() {
-            return new _flipColumn2.default(this);
-        }
+    flipColumnView() {
+      return new _flipColumn2.default(this);
+    }
 
-        /**
+    /**
          * Returns a view of a submatrix giving the index boundaries
          * @param {number} startRow - first row index of the submatrix
          * @param {number} endRow - last row index of the submatrix
@@ -2305,11 +2320,11 @@ function AbstractMatrix(superCtor) {
          * @param {number} endColumn - last column index of the submatrix
          * @return {MatrixSubView}
          */
-        subMatrixView(startRow, endRow, startColumn, endColumn) {
-            return new _sub2.default(this, startRow, endRow, startColumn, endColumn);
-        }
+    subMatrixView(startRow, endRow, startColumn, endColumn) {
+      return new _sub2.default(this, startRow, endRow, startColumn, endColumn);
+    }
 
-        /**
+    /**
          * Returns a view of the cross of the row indices and the column indices
          * @example
          * // resulting vector is [[2], [2]]
@@ -2318,11 +2333,11 @@ function AbstractMatrix(superCtor) {
          * @param {Array<number>} columnIndices
          * @return {MatrixSelectionView}
          */
-        selectionView(rowIndices, columnIndices) {
-            return new _selection2.default(this, rowIndices, columnIndices);
-        }
+    selectionView(rowIndices, columnIndices) {
+      return new _selection2.default(this, rowIndices, columnIndices);
+    }
 
-        /**
+    /**
          * Returns a view of the row indices
          * @example
          * // resulting vector is [[1,2,3], [1,2,3]]
@@ -2330,11 +2345,11 @@ function AbstractMatrix(superCtor) {
          * @param {Array<number>} rowIndices
          * @return {MatrixRowSelectionView}
          */
-        rowSelectionView(rowIndices) {
-            return new _rowSelection2.default(this, rowIndices);
-        }
+    rowSelectionView(rowIndices) {
+      return new _rowSelection2.default(this, rowIndices);
+    }
 
-        /**
+    /**
          * Returns a view of the column indices
          * @example
          * // resulting vector is [[2, 2], [5, 5]]
@@ -2342,118 +2357,118 @@ function AbstractMatrix(superCtor) {
          * @param {Array<number>} columnIndices
          * @return {MatrixColumnSelectionView}
          */
-        columnSelectionView(columnIndices) {
-            return new _columnSelection2.default(this, columnIndices);
-        }
+    columnSelectionView(columnIndices) {
+      return new _columnSelection2.default(this, columnIndices);
+    }
 
-        /**
+    /**
         * Calculates and returns the determinant of a matrix as a Number
         * @example
         *   new Matrix([[1,2,3], [4,5,6]]).det()
         * @return {number}
         */
-        det() {
-            if (this.isSquare()) {
-                var a, b, c, d;
-                if (this.columns === 2) {
-                    // 2 x 2 matrix
-                    a = this.get(0, 0);
-                    b = this.get(0, 1);
-                    c = this.get(1, 0);
-                    d = this.get(1, 1);
+    det() {
+      if (this.isSquare()) {
+        var a, b, c, d;
+        if (this.columns === 2) {
+          // 2 x 2 matrix
+          a = this.get(0, 0);
+          b = this.get(0, 1);
+          c = this.get(1, 0);
+          d = this.get(1, 1);
 
-                    return a * d - b * c;
-                } else if (this.columns === 3) {
-                    // 3 x 3 matrix
-                    var subMatrix0, subMatrix1, subMatrix2;
-                    subMatrix0 = this.selectionView([1, 2], [1, 2]);
-                    subMatrix1 = this.selectionView([1, 2], [0, 2]);
-                    subMatrix2 = this.selectionView([1, 2], [0, 1]);
-                    a = this.get(0, 0);
-                    b = this.get(0, 1);
-                    c = this.get(0, 2);
+          return a * d - b * c;
+        } else if (this.columns === 3) {
+          // 3 x 3 matrix
+          var subMatrix0, subMatrix1, subMatrix2;
+          subMatrix0 = this.selectionView([1, 2], [1, 2]);
+          subMatrix1 = this.selectionView([1, 2], [0, 2]);
+          subMatrix2 = this.selectionView([1, 2], [0, 1]);
+          a = this.get(0, 0);
+          b = this.get(0, 1);
+          c = this.get(0, 2);
 
-                    return a * subMatrix0.det() - b * subMatrix1.det() + c * subMatrix2.det();
-                } else {
-                    // general purpose determinant using the LU decomposition
-                    return new _lu2.default(this).determinant;
-                }
-            } else {
-                throw Error('Determinant can only be calculated for a square matrix.');
-            }
+          return a * subMatrix0.det() - b * subMatrix1.det() + c * subMatrix2.det();
+        } else {
+          // general purpose determinant using the LU decomposition
+          return new _lu2.default(this).determinant;
         }
+      } else {
+        throw Error('Determinant can only be calculated for a square matrix.');
+      }
+    }
 
-        /**
+    /**
          * Returns inverse of a matrix if it exists or the pseudoinverse
          * @param {number} threshold - threshold for taking inverse of singular values (default = 1e-15)
          * @return {Matrix} the (pseudo)inverted matrix.
          */
-        pseudoInverse(threshold) {
-            if (threshold === undefined) threshold = Number.EPSILON;
-            var svdSolution = new _svd2.default(this, { autoTranspose: true });
+    pseudoInverse(threshold) {
+      if (threshold === undefined) threshold = Number.EPSILON;
+      var svdSolution = new _svd2.default(this, { autoTranspose: true });
 
-            var U = svdSolution.leftSingularVectors;
-            var V = svdSolution.rightSingularVectors;
-            var s = svdSolution.diagonal;
+      var U = svdSolution.leftSingularVectors;
+      var V = svdSolution.rightSingularVectors;
+      var s = svdSolution.diagonal;
 
-            for (var i = 0; i < s.length; i++) {
-                if (Math.abs(s[i]) > threshold) {
-                    s[i] = 1.0 / s[i];
-                } else {
-                    s[i] = 0.0;
-                }
-            }
-
-            // convert list to diagonal
-            s = this.constructor[Symbol.species].diag(s);
-            return V.mmul(s.mmul(U.transposeView()));
+      for (var i = 0; i < s.length; i++) {
+        if (Math.abs(s[i]) > threshold) {
+          s[i] = 1.0 / s[i];
+        } else {
+          s[i] = 0.0;
         }
+      }
 
-        /**
+      // convert list to diagonal
+      s = this.constructor[Symbol.species].diag(s);
+      return V.mmul(s.mmul(U.transposeView()));
+    }
+
+    /**
          * Creates an exact and independent copy of the matrix
          * @return {Matrix}
          */
-        clone() {
-            var newMatrix = new this.constructor[Symbol.species](this.rows, this.columns);
-            for (var row = 0; row < this.rows; row++) {
-                for (var column = 0; column < this.columns; column++) {
-                    newMatrix.set(row, column, this.get(row, column));
-                }
-            }
-            return newMatrix;
+    clone() {
+      var newMatrix = new this.constructor[Symbol.species](this.rows, this.columns);
+      for (var row = 0; row < this.rows; row++) {
+        for (var column = 0; column < this.columns; column++) {
+          newMatrix.set(row, column, this.get(row, column));
         }
+      }
+      return newMatrix;
     }
+  }
 
-    Matrix.prototype.klass = 'Matrix';
+  Matrix.prototype.klass = 'Matrix';
 
-    function compareNumbers(a, b) {
-        return a - b;
-    }
+  function compareNumbers(a, b) {
+    return a - b;
+  }
 
-    /*
+  /*
      Synonyms
      */
 
-    Matrix.random = Matrix.rand;
-    Matrix.diagonal = Matrix.diag;
-    Matrix.prototype.diagonal = Matrix.prototype.diag;
-    Matrix.identity = Matrix.eye;
-    Matrix.prototype.negate = Matrix.prototype.neg;
-    Matrix.prototype.tensorProduct = Matrix.prototype.kroneckerProduct;
-    Matrix.prototype.determinant = Matrix.prototype.det;
+  Matrix.random = Matrix.rand;
+  Matrix.diagonal = Matrix.diag;
+  Matrix.prototype.diagonal = Matrix.prototype.diag;
+  Matrix.identity = Matrix.eye;
+  Matrix.prototype.negate = Matrix.prototype.neg;
+  Matrix.prototype.tensorProduct = Matrix.prototype.kroneckerProduct;
+  Matrix.prototype.determinant = Matrix.prototype.det;
 
-    /*
+  /*
      Add dynamically instance and static methods for mathematical operations
      */
 
-    var inplaceOperator = `
+  var inplaceOperator = `
 (function %name%(value) {
     if (typeof value === 'number') return this.%name%S(value);
     return this.%name%M(value);
 })
 `;
 
-    var inplaceOperatorScalar = `
+  var inplaceOperatorScalar = `
 (function %name%S(value) {
     for (var i = 0; i < this.rows; i++) {
         for (var j = 0; j < this.columns; j++) {
@@ -2464,7 +2479,7 @@ function AbstractMatrix(superCtor) {
 })
 `;
 
-    var inplaceOperatorMatrix = `
+  var inplaceOperatorMatrix = `
 (function %name%M(matrix) {
     matrix = this.constructor.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
@@ -2480,14 +2495,14 @@ function AbstractMatrix(superCtor) {
 })
 `;
 
-    var staticOperator = `
+  var staticOperator = `
 (function %name%(matrix, value) {
     var newMatrix = new this[Symbol.species](matrix);
     return newMatrix.%name%(value);
 })
 `;
 
-    var inplaceMethod = `
+  var inplaceMethod = `
 (function %name%() {
     for (var i = 0; i < this.rows; i++) {
         for (var j = 0; j < this.columns; j++) {
@@ -2498,14 +2513,14 @@ function AbstractMatrix(superCtor) {
 })
 `;
 
-    var staticMethod = `
+  var staticMethod = `
 (function %name%(matrix) {
     var newMatrix = new this[Symbol.species](matrix);
     return newMatrix.%name%();
 })
 `;
 
-    var inplaceMethodWithArgs = `
+  var inplaceMethodWithArgs = `
 (function %name%(%args%) {
     for (var i = 0; i < this.rows; i++) {
         for (var j = 0; j < this.columns; j++) {
@@ -2516,14 +2531,14 @@ function AbstractMatrix(superCtor) {
 })
 `;
 
-    var staticMethodWithArgs = `
+  var staticMethodWithArgs = `
 (function %name%(matrix, %args%) {
     var newMatrix = new this[Symbol.species](matrix);
     return newMatrix.%name%(%args%);
 })
 `;
 
-    var inplaceMethodWithOneArgScalar = `
+  var inplaceMethodWithOneArgScalar = `
 (function %name%S(value) {
     for (var i = 0; i < this.rows; i++) {
         for (var j = 0; j < this.columns; j++) {
@@ -2533,7 +2548,7 @@ function AbstractMatrix(superCtor) {
     return this;
 })
 `;
-    var inplaceMethodWithOneArgMatrix = `
+  var inplaceMethodWithOneArgMatrix = `
 (function %name%M(matrix) {
     matrix = this.constructor.checkMatrix(matrix);
     if (this.rows !== matrix.rows ||
@@ -2549,96 +2564,96 @@ function AbstractMatrix(superCtor) {
 })
 `;
 
-    var inplaceMethodWithOneArg = `
+  var inplaceMethodWithOneArg = `
 (function %name%(value) {
     if (typeof value === 'number') return this.%name%S(value);
     return this.%name%M(value);
 })
 `;
 
-    var staticMethodWithOneArg = staticMethodWithArgs;
+  var staticMethodWithOneArg = staticMethodWithArgs;
 
-    var operators = [
-    // Arithmetic operators
-    ['+', 'add'], ['-', 'sub', 'subtract'], ['*', 'mul', 'multiply'], ['/', 'div', 'divide'], ['%', 'mod', 'modulus'],
-    // Bitwise operators
-    ['&', 'and'], ['|', 'or'], ['^', 'xor'], ['<<', 'leftShift'], ['>>', 'signPropagatingRightShift'], ['>>>', 'rightShift', 'zeroFillRightShift']];
+  var operators = [
+  // Arithmetic operators
+  ['+', 'add'], ['-', 'sub', 'subtract'], ['*', 'mul', 'multiply'], ['/', 'div', 'divide'], ['%', 'mod', 'modulus'],
+  // Bitwise operators
+  ['&', 'and'], ['|', 'or'], ['^', 'xor'], ['<<', 'leftShift'], ['>>', 'signPropagatingRightShift'], ['>>>', 'rightShift', 'zeroFillRightShift']];
 
-    var i;
-    var eval2 = eval;
-    for (var operator of operators) {
-        var inplaceOp = eval2(fillTemplateFunction(inplaceOperator, { name: operator[1], op: operator[0] }));
-        var inplaceOpS = eval2(fillTemplateFunction(inplaceOperatorScalar, { name: operator[1] + 'S', op: operator[0] }));
-        var inplaceOpM = eval2(fillTemplateFunction(inplaceOperatorMatrix, { name: operator[1] + 'M', op: operator[0] }));
-        var staticOp = eval2(fillTemplateFunction(staticOperator, { name: operator[1] }));
-        for (i = 1; i < operator.length; i++) {
-            Matrix.prototype[operator[i]] = inplaceOp;
-            Matrix.prototype[operator[i] + 'S'] = inplaceOpS;
-            Matrix.prototype[operator[i] + 'M'] = inplaceOpM;
-            Matrix[operator[i]] = staticOp;
-        }
+  var i;
+  var eval2 = eval; // eslint-disable-line no-eval
+  for (var operator of operators) {
+    var inplaceOp = eval2(fillTemplateFunction(inplaceOperator, { name: operator[1], op: operator[0] }));
+    var inplaceOpS = eval2(fillTemplateFunction(inplaceOperatorScalar, { name: `${operator[1]}S`, op: operator[0] }));
+    var inplaceOpM = eval2(fillTemplateFunction(inplaceOperatorMatrix, { name: `${operator[1]}M`, op: operator[0] }));
+    var staticOp = eval2(fillTemplateFunction(staticOperator, { name: operator[1] }));
+    for (i = 1; i < operator.length; i++) {
+      Matrix.prototype[operator[i]] = inplaceOp;
+      Matrix.prototype[`${operator[i]}S`] = inplaceOpS;
+      Matrix.prototype[`${operator[i]}M`] = inplaceOpM;
+      Matrix[operator[i]] = staticOp;
     }
+  }
 
-    var methods = [['~', 'not']];
+  var methods = [['~', 'not']];
 
-    ['abs', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atanh', 'cbrt', 'ceil', 'clz32', 'cos', 'cosh', 'exp', 'expm1', 'floor', 'fround', 'log', 'log1p', 'log10', 'log2', 'round', 'sign', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'trunc'].forEach(function (mathMethod) {
-        methods.push(['Math.' + mathMethod, mathMethod]);
-    });
+  ['abs', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atanh', 'cbrt', 'ceil', 'clz32', 'cos', 'cosh', 'exp', 'expm1', 'floor', 'fround', 'log', 'log1p', 'log10', 'log2', 'round', 'sign', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'trunc'].forEach(function (mathMethod) {
+    methods.push([`Math.${mathMethod}`, mathMethod]);
+  });
 
-    for (var method of methods) {
-        var inplaceMeth = eval2(fillTemplateFunction(inplaceMethod, { name: method[1], method: method[0] }));
-        var staticMeth = eval2(fillTemplateFunction(staticMethod, { name: method[1] }));
-        for (i = 1; i < method.length; i++) {
-            Matrix.prototype[method[i]] = inplaceMeth;
-            Matrix[method[i]] = staticMeth;
-        }
+  for (var method of methods) {
+    var inplaceMeth = eval2(fillTemplateFunction(inplaceMethod, { name: method[1], method: method[0] }));
+    var staticMeth = eval2(fillTemplateFunction(staticMethod, { name: method[1] }));
+    for (i = 1; i < method.length; i++) {
+      Matrix.prototype[method[i]] = inplaceMeth;
+      Matrix[method[i]] = staticMeth;
     }
+  }
 
-    var methodsWithArgs = [['Math.pow', 1, 'pow']];
+  var methodsWithArgs = [['Math.pow', 1, 'pow']];
 
-    for (var methodWithArg of methodsWithArgs) {
-        var args = 'arg0';
-        for (i = 1; i < methodWithArg[1]; i++) {
-            args += `, arg${i}`;
-        }
-        if (methodWithArg[1] !== 1) {
-            var inplaceMethWithArgs = eval2(fillTemplateFunction(inplaceMethodWithArgs, {
-                name: methodWithArg[2],
-                method: methodWithArg[0],
-                args: args
-            }));
-            var staticMethWithArgs = eval2(fillTemplateFunction(staticMethodWithArgs, { name: methodWithArg[2], args: args }));
-            for (i = 2; i < methodWithArg.length; i++) {
-                Matrix.prototype[methodWithArg[i]] = inplaceMethWithArgs;
-                Matrix[methodWithArg[i]] = staticMethWithArgs;
-            }
-        } else {
-            var tmplVar = {
-                name: methodWithArg[2],
-                args: args,
-                method: methodWithArg[0]
-            };
-            var inplaceMethod2 = eval2(fillTemplateFunction(inplaceMethodWithOneArg, tmplVar));
-            var inplaceMethodS = eval2(fillTemplateFunction(inplaceMethodWithOneArgScalar, tmplVar));
-            var inplaceMethodM = eval2(fillTemplateFunction(inplaceMethodWithOneArgMatrix, tmplVar));
-            var staticMethod2 = eval2(fillTemplateFunction(staticMethodWithOneArg, tmplVar));
-            for (i = 2; i < methodWithArg.length; i++) {
-                Matrix.prototype[methodWithArg[i]] = inplaceMethod2;
-                Matrix.prototype[methodWithArg[i] + 'M'] = inplaceMethodM;
-                Matrix.prototype[methodWithArg[i] + 'S'] = inplaceMethodS;
-                Matrix[methodWithArg[i]] = staticMethod2;
-            }
-        }
+  for (var methodWithArg of methodsWithArgs) {
+    var args = 'arg0';
+    for (i = 1; i < methodWithArg[1]; i++) {
+      args += `, arg${i}`;
     }
-
-    function fillTemplateFunction(template, values) {
-        for (var value in values) {
-            template = template.replace(new RegExp('%' + value + '%', 'g'), values[value]);
-        }
-        return template;
+    if (methodWithArg[1] !== 1) {
+      var inplaceMethWithArgs = eval2(fillTemplateFunction(inplaceMethodWithArgs, {
+        name: methodWithArg[2],
+        method: methodWithArg[0],
+        args: args
+      }));
+      var staticMethWithArgs = eval2(fillTemplateFunction(staticMethodWithArgs, { name: methodWithArg[2], args: args }));
+      for (i = 2; i < methodWithArg.length; i++) {
+        Matrix.prototype[methodWithArg[i]] = inplaceMethWithArgs;
+        Matrix[methodWithArg[i]] = staticMethWithArgs;
+      }
+    } else {
+      var tmplVar = {
+        name: methodWithArg[2],
+        args: args,
+        method: methodWithArg[0]
+      };
+      var inplaceMethod2 = eval2(fillTemplateFunction(inplaceMethodWithOneArg, tmplVar));
+      var inplaceMethodS = eval2(fillTemplateFunction(inplaceMethodWithOneArgScalar, tmplVar));
+      var inplaceMethodM = eval2(fillTemplateFunction(inplaceMethodWithOneArgMatrix, tmplVar));
+      var staticMethod2 = eval2(fillTemplateFunction(staticMethodWithOneArg, tmplVar));
+      for (i = 2; i < methodWithArg.length; i++) {
+        Matrix.prototype[methodWithArg[i]] = inplaceMethod2;
+        Matrix.prototype[`${methodWithArg[i]}M`] = inplaceMethodM;
+        Matrix.prototype[`${methodWithArg[i]}S`] = inplaceMethodS;
+        Matrix[methodWithArg[i]] = staticMethod2;
+      }
     }
+  }
 
-    return Matrix;
+  function fillTemplateFunction(template, values) {
+    for (var value in values) {
+      template = template.replace(new RegExp(`%${value}%`, 'g'), values[value]);
+    }
+    return template;
+  }
+
+  return Matrix;
 }
 
 /***/ }),
@@ -2648,7 +2663,606 @@ function AbstractMatrix(superCtor) {
 "use strict";
 
 
-var arrayStat = __webpack_require__(23);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _index = __webpack_require__(0);
+
+var _util = __webpack_require__(11);
+
+/**
+ * @class SingularValueDecomposition
+ * @see https://github.com/accord-net/framework/blob/development/Sources/Accord.Math/Decompositions/SingularValueDecomposition.cs
+ * @param {Matrix} value
+ * @param {object} [options]
+ * @param {boolean} [options.computeLeftSingularVectors=true]
+ * @param {boolean} [options.computeRightSingularVectors=true]
+ * @param {boolean} [options.autoTranspose=false]
+ */
+class SingularValueDecomposition {
+  constructor(value, options = {}) {
+    value = _index.WrapperMatrix2D.checkMatrix(value);
+
+    var m = value.rows;
+    var n = value.columns;
+
+    var _options$computeLeftS = options.computeLeftSingularVectors,
+        computeLeftSingularVectors = _options$computeLeftS === undefined ? true : _options$computeLeftS,
+        _options$computeRight = options.computeRightSingularVectors,
+        computeRightSingularVectors = _options$computeRight === undefined ? true : _options$computeRight,
+        _options$autoTranspos = options.autoTranspose,
+        autoTranspose = _options$autoTranspos === undefined ? false : _options$autoTranspos;
+
+
+    var wantu = Boolean(computeLeftSingularVectors);
+    var wantv = Boolean(computeRightSingularVectors);
+
+    var swapped = false;
+    var a;
+    if (m < n) {
+      if (!autoTranspose) {
+        a = value.clone();
+        // eslint-disable-next-line no-console
+        console.warn('Computing SVD on a matrix with more columns than rows. Consider enabling autoTranspose');
+      } else {
+        a = value.transpose();
+        m = a.rows;
+        n = a.columns;
+        swapped = true;
+        var aux = wantu;
+        wantu = wantv;
+        wantv = aux;
+      }
+    } else {
+      a = value.clone();
+    }
+
+    var nu = Math.min(m, n);
+    var ni = Math.min(m + 1, n);
+    var s = new Array(ni);
+    var U = (0, _util.getFilled2DArray)(m, nu, 0);
+    var V = (0, _util.getFilled2DArray)(n, n, 0);
+
+    var e = new Array(n);
+    var work = new Array(m);
+
+    var si = new Array(ni);
+    for (var i = 0; i < ni; i++) {
+      si[i] = i;
+    }var nct = Math.min(m - 1, n);
+    var nrt = Math.max(0, Math.min(n - 2, m));
+    var mrc = Math.max(nct, nrt);
+
+    for (var k = 0; k < mrc; k++) {
+      if (k < nct) {
+        s[k] = 0;
+        for (var _i = k; _i < m; _i++) {
+          s[k] = (0, _util.hypotenuse)(s[k], a[_i][k]);
+        }
+        if (s[k] !== 0) {
+          if (a[k][k] < 0) {
+            s[k] = -s[k];
+          }
+          for (var _i2 = k; _i2 < m; _i2++) {
+            a[_i2][k] /= s[k];
+          }
+          a[k][k] += 1;
+        }
+        s[k] = -s[k];
+      }
+
+      for (var j = k + 1; j < n; j++) {
+        if (k < nct && s[k] !== 0) {
+          var t = 0;
+          for (var _i3 = k; _i3 < m; _i3++) {
+            t += a[_i3][k] * a[_i3][j];
+          }
+          t = -t / a[k][k];
+          for (var _i4 = k; _i4 < m; _i4++) {
+            a[_i4][j] += t * a[_i4][k];
+          }
+        }
+        e[j] = a[k][j];
+      }
+
+      if (wantu && k < nct) {
+        for (var _i5 = k; _i5 < m; _i5++) {
+          U[_i5][k] = a[_i5][k];
+        }
+      }
+
+      if (k < nrt) {
+        e[k] = 0;
+        for (var _i6 = k + 1; _i6 < n; _i6++) {
+          e[k] = (0, _util.hypotenuse)(e[k], e[_i6]);
+        }
+        if (e[k] !== 0) {
+          if (e[k + 1] < 0) {
+            e[k] = 0 - e[k];
+          }
+          for (var _i7 = k + 1; _i7 < n; _i7++) {
+            e[_i7] /= e[k];
+          }
+          e[k + 1] += 1;
+        }
+        e[k] = -e[k];
+        if (k + 1 < m && e[k] !== 0) {
+          for (var _i8 = k + 1; _i8 < m; _i8++) {
+            work[_i8] = 0;
+          }
+          for (var _i9 = k + 1; _i9 < m; _i9++) {
+            for (var _j = k + 1; _j < n; _j++) {
+              work[_i9] += e[_j] * a[_i9][_j];
+            }
+          }
+          for (var _j2 = k + 1; _j2 < n; _j2++) {
+            var _t = -e[_j2] / e[k + 1];
+            for (var _i10 = k + 1; _i10 < m; _i10++) {
+              a[_i10][_j2] += _t * work[_i10];
+            }
+          }
+        }
+        if (wantv) {
+          for (var _i11 = k + 1; _i11 < n; _i11++) {
+            V[_i11][k] = e[_i11];
+          }
+        }
+      }
+    }
+
+    var p = Math.min(n, m + 1);
+    if (nct < n) {
+      s[nct] = a[nct][nct];
+    }
+    if (m < p) {
+      s[p - 1] = 0;
+    }
+    if (nrt + 1 < p) {
+      e[nrt] = a[nrt][p - 1];
+    }
+    e[p - 1] = 0;
+
+    if (wantu) {
+      for (var _j3 = nct; _j3 < nu; _j3++) {
+        for (var _i12 = 0; _i12 < m; _i12++) {
+          U[_i12][_j3] = 0;
+        }
+        U[_j3][_j3] = 1;
+      }
+      for (var _k = nct - 1; _k >= 0; _k--) {
+        if (s[_k] !== 0) {
+          for (var _j4 = _k + 1; _j4 < nu; _j4++) {
+            var _t2 = 0;
+            for (var _i13 = _k; _i13 < m; _i13++) {
+              _t2 += U[_i13][_k] * U[_i13][_j4];
+            }
+            _t2 = -_t2 / U[_k][_k];
+            for (var _i14 = _k; _i14 < m; _i14++) {
+              U[_i14][_j4] += _t2 * U[_i14][_k];
+            }
+          }
+          for (var _i15 = _k; _i15 < m; _i15++) {
+            U[_i15][_k] = -U[_i15][_k];
+          }
+          U[_k][_k] = 1 + U[_k][_k];
+          for (var _i16 = 0; _i16 < _k - 1; _i16++) {
+            U[_i16][_k] = 0;
+          }
+        } else {
+          for (var _i17 = 0; _i17 < m; _i17++) {
+            U[_i17][_k] = 0;
+          }
+          U[_k][_k] = 1;
+        }
+      }
+    }
+
+    if (wantv) {
+      for (var _k2 = n - 1; _k2 >= 0; _k2--) {
+        if (_k2 < nrt && e[_k2] !== 0) {
+          for (var _j5 = _k2 + 1; _j5 < n; _j5++) {
+            var _t3 = 0;
+            for (var _i18 = _k2 + 1; _i18 < n; _i18++) {
+              _t3 += V[_i18][_k2] * V[_i18][_j5];
+            }
+            _t3 = -_t3 / V[_k2 + 1][_k2];
+            for (var _i19 = _k2 + 1; _i19 < n; _i19++) {
+              V[_i19][_j5] += _t3 * V[_i19][_k2];
+            }
+          }
+        }
+        for (var _i20 = 0; _i20 < n; _i20++) {
+          V[_i20][_k2] = 0;
+        }
+        V[_k2][_k2] = 1;
+      }
+    }
+
+    var pp = p - 1;
+    var iter = 0;
+    var eps = Number.EPSILON;
+    while (p > 0) {
+      var _k3 = void 0,
+          kase = void 0;
+      for (_k3 = p - 2; _k3 >= -1; _k3--) {
+        if (_k3 === -1) {
+          break;
+        }
+        var alpha = Number.MIN_VALUE + eps * Math.abs(s[_k3] + Math.abs(s[_k3 + 1]));
+        if (Math.abs(e[_k3]) <= alpha || Number.isNaN(e[_k3])) {
+          e[_k3] = 0;
+          break;
+        }
+      }
+      if (_k3 === p - 2) {
+        kase = 4;
+      } else {
+        var ks = void 0;
+        for (ks = p - 1; ks >= _k3; ks--) {
+          if (ks === _k3) {
+            break;
+          }
+          var _t4 = (ks !== p ? Math.abs(e[ks]) : 0) + (ks !== _k3 + 1 ? Math.abs(e[ks - 1]) : 0);
+          if (Math.abs(s[ks]) <= eps * _t4) {
+            s[ks] = 0;
+            break;
+          }
+        }
+        if (ks === _k3) {
+          kase = 3;
+        } else if (ks === p - 1) {
+          kase = 1;
+        } else {
+          kase = 2;
+          _k3 = ks;
+        }
+      }
+
+      _k3++;
+
+      switch (kase) {
+        case 1:
+          {
+            var f = e[p - 2];
+            e[p - 2] = 0;
+            for (var _j6 = p - 2; _j6 >= _k3; _j6--) {
+              var _t5 = (0, _util.hypotenuse)(s[_j6], f);
+              var cs = s[_j6] / _t5;
+              var sn = f / _t5;
+              s[_j6] = _t5;
+              if (_j6 !== _k3) {
+                f = -sn * e[_j6 - 1];
+                e[_j6 - 1] = cs * e[_j6 - 1];
+              }
+              if (wantv) {
+                for (var _i21 = 0; _i21 < n; _i21++) {
+                  _t5 = cs * V[_i21][_j6] + sn * V[_i21][p - 1];
+                  V[_i21][p - 1] = -sn * V[_i21][_j6] + cs * V[_i21][p - 1];
+                  V[_i21][_j6] = _t5;
+                }
+              }
+            }
+            break;
+          }
+        case 2:
+          {
+            var _f = e[_k3 - 1];
+            e[_k3 - 1] = 0;
+            for (var _j7 = _k3; _j7 < p; _j7++) {
+              var _t6 = (0, _util.hypotenuse)(s[_j7], _f);
+              var _cs = s[_j7] / _t6;
+              var _sn = _f / _t6;
+              s[_j7] = _t6;
+              _f = -_sn * e[_j7];
+              e[_j7] = _cs * e[_j7];
+              if (wantu) {
+                for (var _i22 = 0; _i22 < m; _i22++) {
+                  _t6 = _cs * U[_i22][_j7] + _sn * U[_i22][_k3 - 1];
+                  U[_i22][_k3 - 1] = -_sn * U[_i22][_j7] + _cs * U[_i22][_k3 - 1];
+                  U[_i22][_j7] = _t6;
+                }
+              }
+            }
+            break;
+          }
+        case 3:
+          {
+            var scale = Math.max(Math.abs(s[p - 1]), Math.abs(s[p - 2]), Math.abs(e[p - 2]), Math.abs(s[_k3]), Math.abs(e[_k3]));
+            var sp = s[p - 1] / scale;
+            var spm1 = s[p - 2] / scale;
+            var epm1 = e[p - 2] / scale;
+            var sk = s[_k3] / scale;
+            var ek = e[_k3] / scale;
+            var b = ((spm1 + sp) * (spm1 - sp) + epm1 * epm1) / 2;
+            var c = sp * epm1 * (sp * epm1);
+            var shift = 0;
+            if (b !== 0 || c !== 0) {
+              if (b < 0) {
+                shift = 0 - Math.sqrt(b * b + c);
+              } else {
+                shift = Math.sqrt(b * b + c);
+              }
+              shift = c / (b + shift);
+            }
+            var _f2 = (sk + sp) * (sk - sp) + shift;
+            var g = sk * ek;
+            for (var _j8 = _k3; _j8 < p - 1; _j8++) {
+              var _t7 = (0, _util.hypotenuse)(_f2, g);
+              if (_t7 === 0) _t7 = Number.MIN_VALUE;
+              var _cs2 = _f2 / _t7;
+              var _sn2 = g / _t7;
+              if (_j8 !== _k3) {
+                e[_j8 - 1] = _t7;
+              }
+              _f2 = _cs2 * s[_j8] + _sn2 * e[_j8];
+              e[_j8] = _cs2 * e[_j8] - _sn2 * s[_j8];
+              g = _sn2 * s[_j8 + 1];
+              s[_j8 + 1] = _cs2 * s[_j8 + 1];
+              if (wantv) {
+                for (var _i23 = 0; _i23 < n; _i23++) {
+                  _t7 = _cs2 * V[_i23][_j8] + _sn2 * V[_i23][_j8 + 1];
+                  V[_i23][_j8 + 1] = -_sn2 * V[_i23][_j8] + _cs2 * V[_i23][_j8 + 1];
+                  V[_i23][_j8] = _t7;
+                }
+              }
+              _t7 = (0, _util.hypotenuse)(_f2, g);
+              if (_t7 === 0) _t7 = Number.MIN_VALUE;
+              _cs2 = _f2 / _t7;
+              _sn2 = g / _t7;
+              s[_j8] = _t7;
+              _f2 = _cs2 * e[_j8] + _sn2 * s[_j8 + 1];
+              s[_j8 + 1] = -_sn2 * e[_j8] + _cs2 * s[_j8 + 1];
+              g = _sn2 * e[_j8 + 1];
+              e[_j8 + 1] = _cs2 * e[_j8 + 1];
+              if (wantu && _j8 < m - 1) {
+                for (var _i24 = 0; _i24 < m; _i24++) {
+                  _t7 = _cs2 * U[_i24][_j8] + _sn2 * U[_i24][_j8 + 1];
+                  U[_i24][_j8 + 1] = -_sn2 * U[_i24][_j8] + _cs2 * U[_i24][_j8 + 1];
+                  U[_i24][_j8] = _t7;
+                }
+              }
+            }
+            e[p - 2] = _f2;
+            iter = iter + 1;
+            break;
+          }
+        case 4:
+          {
+            if (s[_k3] <= 0) {
+              s[_k3] = s[_k3] < 0 ? -s[_k3] : 0;
+              if (wantv) {
+                for (var _i25 = 0; _i25 <= pp; _i25++) {
+                  V[_i25][_k3] = -V[_i25][_k3];
+                }
+              }
+            }
+            while (_k3 < pp) {
+              if (s[_k3] >= s[_k3 + 1]) {
+                break;
+              }
+              var _t8 = s[_k3];
+              s[_k3] = s[_k3 + 1];
+              s[_k3 + 1] = _t8;
+              if (wantv && _k3 < n - 1) {
+                for (var _i26 = 0; _i26 < n; _i26++) {
+                  _t8 = V[_i26][_k3 + 1];
+                  V[_i26][_k3 + 1] = V[_i26][_k3];
+                  V[_i26][_k3] = _t8;
+                }
+              }
+              if (wantu && _k3 < m - 1) {
+                for (var _i27 = 0; _i27 < m; _i27++) {
+                  _t8 = U[_i27][_k3 + 1];
+                  U[_i27][_k3 + 1] = U[_i27][_k3];
+                  U[_i27][_k3] = _t8;
+                }
+              }
+              _k3++;
+            }
+            iter = 0;
+            p--;
+            break;
+          }
+        // no default
+      }
+    }
+
+    if (swapped) {
+      var tmp = V;
+      V = U;
+      U = tmp;
+    }
+
+    this.m = m;
+    this.n = n;
+    this.s = s;
+    this.U = U;
+    this.V = V;
+  }
+
+  /**
+   * Solve a problem of least square (Ax=b) by using the SVD. Useful when A is singular. When A is not singular, it would be better to use qr.solve(value).
+   * Example : We search to approximate x, with A matrix shape m*n, x vector size n, b vector size m (m > n). We will use :
+   * var svd = SingularValueDecomposition(A);
+   * var x = svd.solve(b);
+   * @param {Matrix} value - Matrix 1D which is the vector b (in the equation Ax = b)
+   * @return {Matrix} - The vector x
+   */
+  solve(value) {
+    var Y = value;
+    var e = this.threshold;
+    var scols = this.s.length;
+    var Ls = _index.Matrix.zeros(scols, scols);
+
+    for (var i = 0; i < scols; i++) {
+      if (Math.abs(this.s[i]) <= e) {
+        Ls[i][i] = 0;
+      } else {
+        Ls[i][i] = 1 / this.s[i];
+      }
+    }
+
+    var U = this.U;
+    var V = this.rightSingularVectors;
+
+    var VL = V.mmul(Ls);
+    var vrows = V.rows;
+    var urows = U.length;
+    var VLU = _index.Matrix.zeros(vrows, urows);
+
+    for (var _i28 = 0; _i28 < vrows; _i28++) {
+      for (var j = 0; j < urows; j++) {
+        var sum = 0;
+        for (var k = 0; k < scols; k++) {
+          sum += VL[_i28][k] * U[j][k];
+        }
+        VLU[_i28][j] = sum;
+      }
+    }
+
+    return VLU.mmul(Y);
+  }
+
+  /**
+   *
+   * @param {Array<number>} value
+   * @return {Matrix}
+   */
+  solveForDiagonal(value) {
+    return this.solve(_index.Matrix.diag(value));
+  }
+
+  /**
+   * Get the inverse of the matrix. We compute the inverse of a matrix using SVD when this matrix is singular or ill-conditioned. Example :
+   * var svd = SingularValueDecomposition(A);
+   * var inverseA = svd.inverse();
+   * @return {Matrix} - The approximation of the inverse of the matrix
+   */
+  inverse() {
+    var V = this.V;
+    var e = this.threshold;
+    var vrows = V.length;
+    var vcols = V[0].length;
+    var X = new _index.Matrix(vrows, this.s.length);
+
+    for (var i = 0; i < vrows; i++) {
+      for (var j = 0; j < vcols; j++) {
+        if (Math.abs(this.s[j]) > e) {
+          X[i][j] = V[i][j] / this.s[j];
+        } else {
+          X[i][j] = 0;
+        }
+      }
+    }
+
+    var U = this.U;
+
+    var urows = U.length;
+    var ucols = U[0].length;
+    var Y = new _index.Matrix(vrows, urows);
+
+    for (var _i29 = 0; _i29 < vrows; _i29++) {
+      for (var _j9 = 0; _j9 < urows; _j9++) {
+        var sum = 0;
+        for (var k = 0; k < ucols; k++) {
+          sum += X[_i29][k] * U[_j9][k];
+        }
+        Y[_i29][_j9] = sum;
+      }
+    }
+
+    return Y;
+  }
+
+  /**
+   *
+   * @return {number}
+   */
+  get condition() {
+    return this.s[0] / this.s[Math.min(this.m, this.n) - 1];
+  }
+
+  /**
+   *
+   * @return {number}
+   */
+  get norm2() {
+    return this.s[0];
+  }
+
+  /**
+   *
+   * @return {number}
+   */
+  get rank() {
+    var tol = Math.max(this.m, this.n) * this.s[0] * Number.EPSILON;
+    var r = 0;
+    var s = this.s;
+    for (var i = 0, ii = s.length; i < ii; i++) {
+      if (s[i] > tol) {
+        r++;
+      }
+    }
+    return r;
+  }
+
+  /**
+   *
+   * @return {Array<number>}
+   */
+  get diagonal() {
+    return this.s;
+  }
+
+  /**
+   *
+   * @return {number}
+   */
+  get threshold() {
+    return Number.EPSILON / 2 * Math.max(this.m, this.n) * this.s[0];
+  }
+
+  /**
+   *
+   * @return {Matrix}
+   */
+  get leftSingularVectors() {
+    if (!_index.Matrix.isMatrix(this.U)) {
+      this.U = new _index.Matrix(this.U);
+    }
+    return this.U;
+  }
+
+  /**
+   *
+   * @return {Matrix}
+   */
+  get rightSingularVectors() {
+    if (!_index.Matrix.isMatrix(this.V)) {
+      this.V = new _index.Matrix(this.V);
+    }
+    return this.V;
+  }
+
+  /**
+   *
+   * @return {Matrix}
+   */
+  get diagonalMatrix() {
+    return _index.Matrix.diag(this.s);
+  }
+}
+exports.default = SingularValueDecomposition;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var arrayStat = __webpack_require__(24);
 
 function compareNumbers(a, b) {
     return a - b;
@@ -3296,14 +3910,14 @@ exports.weightedScatter = function weightedScatter(matrix, weights, means, facto
 };
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _index = __webpack_require__(0);
@@ -3314,793 +3928,199 @@ var _index = __webpack_require__(0);
  * @param {Matrix} matrix
  */
 class LuDecomposition {
-    constructor(matrix) {
-        matrix = _index.WrapperMatrix2D.checkMatrix(matrix);
+  constructor(matrix) {
+    matrix = _index.WrapperMatrix2D.checkMatrix(matrix);
 
-        var lu = matrix.clone();
-        var rows = lu.rows;
-        var columns = lu.columns;
-        var pivotVector = new Array(rows);
-        var pivotSign = 1;
-        var i, j, k, p, s, t, v;
-        var LUcolj, kmax;
+    var lu = matrix.clone();
+    var rows = lu.rows;
+    var columns = lu.columns;
+    var pivotVector = new Array(rows);
+    var pivotSign = 1;
+    var i, j, k, p, s, t, v;
+    var LUcolj, kmax;
 
-        for (i = 0; i < rows; i++) {
-            pivotVector[i] = i;
-        }
-
-        LUcolj = new Array(rows);
-
-        for (j = 0; j < columns; j++) {
-
-            for (i = 0; i < rows; i++) {
-                LUcolj[i] = lu.get(i, j);
-            }
-
-            for (i = 0; i < rows; i++) {
-                kmax = Math.min(i, j);
-                s = 0;
-                for (k = 0; k < kmax; k++) {
-                    s += lu.get(i, k) * LUcolj[k];
-                }
-                LUcolj[i] -= s;
-                lu.set(i, j, LUcolj[i]);
-            }
-
-            p = j;
-            for (i = j + 1; i < rows; i++) {
-                if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
-                    p = i;
-                }
-            }
-
-            if (p !== j) {
-                for (k = 0; k < columns; k++) {
-                    t = lu.get(p, k);
-                    lu.set(p, k, lu.get(j, k));
-                    lu.set(j, k, t);
-                }
-
-                v = pivotVector[p];
-                pivotVector[p] = pivotVector[j];
-                pivotVector[j] = v;
-
-                pivotSign = -pivotSign;
-            }
-
-            if (j < rows && lu.get(j, j) !== 0) {
-                for (i = j + 1; i < rows; i++) {
-                    lu.set(i, j, lu.get(i, j) / lu.get(j, j));
-                }
-            }
-        }
-
-        this.LU = lu;
-        this.pivotVector = pivotVector;
-        this.pivotSign = pivotSign;
+    for (i = 0; i < rows; i++) {
+      pivotVector[i] = i;
     }
 
-    /**
-     *
-     * @return {boolean}
-     */
-    isSingular() {
-        var data = this.LU;
-        var col = data.columns;
-        for (var j = 0; j < col; j++) {
-            if (data[j][j] === 0) {
-                return true;
-            }
+    LUcolj = new Array(rows);
+
+    for (j = 0; j < columns; j++) {
+      for (i = 0; i < rows; i++) {
+        LUcolj[i] = lu.get(i, j);
+      }
+
+      for (i = 0; i < rows; i++) {
+        kmax = Math.min(i, j);
+        s = 0;
+        for (k = 0; k < kmax; k++) {
+          s += lu.get(i, k) * LUcolj[k];
         }
-        return false;
-    }
+        LUcolj[i] -= s;
+        lu.set(i, j, LUcolj[i]);
+      }
 
-    /**
-     *
-     * @param {Matrix} value
-     * @return {Matrix}
-     */
-    solve(value) {
-        value = _index.Matrix.checkMatrix(value);
-
-        var lu = this.LU;
-        var rows = lu.rows;
-
-        if (rows !== value.rows) {
-            throw new Error('Invalid matrix dimensions');
+      p = j;
+      for (i = j + 1; i < rows; i++) {
+        if (Math.abs(LUcolj[i]) > Math.abs(LUcolj[p])) {
+          p = i;
         }
-        if (this.isSingular()) {
-            throw new Error('LU matrix is singular');
-        }
+      }
 
-        var count = value.columns;
-        var X = value.subMatrixRow(this.pivotVector, 0, count - 1);
-        var columns = lu.columns;
-        var i, j, k;
-
+      if (p !== j) {
         for (k = 0; k < columns; k++) {
-            for (i = k + 1; i < columns; i++) {
-                for (j = 0; j < count; j++) {
-                    X[i][j] -= X[k][j] * lu[i][k];
-                }
-            }
+          t = lu.get(p, k);
+          lu.set(p, k, lu.get(j, k));
+          lu.set(j, k, t);
         }
-        for (k = columns - 1; k >= 0; k--) {
-            for (j = 0; j < count; j++) {
-                X[k][j] /= lu[k][k];
-            }
-            for (i = 0; i < k; i++) {
-                for (j = 0; j < count; j++) {
-                    X[i][j] -= X[k][j] * lu[i][k];
-                }
-            }
+
+        v = pivotVector[p];
+        pivotVector[p] = pivotVector[j];
+        pivotVector[j] = v;
+
+        pivotSign = -pivotSign;
+      }
+
+      if (j < rows && lu.get(j, j) !== 0) {
+        for (i = j + 1; i < rows; i++) {
+          lu.set(i, j, lu.get(i, j) / lu.get(j, j));
         }
-        return X;
+      }
     }
 
-    /**
-     *
-     * @return {number}
-     */
-    get determinant() {
-        var data = this.LU;
-        if (!data.isSquare()) {
-            throw new Error('Matrix must be square');
-        }
-        var determinant = this.pivotSign;
-        var col = data.columns;
-        for (var j = 0; j < col; j++) {
-            determinant *= data[j][j];
-        }
-        return determinant;
+    this.LU = lu;
+    this.pivotVector = pivotVector;
+    this.pivotSign = pivotSign;
+  }
+
+  /**
+   *
+   * @return {boolean}
+   */
+  isSingular() {
+    var data = this.LU;
+    var col = data.columns;
+    for (var j = 0; j < col; j++) {
+      if (data[j][j] === 0) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
+   *
+   * @param {Matrix} value
+   * @return {Matrix}
+   */
+  solve(value) {
+    value = _index.Matrix.checkMatrix(value);
+
+    var lu = this.LU;
+    var rows = lu.rows;
+
+    if (rows !== value.rows) {
+      throw new Error('Invalid matrix dimensions');
+    }
+    if (this.isSingular()) {
+      throw new Error('LU matrix is singular');
     }
 
-    /**
-     *
-     * @return {Matrix}
-     */
-    get lowerTriangularMatrix() {
-        var data = this.LU;
-        var rows = data.rows;
-        var columns = data.columns;
-        var X = new _index.Matrix(rows, columns);
-        for (var i = 0; i < rows; i++) {
-            for (var j = 0; j < columns; j++) {
-                if (i > j) {
-                    X[i][j] = data[i][j];
-                } else if (i === j) {
-                    X[i][j] = 1;
-                } else {
-                    X[i][j] = 0;
-                }
-            }
-        }
-        return X;
-    }
+    var count = value.columns;
+    var X = value.subMatrixRow(this.pivotVector, 0, count - 1);
+    var columns = lu.columns;
+    var i, j, k;
 
-    /**
-     *
-     * @return {Matrix}
-     */
-    get upperTriangularMatrix() {
-        var data = this.LU;
-        var rows = data.rows;
-        var columns = data.columns;
-        var X = new _index.Matrix(rows, columns);
-        for (var i = 0; i < rows; i++) {
-            for (var j = 0; j < columns; j++) {
-                if (i <= j) {
-                    X[i][j] = data[i][j];
-                } else {
-                    X[i][j] = 0;
-                }
-            }
+    for (k = 0; k < columns; k++) {
+      for (i = k + 1; i < columns; i++) {
+        for (j = 0; j < count; j++) {
+          X[i][j] -= X[k][j] * lu[i][k];
         }
-        return X;
+      }
     }
+    for (k = columns - 1; k >= 0; k--) {
+      for (j = 0; j < count; j++) {
+        X[k][j] /= lu[k][k];
+      }
+      for (i = 0; i < k; i++) {
+        for (j = 0; j < count; j++) {
+          X[i][j] -= X[k][j] * lu[i][k];
+        }
+      }
+    }
+    return X;
+  }
 
-    /**
-     *
-     * @return {Array<number>}
-     */
-    get pivotPermutationVector() {
-        return this.pivotVector.slice();
+  /**
+   *
+   * @return {number}
+   */
+  get determinant() {
+    var data = this.LU;
+    if (!data.isSquare()) {
+      throw new Error('Matrix must be square');
     }
+    var determinant = this.pivotSign;
+    var col = data.columns;
+    for (var j = 0; j < col; j++) {
+      determinant *= data[j][j];
+    }
+    return determinant;
+  }
+
+  /**
+   *
+   * @return {Matrix}
+   */
+  get lowerTriangularMatrix() {
+    var data = this.LU;
+    var rows = data.rows;
+    var columns = data.columns;
+    var X = new _index.Matrix(rows, columns);
+    for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < columns; j++) {
+        if (i > j) {
+          X[i][j] = data[i][j];
+        } else if (i === j) {
+          X[i][j] = 1;
+        } else {
+          X[i][j] = 0;
+        }
+      }
+    }
+    return X;
+  }
+
+  /**
+   *
+   * @return {Matrix}
+   */
+  get upperTriangularMatrix() {
+    var data = this.LU;
+    var rows = data.rows;
+    var columns = data.columns;
+    var X = new _index.Matrix(rows, columns);
+    for (var i = 0; i < rows; i++) {
+      for (var j = 0; j < columns; j++) {
+        if (i <= j) {
+          X[i][j] = data[i][j];
+        } else {
+          X[i][j] = 0;
+        }
+      }
+    }
+    return X;
+  }
+
+  /**
+   *
+   * @return {Array<number>}
+   */
+  get pivotPermutationVector() {
+    return this.pivotVector.slice();
+  }
 }
 exports.default = LuDecomposition;
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _index = __webpack_require__(0);
-
-var _util = __webpack_require__(11);
-
-/**
- * @class SingularValueDecomposition
- * @link https://github.com/lutzroeder/Mapack/blob/master/Source/SingularValueDecomposition.cs
- * @param {Matrix} value
- * @param {object} [options]
- * @param {boolean} [options.computeLeftSingularVectors=true]
- * @param {boolean} [options.computeRightSingularVectors=true]
- * @param {boolean} [options.autoTranspose=false]
- */
-class SingularValueDecomposition {
-    constructor(value, options = {}) {
-        value = _index.WrapperMatrix2D.checkMatrix(value);
-
-        var m = value.rows;
-        var n = value.columns;
-        var nu = Math.min(m, n);
-
-        var _options$computeLeftS = options.computeLeftSingularVectors,
-            computeLeftSingularVectors = _options$computeLeftS === undefined ? true : _options$computeLeftS,
-            _options$computeRight = options.computeRightSingularVectors,
-            computeRightSingularVectors = _options$computeRight === undefined ? true : _options$computeRight,
-            _options$autoTranspos = options.autoTranspose,
-            autoTranspose = _options$autoTranspos === undefined ? false : _options$autoTranspos;
-
-
-        var wantu = Boolean(computeLeftSingularVectors);
-        var wantv = Boolean(computeRightSingularVectors);
-
-        var swapped = false;
-        var a;
-        if (m < n) {
-            if (!autoTranspose) {
-                a = value.clone();
-                // eslint-disable-next-line no-console
-                console.warn('Computing SVD on a matrix with more columns than rows. Consider enabling autoTranspose');
-            } else {
-                a = value.transpose();
-                m = a.rows;
-                n = a.columns;
-                swapped = true;
-                var aux = wantu;
-                wantu = wantv;
-                wantv = aux;
-            }
-        } else {
-            a = value.clone();
-        }
-
-        var s = new Array(Math.min(m + 1, n));
-        var U = (0, _util.getFilled2DArray)(m, nu, 0);
-        var V = (0, _util.getFilled2DArray)(n, n, 0);
-        var e = new Array(n);
-        var work = new Array(m);
-
-        var nct = Math.min(m - 1, n);
-        var nrt = Math.max(0, Math.min(n - 2, m));
-
-        var i, j, k, p, t, ks, f, cs, sn, max, kase, scale, sp, spm1, epm1, sk, ek, b, c, shift, g;
-
-        for (k = 0, max = Math.max(nct, nrt); k < max; k++) {
-            if (k < nct) {
-                s[k] = 0;
-                for (i = k; i < m; i++) {
-                    s[k] = (0, _util.hypotenuse)(s[k], a[i][k]);
-                }
-                if (s[k] !== 0) {
-                    if (a[k][k] < 0) {
-                        s[k] = -s[k];
-                    }
-                    for (i = k; i < m; i++) {
-                        a[i][k] /= s[k];
-                    }
-                    a[k][k] += 1;
-                }
-                s[k] = -s[k];
-            }
-
-            for (j = k + 1; j < n; j++) {
-                if (k < nct && s[k] !== 0) {
-                    t = 0;
-                    for (i = k; i < m; i++) {
-                        t += a[i][k] * a[i][j];
-                    }
-                    t = -t / a[k][k];
-                    for (i = k; i < m; i++) {
-                        a[i][j] += t * a[i][k];
-                    }
-                }
-                e[j] = a[k][j];
-            }
-
-            if (wantu && k < nct) {
-                for (i = k; i < m; i++) {
-                    U[i][k] = a[i][k];
-                }
-            }
-
-            if (k < nrt) {
-                e[k] = 0;
-                for (i = k + 1; i < n; i++) {
-                    e[k] = (0, _util.hypotenuse)(e[k], e[i]);
-                }
-                if (e[k] !== 0) {
-                    if (e[k + 1] < 0) {
-                        e[k] = 0 - e[k];
-                    }
-                    for (i = k + 1; i < n; i++) {
-                        e[i] /= e[k];
-                    }
-                    e[k + 1] += 1;
-                }
-                e[k] = -e[k];
-                if (k + 1 < m && e[k] !== 0) {
-                    for (i = k + 1; i < m; i++) {
-                        work[i] = 0;
-                    }
-                    for (j = k + 1; j < n; j++) {
-                        for (i = k + 1; i < m; i++) {
-                            work[i] += e[j] * a[i][j];
-                        }
-                    }
-                    for (j = k + 1; j < n; j++) {
-                        t = -e[j] / e[k + 1];
-                        for (i = k + 1; i < m; i++) {
-                            a[i][j] += t * work[i];
-                        }
-                    }
-                }
-                if (wantv) {
-                    for (i = k + 1; i < n; i++) {
-                        V[i][k] = e[i];
-                    }
-                }
-            }
-        }
-
-        p = Math.min(n, m + 1);
-        if (nct < n) {
-            s[nct] = a[nct][nct];
-        }
-        if (m < p) {
-            s[p - 1] = 0;
-        }
-        if (nrt + 1 < p) {
-            e[nrt] = a[nrt][p - 1];
-        }
-        e[p - 1] = 0;
-
-        if (wantu) {
-            for (j = nct; j < nu; j++) {
-                for (i = 0; i < m; i++) {
-                    U[i][j] = 0;
-                }
-                U[j][j] = 1;
-            }
-            for (k = nct - 1; k >= 0; k--) {
-                if (s[k] !== 0) {
-                    for (j = k + 1; j < nu; j++) {
-                        t = 0;
-                        for (i = k; i < m; i++) {
-                            t += U[i][k] * U[i][j];
-                        }
-                        t = -t / U[k][k];
-                        for (i = k; i < m; i++) {
-                            U[i][j] += t * U[i][k];
-                        }
-                    }
-                    for (i = k; i < m; i++) {
-                        U[i][k] = -U[i][k];
-                    }
-                    U[k][k] = 1 + U[k][k];
-                    for (i = 0; i < k - 1; i++) {
-                        U[i][k] = 0;
-                    }
-                } else {
-                    for (i = 0; i < m; i++) {
-                        U[i][k] = 0;
-                    }
-                    U[k][k] = 1;
-                }
-            }
-        }
-
-        if (wantv) {
-            for (k = n - 1; k >= 0; k--) {
-                if (k < nrt && e[k] !== 0) {
-                    for (j = k + 1; j < n; j++) {
-                        t = 0;
-                        for (i = k + 1; i < n; i++) {
-                            t += V[i][k] * V[i][j];
-                        }
-                        t = -t / V[k + 1][k];
-                        for (i = k + 1; i < n; i++) {
-                            V[i][j] += t * V[i][k];
-                        }
-                    }
-                }
-                for (i = 0; i < n; i++) {
-                    V[i][k] = 0;
-                }
-                V[k][k] = 1;
-            }
-        }
-
-        var pp = p - 1;
-        var iter = 0;
-        var eps = Number.EPSILON;
-        while (p > 0) {
-            for (k = p - 2; k >= -1; k--) {
-                if (k === -1) {
-                    break;
-                }
-                if (Math.abs(e[k]) <= eps * (Math.abs(s[k]) + Math.abs(s[k + 1]))) {
-                    e[k] = 0;
-                    break;
-                }
-            }
-            if (k === p - 2) {
-                kase = 4;
-            } else {
-                for (ks = p - 1; ks >= k; ks--) {
-                    if (ks === k) {
-                        break;
-                    }
-                    t = (ks !== p ? Math.abs(e[ks]) : 0) + (ks !== k + 1 ? Math.abs(e[ks - 1]) : 0);
-                    if (Math.abs(s[ks]) <= eps * t) {
-                        s[ks] = 0;
-                        break;
-                    }
-                }
-                if (ks === k) {
-                    kase = 3;
-                } else if (ks === p - 1) {
-                    kase = 1;
-                } else {
-                    kase = 2;
-                    k = ks;
-                }
-            }
-
-            k++;
-
-            switch (kase) {
-                case 1:
-                    {
-                        f = e[p - 2];
-                        e[p - 2] = 0;
-                        for (j = p - 2; j >= k; j--) {
-                            t = (0, _util.hypotenuse)(s[j], f);
-                            cs = s[j] / t;
-                            sn = f / t;
-                            s[j] = t;
-                            if (j !== k) {
-                                f = -sn * e[j - 1];
-                                e[j - 1] = cs * e[j - 1];
-                            }
-                            if (wantv) {
-                                for (i = 0; i < n; i++) {
-                                    t = cs * V[i][j] + sn * V[i][p - 1];
-                                    V[i][p - 1] = -sn * V[i][j] + cs * V[i][p - 1];
-                                    V[i][j] = t;
-                                }
-                            }
-                        }
-                        break;
-                    }
-                case 2:
-                    {
-                        f = e[k - 1];
-                        e[k - 1] = 0;
-                        for (j = k; j < p; j++) {
-                            t = (0, _util.hypotenuse)(s[j], f);
-                            cs = s[j] / t;
-                            sn = f / t;
-                            s[j] = t;
-                            f = -sn * e[j];
-                            e[j] = cs * e[j];
-                            if (wantu) {
-                                for (i = 0; i < m; i++) {
-                                    t = cs * U[i][j] + sn * U[i][k - 1];
-                                    U[i][k - 1] = -sn * U[i][j] + cs * U[i][k - 1];
-                                    U[i][j] = t;
-                                }
-                            }
-                        }
-                        break;
-                    }
-                case 3:
-                    {
-                        scale = Math.max(Math.abs(s[p - 1]), Math.abs(s[p - 2]), Math.abs(e[p - 2]), Math.abs(s[k]), Math.abs(e[k]));
-                        sp = s[p - 1] / scale;
-                        spm1 = s[p - 2] / scale;
-                        epm1 = e[p - 2] / scale;
-                        sk = s[k] / scale;
-                        ek = e[k] / scale;
-                        b = ((spm1 + sp) * (spm1 - sp) + epm1 * epm1) / 2;
-                        c = sp * epm1 * (sp * epm1);
-                        shift = 0;
-                        if (b !== 0 || c !== 0) {
-                            shift = Math.sqrt(b * b + c);
-                            if (b < 0) {
-                                shift = -shift;
-                            }
-                            shift = c / (b + shift);
-                        }
-                        f = (sk + sp) * (sk - sp) + shift;
-                        g = sk * ek;
-                        for (j = k; j < p - 1; j++) {
-                            t = (0, _util.hypotenuse)(f, g);
-                            cs = f / t;
-                            sn = g / t;
-                            if (j !== k) {
-                                e[j - 1] = t;
-                            }
-                            f = cs * s[j] + sn * e[j];
-                            e[j] = cs * e[j] - sn * s[j];
-                            g = sn * s[j + 1];
-                            s[j + 1] = cs * s[j + 1];
-                            if (wantv) {
-                                for (i = 0; i < n; i++) {
-                                    t = cs * V[i][j] + sn * V[i][j + 1];
-                                    V[i][j + 1] = -sn * V[i][j] + cs * V[i][j + 1];
-                                    V[i][j] = t;
-                                }
-                            }
-                            t = (0, _util.hypotenuse)(f, g);
-                            cs = f / t;
-                            sn = g / t;
-                            s[j] = t;
-                            f = cs * e[j] + sn * s[j + 1];
-                            s[j + 1] = -sn * e[j] + cs * s[j + 1];
-                            g = sn * e[j + 1];
-                            e[j + 1] = cs * e[j + 1];
-                            if (wantu && j < m - 1) {
-                                for (i = 0; i < m; i++) {
-                                    t = cs * U[i][j] + sn * U[i][j + 1];
-                                    U[i][j + 1] = -sn * U[i][j] + cs * U[i][j + 1];
-                                    U[i][j] = t;
-                                }
-                            }
-                        }
-                        e[p - 2] = f;
-                        iter = iter + 1;
-                        break;
-                    }
-                case 4:
-                    {
-                        if (s[k] <= 0) {
-                            s[k] = s[k] < 0 ? -s[k] : 0;
-                            if (wantv) {
-                                for (i = 0; i <= pp; i++) {
-                                    V[i][k] = -V[i][k];
-                                }
-                            }
-                        }
-                        while (k < pp) {
-                            if (s[k] >= s[k + 1]) {
-                                break;
-                            }
-                            t = s[k];
-                            s[k] = s[k + 1];
-                            s[k + 1] = t;
-                            if (wantv && k < n - 1) {
-                                for (i = 0; i < n; i++) {
-                                    t = V[i][k + 1];
-                                    V[i][k + 1] = V[i][k];
-                                    V[i][k] = t;
-                                }
-                            }
-                            if (wantu && k < m - 1) {
-                                for (i = 0; i < m; i++) {
-                                    t = U[i][k + 1];
-                                    U[i][k + 1] = U[i][k];
-                                    U[i][k] = t;
-                                }
-                            }
-                            k++;
-                        }
-                        iter = 0;
-                        p--;
-                        break;
-                    }
-                // no default
-            }
-        }
-
-        if (swapped) {
-            var tmp = V;
-            V = U;
-            U = tmp;
-        }
-
-        this.m = m;
-        this.n = n;
-        this.s = s;
-        this.U = U;
-        this.V = V;
-    }
-
-    /**
-     * Solve a problem of least square (Ax=b) by using the SVD. Useful when A is singular. When A is not singular, it would be better to use qr.solve(value).
-     * Example : We search to approximate x, with A matrix shape m*n, x vector size n, b vector size m (m > n). We will use :
-     * var svd = SingularValueDecomposition(A);
-     * var x = svd.solve(b);
-     * @param {Matrix} value - Matrix 1D which is the vector b (in the equation Ax = b)
-     * @return {Matrix} - The vector x
-     */
-    solve(value) {
-
-        var Y = value;
-        var e = this.threshold;
-        var scols = this.s.length;
-        var Ls = _index.Matrix.zeros(scols, scols);
-        var i;
-
-        for (i = 0; i < scols; i++) {
-            if (Math.abs(this.s[i]) <= e) {
-                Ls[i][i] = 0;
-            } else {
-                Ls[i][i] = 1 / this.s[i];
-            }
-        }
-
-        var U = this.U;
-        var V = this.rightSingularVectors;
-
-        var VL = V.mmul(Ls);
-        var vrows = V.rows;
-        var urows = U.length;
-        var VLU = _index.Matrix.zeros(vrows, urows);
-        var j, k, sum;
-
-        for (i = 0; i < vrows; i++) {
-            for (j = 0; j < urows; j++) {
-                sum = 0;
-                for (k = 0; k < scols; k++) {
-                    sum += VL[i][k] * U[j][k];
-                }
-                VLU[i][j] = sum;
-            }
-        }
-
-        return VLU.mmul(Y);
-    }
-
-    /**
-     *
-     * @param {Array<number>} value
-     * @return {Matrix}
-     */
-    solveForDiagonal(value) {
-        return this.solve(_index.Matrix.diag(value));
-    }
-
-    /**
-     * Get the inverse of the matrix. We compute the inverse of a matrix using SVD when this matrix is singular or ill-conditioned. Example :
-     * var svd = SingularValueDecomposition(A);
-     * var inverseA = svd.inverse();
-     * @return {Matrix} - The approximation of the inverse of the matrix
-     */
-    inverse() {
-        var V = this.V;
-        var e = this.threshold;
-        var vrows = V.length;
-        var vcols = V[0].length;
-        var X = new _index.Matrix(vrows, this.s.length);
-        var i, j;
-
-        for (i = 0; i < vrows; i++) {
-            for (j = 0; j < vcols; j++) {
-                if (Math.abs(this.s[j]) > e) {
-                    X[i][j] = V[i][j] / this.s[j];
-                } else {
-                    X[i][j] = 0;
-                }
-            }
-        }
-
-        var U = this.U;
-
-        var urows = U.length;
-        var ucols = U[0].length;
-        var Y = new _index.Matrix(vrows, urows);
-        var k, sum;
-
-        for (i = 0; i < vrows; i++) {
-            for (j = 0; j < urows; j++) {
-                sum = 0;
-                for (k = 0; k < ucols; k++) {
-                    sum += X[i][k] * U[j][k];
-                }
-                Y[i][j] = sum;
-            }
-        }
-
-        return Y;
-    }
-
-    /**
-     *
-     * @return {number}
-     */
-    get condition() {
-        return this.s[0] / this.s[Math.min(this.m, this.n) - 1];
-    }
-
-    /**
-     *
-     * @return {number}
-     */
-    get norm2() {
-        return this.s[0];
-    }
-
-    /**
-     *
-     * @return {number}
-     */
-    get rank() {
-        var tol = Math.max(this.m, this.n) * this.s[0] * Number.EPSILON;
-        var r = 0;
-        var s = this.s;
-        for (var i = 0, ii = s.length; i < ii; i++) {
-            if (s[i] > tol) {
-                r++;
-            }
-        }
-        return r;
-    }
-
-    /**
-     *
-     * @return {Array<number>}
-     */
-    get diagonal() {
-        return this.s;
-    }
-
-    /**
-     *
-     * @return {number}
-     */
-    get threshold() {
-        return Number.EPSILON / 2 * Math.max(this.m, this.n) * this.s[0];
-    }
-
-    /**
-     *
-     * @return {Matrix}
-     */
-    get leftSingularVectors() {
-        if (!_index.Matrix.isMatrix(this.U)) {
-            this.U = new _index.Matrix(this.U);
-        }
-        return this.U;
-    }
-
-    /**
-     *
-     * @return {Matrix}
-     */
-    get rightSingularVectors() {
-        if (!_index.Matrix.isMatrix(this.V)) {
-            this.V = new _index.Matrix(this.V);
-        }
-        return this.V;
-    }
-
-    /**
-     *
-     * @return {Matrix}
-     */
-    get diagonalMatrix() {
-        return _index.Matrix.diag(this.s);
-    }
-}
-exports.default = SingularValueDecomposition;
 
 /***/ }),
 /* 11 */
@@ -4110,32 +4130,32 @@ exports.default = SingularValueDecomposition;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.hypotenuse = hypotenuse;
 exports.getFilled2DArray = getFilled2DArray;
 function hypotenuse(a, b) {
-    var r = 0;
-    if (Math.abs(a) > Math.abs(b)) {
-        r = b / a;
-        return Math.abs(a) * Math.sqrt(1 + r * r);
-    }
-    if (b !== 0) {
-        r = a / b;
-        return Math.abs(b) * Math.sqrt(1 + r * r);
-    }
-    return 0;
+  var r = 0;
+  if (Math.abs(a) > Math.abs(b)) {
+    r = b / a;
+    return Math.abs(a) * Math.sqrt(1 + r * r);
+  }
+  if (b !== 0) {
+    r = a / b;
+    return Math.abs(b) * Math.sqrt(1 + r * r);
+  }
+  return 0;
 }
 
 function getFilled2DArray(rows, columns, value) {
-    var array = new Array(rows);
-    for (var i = 0; i < rows; i++) {
-        array[i] = new Array(columns);
-        for (var j = 0; j < columns; j++) {
-            array[i][j] = value;
-        }
+  var array = new Array(rows);
+  for (var i = 0; i < rows; i++) {
+    array[i] = new Array(columns);
+    for (var j = 0; j < columns; j++) {
+      array[i][j] = value;
     }
-    return array;
+  }
+  return array;
 }
 
 /***/ }),
@@ -4177,7 +4197,7 @@ function mean(input) {
 "use strict";
 
 
-var Heap = __webpack_require__(81);
+var Heap = __webpack_require__(83);
 
 function Cluster() {
     this.children = [];
@@ -4266,16 +4286,16 @@ module.exports = Cluster;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var GaussianKernel = __webpack_require__(95);
-var PolynomialKernel = __webpack_require__(96);
-var ANOVAKernel = __webpack_require__(97);
-var CauchyKernel = __webpack_require__(98);
-var ExponentialKernel = __webpack_require__(99);
-var HistogramKernel = __webpack_require__(100);
-var LaplacianKernel = __webpack_require__(101);
-var MultiquadraticKernel = __webpack_require__(102);
-var RationalKernel = __webpack_require__(103);
-var SigmoidKernel = __webpack_require__(104);
+var GaussianKernel = __webpack_require__(97);
+var PolynomialKernel = __webpack_require__(98);
+var ANOVAKernel = __webpack_require__(99);
+var CauchyKernel = __webpack_require__(100);
+var ExponentialKernel = __webpack_require__(101);
+var HistogramKernel = __webpack_require__(102);
+var LaplacianKernel = __webpack_require__(103);
+var MultiquadraticKernel = __webpack_require__(104);
+var RationalKernel = __webpack_require__(105);
+var SigmoidKernel = __webpack_require__(106);
 
 var kernelType = {
     gaussian: GaussianKernel,
@@ -4452,6 +4472,8 @@ function regress(slr, x, y) {
 
 var hasOwn = Object.prototype.hasOwnProperty;
 var toStr = Object.prototype.toString;
+var defineProperty = Object.defineProperty;
+var gOPD = Object.getOwnPropertyDescriptor;
 
 var isArray = function isArray(arr) {
 	if (typeof Array.isArray === 'function') {
@@ -4481,6 +4503,35 @@ var isPlainObject = function isPlainObject(obj) {
 	return typeof key === 'undefined' || hasOwn.call(obj, key);
 };
 
+// If name is '__proto__', and Object.defineProperty is available, define __proto__ as an own property on target
+var setProperty = function setProperty(target, options) {
+	if (defineProperty && options.name === '__proto__') {
+		defineProperty(target, options.name, {
+			enumerable: true,
+			configurable: true,
+			value: options.newValue,
+			writable: true
+		});
+	} else {
+		target[options.name] = options.newValue;
+	}
+};
+
+// Return undefined instead of __proto__ if '__proto__' is not an own property
+var getProperty = function getProperty(obj, name) {
+	if (name === '__proto__') {
+		if (!hasOwn.call(obj, name)) {
+			return void 0;
+		} else if (gOPD) {
+			// In early versions of node, obj['__proto__'] is buggy when obj has
+			// __proto__ as an own property. Object.getOwnPropertyDescriptor() works.
+			return gOPD(obj, name).value;
+		}
+	}
+
+	return obj[name];
+};
+
 module.exports = function extend() {
 	var options, name, src, copy, copyIsArray, clone;
 	var target = arguments[0];
@@ -4505,8 +4556,8 @@ module.exports = function extend() {
 		if (options != null) {
 			// Extend the base object
 			for (name in options) {
-				src = target[name];
-				copy = options[name];
+				src = getProperty(target, name);
+				copy = getProperty(options, name);
 
 				// Prevent never-ending loop
 				if (target !== copy) {
@@ -4520,11 +4571,11 @@ module.exports = function extend() {
 						}
 
 						// Never move original objects, clone them
-						target[name] = extend(deep, clone, copy);
+						setProperty(target, { name: name, newValue: extend(deep, clone, copy) });
 
 						// Don't bring in undefined values
 					} else if (typeof copy !== 'undefined') {
-						target[name] = copy;
+						setProperty(target, { name: name, newValue: copy });
 					}
 				}
 			}
@@ -4546,7 +4597,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _DecisionTreeClassifier = __webpack_require__(51);
+var _DecisionTreeClassifier = __webpack_require__(54);
 
 Object.defineProperty(exports, 'DecisionTreeClassifier', {
   enumerable: true,
@@ -4555,7 +4606,7 @@ Object.defineProperty(exports, 'DecisionTreeClassifier', {
   }
 });
 
-var _DecisionTreeRegression = __webpack_require__(70);
+var _DecisionTreeRegression = __webpack_require__(72);
 
 Object.defineProperty(exports, 'DecisionTreeRegression', {
   enumerable: true,
@@ -4574,58 +4625,27 @@ Object.defineProperty(exports, 'DecisionTreeRegression', {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
-var _abstractMatrix = __webpack_require__(7);
-
-var _abstractMatrix2 = _interopRequireDefault(_abstractMatrix);
-
-var _matrix = __webpack_require__(6);
-
-var _matrix2 = _interopRequireDefault(_matrix);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-class WrapperMatrix1D extends (0, _abstractMatrix2.default)() {
-    /**
-     * @class WrapperMatrix1D
-     * @param {Array<number>} data
-     * @param {object} [options]
-     * @param {object} [options.rows = 1]
-     */
-    constructor(data, options = {}) {
-        var _options$rows = options.rows,
-            rows = _options$rows === undefined ? 1 : _options$rows;
-
-
-        if (data.length % rows !== 0) {
-            throw new Error('the data length is not divisible by the number of rows');
-        }
-        super();
-        this.rows = rows;
-        this.columns = data.length / rows;
-        this.data = data;
+exports.default = max;
+/**
+ * Computes the maximum of the given values
+ * @param {Array<number>} input
+ * @return {number}
+ */
+function max(input) {
+    if (!Array.isArray(input)) {
+        throw new Error('input must be an array');
     }
 
-    set(rowIndex, columnIndex, value) {
-        var index = this._calculateIndex(rowIndex, columnIndex);
-        this.data[index] = value;
-        return this;
+    if (input.length === 0) {
+        throw new Error('input must not be empty');
     }
 
-    get(rowIndex, columnIndex) {
-        var index = this._calculateIndex(rowIndex, columnIndex);
-        return this.data[index];
+    var max = input[0];
+    for (var i = 1; i < input.length; i++) {
+        if (input[i] > max) max = input[i];
     }
-
-    _calculateIndex(row, column) {
-        return row * this.columns + column;
-    }
-
-    static get [Symbol.species]() {
-        return _matrix2.default;
-    }
+    return max;
 }
-exports.default = WrapperMatrix1D;
 
 /***/ }),
 /* 19 */
@@ -4635,45 +4655,60 @@ exports.default = WrapperMatrix1D;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _abstractMatrix = __webpack_require__(7);
 
 var _abstractMatrix2 = _interopRequireDefault(_abstractMatrix);
 
-var _matrix = __webpack_require__(6);
+var _matrix = __webpack_require__(5);
 
 var _matrix2 = _interopRequireDefault(_matrix);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class WrapperMatrix2D extends (0, _abstractMatrix2.default)() {
-    /**
-     * @class WrapperMatrix2D
-     * @param {Array<Array<number>>} data
-     */
-    constructor(data) {
-        super();
-        this.data = data;
-        this.rows = data.length;
-        this.columns = data[0].length;
-    }
+class WrapperMatrix1D extends (0, _abstractMatrix2.default)() {
+  /**
+   * @class WrapperMatrix1D
+   * @param {Array<number>} data
+   * @param {object} [options]
+   * @param {object} [options.rows = 1]
+   */
+  constructor(data, options = {}) {
+    var _options$rows = options.rows,
+        rows = _options$rows === undefined ? 1 : _options$rows;
 
-    set(rowIndex, columnIndex, value) {
-        this.data[rowIndex][columnIndex] = value;
-        return this;
-    }
 
-    get(rowIndex, columnIndex) {
-        return this.data[rowIndex][columnIndex];
+    if (data.length % rows !== 0) {
+      throw new Error('the data length is not divisible by the number of rows');
     }
+    super();
+    this.rows = rows;
+    this.columns = data.length / rows;
+    this.data = data;
+  }
 
-    static get [Symbol.species]() {
-        return _matrix2.default;
-    }
+  set(rowIndex, columnIndex, value) {
+    var index = this._calculateIndex(rowIndex, columnIndex);
+    this.data[index] = value;
+    return this;
+  }
+
+  get(rowIndex, columnIndex) {
+    var index = this._calculateIndex(rowIndex, columnIndex);
+    return this.data[index];
+  }
+
+  _calculateIndex(row, column) {
+    return row * this.columns + column;
+  }
+
+  static get [Symbol.species]() {
+    return _matrix2.default;
+  }
 }
-exports.default = WrapperMatrix2D;
+exports.default = WrapperMatrix1D;
 
 /***/ }),
 /* 20 */
@@ -4683,7 +4718,55 @@ exports.default = WrapperMatrix2D;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
+});
+
+var _abstractMatrix = __webpack_require__(7);
+
+var _abstractMatrix2 = _interopRequireDefault(_abstractMatrix);
+
+var _matrix = __webpack_require__(5);
+
+var _matrix2 = _interopRequireDefault(_matrix);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class WrapperMatrix2D extends (0, _abstractMatrix2.default)() {
+  /**
+   * @class WrapperMatrix2D
+   * @param {Array<Array<number>>} data
+   */
+  constructor(data) {
+    super();
+    this.data = data;
+    this.rows = data.length;
+    this.columns = data[0].length;
+  }
+
+  set(rowIndex, columnIndex, value) {
+    this.data[rowIndex][columnIndex] = value;
+    return this;
+  }
+
+  get(rowIndex, columnIndex) {
+    return this.data[rowIndex][columnIndex];
+  }
+
+  static get [Symbol.species]() {
+    return _matrix2.default;
+  }
+}
+exports.default = WrapperMatrix2D;
+
+/***/ }),
+/* 21 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
 
 var _index = __webpack_require__(0);
@@ -4696,173 +4779,173 @@ var _util = __webpack_require__(11);
  * @param {Matrix} value
  */
 class QrDecomposition {
-    constructor(value) {
-        value = _index.WrapperMatrix2D.checkMatrix(value);
+  constructor(value) {
+    value = _index.WrapperMatrix2D.checkMatrix(value);
 
-        var qr = value.clone();
-        var m = value.rows;
-        var n = value.columns;
-        var rdiag = new Array(n);
-        var i, j, k, s;
+    var qr = value.clone();
+    var m = value.rows;
+    var n = value.columns;
+    var rdiag = new Array(n);
+    var i, j, k, s;
 
-        for (k = 0; k < n; k++) {
-            var nrm = 0;
-            for (i = k; i < m; i++) {
-                nrm = (0, _util.hypotenuse)(nrm, qr.get(i, k));
-            }
-            if (nrm !== 0) {
-                if (qr.get(k, k) < 0) {
-                    nrm = -nrm;
-                }
-                for (i = k; i < m; i++) {
-                    qr.set(i, k, qr.get(i, k) / nrm);
-                }
-                qr.set(k, k, qr.get(k, k) + 1);
-                for (j = k + 1; j < n; j++) {
-                    s = 0;
-                    for (i = k; i < m; i++) {
-                        s += qr.get(i, k) * qr.get(i, j);
-                    }
-                    s = -s / qr.get(k, k);
-                    for (i = k; i < m; i++) {
-                        qr.set(i, j, qr.get(i, j) + s * qr.get(i, k));
-                    }
-                }
-            }
-            rdiag[k] = -nrm;
+    for (k = 0; k < n; k++) {
+      var nrm = 0;
+      for (i = k; i < m; i++) {
+        nrm = (0, _util.hypotenuse)(nrm, qr.get(i, k));
+      }
+      if (nrm !== 0) {
+        if (qr.get(k, k) < 0) {
+          nrm = -nrm;
         }
-
-        this.QR = qr;
-        this.Rdiag = rdiag;
+        for (i = k; i < m; i++) {
+          qr.set(i, k, qr.get(i, k) / nrm);
+        }
+        qr.set(k, k, qr.get(k, k) + 1);
+        for (j = k + 1; j < n; j++) {
+          s = 0;
+          for (i = k; i < m; i++) {
+            s += qr.get(i, k) * qr.get(i, j);
+          }
+          s = -s / qr.get(k, k);
+          for (i = k; i < m; i++) {
+            qr.set(i, j, qr.get(i, j) + s * qr.get(i, k));
+          }
+        }
+      }
+      rdiag[k] = -nrm;
     }
 
-    /**
-     * Solve a problem of least square (Ax=b) by using the QR decomposition. Useful when A is rectangular, but not working when A is singular.
-     * Example : We search to approximate x, with A matrix shape m*n, x vector size n, b vector size m (m > n). We will use :
-     * var qr = QrDecomposition(A);
-     * var x = qr.solve(b);
-     * @param {Matrix} value - Matrix 1D which is the vector b (in the equation Ax = b)
-     * @return {Matrix} - The vector x
-     */
-    solve(value) {
-        value = _index.Matrix.checkMatrix(value);
+    this.QR = qr;
+    this.Rdiag = rdiag;
+  }
 
-        var qr = this.QR;
-        var m = qr.rows;
+  /**
+   * Solve a problem of least square (Ax=b) by using the QR decomposition. Useful when A is rectangular, but not working when A is singular.
+   * Example : We search to approximate x, with A matrix shape m*n, x vector size n, b vector size m (m > n). We will use :
+   * var qr = QrDecomposition(A);
+   * var x = qr.solve(b);
+   * @param {Matrix} value - Matrix 1D which is the vector b (in the equation Ax = b)
+   * @return {Matrix} - The vector x
+   */
+  solve(value) {
+    value = _index.Matrix.checkMatrix(value);
 
-        if (value.rows !== m) {
-            throw new Error('Matrix row dimensions must agree');
-        }
-        if (!this.isFullRank()) {
-            throw new Error('Matrix is rank deficient');
-        }
+    var qr = this.QR;
+    var m = qr.rows;
 
-        var count = value.columns;
-        var X = value.clone();
-        var n = qr.columns;
-        var i, j, k, s;
-
-        for (k = 0; k < n; k++) {
-            for (j = 0; j < count; j++) {
-                s = 0;
-                for (i = k; i < m; i++) {
-                    s += qr[i][k] * X[i][j];
-                }
-                s = -s / qr[k][k];
-                for (i = k; i < m; i++) {
-                    X[i][j] += s * qr[i][k];
-                }
-            }
-        }
-        for (k = n - 1; k >= 0; k--) {
-            for (j = 0; j < count; j++) {
-                X[k][j] /= this.Rdiag[k];
-            }
-            for (i = 0; i < k; i++) {
-                for (j = 0; j < count; j++) {
-                    X[i][j] -= X[k][j] * qr[i][k];
-                }
-            }
-        }
-
-        return X.subMatrix(0, n - 1, 0, count - 1);
+    if (value.rows !== m) {
+      throw new Error('Matrix row dimensions must agree');
+    }
+    if (!this.isFullRank()) {
+      throw new Error('Matrix is rank deficient');
     }
 
-    /**
-     *
-     * @return {boolean}
-     */
-    isFullRank() {
-        var columns = this.QR.columns;
-        for (var i = 0; i < columns; i++) {
-            if (this.Rdiag[i] === 0) {
-                return false;
-            }
+    var count = value.columns;
+    var X = value.clone();
+    var n = qr.columns;
+    var i, j, k, s;
+
+    for (k = 0; k < n; k++) {
+      for (j = 0; j < count; j++) {
+        s = 0;
+        for (i = k; i < m; i++) {
+          s += qr[i][k] * X[i][j];
         }
-        return true;
+        s = -s / qr[k][k];
+        for (i = k; i < m; i++) {
+          X[i][j] += s * qr[i][k];
+        }
+      }
+    }
+    for (k = n - 1; k >= 0; k--) {
+      for (j = 0; j < count; j++) {
+        X[k][j] /= this.Rdiag[k];
+      }
+      for (i = 0; i < k; i++) {
+        for (j = 0; j < count; j++) {
+          X[i][j] -= X[k][j] * qr[i][k];
+        }
+      }
     }
 
-    /**
-     *
-     * @return {Matrix}
-     */
-    get upperTriangularMatrix() {
-        var qr = this.QR;
-        var n = qr.columns;
-        var X = new _index.Matrix(n, n);
-        var i, j;
-        for (i = 0; i < n; i++) {
-            for (j = 0; j < n; j++) {
-                if (i < j) {
-                    X[i][j] = qr[i][j];
-                } else if (i === j) {
-                    X[i][j] = this.Rdiag[i];
-                } else {
-                    X[i][j] = 0;
-                }
-            }
-        }
-        return X;
+    return X.subMatrix(0, n - 1, 0, count - 1);
+  }
+
+  /**
+   *
+   * @return {boolean}
+   */
+  isFullRank() {
+    var columns = this.QR.columns;
+    for (var i = 0; i < columns; i++) {
+      if (this.Rdiag[i] === 0) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    /**
-     *
-     * @return {Matrix}
-     */
-    get orthogonalMatrix() {
-        var qr = this.QR;
-        var rows = qr.rows;
-        var columns = qr.columns;
-        var X = new _index.Matrix(rows, columns);
-        var i, j, k, s;
-
-        for (k = columns - 1; k >= 0; k--) {
-            for (i = 0; i < rows; i++) {
-                X[i][k] = 0;
-            }
-            X[k][k] = 1;
-            for (j = k; j < columns; j++) {
-                if (qr[k][k] !== 0) {
-                    s = 0;
-                    for (i = k; i < rows; i++) {
-                        s += qr[i][k] * X[i][j];
-                    }
-
-                    s = -s / qr[k][k];
-
-                    for (i = k; i < rows; i++) {
-                        X[i][j] += s * qr[i][k];
-                    }
-                }
-            }
+  /**
+   *
+   * @return {Matrix}
+   */
+  get upperTriangularMatrix() {
+    var qr = this.QR;
+    var n = qr.columns;
+    var X = new _index.Matrix(n, n);
+    var i, j;
+    for (i = 0; i < n; i++) {
+      for (j = 0; j < n; j++) {
+        if (i < j) {
+          X[i][j] = qr[i][j];
+        } else if (i === j) {
+          X[i][j] = this.Rdiag[i];
+        } else {
+          X[i][j] = 0;
         }
-        return X;
+      }
     }
+    return X;
+  }
+
+  /**
+   *
+   * @return {Matrix}
+   */
+  get orthogonalMatrix() {
+    var qr = this.QR;
+    var rows = qr.rows;
+    var columns = qr.columns;
+    var X = new _index.Matrix(rows, columns);
+    var i, j, k, s;
+
+    for (k = columns - 1; k >= 0; k--) {
+      for (i = 0; i < rows; i++) {
+        X[i][k] = 0;
+      }
+      X[k][k] = 1;
+      for (j = k; j < columns; j++) {
+        if (qr[k][k] !== 0) {
+          s = 0;
+          for (i = k; i < rows; i++) {
+            s += qr[i][k] * X[i][j];
+          }
+
+          s = -s / qr[k][k];
+
+          for (i = k; i < rows; i++) {
+            X[i][j] += s * qr[i][k];
+          }
+        }
+      }
+    }
+    return X;
+  }
 }
 exports.default = QrDecomposition;
 
 /***/ }),
-/* 21 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4876,7 +4959,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _utils = __webpack_require__(69);
+var _utils = __webpack_require__(71);
 
 var Utils = _interopRequireWildcard(_utils);
 
@@ -5110,24 +5193,24 @@ class TreeNode {
 exports.default = TreeNode;
 
 /***/ }),
-/* 22 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.RandomForestBase = undefined;
 
 var _mlCart = __webpack_require__(17);
 
-var _utils = __webpack_require__(73);
+var _mlMatrix = __webpack_require__(0);
+
+var _utils = __webpack_require__(75);
 
 var Utils = _interopRequireWildcard(_utils);
-
-var _mlMatrix = __webpack_require__(0);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -5135,150 +5218,149 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
  * @class RandomForestBase
  */
 class RandomForestBase {
+  /**
+   * Create a new base random forest for a classifier or regression model.
+   * @constructor
+   * @param {object} options
+   * @param {number|String} [options.maxFeatures] - the number of features used on each estimator.
+   *        * if is an integer it selects maxFeatures elements over the sample features.
+   *        * if is a float between (0, 1), it takes the percentage of features.
+   * @param {boolean} [options.replacement] - use replacement over the sample features.
+   * @param {number} [options.seed] - seed for feature and samples selection, must be a 32-bit integer.
+   * @param {number} [options.nEstimators] - number of estimator to use.
+   * @param {object} [options.treeOptions] - options for the tree classifier, see [ml-cart]{@link https://mljs.github.io/decision-tree-cart/}
+   * @param {boolean} [options.isClassifier] - boolean to check if is a classifier or regression model (used by subclasses).
+   * @param {boolean} [options.useSampleBagging] - use bagging over training samples.
+   * @param {object} model - for load purposes.
+   */
+  constructor(options, model) {
+    if (options === true) {
+      this.replacement = model.replacement;
+      this.maxFeatures = model.maxFeatures;
+      this.nEstimators = model.nEstimators;
+      this.treeOptions = model.treeOptions;
+      this.isClassifier = model.isClassifier;
+      this.seed = model.seed;
+      this.n = model.n;
+      this.indexes = model.indexes;
+      this.useSampleBagging = model.useSampleBagging;
 
-    /**
-     * Create a new base random forest for a classifier or regression model.
-     * @constructor
-     * @param {object} options
-     * @param {number|String} [options.maxFeatures] - the number of features used on each estimator.
-     *        * if is an integer it selects maxFeatures elements over the sample features.
-     *        * if is a float between (0, 1), it takes the percentage of features.
-     * @param {boolean} [options.replacement] - use replacement over the sample features.
-     * @param {number} [options.seed] - seed for feature and samples selection, must be a 32-bit integer.
-     * @param {number} [options.nEstimators] - number of estimator to use.
-     * @param {object} [options.treeOptions] - options for the tree classifier, see [ml-cart]{@link https://mljs.github.io/decision-tree-cart/}
-     * @param {boolean} [options.isClassifier] - boolean to check if is a classifier or regression model (used by subclasses).
-     * @param {boolean} [options.useSampleBagging] - use bagging over training samples.
-     * @param {object} model - for load purposes.
-     */
-    constructor(options, model) {
-        if (options === true) {
-            this.replacement = model.replacement;
-            this.maxFeatures = model.maxFeatures;
-            this.nEstimators = model.nEstimators;
-            this.treeOptions = model.treeOptions;
-            this.isClassifier = model.isClassifier;
-            this.seed = model.seed;
-            this.n = model.n;
-            this.indexes = model.indexes;
-            this.useSampleBagging = model.useSampleBagging;
+      var Estimator = this.isClassifier ? _mlCart.DecisionTreeClassifier : _mlCart.DecisionTreeRegression;
+      this.estimators = model.estimators.map(est => Estimator.load(est));
+    } else {
+      this.replacement = options.replacement;
+      this.maxFeatures = options.maxFeatures;
+      this.nEstimators = options.nEstimators;
+      this.treeOptions = options.treeOptions;
+      this.isClassifier = options.isClassifier;
+      this.seed = options.seed;
+      this.useSampleBagging = options.useSampleBagging;
+    }
+  }
 
-            var Estimator = this.isClassifier ? _mlCart.DecisionTreeClassifier : _mlCart.DecisionTreeRegression;
-            this.estimators = model.estimators.map(est => Estimator.load(est));
-        } else {
-            this.replacement = options.replacement;
-            this.maxFeatures = options.maxFeatures;
-            this.nEstimators = options.nEstimators;
-            this.treeOptions = options.treeOptions;
-            this.isClassifier = options.isClassifier;
-            this.seed = options.seed;
-            this.useSampleBagging = options.useSampleBagging;
-        }
+  /**
+   * Train the decision tree with the given training set and labels.
+   * @param {Matrix|Array} trainingSet
+   * @param {Array} trainingValues
+   */
+  train(trainingSet, trainingValues) {
+    trainingSet = _mlMatrix.Matrix.checkMatrix(trainingSet);
+
+    this.maxFeatures = this.maxFeatures || trainingSet.columns;
+
+    if (Utils.checkFloat(this.maxFeatures)) {
+      this.n = Math.floor(trainingSet.columns * this.maxFeatures);
+    } else if (Number.isInteger(this.maxFeatures)) {
+      if (this.maxFeatures > trainingSet.columns) {
+        throw new RangeError(`The maxFeatures parameter should be less than ${trainingSet.columns}`);
+      } else {
+        this.n = this.maxFeatures;
+      }
+    } else {
+      throw new RangeError(`Cannot process the maxFeatures parameter ${this.maxFeatures}`);
     }
 
-    /**
-     * Train the decision tree with the given training set and labels.
-     * @param {Matrix|Array} trainingSet
-     * @param {Array} trainingValues
-     */
-    train(trainingSet, trainingValues) {
-        trainingSet = _mlMatrix.Matrix.checkMatrix(trainingSet);
-
-        this.maxFeatures = this.maxFeatures || trainingSet.columns;
-
-        if (Utils.checkFloat(this.maxFeatures)) {
-            this.n = Math.floor(trainingSet.columns * this.maxFeatures);
-        } else if (Number.isInteger(this.maxFeatures)) {
-            if (this.maxFeatures > trainingSet.columns) {
-                throw new RangeError('The maxFeatures parameter should be less than ' + trainingSet.columns);
-            } else {
-                this.n = this.maxFeatures;
-            }
-        } else {
-            throw new RangeError('Cannot process the maxFeatures parameter ' + this.maxFeatures);
-        }
-
-        if (this.isClassifier) {
-            var Estimator = _mlCart.DecisionTreeClassifier;
-        } else {
-            Estimator = _mlCart.DecisionTreeRegression;
-        }
-
-        this.estimators = new Array(this.nEstimators);
-        this.indexes = new Array(this.nEstimators);
-
-        for (var i = 0; i < this.nEstimators; ++i) {
-            var res = this.useSampleBagging ? Utils.examplesBaggingWithReplacement(trainingSet, trainingValues, this.seed) : { X: trainingSet, y: trainingValues };
-            var X = res.X;
-            var y = res.y;
-
-            res = Utils.featureBagging(X, this.n, this.replacement, this.seed);
-            X = res.X;
-
-            this.indexes[i] = res.usedIndex;
-            this.estimators[i] = new Estimator(this.treeOptions);
-            this.estimators[i].train(X, y);
-        }
+    if (this.isClassifier) {
+      var Estimator = _mlCart.DecisionTreeClassifier;
+    } else {
+      Estimator = _mlCart.DecisionTreeRegression;
     }
 
-    /**
-     * Method that returns the way the algorithm generates the predictions, for example, in classification
-     * you can return the mode of all predictions retrieved by the trees, or in case of regression you can
-     * use the mean or the median.
-     * @abstract
-     * @param {Array} values - predictions of the estimators.
-     * @return {number} prediction.
-     */
-    // eslint-disable-next-line no-unused-vars
-    selection(values) {
-        throw new Error('Abstract method \'selection\' not implemented!');
+    this.estimators = new Array(this.nEstimators);
+    this.indexes = new Array(this.nEstimators);
+
+    for (var i = 0; i < this.nEstimators; ++i) {
+      var res = this.useSampleBagging ? Utils.examplesBaggingWithReplacement(trainingSet, trainingValues, this.seed) : { X: trainingSet, y: trainingValues };
+      var X = res.X;
+      var y = res.y;
+
+      res = Utils.featureBagging(X, this.n, this.replacement, this.seed);
+      X = res.X;
+
+      this.indexes[i] = res.usedIndex;
+      this.estimators[i] = new Estimator(this.treeOptions);
+      this.estimators[i].train(X, y);
+    }
+  }
+
+  /**
+   * Method that returns the way the algorithm generates the predictions, for example, in classification
+   * you can return the mode of all predictions retrieved by the trees, or in case of regression you can
+   * use the mean or the median.
+   * @abstract
+   * @param {Array} values - predictions of the estimators.
+   * @return {number} prediction.
+   */
+  // eslint-disable-next-line no-unused-vars
+  selection(values) {
+    throw new Error('Abstract method \'selection\' not implemented!');
+  }
+
+  /**
+   * Predicts the output given the matrix to predict.
+   * @param {Matrix|Array} toPredict
+   * @return {Array} predictions
+   */
+  predict(toPredict) {
+    var predictionValues = new Array(this.nEstimators);
+    toPredict = _mlMatrix.Matrix.checkMatrix(toPredict);
+    for (var i = 0; i < this.nEstimators; ++i) {
+      var X = toPredict.columnSelectionView(this.indexes[i]); // get features for estimator
+      predictionValues[i] = this.estimators[i].predict(X);
     }
 
-    /**
-     * Predicts the output given the matrix to predict.
-     * @param {Matrix|Array} toPredict
-     * @return {Array} predictions
-     */
-    predict(toPredict) {
-        var predictionValues = new Array(this.nEstimators);
-        toPredict = _mlMatrix.Matrix.checkMatrix(toPredict);
-        for (var i = 0; i < this.nEstimators; ++i) {
-            var X = toPredict.columnSelectionView(this.indexes[i]); // get features for estimator
-            predictionValues[i] = this.estimators[i].predict(X);
-        }
-
-        predictionValues = new _mlMatrix.WrapperMatrix2D(predictionValues).transposeView();
-        var predictions = new Array(predictionValues.rows);
-        for (i = 0; i < predictionValues.rows; ++i) {
-            predictions[i] = this.selection(predictionValues.getRow(i));
-        }
-
-        return predictions;
+    predictionValues = new _mlMatrix.WrapperMatrix2D(predictionValues).transposeView();
+    var predictions = new Array(predictionValues.rows);
+    for (i = 0; i < predictionValues.rows; ++i) {
+      predictions[i] = this.selection(predictionValues.getRow(i));
     }
 
-    /**
-     * Export the current model to JSON.
-     * @return {object} - Current model.
-     */
-    toJSON() {
-        return {
-            indexes: this.indexes,
-            n: this.n,
-            replacement: this.replacement,
-            maxFeatures: this.maxFeatures,
-            nEstimators: this.nEstimators,
-            treeOptions: this.treeOptions,
-            isClassifier: this.isClassifier,
-            seed: this.seed,
-            estimators: this.estimators,
-            useSampleBagging: this.useSampleBagging
-        };
-    }
+    return predictions;
+  }
+
+  /**
+   * Export the current model to JSON.
+   * @return {object} - Current model.
+   */
+  toJSON() {
+    return {
+      indexes: this.indexes,
+      n: this.n,
+      replacement: this.replacement,
+      maxFeatures: this.maxFeatures,
+      nEstimators: this.nEstimators,
+      treeOptions: this.treeOptions,
+      isClassifier: this.isClassifier,
+      seed: this.seed,
+      estimators: this.estimators.map(est => est.toJSON()),
+      useSampleBagging: this.useSampleBagging
+    };
+  }
 }
 exports.RandomForestBase = RandomForestBase;
 
 /***/ }),
-/* 23 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5768,14 +5850,14 @@ exports.cumulativeSum = function cumulativeSum(array) {
 };
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var Cluster = __webpack_require__(13);
-var util = __webpack_require__(83);
+var util = __webpack_require__(85);
 
 function ClusterLeaf(index) {
     Cluster.call(this);
@@ -5789,7 +5871,7 @@ util.inherits(ClusterLeaf, Cluster);
 module.exports = ClusterLeaf;
 
 /***/ }),
-/* 25 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5827,119 +5909,329 @@ function distanceMatrix(data, distanceFn) {
 module.exports = distanceMatrix;
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var nearestVector = __webpack_require__(90);
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.calculateDistanceMatrix = calculateDistanceMatrix;
+exports.updateClusterID = updateClusterID;
+exports.updateCenters = updateCenters;
+exports.hasConverged = hasConverged;
+
+var _mlNearestVector = __webpack_require__(92);
+
+var _mlNearestVector2 = _interopRequireDefault(_mlNearestVector);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * Calculates the distance matrix for a given array of points
  * @ignore
- * @param {Array<Array<Number>>} data - the [x,y,z,...] points to cluster
- * @param {Function} distance - Distance function to use between the points
- * @return {Array<Array<Number>>} - matrix with the distance values
+ * @param {Array<Array<number>>} data - the [x,y,z,...] points to cluster
+ * @param {function} distance - Distance function to use between the points
+ * @return {Array<Array<number>>} - matrix with the distance values
  */
 function calculateDistanceMatrix(data, distance) {
-    var distanceMatrix = new Array(data.length);
-    for (var i = 0; i < data.length; ++i) {
-        for (var j = i; j < data.length; ++j) {
-            if (!distanceMatrix[i]) {
-                distanceMatrix[i] = new Array(data.length);
-            }
-            if (!distanceMatrix[j]) {
-                distanceMatrix[j] = new Array(data.length);
-            }
-            var dist = distance(data[i], data[j]);
-            distanceMatrix[i][j] = dist;
-            distanceMatrix[j][i] = dist;
-        }
+  var distanceMatrix = new Array(data.length);
+  for (var i = 0; i < data.length; ++i) {
+    for (var j = i; j < data.length; ++j) {
+      if (!distanceMatrix[i]) {
+        distanceMatrix[i] = new Array(data.length);
+      }
+      if (!distanceMatrix[j]) {
+        distanceMatrix[j] = new Array(data.length);
+      }
+      var dist = distance(data[i], data[j]);
+      distanceMatrix[i][j] = dist;
+      distanceMatrix[j][i] = dist;
     }
-    return distanceMatrix;
+  }
+  return distanceMatrix;
 }
 
 /**
  * Updates the cluster identifier based in the new data
  * @ignore
- * @param {Array<Array<Number>>} data - the [x,y,z,...] points to cluster
- * @param {Array<Array<Number>>} centers - the K centers in format [x,y,z,...]
- * @param {Array <Number>} clusterID - the cluster identifier for each data dot
- * @param {Function} distance - Distance function to use between the points
- * @returns {Array} the cluster identifier for each data dot
+ * @param {Array<Array<number>>} data - the [x,y,z,...] points to cluster
+ * @param {Array<Array<number>>} centers - the K centers in format [x,y,z,...]
+ * @param {Array <number>} clusterID - the cluster identifier for each data dot
+ * @param {function} distance - Distance function to use between the points
+ * @return {Array} the cluster identifier for each data dot
  */
 function updateClusterID(data, centers, clusterID, distance) {
-    for (var i = 0; i < data.length; i++) {
-        clusterID[i] = nearestVector(centers, data[i], { distanceFunction: distance });
-    }
-    return clusterID;
+  for (var i = 0; i < data.length; i++) {
+    clusterID[i] = (0, _mlNearestVector2.default)(centers, data[i], {
+      distanceFunction: distance
+    });
+  }
+  return clusterID;
 }
 
 /**
  * Update the center values based in the new configurations of the clusters
  * @ignore
- * @param {Array <Array <Number>>} data - the [x,y,z,...] points to cluster
- * @param {Array <Number>} clusterID - the cluster identifier for each data dot
- * @param {Number} K - Number of clusters
- * @returns {Array} he K centers in format [x,y,z,...]
+ * @param {Array<Array<number>>} prevCenters - Centroids from the previous iteration
+ * @param {Array <Array <number>>} data - the [x,y,z,...] points to cluster
+ * @param {Array <number>} clusterID - the cluster identifier for each data dot
+ * @param {number} K - Number of clusters
+ * @return {Array} he K centers in format [x,y,z,...]
  */
-function updateCenters(data, clusterID, K) {
-    var nDim = data[0].length;
+function updateCenters(prevCenters, data, clusterID, K) {
+  var nDim = data[0].length;
 
-    // creates empty centers with 0 size
-    var centers = new Array(K);
-    var centersLen = new Array(K);
-    for (var i = 0; i < K; i++) {
-        centers[i] = new Array(nDim);
-        centersLen[i] = 0;
-        for (var j = 0; j < nDim; j++) {
-            centers[i][j] = 0;
-        }
+  // copy previous centers
+  var centers = new Array(K);
+  var centersLen = new Array(K);
+  for (var i = 0; i < K; i++) {
+    centers[i] = new Array(nDim);
+    centersLen[i] = 0;
+    for (var j = 0; j < nDim; j++) {
+      centers[i][j] = 0;
     }
+  }
 
-    // add the value for all dimensions of the point
-    for (var l = 0; l < data.length; l++) {
-        centersLen[clusterID[l]]++;
-        for (var dim = 0; dim < nDim; dim++) {
-            centers[clusterID[l]][dim] += data[l][dim];
-        }
+  // add the value for all dimensions of the point
+  for (var l = 0; l < data.length; l++) {
+    centersLen[clusterID[l]]++;
+    for (var dim = 0; dim < nDim; dim++) {
+      centers[clusterID[l]][dim] += data[l][dim];
     }
+  }
 
-    // divides by length
-    for (var id = 0; id < K; id++) {
-        for (var d = 0; d < nDim; d++) {
-            centers[id][d] /= centersLen[id];
-        }
+  // divides by length
+  for (var id = 0; id < K; id++) {
+    for (var d = 0; d < nDim; d++) {
+      if (centersLen[id]) {
+        centers[id][d] /= centersLen[id];
+      } else {
+        centers[id][d] = prevCenters[id][d];
+      }
     }
-    return centers;
+  }
+  return centers;
 }
 
 /**
  * The centers have moved more than the tolerance value?
  * @ignore
- * @param {Array<Array<Number>>} centers - the K centers in format [x,y,z,...]
- * @param {Array<Array<Number>>} oldCenters - the K old centers in format [x,y,z,...]
- * @param {Function} distanceFunction - Distance function to use between the points
- * @param {Number} tolerance - Allowed distance for the centroids to move
+ * @param {Array<Array<number>>} centers - the K centers in format [x,y,z,...]
+ * @param {Array<Array<number>>} oldCenters - the K old centers in format [x,y,z,...]
+ * @param {function} distanceFunction - Distance function to use between the points
+ * @param {number} tolerance - Allowed distance for the centroids to move
  * @return {boolean}
  */
-function converged(centers, oldCenters, distanceFunction, tolerance) {
-    for (var i = 0; i < centers.length; i++) {
-        if (distanceFunction(centers[i], oldCenters[i]) > tolerance) {
-            return false;
-        }
+function hasConverged(centers, oldCenters, distanceFunction, tolerance) {
+  for (var i = 0; i < centers.length; i++) {
+    if (distanceFunction(centers[i], oldCenters[i]) > tolerance) {
+      return false;
     }
-    return true;
+  }
+  return true;
 }
 
-exports.updateClusterID = updateClusterID;
-exports.updateCenters = updateCenters;
-exports.calculateDistanceMatrix = calculateDistanceMatrix;
-exports.converged = converged;
+/***/ }),
+/* 28 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _choice = __webpack_require__(94);
+
+var _choice2 = _interopRequireDefault(_choice);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// tslint:disable-next-line
+var XSAdd = __webpack_require__(29);
+
+/**
+ * @classdesc Random class
+ */
+class Random {
+    /**
+     * @param [seedOrRandom=Math.random] - Control the random number generator used by the Random class instance. Pass a random number generator function with a uniform distribution over the half-open interval [0, 1[. If seed will pass it to ml-xsadd to create a seeded random number generator. If undefined will use Math.random.
+     */
+    constructor(seedOrRandom = Math.random) {
+        if (typeof seedOrRandom === 'number') {
+            var xsadd = new XSAdd(seedOrRandom);
+            this.randomGenerator = xsadd.random;
+        } else {
+            this.randomGenerator = seedOrRandom;
+        }
+    }
+    choice(values, options) {
+        if (typeof values === 'number') {
+            return (0, _choice2.default)(values, options, this.randomGenerator);
+        }
+        return (0, _choice2.default)(values, options, this.randomGenerator);
+    }
+    /**
+     * Draw a random number from a uniform distribution on [0,1)
+     * @return The random number
+     */
+    random() {
+        return this.randomGenerator();
+    }
+    /**
+     * Draw a random integer from a uniform distribution on [low, high). If only low is specified, the number is drawn on [0, low)
+     * @param low - The lower bound of the uniform distribution interval.
+     * @param high - The higher bound of the uniform distribution interval.
+     */
+    randInt(low, high) {
+        if (high === undefined) {
+            high = low;
+            low = 0;
+        }
+        return low + Math.floor(this.randomGenerator() * (high - low));
+    }
+    /**
+     * Draw several random number from a uniform distribution on [0, 1)
+     * @param size - The number of number to draw
+     * @return - The list of drawn numbers.
+     */
+    randomSample(size) {
+        var result = [];
+        for (var i = 0; i < size; i++) {
+            result.push(this.random());
+        }
+        return result;
+    }
+}
+exports.default = Random;
 
 /***/ }),
-/* 27 */
+/* 29 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () {
+    function defineProperties(target, props) {
+        for (var i = 0; i < props.length; i++) {
+            var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
+        }
+    }return function (Constructor, protoProps, staticProps) {
+        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
+    };
+}();
+
+function _classCallCheck(instance, Constructor) {
+    if (!(instance instanceof Constructor)) {
+        throw new TypeError("Cannot call a class as a function");
+    }
+}
+
+var LOOP = 8;
+var FLOAT_MUL = 1 / 16777216;
+
+function multiply_uint32(n, m) {
+    n >>>= 0;
+    m >>>= 0;
+    var nlo = n & 0xffff;
+    var nhi = n - nlo;
+    return (nhi * m >>> 0) + nlo * m >>> 0;
+}
+
+var XSadd = function () {
+    function XSadd() {
+        var seed = arguments.length <= 0 || arguments[0] === undefined ? Date.now() : arguments[0];
+
+        _classCallCheck(this, XSadd);
+
+        this.state = new Uint32Array(4);
+        this.init(seed);
+    }
+
+    _createClass(XSadd, [{
+        key: "init",
+        value: function init(seed) {
+            this.state[0] = seed;
+            this.state[1] = 0;
+            this.state[2] = 0;
+            this.state[3] = 0;
+            for (var i = 1; i < LOOP; i++) {
+                this.state[i & 3] ^= i + multiply_uint32(1812433253, this.state[i - 1 & 3] ^ this.state[i - 1 & 3] >>> 30 >>> 0) >>> 0;
+            }
+            period_certification(this);
+            for (var i = 0; i < LOOP; i++) {
+                next_state(this);
+            }
+        }
+
+        /**
+         * Returns a 32-bit integer r (0 <= r < 2^32)
+         */
+    }, {
+        key: "getUint32",
+        value: function getUint32() {
+            next_state(this);
+            return this.state[3] + this.state[2] >>> 0;
+        }
+
+        /**
+         * Returns a floating point number r (0.0 <= r < 1.0)
+         */
+    }, {
+        key: "getFloat",
+        value: function getFloat() {
+            return (this.getUint32() >>> 8) * FLOAT_MUL;
+        }
+    }, {
+        key: "random",
+        get: function get() {
+            if (!this._random) {
+                this._random = this.getFloat.bind(this);
+            }
+            return this._random;
+        }
+    }]);
+
+    return XSadd;
+}();
+
+exports["default"] = XSadd;
+
+function period_certification(xsadd) {
+    if (xsadd.state[0] === 0 && xsadd.state[1] === 0 && xsadd.state[2] === 0 && xsadd.state[3] === 0) {
+        xsadd.state[0] = 88; // X
+        xsadd.state[1] = 83; // S
+        xsadd.state[2] = 65; // A
+        xsadd.state[3] = 68; // D
+    }
+}
+
+var sh1 = 15;
+var sh2 = 18;
+var sh3 = 11;
+function next_state(xsadd) {
+    var t = xsadd.state[0];
+    t ^= t << sh1;
+    t ^= t >>> sh2;
+    t ^= xsadd.state[3] << sh3;
+    xsadd.state[0] = xsadd.state[1];
+    xsadd.state[1] = xsadd.state[2];
+    xsadd.state[2] = xsadd.state[3];
+    xsadd.state[3] = t;
+}
+module.exports = exports["default"];
+
+/***/ }),
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5989,7 +6281,7 @@ function separateClasses(X, y) {
 }
 
 /***/ }),
-/* 28 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6007,7 +6299,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _matrix = __webpack_require__(8);
+var _matrix = __webpack_require__(9);
 
 var _matrix2 = _interopRequireDefault(_matrix);
 
@@ -6075,7 +6367,7 @@ function initializeMatrices(array, isMatrix) {
 }
 
 /***/ }),
-/* 29 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6468,7 +6760,7 @@ class ConfusionMatrix {
 module.exports = ConfusionMatrix;
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6476,8 +6768,8 @@ module.exports = ConfusionMatrix;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var Utils = __webpack_require__(31);
-var ACTIVATION_FUNCTIONS = __webpack_require__(32);
+var Utils = __webpack_require__(34);
+var ACTIVATION_FUNCTIONS = __webpack_require__(35);
 
 class Layer {
     /**
@@ -6602,7 +6894,7 @@ class Layer {
 module.exports = Layer;
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6674,7 +6966,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6768,7 +7060,7 @@ var ACTIVATION_FUNCTIONS = {
 module.exports = ACTIVATION_FUNCTIONS;
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6879,7 +7171,7 @@ NodeSquare.prototype.getPosition = function getPosition(element) {
 module.exports = NodeSquare;
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6905,7 +7197,7 @@ Object.defineProperty(exports, 'SLR', {
     }
 });
 
-var _mlRegressionPolynomial = __webpack_require__(35);
+var _mlRegressionPolynomial = __webpack_require__(38);
 
 Object.defineProperty(exports, 'PolynomialRegression', {
     enumerable: true,
@@ -6914,7 +7206,7 @@ Object.defineProperty(exports, 'PolynomialRegression', {
     }
 });
 
-var _mlRegressionExponential = __webpack_require__(121);
+var _mlRegressionExponential = __webpack_require__(123);
 
 Object.defineProperty(exports, 'ExponentialRegression', {
     enumerable: true,
@@ -6923,7 +7215,7 @@ Object.defineProperty(exports, 'ExponentialRegression', {
     }
 });
 
-var _mlRegressionPower = __webpack_require__(122);
+var _mlRegressionPower = __webpack_require__(124);
 
 Object.defineProperty(exports, 'PowerRegression', {
     enumerable: true,
@@ -6932,7 +7224,7 @@ Object.defineProperty(exports, 'PowerRegression', {
     }
 });
 
-var _mlRegressionMultivariateLinear = __webpack_require__(123);
+var _mlRegressionMultivariateLinear = __webpack_require__(125);
 
 Object.defineProperty(exports, 'MultivariateLinearRegression', {
     enumerable: true,
@@ -6941,7 +7233,7 @@ Object.defineProperty(exports, 'MultivariateLinearRegression', {
     }
 });
 
-var _kernelRidgeRegression = __webpack_require__(124);
+var _kernelRidgeRegression = __webpack_require__(126);
 
 Object.defineProperty(exports, 'KernelRidgeRegression', {
     enumerable: true,
@@ -6956,7 +7248,7 @@ Object.defineProperty(exports, 'KRR', {
     }
 });
 
-var _polyFitRegression2d = __webpack_require__(125);
+var _polyFitRegression2d = __webpack_require__(127);
 
 Object.defineProperty(exports, 'PolinomialFitting2D', {
     enumerable: true,
@@ -6965,7 +7257,7 @@ Object.defineProperty(exports, 'PolinomialFitting2D', {
     }
 });
 
-var _mlRegressionTheilSen = __webpack_require__(126);
+var _mlRegressionTheilSen = __webpack_require__(128);
 
 Object.defineProperty(exports, 'TheilSenRegression', {
     enumerable: true,
@@ -6974,7 +7266,7 @@ Object.defineProperty(exports, 'TheilSenRegression', {
     }
 });
 
-var _mlRegressionRobustPolynomial = __webpack_require__(127);
+var _mlRegressionRobustPolynomial = __webpack_require__(129);
 
 Object.defineProperty(exports, 'RobustPolynomialRegression', {
     enumerable: true,
@@ -6983,7 +7275,7 @@ Object.defineProperty(exports, 'RobustPolynomialRegression', {
     }
 });
 
-var _potentialRegression = __webpack_require__(128);
+var _potentialRegression = __webpack_require__(130);
 
 var _potentialRegression2 = _interopRequireDefault(_potentialRegression);
 
@@ -6996,7 +7288,7 @@ exports.NLR = NLR;
 exports.NonLinearRegression = NLR;
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7138,15 +7430,15 @@ function regress(pr, x, y, degree) {
 }
 
 /***/ }),
-/* 36 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var newArray = __webpack_require__(131);
+var newArray = __webpack_require__(133);
 
-var primeFinder = __webpack_require__(132);
+var primeFinder = __webpack_require__(134);
 var nextPrime = primeFinder.nextPrime;
 var largestPrime = primeFinder.largestPrime;
 
@@ -7446,7 +7738,7 @@ function chooseShrinkCapacity(size, minLoad, maxLoad) {
 }
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7486,13 +7778,13 @@ module.exports = function (haystack, needle, comparator, low, high) {
 };
 
 /***/ }),
-/* 38 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var numberIsNan = __webpack_require__(133);
+var numberIsNan = __webpack_require__(135);
 
 function assertNum(x) {
 	if (typeof x !== 'number' || numberIsNan(x)) {
@@ -7513,17 +7805,17 @@ exports.desc = function (a, b) {
 };
 
 /***/ }),
-/* 39 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.distance = __webpack_require__(134);
-exports.similarity = __webpack_require__(171);
+exports.distance = __webpack_require__(136);
+exports.similarity = __webpack_require__(173);
 
 /***/ }),
-/* 40 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7540,7 +7832,7 @@ module.exports = function czekanowskiSimilarity(a, b) {
 };
 
 /***/ }),
-/* 41 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7560,7 +7852,7 @@ module.exports = function dice(a, b) {
 };
 
 /***/ }),
-/* 42 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7576,7 +7868,7 @@ module.exports = function intersection(a, b) {
 };
 
 /***/ }),
-/* 43 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7598,7 +7890,7 @@ module.exports = function jaccard(a, b) {
 };
 
 /***/ }),
-/* 44 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7616,7 +7908,7 @@ module.exports = function kulczynski(a, b) {
 };
 
 /***/ }),
-/* 45 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7634,7 +7926,7 @@ module.exports = function motyka(a, b) {
 };
 
 /***/ }),
-/* 46 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7650,7 +7942,7 @@ module.exports = function squaredChord(a, b) {
 };
 
 /***/ }),
-/* 47 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7681,7 +7973,7 @@ module.exports = function tanimoto(a, b, bitvector) {
 };
 
 /***/ }),
-/* 48 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7701,7 +7993,7 @@ module.exports = function cosine(a, b) {
 };
 
 /***/ }),
-/* 49 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7795,40 +8087,40 @@ function padArray(data, options) {
 module.exports = padArray;
 
 /***/ }),
-/* 50 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var mlCart = __webpack_require__(17);
-var mlRandomForest = __webpack_require__(71);
+var mlRandomForest = __webpack_require__(73);
 
 var ML = exports;
 
 // Try to keep this list in the same structure as the README.
 
 // Unsupervised learning
-ML.PCA = __webpack_require__(78);
-ML.HClust = __webpack_require__(79);
-ML.KMeans = __webpack_require__(89);
+ML.PCA = __webpack_require__(80);
+ML.HClust = __webpack_require__(81);
+ML.KMeans = __webpack_require__(91);
 
 // Supervised learning
-ML.SVM = __webpack_require__(94);
-ML.NaiveBayes = __webpack_require__(105);
-ML.KNN = __webpack_require__(108);
-ML.PLS = __webpack_require__(110);
-ML.CrossValidation = __webpack_require__(113);
-ML.ConfusionMatrix = __webpack_require__(29);
+ML.SVM = __webpack_require__(96);
+ML.NaiveBayes = __webpack_require__(107);
+ML.KNN = __webpack_require__(110);
+ML.PLS = __webpack_require__(112);
+ML.CrossValidation = __webpack_require__(115);
+ML.ConfusionMatrix = __webpack_require__(32);
 ML.DecisionTreeClassifier = mlCart.DecisionTreeClassifier;
 ML.RandomForestClassifier = mlRandomForest.RandomForestClassifier;
 
 // Artificial neural networks
-ML.FNN = __webpack_require__(115);
-ML.SOM = __webpack_require__(117);
+ML.FNN = __webpack_require__(117);
+ML.SOM = __webpack_require__(119);
 
 // Regression
-var Regression = __webpack_require__(34);
+var Regression = __webpack_require__(37);
 ML.SimpleLinearRegression = Regression.SimpleLinearRegression;
 ML.PolynomialRegression = Regression.PolynomialRegression;
 ML.MultivariateLinearRegression = Regression.MultivariateLinearRegression;
@@ -7836,11 +8128,11 @@ ML.PowerRegression = Regression.PowerRegression;
 ML.ExponentialRegression = Regression.ExponentialRegression;
 ML.TheilSenRegression = Regression.TheilSenRegression;
 ML.RobustPolynomialRegression = Regression.RobustPolynomialRegression;
-ML.DesisionTreeRegression = mlCart.DesisionTreeRegression;
+ML.DecisionTreeRegression = mlCart.DecisionTreeRegression;
 ML.RandomForestRegression = mlRandomForest.RandomForestRegression;
 
 // Optimization
-ML.levenbergMarquardt = __webpack_require__(129);
+ML.levenbergMarquardt = __webpack_require__(131);
 
 // Math
 var Matrix = __webpack_require__(0);
@@ -7851,36 +8143,37 @@ ML.CholeskyDecomposition = Matrix.CholeskyDecomposition;
 ML.LuDecomposition = Matrix.LuDecomposition;
 ML.QrDecomposition = Matrix.QrDecomposition;
 
-ML.SparseMatrix = __webpack_require__(130);
+ML.SparseMatrix = __webpack_require__(132);
 ML.Kernel = __webpack_require__(14);
-ML.Distance = __webpack_require__(39).distance;
-ML.Similarity = __webpack_require__(39).similarity;
-ML.distanceMatrix = __webpack_require__(25);
-ML.XSadd = __webpack_require__(179);
+ML.Distance = __webpack_require__(42).distance;
+ML.Similarity = __webpack_require__(42).similarity;
+ML.distanceMatrix = __webpack_require__(26);
+ML.XSadd = __webpack_require__(29);
 
 // Statistics
-ML.Performance = __webpack_require__(180);
+ML.Performance = __webpack_require__(181);
 
 // Data preprocessing
-ML.savitzkyGolay = __webpack_require__(182);
-ML.savitzkyGolayGeneralized = __webpack_require__(183);
+ML.savitzkyGolay = __webpack_require__(183);
+ML.savitzkyGolayGeneralized = __webpack_require__(184);
 
 // Utility
-ML.BitArray = __webpack_require__(184);
-ML.HashTable = __webpack_require__(36);
-ML.padArray = __webpack_require__(49);
-ML.binarySearch = __webpack_require__(37);
-ML.numSort = __webpack_require__(38);
+ML.BitArray = __webpack_require__(185);
+ML.HashTable = __webpack_require__(39);
+ML.padArray = __webpack_require__(52);
+ML.binarySearch = __webpack_require__(40);
+ML.numSort = __webpack_require__(41);
+ML.Random = __webpack_require__(28);
 
 // Undocumented/deprecated packages
-ML.ArrayUtils = __webpack_require__(186);
-ML.Regression = __webpack_require__(34);
+ML.ArrayUtils = __webpack_require__(187);
+ML.Regression = __webpack_require__(37);
 ML.MatrixUtil = __webpack_require__(0);
 ML.ArrayStat = __webpack_require__(4).array;
 ML.MatrixStat = __webpack_require__(4).matrix;
 
 /***/ }),
-/* 51 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7895,7 +8188,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _TreeNode = __webpack_require__(21);
+var _TreeNode = __webpack_require__(22);
 
 var _TreeNode2 = _interopRequireDefault(_TreeNode);
 
@@ -7986,18 +8279,7 @@ class DecisionTreeClassifier {
 exports.DecisionTreeClassifier = DecisionTreeClassifier;
 
 /***/ }),
-/* 52 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-if (!Symbol.species) {
-    Symbol.species = Symbol.for('@@species');
-}
-
-/***/ }),
-/* 53 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8008,11 +8290,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = rescale;
 
-var _mlArrayMax = __webpack_require__(54);
+var _mlArrayMax = __webpack_require__(18);
 
 var _mlArrayMax2 = _interopRequireDefault(_mlArrayMax);
 
-var _mlArrayMin = __webpack_require__(55);
+var _mlArrayMin = __webpack_require__(56);
 
 var _mlArrayMin2 = _interopRequireDefault(_mlArrayMin);
 
@@ -8061,39 +8343,7 @@ function rescale(input, options = {}) {
 }
 
 /***/ }),
-/* 54 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = max;
-/**
- * Computes the maximum of the given values
- * @param {Array<number>} input
- * @return {number}
- */
-function max(input) {
-    if (!Array.isArray(input)) {
-        throw new Error('input must be an array');
-    }
-
-    if (input.length === 0) {
-        throw new Error('input must not be empty');
-    }
-
-    var max = input[0];
-    for (var i = 1; i < input.length; i++) {
-        if (input[i] > max) max = input[i];
-    }
-    return max;
-}
-
-/***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8125,14 +8375,14 @@ function min(input) {
 }
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _base = __webpack_require__(3);
@@ -8142,54 +8392,20 @@ var _base2 = _interopRequireDefault(_base);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 class MatrixTransposeView extends _base2.default {
-    constructor(matrix) {
-        super(matrix, matrix.columns, matrix.rows);
-    }
+  constructor(matrix) {
+    super(matrix, matrix.columns, matrix.rows);
+  }
 
-    set(rowIndex, columnIndex, value) {
-        this.matrix.set(columnIndex, rowIndex, value);
-        return this;
-    }
+  set(rowIndex, columnIndex, value) {
+    this.matrix.set(columnIndex, rowIndex, value);
+    return this;
+  }
 
-    get(rowIndex, columnIndex) {
-        return this.matrix.get(columnIndex, rowIndex);
-    }
+  get(rowIndex, columnIndex) {
+    return this.matrix.get(columnIndex, rowIndex);
+  }
 }
 exports.default = MatrixTransposeView;
-
-/***/ }),
-/* 57 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _base = __webpack_require__(3);
-
-var _base2 = _interopRequireDefault(_base);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-class MatrixRowView extends _base2.default {
-    constructor(matrix, row) {
-        super(matrix, 1, matrix.columns);
-        this.row = row;
-    }
-
-    set(rowIndex, columnIndex, value) {
-        this.matrix.set(this.row, columnIndex, value);
-        return this;
-    }
-
-    get(rowIndex, columnIndex) {
-        return this.matrix.get(this.row, columnIndex);
-    }
-}
-exports.default = MatrixRowView;
 
 /***/ }),
 /* 58 */
@@ -8199,35 +8415,31 @@ exports.default = MatrixRowView;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _base = __webpack_require__(3);
 
 var _base2 = _interopRequireDefault(_base);
 
-var _util = __webpack_require__(5);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class MatrixSubView extends _base2.default {
-    constructor(matrix, startRow, endRow, startColumn, endColumn) {
-        (0, _util.checkRange)(matrix, startRow, endRow, startColumn, endColumn);
-        super(matrix, endRow - startRow + 1, endColumn - startColumn + 1);
-        this.startRow = startRow;
-        this.startColumn = startColumn;
-    }
+class MatrixRowView extends _base2.default {
+  constructor(matrix, row) {
+    super(matrix, 1, matrix.columns);
+    this.row = row;
+  }
 
-    set(rowIndex, columnIndex, value) {
-        this.matrix.set(this.startRow + rowIndex, this.startColumn + columnIndex, value);
-        return this;
-    }
+  set(rowIndex, columnIndex, value) {
+    this.matrix.set(this.row, columnIndex, value);
+    return this;
+  }
 
-    get(rowIndex, columnIndex) {
-        return this.matrix.get(this.startRow + rowIndex, this.startColumn + columnIndex);
-    }
+  get(rowIndex, columnIndex) {
+    return this.matrix.get(this.row, columnIndex);
+  }
 }
-exports.default = MatrixSubView;
+exports.default = MatrixRowView;
 
 /***/ }),
 /* 59 */
@@ -8237,35 +8449,35 @@ exports.default = MatrixSubView;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+
+var _util = __webpack_require__(6);
 
 var _base = __webpack_require__(3);
 
 var _base2 = _interopRequireDefault(_base);
 
-var _util = __webpack_require__(5);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class MatrixSelectionView extends _base2.default {
-    constructor(matrix, rowIndices, columnIndices) {
-        var indices = (0, _util.checkIndices)(matrix, rowIndices, columnIndices);
-        super(matrix, indices.row.length, indices.column.length);
-        this.rowIndices = indices.row;
-        this.columnIndices = indices.column;
-    }
+class MatrixSubView extends _base2.default {
+  constructor(matrix, startRow, endRow, startColumn, endColumn) {
+    (0, _util.checkRange)(matrix, startRow, endRow, startColumn, endColumn);
+    super(matrix, endRow - startRow + 1, endColumn - startColumn + 1);
+    this.startRow = startRow;
+    this.startColumn = startColumn;
+  }
 
-    set(rowIndex, columnIndex, value) {
-        this.matrix.set(this.rowIndices[rowIndex], this.columnIndices[columnIndex], value);
-        return this;
-    }
+  set(rowIndex, columnIndex, value) {
+    this.matrix.set(this.startRow + rowIndex, this.startColumn + columnIndex, value);
+    return this;
+  }
 
-    get(rowIndex, columnIndex) {
-        return this.matrix.get(this.rowIndices[rowIndex], this.columnIndices[columnIndex]);
-    }
+  get(rowIndex, columnIndex) {
+    return this.matrix.get(this.startRow + rowIndex, this.startColumn + columnIndex);
+  }
 }
-exports.default = MatrixSelectionView;
+exports.default = MatrixSubView;
 
 /***/ }),
 /* 60 */
@@ -8275,34 +8487,35 @@ exports.default = MatrixSelectionView;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+
+var _util = __webpack_require__(6);
 
 var _base = __webpack_require__(3);
 
 var _base2 = _interopRequireDefault(_base);
 
-var _util = __webpack_require__(5);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class MatrixRowSelectionView extends _base2.default {
-    constructor(matrix, rowIndices) {
-        rowIndices = (0, _util.checkRowIndices)(matrix, rowIndices);
-        super(matrix, rowIndices.length, matrix.columns);
-        this.rowIndices = rowIndices;
-    }
+class MatrixSelectionView extends _base2.default {
+  constructor(matrix, rowIndices, columnIndices) {
+    var indices = (0, _util.checkIndices)(matrix, rowIndices, columnIndices);
+    super(matrix, indices.row.length, indices.column.length);
+    this.rowIndices = indices.row;
+    this.columnIndices = indices.column;
+  }
 
-    set(rowIndex, columnIndex, value) {
-        this.matrix.set(this.rowIndices[rowIndex], columnIndex, value);
-        return this;
-    }
+  set(rowIndex, columnIndex, value) {
+    this.matrix.set(this.rowIndices[rowIndex], this.columnIndices[columnIndex], value);
+    return this;
+  }
 
-    get(rowIndex, columnIndex) {
-        return this.matrix.get(this.rowIndices[rowIndex], columnIndex);
-    }
+  get(rowIndex, columnIndex) {
+    return this.matrix.get(this.rowIndices[rowIndex], this.columnIndices[columnIndex]);
+  }
 }
-exports.default = MatrixRowSelectionView;
+exports.default = MatrixSelectionView;
 
 /***/ }),
 /* 61 */
@@ -8312,34 +8525,34 @@ exports.default = MatrixRowSelectionView;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+
+var _util = __webpack_require__(6);
 
 var _base = __webpack_require__(3);
 
 var _base2 = _interopRequireDefault(_base);
 
-var _util = __webpack_require__(5);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class MatrixColumnSelectionView extends _base2.default {
-    constructor(matrix, columnIndices) {
-        columnIndices = (0, _util.checkColumnIndices)(matrix, columnIndices);
-        super(matrix, matrix.rows, columnIndices.length);
-        this.columnIndices = columnIndices;
-    }
+class MatrixRowSelectionView extends _base2.default {
+  constructor(matrix, rowIndices) {
+    rowIndices = (0, _util.checkRowIndices)(matrix, rowIndices);
+    super(matrix, rowIndices.length, matrix.columns);
+    this.rowIndices = rowIndices;
+  }
 
-    set(rowIndex, columnIndex, value) {
-        this.matrix.set(rowIndex, this.columnIndices[columnIndex], value);
-        return this;
-    }
+  set(rowIndex, columnIndex, value) {
+    this.matrix.set(this.rowIndices[rowIndex], columnIndex, value);
+    return this;
+  }
 
-    get(rowIndex, columnIndex) {
-        return this.matrix.get(rowIndex, this.columnIndices[columnIndex]);
-    }
+  get(rowIndex, columnIndex) {
+    return this.matrix.get(this.rowIndices[rowIndex], columnIndex);
+  }
 }
-exports.default = MatrixColumnSelectionView;
+exports.default = MatrixRowSelectionView;
 
 /***/ }),
 /* 62 */
@@ -8349,8 +8562,10 @@ exports.default = MatrixColumnSelectionView;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
+
+var _util = __webpack_require__(6);
 
 var _base = __webpack_require__(3);
 
@@ -8358,22 +8573,23 @@ var _base2 = _interopRequireDefault(_base);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class MatrixColumnView extends _base2.default {
-    constructor(matrix, column) {
-        super(matrix, matrix.rows, 1);
-        this.column = column;
-    }
+class MatrixColumnSelectionView extends _base2.default {
+  constructor(matrix, columnIndices) {
+    columnIndices = (0, _util.checkColumnIndices)(matrix, columnIndices);
+    super(matrix, matrix.rows, columnIndices.length);
+    this.columnIndices = columnIndices;
+  }
 
-    set(rowIndex, columnIndex, value) {
-        this.matrix.set(rowIndex, this.column, value);
-        return this;
-    }
+  set(rowIndex, columnIndex, value) {
+    this.matrix.set(rowIndex, this.columnIndices[columnIndex], value);
+    return this;
+  }
 
-    get(rowIndex) {
-        return this.matrix.get(rowIndex, this.column);
-    }
+  get(rowIndex, columnIndex) {
+    return this.matrix.get(rowIndex, this.columnIndices[columnIndex]);
+  }
 }
-exports.default = MatrixColumnView;
+exports.default = MatrixColumnSelectionView;
 
 /***/ }),
 /* 63 */
@@ -8383,7 +8599,7 @@ exports.default = MatrixColumnView;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _base = __webpack_require__(3);
@@ -8392,21 +8608,22 @@ var _base2 = _interopRequireDefault(_base);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class MatrixFlipRowView extends _base2.default {
-    constructor(matrix) {
-        super(matrix, matrix.rows, matrix.columns);
-    }
+class MatrixColumnView extends _base2.default {
+  constructor(matrix, column) {
+    super(matrix, matrix.rows, 1);
+    this.column = column;
+  }
 
-    set(rowIndex, columnIndex, value) {
-        this.matrix.set(this.rows - rowIndex - 1, columnIndex, value);
-        return this;
-    }
+  set(rowIndex, columnIndex, value) {
+    this.matrix.set(rowIndex, this.column, value);
+    return this;
+  }
 
-    get(rowIndex, columnIndex) {
-        return this.matrix.get(this.rows - rowIndex - 1, columnIndex);
-    }
+  get(rowIndex) {
+    return this.matrix.get(rowIndex, this.column);
+  }
 }
-exports.default = MatrixFlipRowView;
+exports.default = MatrixColumnView;
 
 /***/ }),
 /* 64 */
@@ -8416,7 +8633,7 @@ exports.default = MatrixFlipRowView;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _base = __webpack_require__(3);
@@ -8425,21 +8642,21 @@ var _base2 = _interopRequireDefault(_base);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-class MatrixFlipColumnView extends _base2.default {
-    constructor(matrix) {
-        super(matrix, matrix.rows, matrix.columns);
-    }
+class MatrixFlipRowView extends _base2.default {
+  constructor(matrix) {
+    super(matrix, matrix.rows, matrix.columns);
+  }
 
-    set(rowIndex, columnIndex, value) {
-        this.matrix.set(rowIndex, this.columns - columnIndex - 1, value);
-        return this;
-    }
+  set(rowIndex, columnIndex, value) {
+    this.matrix.set(this.rows - rowIndex - 1, columnIndex, value);
+    return this;
+  }
 
-    get(rowIndex, columnIndex) {
-        return this.matrix.get(rowIndex, this.columns - columnIndex - 1);
-    }
+  get(rowIndex, columnIndex) {
+    return this.matrix.get(this.rows - rowIndex - 1, columnIndex);
+  }
 }
-exports.default = MatrixFlipColumnView;
+exports.default = MatrixFlipRowView;
 
 /***/ }),
 /* 65 */
@@ -8449,15 +8666,48 @@ exports.default = MatrixFlipColumnView;
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
+});
+
+var _base = __webpack_require__(3);
+
+var _base2 = _interopRequireDefault(_base);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+class MatrixFlipColumnView extends _base2.default {
+  constructor(matrix) {
+    super(matrix, matrix.rows, matrix.columns);
+  }
+
+  set(rowIndex, columnIndex, value) {
+    this.matrix.set(rowIndex, this.columns - columnIndex - 1, value);
+    return this;
+  }
+
+  get(rowIndex, columnIndex) {
+    return this.matrix.get(rowIndex, this.columns - columnIndex - 1);
+  }
+}
+exports.default = MatrixFlipColumnView;
+
+/***/ }),
+/* 66 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
 exports.wrap = wrap;
 
-var _WrapperMatrix1D = __webpack_require__(18);
+var _WrapperMatrix1D = __webpack_require__(19);
 
 var _WrapperMatrix1D2 = _interopRequireDefault(_WrapperMatrix1D);
 
-var _WrapperMatrix2D = __webpack_require__(19);
+var _WrapperMatrix2D = __webpack_require__(20);
 
 var _WrapperMatrix2D2 = _interopRequireDefault(_WrapperMatrix2D);
 
@@ -8470,76 +8720,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @return {WrapperMatrix1D|WrapperMatrix2D}
  */
 function wrap(array, options) {
-    if (Array.isArray(array)) {
-        if (array[0] && Array.isArray(array[0])) {
-            return new _WrapperMatrix2D2.default(array);
-        } else {
-            return new _WrapperMatrix1D2.default(array, options);
-        }
+  if (Array.isArray(array)) {
+    if (array[0] && Array.isArray(array[0])) {
+      return new _WrapperMatrix2D2.default(array);
     } else {
-        throw new Error('the argument is not an array');
+      return new _WrapperMatrix1D2.default(array, options);
     }
-}
-
-/***/ }),
-/* 66 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.inverse = inverse;
-exports.solve = solve;
-
-var _index = __webpack_require__(0);
-
-var _lu = __webpack_require__(9);
-
-var _lu2 = _interopRequireDefault(_lu);
-
-var _qr = __webpack_require__(20);
-
-var _qr2 = _interopRequireDefault(_qr);
-
-var _svd = __webpack_require__(10);
-
-var _svd2 = _interopRequireDefault(_svd);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Computes the inverse of a Matrix
- * @param {Matrix} matrix
- * @param {boolean} [useSVD=false]
- * @return {Matrix}
- */
-function inverse(matrix, useSVD = false) {
-    matrix = _index.WrapperMatrix2D.checkMatrix(matrix);
-    if (useSVD) {
-        return new _svd2.default(matrix).inverse();
-    } else {
-        return solve(matrix, _index.Matrix.eye(matrix.rows));
-    }
-}
-
-/**
- *
- * @param {Matrix} leftHandSide
- * @param {Matrix} rightHandSide
- * @param {boolean} [useSVD = false]
- * @return {Matrix}
- */
-function solve(leftHandSide, rightHandSide, useSVD = false) {
-    leftHandSide = _index.WrapperMatrix2D.checkMatrix(leftHandSide);
-    rightHandSide = _index.WrapperMatrix2D.checkMatrix(rightHandSide);
-    if (useSVD) {
-        return new _svd2.default(leftHandSide).solve(rightHandSide);
-    } else {
-        return leftHandSide.isSquare() ? new _lu2.default(leftHandSide).solve(rightHandSide) : new _qr2.default(leftHandSide).solve(rightHandSide);
-    }
+  } else {
+    throw new Error('the argument is not an array');
+  }
 }
 
 /***/ }),
@@ -8550,7 +8739,152 @@ function solve(leftHandSide, rightHandSide, useSVD = false) {
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
+});
+exports.inverse = inverse;
+exports.solve = solve;
+
+var _lu = __webpack_require__(10);
+
+var _lu2 = _interopRequireDefault(_lu);
+
+var _qr = __webpack_require__(21);
+
+var _qr2 = _interopRequireDefault(_qr);
+
+var _svd = __webpack_require__(8);
+
+var _svd2 = _interopRequireDefault(_svd);
+
+var _index = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Computes the inverse of a Matrix
+ * @param {Matrix} matrix
+ * @param {boolean} [useSVD=false]
+ * @return {Matrix}
+ */
+function inverse(matrix, useSVD = false) {
+  matrix = _index.WrapperMatrix2D.checkMatrix(matrix);
+  if (useSVD) {
+    return new _svd2.default(matrix).inverse();
+  } else {
+    return solve(matrix, _index.Matrix.eye(matrix.rows));
+  }
+}
+
+/**
+ *
+ * @param {Matrix} leftHandSide
+ * @param {Matrix} rightHandSide
+ * @param {boolean} [useSVD = false]
+ * @return {Matrix}
+ */
+function solve(leftHandSide, rightHandSide, useSVD = false) {
+  leftHandSide = _index.WrapperMatrix2D.checkMatrix(leftHandSide);
+  rightHandSide = _index.WrapperMatrix2D.checkMatrix(rightHandSide);
+  if (useSVD) {
+    return new _svd2.default(leftHandSide).solve(rightHandSide);
+  } else {
+    return leftHandSide.isSquare() ? new _lu2.default(leftHandSide).solve(rightHandSide) : new _qr2.default(leftHandSide).solve(rightHandSide);
+  }
+}
+
+/***/ }),
+/* 68 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.linearDependencies = linearDependencies;
+
+var _mlArrayMax = __webpack_require__(18);
+
+var _mlArrayMax2 = _interopRequireDefault(_mlArrayMax);
+
+var _matrix = __webpack_require__(5);
+
+var _matrix2 = _interopRequireDefault(_matrix);
+
+var _svd = __webpack_require__(8);
+
+var _svd2 = _interopRequireDefault(_svd);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// function used by rowsDependencies
+function xrange(n, exception) {
+  var range = [];
+  for (var i = 0; i < n; i++) {
+    if (i !== exception) {
+      range.push(i);
+    }
+  }
+  return range;
+}
+
+// function used by rowsDependencies
+function dependenciesOneRow(error, matrix, index, thresholdValue = 10e-10, thresholdError = 10e-10) {
+  if (error > thresholdError) {
+    return new Array(matrix.rows + 1).fill(0);
+  } else {
+    var returnArray = matrix.addRow(index, [0]);
+    for (var i = 0; i < returnArray.rows; i++) {
+      if (Math.abs(returnArray.get(i, 0)) < thresholdValue) {
+        returnArray.set(i, 0, 0);
+      }
+    }
+    return returnArray.to1DArray();
+  }
+}
+
+/**
+ * Creates a matrix which represents the dependencies between rows.
+ * If a row is a linear combination of others rows, the result will be a row with the coefficients of this combination.
+ * For example : for A = [[2, 0, 0, 1], [0, 1, 6, 0], [0, 3, 0, 1], [0, 0, 1, 0], [0, 1, 2, 0]], the result will be [[0, 0, 0, 0, 0], [0, 0, 0, 4, 1], [0, 0, 0, 0, 0], [0, 0.25, 0, 0, -0.25], [0, 1, 0, -4, 0]]
+ * @param {Matrix} matrix
+ * @param {Object} [options] includes thresholdValue and thresholdError.
+ * @param {number} [options.thresholdValue = 10e-10] If an absolute value is inferior to this threshold, it will equals zero.
+ * @param {number} [options.thresholdError = 10e-10] If the error is inferior to that threshold, the linear combination found is accepted and the row is dependent from other rows.
+ * @return {Matrix} the matrix which represents the dependencies between rows.
+ */
+
+function linearDependencies(matrix, options = {}) {
+  var _options$thresholdVal = options.thresholdValue,
+      thresholdValue = _options$thresholdVal === undefined ? 10e-10 : _options$thresholdVal,
+      _options$thresholdErr = options.thresholdError,
+      thresholdError = _options$thresholdErr === undefined ? 10e-10 : _options$thresholdErr;
+
+
+  var n = matrix.rows;
+  var results = new _matrix2.default(n, n);
+
+  for (var i = 0; i < n; i++) {
+    var b = _matrix2.default.columnVector(matrix.getRow(i));
+    var Abis = matrix.subMatrixRow(xrange(n, i)).transposeView();
+    var svd = new _svd2.default(Abis);
+    var x = svd.solve(b);
+    var error = (0, _mlArrayMax2.default)(_matrix2.default.sub(b, Abis.mmul(x)).abs().to1DArray());
+    results.setRow(i, dependenciesOneRow(error, x, i, thresholdValue, thresholdError));
+  }
+  return results;
+}
+
+/***/ }),
+/* 69 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
 });
 
 var _index = __webpack_require__(0);
@@ -8565,795 +8899,793 @@ var _util = __webpack_require__(11);
  * @param {boolean} [options.assumeSymmetric=false]
  */
 class EigenvalueDecomposition {
-    constructor(matrix, options = {}) {
-        var _options$assumeSymmet = options.assumeSymmetric,
-            assumeSymmetric = _options$assumeSymmet === undefined ? false : _options$assumeSymmet;
+  constructor(matrix, options = {}) {
+    var _options$assumeSymmet = options.assumeSymmetric,
+        assumeSymmetric = _options$assumeSymmet === undefined ? false : _options$assumeSymmet;
 
 
-        matrix = _index.WrapperMatrix2D.checkMatrix(matrix);
-        if (!matrix.isSquare()) {
-            throw new Error('Matrix is not a square matrix');
-        }
-
-        var n = matrix.columns;
-        var V = (0, _util.getFilled2DArray)(n, n, 0);
-        var d = new Array(n);
-        var e = new Array(n);
-        var value = matrix;
-        var i, j;
-
-        var isSymmetric = false;
-        if (assumeSymmetric) {
-            isSymmetric = true;
-        } else {
-            isSymmetric = matrix.isSymmetric();
-        }
-
-        if (isSymmetric) {
-            for (i = 0; i < n; i++) {
-                for (j = 0; j < n; j++) {
-                    V[i][j] = value.get(i, j);
-                }
-            }
-            tred2(n, e, d, V);
-            tql2(n, e, d, V);
-        } else {
-            var H = (0, _util.getFilled2DArray)(n, n, 0);
-            var ort = new Array(n);
-            for (j = 0; j < n; j++) {
-                for (i = 0; i < n; i++) {
-                    H[i][j] = value.get(i, j);
-                }
-            }
-            orthes(n, H, ort, V);
-            hqr2(n, e, d, V, H);
-        }
-
-        this.n = n;
-        this.e = e;
-        this.d = d;
-        this.V = V;
+    matrix = _index.WrapperMatrix2D.checkMatrix(matrix);
+    if (!matrix.isSquare()) {
+      throw new Error('Matrix is not a square matrix');
     }
 
-    /**
-     *
-     * @return {Array<number>}
-     */
-    get realEigenvalues() {
-        return this.d;
+    var n = matrix.columns;
+    var V = (0, _util.getFilled2DArray)(n, n, 0);
+    var d = new Array(n);
+    var e = new Array(n);
+    var value = matrix;
+    var i, j;
+
+    var isSymmetric = false;
+    if (assumeSymmetric) {
+      isSymmetric = true;
+    } else {
+      isSymmetric = matrix.isSymmetric();
     }
 
-    /**
-     *
-     * @return {Array<number>}
-     */
-    get imaginaryEigenvalues() {
-        return this.e;
-    }
-
-    /**
-     *
-     * @return {Matrix}
-     */
-    get eigenvectorMatrix() {
-        if (!_index.Matrix.isMatrix(this.V)) {
-            this.V = new _index.Matrix(this.V);
+    if (isSymmetric) {
+      for (i = 0; i < n; i++) {
+        for (j = 0; j < n; j++) {
+          V[i][j] = value.get(i, j);
         }
-        return this.V;
-    }
-
-    /**
-     *
-     * @return {Matrix}
-     */
-    get diagonalMatrix() {
-        var n = this.n;
-        var e = this.e;
-        var d = this.d;
-        var X = new _index.Matrix(n, n);
-        var i, j;
+      }
+      tred2(n, e, d, V);
+      tql2(n, e, d, V);
+    } else {
+      var H = (0, _util.getFilled2DArray)(n, n, 0);
+      var ort = new Array(n);
+      for (j = 0; j < n; j++) {
         for (i = 0; i < n; i++) {
-            for (j = 0; j < n; j++) {
-                X[i][j] = 0;
-            }
-            X[i][i] = d[i];
-            if (e[i] > 0) {
-                X[i][i + 1] = e[i];
-            } else if (e[i] < 0) {
-                X[i][i - 1] = e[i];
-            }
+          H[i][j] = value.get(i, j);
         }
-        return X;
+      }
+      orthes(n, H, ort, V);
+      hqr2(n, e, d, V, H);
     }
+
+    this.n = n;
+    this.e = e;
+    this.d = d;
+    this.V = V;
+  }
+
+  /**
+   *
+   * @return {Array<number>}
+   */
+  get realEigenvalues() {
+    return this.d;
+  }
+
+  /**
+   *
+   * @return {Array<number>}
+   */
+  get imaginaryEigenvalues() {
+    return this.e;
+  }
+
+  /**
+   *
+   * @return {Matrix}
+   */
+  get eigenvectorMatrix() {
+    if (!_index.Matrix.isMatrix(this.V)) {
+      this.V = new _index.Matrix(this.V);
+    }
+    return this.V;
+  }
+
+  /**
+   *
+   * @return {Matrix}
+   */
+  get diagonalMatrix() {
+    var n = this.n;
+    var e = this.e;
+    var d = this.d;
+    var X = new _index.Matrix(n, n);
+    var i, j;
+    for (i = 0; i < n; i++) {
+      for (j = 0; j < n; j++) {
+        X[i][j] = 0;
+      }
+      X[i][i] = d[i];
+      if (e[i] > 0) {
+        X[i][i + 1] = e[i];
+      } else if (e[i] < 0) {
+        X[i][i - 1] = e[i];
+      }
+    }
+    return X;
+  }
 }
 
 exports.default = EigenvalueDecomposition;
 function tred2(n, e, d, V) {
-    var f, g, h, i, j, k, hh, scale;
+  var f, g, h, i, j, k, hh, scale;
 
-    for (j = 0; j < n; j++) {
-        d[j] = V[n - 1][j];
+  for (j = 0; j < n; j++) {
+    d[j] = V[n - 1][j];
+  }
+
+  for (i = n - 1; i > 0; i--) {
+    scale = 0;
+    h = 0;
+    for (k = 0; k < i; k++) {
+      scale = scale + Math.abs(d[k]);
     }
 
-    for (i = n - 1; i > 0; i--) {
-        scale = 0;
-        h = 0;
-        for (k = 0; k < i; k++) {
-            scale = scale + Math.abs(d[k]);
+    if (scale === 0) {
+      e[i] = d[i - 1];
+      for (j = 0; j < i; j++) {
+        d[j] = V[i - 1][j];
+        V[i][j] = 0;
+        V[j][i] = 0;
+      }
+    } else {
+      for (k = 0; k < i; k++) {
+        d[k] /= scale;
+        h += d[k] * d[k];
+      }
+
+      f = d[i - 1];
+      g = Math.sqrt(h);
+      if (f > 0) {
+        g = -g;
+      }
+
+      e[i] = scale * g;
+      h = h - f * g;
+      d[i - 1] = f - g;
+      for (j = 0; j < i; j++) {
+        e[j] = 0;
+      }
+
+      for (j = 0; j < i; j++) {
+        f = d[j];
+        V[j][i] = f;
+        g = e[j] + V[j][j] * f;
+        for (k = j + 1; k <= i - 1; k++) {
+          g += V[k][j] * d[k];
+          e[k] += V[k][j] * f;
         }
+        e[j] = g;
+      }
 
-        if (scale === 0) {
-            e[i] = d[i - 1];
-            for (j = 0; j < i; j++) {
-                d[j] = V[i - 1][j];
-                V[i][j] = 0;
-                V[j][i] = 0;
-            }
-        } else {
-            for (k = 0; k < i; k++) {
-                d[k] /= scale;
-                h += d[k] * d[k];
-            }
+      f = 0;
+      for (j = 0; j < i; j++) {
+        e[j] /= h;
+        f += e[j] * d[j];
+      }
 
-            f = d[i - 1];
-            g = Math.sqrt(h);
-            if (f > 0) {
-                g = -g;
-            }
+      hh = f / (h + h);
+      for (j = 0; j < i; j++) {
+        e[j] -= hh * d[j];
+      }
 
-            e[i] = scale * g;
-            h = h - f * g;
-            d[i - 1] = f - g;
-            for (j = 0; j < i; j++) {
-                e[j] = 0;
-            }
-
-            for (j = 0; j < i; j++) {
-                f = d[j];
-                V[j][i] = f;
-                g = e[j] + V[j][j] * f;
-                for (k = j + 1; k <= i - 1; k++) {
-                    g += V[k][j] * d[k];
-                    e[k] += V[k][j] * f;
-                }
-                e[j] = g;
-            }
-
-            f = 0;
-            for (j = 0; j < i; j++) {
-                e[j] /= h;
-                f += e[j] * d[j];
-            }
-
-            hh = f / (h + h);
-            for (j = 0; j < i; j++) {
-                e[j] -= hh * d[j];
-            }
-
-            for (j = 0; j < i; j++) {
-                f = d[j];
-                g = e[j];
-                for (k = j; k <= i - 1; k++) {
-                    V[k][j] -= f * e[k] + g * d[k];
-                }
-                d[j] = V[i - 1][j];
-                V[i][j] = 0;
-            }
+      for (j = 0; j < i; j++) {
+        f = d[j];
+        g = e[j];
+        for (k = j; k <= i - 1; k++) {
+          V[k][j] -= f * e[k] + g * d[k];
         }
-        d[i] = h;
+        d[j] = V[i - 1][j];
+        V[i][j] = 0;
+      }
     }
+    d[i] = h;
+  }
 
-    for (i = 0; i < n - 1; i++) {
-        V[n - 1][i] = V[i][i];
-        V[i][i] = 1;
-        h = d[i + 1];
-        if (h !== 0) {
-            for (k = 0; k <= i; k++) {
-                d[k] = V[k][i + 1] / h;
-            }
+  for (i = 0; i < n - 1; i++) {
+    V[n - 1][i] = V[i][i];
+    V[i][i] = 1;
+    h = d[i + 1];
+    if (h !== 0) {
+      for (k = 0; k <= i; k++) {
+        d[k] = V[k][i + 1] / h;
+      }
 
-            for (j = 0; j <= i; j++) {
-                g = 0;
-                for (k = 0; k <= i; k++) {
-                    g += V[k][i + 1] * V[k][j];
-                }
-                for (k = 0; k <= i; k++) {
-                    V[k][j] -= g * d[k];
-                }
-            }
-        }
-
+      for (j = 0; j <= i; j++) {
+        g = 0;
         for (k = 0; k <= i; k++) {
-            V[k][i + 1] = 0;
+          g += V[k][i + 1] * V[k][j];
         }
+        for (k = 0; k <= i; k++) {
+          V[k][j] -= g * d[k];
+        }
+      }
     }
 
-    for (j = 0; j < n; j++) {
-        d[j] = V[n - 1][j];
-        V[n - 1][j] = 0;
+    for (k = 0; k <= i; k++) {
+      V[k][i + 1] = 0;
     }
+  }
 
-    V[n - 1][n - 1] = 1;
-    e[0] = 0;
+  for (j = 0; j < n; j++) {
+    d[j] = V[n - 1][j];
+    V[n - 1][j] = 0;
+  }
+
+  V[n - 1][n - 1] = 1;
+  e[0] = 0;
 }
 
 function tql2(n, e, d, V) {
+  var g, h, i, j, k, l, m, p, r, dl1, c, c2, c3, el1, s, s2, iter;
 
-    var g, h, i, j, k, l, m, p, r, dl1, c, c2, c3, el1, s, s2, iter;
+  for (i = 1; i < n; i++) {
+    e[i - 1] = e[i];
+  }
 
-    for (i = 1; i < n; i++) {
-        e[i - 1] = e[i];
+  e[n - 1] = 0;
+
+  var f = 0;
+  var tst1 = 0;
+  var eps = Number.EPSILON;
+
+  for (l = 0; l < n; l++) {
+    tst1 = Math.max(tst1, Math.abs(d[l]) + Math.abs(e[l]));
+    m = l;
+    while (m < n) {
+      if (Math.abs(e[m]) <= eps * tst1) {
+        break;
+      }
+      m++;
     }
 
-    e[n - 1] = 0;
+    if (m > l) {
+      iter = 0;
+      do {
+        iter = iter + 1;
 
-    var f = 0;
-    var tst1 = 0;
-    var eps = Number.EPSILON;
-
-    for (l = 0; l < n; l++) {
-        tst1 = Math.max(tst1, Math.abs(d[l]) + Math.abs(e[l]));
-        m = l;
-        while (m < n) {
-            if (Math.abs(e[m]) <= eps * tst1) {
-                break;
-            }
-            m++;
+        g = d[l];
+        p = (d[l + 1] - g) / (2 * e[l]);
+        r = (0, _util.hypotenuse)(p, 1);
+        if (p < 0) {
+          r = -r;
         }
 
-        if (m > l) {
-            iter = 0;
-            do {
-                iter = iter + 1;
-
-                g = d[l];
-                p = (d[l + 1] - g) / (2 * e[l]);
-                r = (0, _util.hypotenuse)(p, 1);
-                if (p < 0) {
-                    r = -r;
-                }
-
-                d[l] = e[l] / (p + r);
-                d[l + 1] = e[l] * (p + r);
-                dl1 = d[l + 1];
-                h = g - d[l];
-                for (i = l + 2; i < n; i++) {
-                    d[i] -= h;
-                }
-
-                f = f + h;
-
-                p = d[m];
-                c = 1;
-                c2 = c;
-                c3 = c;
-                el1 = e[l + 1];
-                s = 0;
-                s2 = 0;
-                for (i = m - 1; i >= l; i--) {
-                    c3 = c2;
-                    c2 = c;
-                    s2 = s;
-                    g = c * e[i];
-                    h = c * p;
-                    r = (0, _util.hypotenuse)(p, e[i]);
-                    e[i + 1] = s * r;
-                    s = e[i] / r;
-                    c = p / r;
-                    p = c * d[i] - s * g;
-                    d[i + 1] = h + s * (c * g + s * d[i]);
-
-                    for (k = 0; k < n; k++) {
-                        h = V[k][i + 1];
-                        V[k][i + 1] = s * V[k][i] + c * h;
-                        V[k][i] = c * V[k][i] - s * h;
-                    }
-                }
-
-                p = -s * s2 * c3 * el1 * e[l] / dl1;
-                e[l] = s * p;
-                d[l] = c * p;
-            } while (Math.abs(e[l]) > eps * tst1);
+        d[l] = e[l] / (p + r);
+        d[l + 1] = e[l] * (p + r);
+        dl1 = d[l + 1];
+        h = g - d[l];
+        for (i = l + 2; i < n; i++) {
+          d[i] -= h;
         }
-        d[l] = d[l] + f;
-        e[l] = 0;
+
+        f = f + h;
+
+        p = d[m];
+        c = 1;
+        c2 = c;
+        c3 = c;
+        el1 = e[l + 1];
+        s = 0;
+        s2 = 0;
+        for (i = m - 1; i >= l; i--) {
+          c3 = c2;
+          c2 = c;
+          s2 = s;
+          g = c * e[i];
+          h = c * p;
+          r = (0, _util.hypotenuse)(p, e[i]);
+          e[i + 1] = s * r;
+          s = e[i] / r;
+          c = p / r;
+          p = c * d[i] - s * g;
+          d[i + 1] = h + s * (c * g + s * d[i]);
+
+          for (k = 0; k < n; k++) {
+            h = V[k][i + 1];
+            V[k][i + 1] = s * V[k][i] + c * h;
+            V[k][i] = c * V[k][i] - s * h;
+          }
+        }
+
+        p = -s * s2 * c3 * el1 * e[l] / dl1;
+        e[l] = s * p;
+        d[l] = c * p;
+      } while (Math.abs(e[l]) > eps * tst1);
+    }
+    d[l] = d[l] + f;
+    e[l] = 0;
+  }
+
+  for (i = 0; i < n - 1; i++) {
+    k = i;
+    p = d[i];
+    for (j = i + 1; j < n; j++) {
+      if (d[j] < p) {
+        k = j;
+        p = d[j];
+      }
     }
 
-    for (i = 0; i < n - 1; i++) {
-        k = i;
-        p = d[i];
-        for (j = i + 1; j < n; j++) {
-            if (d[j] < p) {
-                k = j;
-                p = d[j];
-            }
-        }
-
-        if (k !== i) {
-            d[k] = d[i];
-            d[i] = p;
-            for (j = 0; j < n; j++) {
-                p = V[j][i];
-                V[j][i] = V[j][k];
-                V[j][k] = p;
-            }
-        }
+    if (k !== i) {
+      d[k] = d[i];
+      d[i] = p;
+      for (j = 0; j < n; j++) {
+        p = V[j][i];
+        V[j][i] = V[j][k];
+        V[j][k] = p;
+      }
     }
+  }
 }
 
 function orthes(n, H, ort, V) {
+  var low = 0;
+  var high = n - 1;
+  var f, g, h, i, j, m;
+  var scale;
 
-    var low = 0;
-    var high = n - 1;
-    var f, g, h, i, j, m;
-    var scale;
+  for (m = low + 1; m <= high - 1; m++) {
+    scale = 0;
+    for (i = m; i <= high; i++) {
+      scale = scale + Math.abs(H[i][m - 1]);
+    }
 
-    for (m = low + 1; m <= high - 1; m++) {
-        scale = 0;
+    if (scale !== 0) {
+      h = 0;
+      for (i = high; i >= m; i--) {
+        ort[i] = H[i][m - 1] / scale;
+        h += ort[i] * ort[i];
+      }
+
+      g = Math.sqrt(h);
+      if (ort[m] > 0) {
+        g = -g;
+      }
+
+      h = h - ort[m] * g;
+      ort[m] = ort[m] - g;
+
+      for (j = m; j < n; j++) {
+        f = 0;
+        for (i = high; i >= m; i--) {
+          f += ort[i] * H[i][j];
+        }
+
+        f = f / h;
         for (i = m; i <= high; i++) {
-            scale = scale + Math.abs(H[i][m - 1]);
+          H[i][j] -= f * ort[i];
+        }
+      }
+
+      for (i = 0; i <= high; i++) {
+        f = 0;
+        for (j = high; j >= m; j--) {
+          f += ort[j] * H[i][j];
         }
 
-        if (scale !== 0) {
-            h = 0;
-            for (i = high; i >= m; i--) {
-                ort[i] = H[i][m - 1] / scale;
-                h += ort[i] * ort[i];
-            }
-
-            g = Math.sqrt(h);
-            if (ort[m] > 0) {
-                g = -g;
-            }
-
-            h = h - ort[m] * g;
-            ort[m] = ort[m] - g;
-
-            for (j = m; j < n; j++) {
-                f = 0;
-                for (i = high; i >= m; i--) {
-                    f += ort[i] * H[i][j];
-                }
-
-                f = f / h;
-                for (i = m; i <= high; i++) {
-                    H[i][j] -= f * ort[i];
-                }
-            }
-
-            for (i = 0; i <= high; i++) {
-                f = 0;
-                for (j = high; j >= m; j--) {
-                    f += ort[j] * H[i][j];
-                }
-
-                f = f / h;
-                for (j = m; j <= high; j++) {
-                    H[i][j] -= f * ort[j];
-                }
-            }
-
-            ort[m] = scale * ort[m];
-            H[m][m - 1] = scale * g;
+        f = f / h;
+        for (j = m; j <= high; j++) {
+          H[i][j] -= f * ort[j];
         }
+      }
+
+      ort[m] = scale * ort[m];
+      H[m][m - 1] = scale * g;
     }
+  }
 
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < n; j++) {
-            V[i][j] = i === j ? 1 : 0;
-        }
+  for (i = 0; i < n; i++) {
+    for (j = 0; j < n; j++) {
+      V[i][j] = i === j ? 1 : 0;
     }
+  }
 
-    for (m = high - 1; m >= low + 1; m--) {
-        if (H[m][m - 1] !== 0) {
-            for (i = m + 1; i <= high; i++) {
-                ort[i] = H[i][m - 1];
-            }
+  for (m = high - 1; m >= low + 1; m--) {
+    if (H[m][m - 1] !== 0) {
+      for (i = m + 1; i <= high; i++) {
+        ort[i] = H[i][m - 1];
+      }
 
-            for (j = m; j <= high; j++) {
-                g = 0;
-                for (i = m; i <= high; i++) {
-                    g += ort[i] * V[i][j];
-                }
-
-                g = g / ort[m] / H[m][m - 1];
-                for (i = m; i <= high; i++) {
-                    V[i][j] += g * ort[i];
-                }
-            }
+      for (j = m; j <= high; j++) {
+        g = 0;
+        for (i = m; i <= high; i++) {
+          g += ort[i] * V[i][j];
         }
+
+        g = g / ort[m] / H[m][m - 1];
+        for (i = m; i <= high; i++) {
+          V[i][j] += g * ort[i];
+        }
+      }
     }
+  }
 }
 
 function hqr2(nn, e, d, V, H) {
-    var n = nn - 1;
-    var low = 0;
-    var high = nn - 1;
-    var eps = Number.EPSILON;
-    var exshift = 0;
-    var norm = 0;
-    var p = 0;
-    var q = 0;
-    var r = 0;
-    var s = 0;
-    var z = 0;
-    var iter = 0;
-    var i, j, k, l, m, t, w, x, y;
-    var ra, sa, vr, vi;
-    var notlast, cdivres;
+  var n = nn - 1;
+  var low = 0;
+  var high = nn - 1;
+  var eps = Number.EPSILON;
+  var exshift = 0;
+  var norm = 0;
+  var p = 0;
+  var q = 0;
+  var r = 0;
+  var s = 0;
+  var z = 0;
+  var iter = 0;
+  var i, j, k, l, m, t, w, x, y;
+  var ra, sa, vr, vi;
+  var notlast, cdivres;
 
-    for (i = 0; i < nn; i++) {
-        if (i < low || i > high) {
-            d[i] = H[i][i];
-            e[i] = 0;
-        }
-
-        for (j = Math.max(i - 1, 0); j < nn; j++) {
-            norm = norm + Math.abs(H[i][j]);
-        }
+  for (i = 0; i < nn; i++) {
+    if (i < low || i > high) {
+      d[i] = H[i][i];
+      e[i] = 0;
     }
 
-    while (n >= low) {
-        l = n;
-        while (l > low) {
-            s = Math.abs(H[l - 1][l - 1]) + Math.abs(H[l][l]);
-            if (s === 0) {
-                s = norm;
-            }
-            if (Math.abs(H[l][l - 1]) < eps * s) {
-                break;
-            }
-            l--;
-        }
+    for (j = Math.max(i - 1, 0); j < nn; j++) {
+      norm = norm + Math.abs(H[i][j]);
+    }
+  }
 
-        if (l === n) {
-            H[n][n] = H[n][n] + exshift;
-            d[n] = H[n][n];
-            e[n] = 0;
-            n--;
-            iter = 0;
-        } else if (l === n - 1) {
-            w = H[n][n - 1] * H[n - 1][n];
-            p = (H[n - 1][n - 1] - H[n][n]) / 2;
-            q = p * p + w;
-            z = Math.sqrt(Math.abs(q));
-            H[n][n] = H[n][n] + exshift;
-            H[n - 1][n - 1] = H[n - 1][n - 1] + exshift;
-            x = H[n][n];
-
-            if (q >= 0) {
-                z = p >= 0 ? p + z : p - z;
-                d[n - 1] = x + z;
-                d[n] = d[n - 1];
-                if (z !== 0) {
-                    d[n] = x - w / z;
-                }
-                e[n - 1] = 0;
-                e[n] = 0;
-                x = H[n][n - 1];
-                s = Math.abs(x) + Math.abs(z);
-                p = x / s;
-                q = z / s;
-                r = Math.sqrt(p * p + q * q);
-                p = p / r;
-                q = q / r;
-
-                for (j = n - 1; j < nn; j++) {
-                    z = H[n - 1][j];
-                    H[n - 1][j] = q * z + p * H[n][j];
-                    H[n][j] = q * H[n][j] - p * z;
-                }
-
-                for (i = 0; i <= n; i++) {
-                    z = H[i][n - 1];
-                    H[i][n - 1] = q * z + p * H[i][n];
-                    H[i][n] = q * H[i][n] - p * z;
-                }
-
-                for (i = low; i <= high; i++) {
-                    z = V[i][n - 1];
-                    V[i][n - 1] = q * z + p * V[i][n];
-                    V[i][n] = q * V[i][n] - p * z;
-                }
-            } else {
-                d[n - 1] = x + p;
-                d[n] = x + p;
-                e[n - 1] = z;
-                e[n] = -z;
-            }
-
-            n = n - 2;
-            iter = 0;
-        } else {
-            x = H[n][n];
-            y = 0;
-            w = 0;
-            if (l < n) {
-                y = H[n - 1][n - 1];
-                w = H[n][n - 1] * H[n - 1][n];
-            }
-
-            if (iter === 10) {
-                exshift += x;
-                for (i = low; i <= n; i++) {
-                    H[i][i] -= x;
-                }
-                s = Math.abs(H[n][n - 1]) + Math.abs(H[n - 1][n - 2]);
-                x = y = 0.75 * s;
-                w = -0.4375 * s * s;
-            }
-
-            if (iter === 30) {
-                s = (y - x) / 2;
-                s = s * s + w;
-                if (s > 0) {
-                    s = Math.sqrt(s);
-                    if (y < x) {
-                        s = -s;
-                    }
-                    s = x - w / ((y - x) / 2 + s);
-                    for (i = low; i <= n; i++) {
-                        H[i][i] -= s;
-                    }
-                    exshift += s;
-                    x = y = w = 0.964;
-                }
-            }
-
-            iter = iter + 1;
-
-            m = n - 2;
-            while (m >= l) {
-                z = H[m][m];
-                r = x - z;
-                s = y - z;
-                p = (r * s - w) / H[m + 1][m] + H[m][m + 1];
-                q = H[m + 1][m + 1] - z - r - s;
-                r = H[m + 2][m + 1];
-                s = Math.abs(p) + Math.abs(q) + Math.abs(r);
-                p = p / s;
-                q = q / s;
-                r = r / s;
-                if (m === l) {
-                    break;
-                }
-                if (Math.abs(H[m][m - 1]) * (Math.abs(q) + Math.abs(r)) < eps * (Math.abs(p) * (Math.abs(H[m - 1][m - 1]) + Math.abs(z) + Math.abs(H[m + 1][m + 1])))) {
-                    break;
-                }
-                m--;
-            }
-
-            for (i = m + 2; i <= n; i++) {
-                H[i][i - 2] = 0;
-                if (i > m + 2) {
-                    H[i][i - 3] = 0;
-                }
-            }
-
-            for (k = m; k <= n - 1; k++) {
-                notlast = k !== n - 1;
-                if (k !== m) {
-                    p = H[k][k - 1];
-                    q = H[k + 1][k - 1];
-                    r = notlast ? H[k + 2][k - 1] : 0;
-                    x = Math.abs(p) + Math.abs(q) + Math.abs(r);
-                    if (x !== 0) {
-                        p = p / x;
-                        q = q / x;
-                        r = r / x;
-                    }
-                }
-
-                if (x === 0) {
-                    break;
-                }
-
-                s = Math.sqrt(p * p + q * q + r * r);
-                if (p < 0) {
-                    s = -s;
-                }
-
-                if (s !== 0) {
-                    if (k !== m) {
-                        H[k][k - 1] = -s * x;
-                    } else if (l !== m) {
-                        H[k][k - 1] = -H[k][k - 1];
-                    }
-
-                    p = p + s;
-                    x = p / s;
-                    y = q / s;
-                    z = r / s;
-                    q = q / p;
-                    r = r / p;
-
-                    for (j = k; j < nn; j++) {
-                        p = H[k][j] + q * H[k + 1][j];
-                        if (notlast) {
-                            p = p + r * H[k + 2][j];
-                            H[k + 2][j] = H[k + 2][j] - p * z;
-                        }
-
-                        H[k][j] = H[k][j] - p * x;
-                        H[k + 1][j] = H[k + 1][j] - p * y;
-                    }
-
-                    for (i = 0; i <= Math.min(n, k + 3); i++) {
-                        p = x * H[i][k] + y * H[i][k + 1];
-                        if (notlast) {
-                            p = p + z * H[i][k + 2];
-                            H[i][k + 2] = H[i][k + 2] - p * r;
-                        }
-
-                        H[i][k] = H[i][k] - p;
-                        H[i][k + 1] = H[i][k + 1] - p * q;
-                    }
-
-                    for (i = low; i <= high; i++) {
-                        p = x * V[i][k] + y * V[i][k + 1];
-                        if (notlast) {
-                            p = p + z * V[i][k + 2];
-                            V[i][k + 2] = V[i][k + 2] - p * r;
-                        }
-
-                        V[i][k] = V[i][k] - p;
-                        V[i][k + 1] = V[i][k + 1] - p * q;
-                    }
-                }
-            }
-        }
+  while (n >= low) {
+    l = n;
+    while (l > low) {
+      s = Math.abs(H[l - 1][l - 1]) + Math.abs(H[l][l]);
+      if (s === 0) {
+        s = norm;
+      }
+      if (Math.abs(H[l][l - 1]) < eps * s) {
+        break;
+      }
+      l--;
     }
 
-    if (norm === 0) {
-        return;
-    }
+    if (l === n) {
+      H[n][n] = H[n][n] + exshift;
+      d[n] = H[n][n];
+      e[n] = 0;
+      n--;
+      iter = 0;
+    } else if (l === n - 1) {
+      w = H[n][n - 1] * H[n - 1][n];
+      p = (H[n - 1][n - 1] - H[n][n]) / 2;
+      q = p * p + w;
+      z = Math.sqrt(Math.abs(q));
+      H[n][n] = H[n][n] + exshift;
+      H[n - 1][n - 1] = H[n - 1][n - 1] + exshift;
+      x = H[n][n];
 
-    for (n = nn - 1; n >= 0; n--) {
-        p = d[n];
-        q = e[n];
-
-        if (q === 0) {
-            l = n;
-            H[n][n] = 1;
-            for (i = n - 1; i >= 0; i--) {
-                w = H[i][i] - p;
-                r = 0;
-                for (j = l; j <= n; j++) {
-                    r = r + H[i][j] * H[j][n];
-                }
-
-                if (e[i] < 0) {
-                    z = w;
-                    s = r;
-                } else {
-                    l = i;
-                    if (e[i] === 0) {
-                        H[i][n] = w !== 0 ? -r / w : -r / (eps * norm);
-                    } else {
-                        x = H[i][i + 1];
-                        y = H[i + 1][i];
-                        q = (d[i] - p) * (d[i] - p) + e[i] * e[i];
-                        t = (x * s - z * r) / q;
-                        H[i][n] = t;
-                        H[i + 1][n] = Math.abs(x) > Math.abs(z) ? (-r - w * t) / x : (-s - y * t) / z;
-                    }
-
-                    t = Math.abs(H[i][n]);
-                    if (eps * t * t > 1) {
-                        for (j = i; j <= n; j++) {
-                            H[j][n] = H[j][n] / t;
-                        }
-                    }
-                }
-            }
-        } else if (q < 0) {
-            l = n - 1;
-
-            if (Math.abs(H[n][n - 1]) > Math.abs(H[n - 1][n])) {
-                H[n - 1][n - 1] = q / H[n][n - 1];
-                H[n - 1][n] = -(H[n][n] - p) / H[n][n - 1];
-            } else {
-                cdivres = cdiv(0, -H[n - 1][n], H[n - 1][n - 1] - p, q);
-                H[n - 1][n - 1] = cdivres[0];
-                H[n - 1][n] = cdivres[1];
-            }
-
-            H[n][n - 1] = 0;
-            H[n][n] = 1;
-            for (i = n - 2; i >= 0; i--) {
-                ra = 0;
-                sa = 0;
-                for (j = l; j <= n; j++) {
-                    ra = ra + H[i][j] * H[j][n - 1];
-                    sa = sa + H[i][j] * H[j][n];
-                }
-
-                w = H[i][i] - p;
-
-                if (e[i] < 0) {
-                    z = w;
-                    r = ra;
-                    s = sa;
-                } else {
-                    l = i;
-                    if (e[i] === 0) {
-                        cdivres = cdiv(-ra, -sa, w, q);
-                        H[i][n - 1] = cdivres[0];
-                        H[i][n] = cdivres[1];
-                    } else {
-                        x = H[i][i + 1];
-                        y = H[i + 1][i];
-                        vr = (d[i] - p) * (d[i] - p) + e[i] * e[i] - q * q;
-                        vi = (d[i] - p) * 2 * q;
-                        if (vr === 0 && vi === 0) {
-                            vr = eps * norm * (Math.abs(w) + Math.abs(q) + Math.abs(x) + Math.abs(y) + Math.abs(z));
-                        }
-                        cdivres = cdiv(x * r - z * ra + q * sa, x * s - z * sa - q * ra, vr, vi);
-                        H[i][n - 1] = cdivres[0];
-                        H[i][n] = cdivres[1];
-                        if (Math.abs(x) > Math.abs(z) + Math.abs(q)) {
-                            H[i + 1][n - 1] = (-ra - w * H[i][n - 1] + q * H[i][n]) / x;
-                            H[i + 1][n] = (-sa - w * H[i][n] - q * H[i][n - 1]) / x;
-                        } else {
-                            cdivres = cdiv(-r - y * H[i][n - 1], -s - y * H[i][n], z, q);
-                            H[i + 1][n - 1] = cdivres[0];
-                            H[i + 1][n] = cdivres[1];
-                        }
-                    }
-
-                    t = Math.max(Math.abs(H[i][n - 1]), Math.abs(H[i][n]));
-                    if (eps * t * t > 1) {
-                        for (j = i; j <= n; j++) {
-                            H[j][n - 1] = H[j][n - 1] / t;
-                            H[j][n] = H[j][n] / t;
-                        }
-                    }
-                }
-            }
+      if (q >= 0) {
+        z = p >= 0 ? p + z : p - z;
+        d[n - 1] = x + z;
+        d[n] = d[n - 1];
+        if (z !== 0) {
+          d[n] = x - w / z;
         }
-    }
+        e[n - 1] = 0;
+        e[n] = 0;
+        x = H[n][n - 1];
+        s = Math.abs(x) + Math.abs(z);
+        p = x / s;
+        q = z / s;
+        r = Math.sqrt(p * p + q * q);
+        p = p / r;
+        q = q / r;
 
-    for (i = 0; i < nn; i++) {
-        if (i < low || i > high) {
-            for (j = i; j < nn; j++) {
-                V[i][j] = H[i][j];
-            }
+        for (j = n - 1; j < nn; j++) {
+          z = H[n - 1][j];
+          H[n - 1][j] = q * z + p * H[n][j];
+          H[n][j] = q * H[n][j] - p * z;
         }
-    }
 
-    for (j = nn - 1; j >= low; j--) {
+        for (i = 0; i <= n; i++) {
+          z = H[i][n - 1];
+          H[i][n - 1] = q * z + p * H[i][n];
+          H[i][n] = q * H[i][n] - p * z;
+        }
+
         for (i = low; i <= high; i++) {
-            z = 0;
-            for (k = low; k <= Math.min(j, high); k++) {
-                z = z + V[i][k] * H[k][j];
-            }
-            V[i][j] = z;
+          z = V[i][n - 1];
+          V[i][n - 1] = q * z + p * V[i][n];
+          V[i][n] = q * V[i][n] - p * z;
         }
+      } else {
+        d[n - 1] = x + p;
+        d[n] = x + p;
+        e[n - 1] = z;
+        e[n] = -z;
+      }
+
+      n = n - 2;
+      iter = 0;
+    } else {
+      x = H[n][n];
+      y = 0;
+      w = 0;
+      if (l < n) {
+        y = H[n - 1][n - 1];
+        w = H[n][n - 1] * H[n - 1][n];
+      }
+
+      if (iter === 10) {
+        exshift += x;
+        for (i = low; i <= n; i++) {
+          H[i][i] -= x;
+        }
+        s = Math.abs(H[n][n - 1]) + Math.abs(H[n - 1][n - 2]);
+        x = y = 0.75 * s;
+        w = -0.4375 * s * s;
+      }
+
+      if (iter === 30) {
+        s = (y - x) / 2;
+        s = s * s + w;
+        if (s > 0) {
+          s = Math.sqrt(s);
+          if (y < x) {
+            s = -s;
+          }
+          s = x - w / ((y - x) / 2 + s);
+          for (i = low; i <= n; i++) {
+            H[i][i] -= s;
+          }
+          exshift += s;
+          x = y = w = 0.964;
+        }
+      }
+
+      iter = iter + 1;
+
+      m = n - 2;
+      while (m >= l) {
+        z = H[m][m];
+        r = x - z;
+        s = y - z;
+        p = (r * s - w) / H[m + 1][m] + H[m][m + 1];
+        q = H[m + 1][m + 1] - z - r - s;
+        r = H[m + 2][m + 1];
+        s = Math.abs(p) + Math.abs(q) + Math.abs(r);
+        p = p / s;
+        q = q / s;
+        r = r / s;
+        if (m === l) {
+          break;
+        }
+        if (Math.abs(H[m][m - 1]) * (Math.abs(q) + Math.abs(r)) < eps * (Math.abs(p) * (Math.abs(H[m - 1][m - 1]) + Math.abs(z) + Math.abs(H[m + 1][m + 1])))) {
+          break;
+        }
+        m--;
+      }
+
+      for (i = m + 2; i <= n; i++) {
+        H[i][i - 2] = 0;
+        if (i > m + 2) {
+          H[i][i - 3] = 0;
+        }
+      }
+
+      for (k = m; k <= n - 1; k++) {
+        notlast = k !== n - 1;
+        if (k !== m) {
+          p = H[k][k - 1];
+          q = H[k + 1][k - 1];
+          r = notlast ? H[k + 2][k - 1] : 0;
+          x = Math.abs(p) + Math.abs(q) + Math.abs(r);
+          if (x !== 0) {
+            p = p / x;
+            q = q / x;
+            r = r / x;
+          }
+        }
+
+        if (x === 0) {
+          break;
+        }
+
+        s = Math.sqrt(p * p + q * q + r * r);
+        if (p < 0) {
+          s = -s;
+        }
+
+        if (s !== 0) {
+          if (k !== m) {
+            H[k][k - 1] = -s * x;
+          } else if (l !== m) {
+            H[k][k - 1] = -H[k][k - 1];
+          }
+
+          p = p + s;
+          x = p / s;
+          y = q / s;
+          z = r / s;
+          q = q / p;
+          r = r / p;
+
+          for (j = k; j < nn; j++) {
+            p = H[k][j] + q * H[k + 1][j];
+            if (notlast) {
+              p = p + r * H[k + 2][j];
+              H[k + 2][j] = H[k + 2][j] - p * z;
+            }
+
+            H[k][j] = H[k][j] - p * x;
+            H[k + 1][j] = H[k + 1][j] - p * y;
+          }
+
+          for (i = 0; i <= Math.min(n, k + 3); i++) {
+            p = x * H[i][k] + y * H[i][k + 1];
+            if (notlast) {
+              p = p + z * H[i][k + 2];
+              H[i][k + 2] = H[i][k + 2] - p * r;
+            }
+
+            H[i][k] = H[i][k] - p;
+            H[i][k + 1] = H[i][k + 1] - p * q;
+          }
+
+          for (i = low; i <= high; i++) {
+            p = x * V[i][k] + y * V[i][k + 1];
+            if (notlast) {
+              p = p + z * V[i][k + 2];
+              V[i][k + 2] = V[i][k + 2] - p * r;
+            }
+
+            V[i][k] = V[i][k] - p;
+            V[i][k + 1] = V[i][k + 1] - p * q;
+          }
+        }
+      }
     }
+  }
+
+  if (norm === 0) {
+    return;
+  }
+
+  for (n = nn - 1; n >= 0; n--) {
+    p = d[n];
+    q = e[n];
+
+    if (q === 0) {
+      l = n;
+      H[n][n] = 1;
+      for (i = n - 1; i >= 0; i--) {
+        w = H[i][i] - p;
+        r = 0;
+        for (j = l; j <= n; j++) {
+          r = r + H[i][j] * H[j][n];
+        }
+
+        if (e[i] < 0) {
+          z = w;
+          s = r;
+        } else {
+          l = i;
+          if (e[i] === 0) {
+            H[i][n] = w !== 0 ? -r / w : -r / (eps * norm);
+          } else {
+            x = H[i][i + 1];
+            y = H[i + 1][i];
+            q = (d[i] - p) * (d[i] - p) + e[i] * e[i];
+            t = (x * s - z * r) / q;
+            H[i][n] = t;
+            H[i + 1][n] = Math.abs(x) > Math.abs(z) ? (-r - w * t) / x : (-s - y * t) / z;
+          }
+
+          t = Math.abs(H[i][n]);
+          if (eps * t * t > 1) {
+            for (j = i; j <= n; j++) {
+              H[j][n] = H[j][n] / t;
+            }
+          }
+        }
+      }
+    } else if (q < 0) {
+      l = n - 1;
+
+      if (Math.abs(H[n][n - 1]) > Math.abs(H[n - 1][n])) {
+        H[n - 1][n - 1] = q / H[n][n - 1];
+        H[n - 1][n] = -(H[n][n] - p) / H[n][n - 1];
+      } else {
+        cdivres = cdiv(0, -H[n - 1][n], H[n - 1][n - 1] - p, q);
+        H[n - 1][n - 1] = cdivres[0];
+        H[n - 1][n] = cdivres[1];
+      }
+
+      H[n][n - 1] = 0;
+      H[n][n] = 1;
+      for (i = n - 2; i >= 0; i--) {
+        ra = 0;
+        sa = 0;
+        for (j = l; j <= n; j++) {
+          ra = ra + H[i][j] * H[j][n - 1];
+          sa = sa + H[i][j] * H[j][n];
+        }
+
+        w = H[i][i] - p;
+
+        if (e[i] < 0) {
+          z = w;
+          r = ra;
+          s = sa;
+        } else {
+          l = i;
+          if (e[i] === 0) {
+            cdivres = cdiv(-ra, -sa, w, q);
+            H[i][n - 1] = cdivres[0];
+            H[i][n] = cdivres[1];
+          } else {
+            x = H[i][i + 1];
+            y = H[i + 1][i];
+            vr = (d[i] - p) * (d[i] - p) + e[i] * e[i] - q * q;
+            vi = (d[i] - p) * 2 * q;
+            if (vr === 0 && vi === 0) {
+              vr = eps * norm * (Math.abs(w) + Math.abs(q) + Math.abs(x) + Math.abs(y) + Math.abs(z));
+            }
+            cdivres = cdiv(x * r - z * ra + q * sa, x * s - z * sa - q * ra, vr, vi);
+            H[i][n - 1] = cdivres[0];
+            H[i][n] = cdivres[1];
+            if (Math.abs(x) > Math.abs(z) + Math.abs(q)) {
+              H[i + 1][n - 1] = (-ra - w * H[i][n - 1] + q * H[i][n]) / x;
+              H[i + 1][n] = (-sa - w * H[i][n] - q * H[i][n - 1]) / x;
+            } else {
+              cdivres = cdiv(-r - y * H[i][n - 1], -s - y * H[i][n], z, q);
+              H[i + 1][n - 1] = cdivres[0];
+              H[i + 1][n] = cdivres[1];
+            }
+          }
+
+          t = Math.max(Math.abs(H[i][n - 1]), Math.abs(H[i][n]));
+          if (eps * t * t > 1) {
+            for (j = i; j <= n; j++) {
+              H[j][n - 1] = H[j][n - 1] / t;
+              H[j][n] = H[j][n] / t;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  for (i = 0; i < nn; i++) {
+    if (i < low || i > high) {
+      for (j = i; j < nn; j++) {
+        V[i][j] = H[i][j];
+      }
+    }
+  }
+
+  for (j = nn - 1; j >= low; j--) {
+    for (i = low; i <= high; i++) {
+      z = 0;
+      for (k = low; k <= Math.min(j, high); k++) {
+        z = z + V[i][k] * H[k][j];
+      }
+      V[i][j] = z;
+    }
+  }
 }
 
 function cdiv(xr, xi, yr, yi) {
-    var r, d;
-    if (Math.abs(yr) > Math.abs(yi)) {
-        r = yi / yr;
-        d = yr + r * yi;
-        return [(xr + r * xi) / d, (xi - r * xr) / d];
-    } else {
-        r = yr / yi;
-        d = yi + r * yr;
-        return [(r * xr + xi) / d, (r * xi - xr) / d];
-    }
+  var r, d;
+  if (Math.abs(yr) > Math.abs(yi)) {
+    r = yi / yr;
+    d = yr + r * yi;
+    return [(xr + r * xi) / d, (xi - r * xr) / d];
+  } else {
+    r = yr / yi;
+    d = yi + r * yr;
+    return [(r * xr + xi) / d, (r * xi - xr) / d];
+  }
 }
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 
 var _index = __webpack_require__(0);
@@ -9364,99 +9696,99 @@ var _index = __webpack_require__(0);
  * @param {Matrix} value
  */
 class CholeskyDecomposition {
-    constructor(value) {
-        value = _index.WrapperMatrix2D.checkMatrix(value);
-        if (!value.isSymmetric()) {
-            throw new Error('Matrix is not symmetric');
-        }
-
-        var a = value;
-        var dimension = a.rows;
-        var l = new _index.Matrix(dimension, dimension);
-        var positiveDefinite = true;
-        var i, j, k;
-
-        for (j = 0; j < dimension; j++) {
-            var Lrowj = l[j];
-            var d = 0;
-            for (k = 0; k < j; k++) {
-                var Lrowk = l[k];
-                var s = 0;
-                for (i = 0; i < k; i++) {
-                    s += Lrowk[i] * Lrowj[i];
-                }
-                Lrowj[k] = s = (a.get(j, k) - s) / l[k][k];
-                d = d + s * s;
-            }
-
-            d = a.get(j, j) - d;
-
-            positiveDefinite &= d > 0;
-            l[j][j] = Math.sqrt(Math.max(d, 0));
-            for (k = j + 1; k < dimension; k++) {
-                l[j][k] = 0;
-            }
-        }
-
-        if (!positiveDefinite) {
-            throw new Error('Matrix is not positive definite');
-        }
-
-        this.L = l;
+  constructor(value) {
+    value = _index.WrapperMatrix2D.checkMatrix(value);
+    if (!value.isSymmetric()) {
+      throw new Error('Matrix is not symmetric');
     }
 
-    /**
-     *
-     * @param {Matrix} value
-     * @return {Matrix}
-     */
-    solve(value) {
-        value = _index.WrapperMatrix2D.checkMatrix(value);
+    var a = value;
+    var dimension = a.rows;
+    var l = new _index.Matrix(dimension, dimension);
+    var positiveDefinite = true;
+    var i, j, k;
 
-        var l = this.L;
-        var dimension = l.rows;
-
-        if (value.rows !== dimension) {
-            throw new Error('Matrix dimensions do not match');
+    for (j = 0; j < dimension; j++) {
+      var Lrowj = l[j];
+      var d = 0;
+      for (k = 0; k < j; k++) {
+        var Lrowk = l[k];
+        var s = 0;
+        for (i = 0; i < k; i++) {
+          s += Lrowk[i] * Lrowj[i];
         }
+        Lrowj[k] = s = (a.get(j, k) - s) / l[k][k];
+        d = d + s * s;
+      }
 
-        var count = value.columns;
-        var B = value.clone();
-        var i, j, k;
+      d = a.get(j, j) - d;
 
-        for (k = 0; k < dimension; k++) {
-            for (j = 0; j < count; j++) {
-                for (i = 0; i < k; i++) {
-                    B[k][j] -= B[i][j] * l[k][i];
-                }
-                B[k][j] /= l[k][k];
-            }
-        }
-
-        for (k = dimension - 1; k >= 0; k--) {
-            for (j = 0; j < count; j++) {
-                for (i = k + 1; i < dimension; i++) {
-                    B[k][j] -= B[i][j] * l[i][k];
-                }
-                B[k][j] /= l[k][k];
-            }
-        }
-
-        return B;
+      positiveDefinite &= d > 0;
+      l[j][j] = Math.sqrt(Math.max(d, 0));
+      for (k = j + 1; k < dimension; k++) {
+        l[j][k] = 0;
+      }
     }
 
-    /**
-     *
-     * @return {Matrix}
-     */
-    get lowerTriangularMatrix() {
-        return this.L;
+    if (!positiveDefinite) {
+      throw new Error('Matrix is not positive definite');
     }
+
+    this.L = l;
+  }
+
+  /**
+   *
+   * @param {Matrix} value
+   * @return {Matrix}
+   */
+  solve(value) {
+    value = _index.WrapperMatrix2D.checkMatrix(value);
+
+    var l = this.L;
+    var dimension = l.rows;
+
+    if (value.rows !== dimension) {
+      throw new Error('Matrix dimensions do not match');
+    }
+
+    var count = value.columns;
+    var B = value.clone();
+    var i, j, k;
+
+    for (k = 0; k < dimension; k++) {
+      for (j = 0; j < count; j++) {
+        for (i = 0; i < k; i++) {
+          B[k][j] -= B[i][j] * l[k][i];
+        }
+        B[k][j] /= l[k][k];
+      }
+    }
+
+    for (k = dimension - 1; k >= 0; k--) {
+      for (j = 0; j < count; j++) {
+        for (i = k + 1; i < dimension; i++) {
+          B[k][j] -= B[i][j] * l[i][k];
+        }
+        B[k][j] /= l[k][k];
+      }
+    }
+
+    return B;
+  }
+
+  /**
+   *
+   * @return {Matrix}
+   */
+  get lowerTriangularMatrix() {
+    return this.L;
+  }
 }
 exports.default = CholeskyDecomposition;
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9657,7 +9989,7 @@ function zip(a, b) {
 }
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9672,7 +10004,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _TreeNode = __webpack_require__(21);
+var _TreeNode = __webpack_require__(22);
 
 var _TreeNode2 = _interopRequireDefault(_TreeNode);
 
@@ -9765,7 +10097,7 @@ class DecisionTreeRegression {
 exports.DecisionTreeRegression = DecisionTreeRegression;
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9775,7 +10107,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _RandomForestClassifier = __webpack_require__(72);
+var _RandomForestClassifier = __webpack_require__(74);
 
 Object.defineProperty(exports, 'RandomForestClassifier', {
   enumerable: true,
@@ -9784,7 +10116,7 @@ Object.defineProperty(exports, 'RandomForestClassifier', {
   }
 });
 
-var _RandomForestRegression = __webpack_require__(75);
+var _RandomForestRegression = __webpack_require__(77);
 
 Object.defineProperty(exports, 'RandomForestRegression', {
   enumerable: true,
@@ -9794,25 +10126,25 @@ Object.defineProperty(exports, 'RandomForestRegression', {
 });
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.RandomForestClassifier = undefined;
 
-var _RandomForestBase = __webpack_require__(22);
+var _RandomForestBase = __webpack_require__(23);
 
 var defaultOptions = {
-    maxFeatures: 1.0,
-    replacement: true,
-    nEstimators: 10,
-    seed: 42,
-    useSampleBagging: false
+  maxFeatures: 1.0,
+  replacement: true,
+  nEstimators: 10,
+  seed: 42,
+  useSampleBagging: false
 };
 
 /**
@@ -9820,8 +10152,7 @@ var defaultOptions = {
  * @augments RandomForestBase
  */
 class RandomForestClassifier extends _RandomForestBase.RandomForestBase {
-
-    /**
+  /**
      * Create a new base random forest for a classifier or regression model.
      * @constructor
      * @param {object} options
@@ -9835,49 +10166,49 @@ class RandomForestClassifier extends _RandomForestBase.RandomForestBase {
      * @param {boolean} [options.useSampleBagging=false] - use bagging over training samples.
      * @param {object} model - for load purposes.
      */
-    constructor(options, model) {
-        if (options === true) {
-            super(true, model.baseModel);
-        } else {
-            options = Object.assign({}, defaultOptions, options);
-            options.isClassifier = true;
-            super(options);
-        }
+  constructor(options, model) {
+    if (options === true) {
+      super(true, model.baseModel);
+    } else {
+      options = Object.assign({}, defaultOptions, options);
+      options.isClassifier = true;
+      super(options);
     }
+  }
 
-    /**
+  /**
      * retrieve the prediction given the selection method.
      * @param {Array} values - predictions of the estimators.
      * @return {number} prediction
      */
-    selection(values) {
-        return mode(values);
-    }
+  selection(values) {
+    return mode(values);
+  }
 
-    /**
+  /**
      * Export the current model to JSON.
      * @return {object} - Current model.
      */
-    toJSON() {
-        var baseModel = super.toJSON();
-        return {
-            baseModel: baseModel,
-            name: 'RFClassifier'
-        };
-    }
+  toJSON() {
+    var baseModel = super.toJSON();
+    return {
+      baseModel: baseModel,
+      name: 'RFClassifier'
+    };
+  }
 
-    /**
+  /**
      * Load a Decision tree classifier with the given model.
      * @param {object} model
      * @return {RandomForestClassifier}
      */
-    static load(model) {
-        if (model.name !== 'RFClassifier') {
-            throw new RangeError('Invalid model: ' + model.name);
-        }
-
-        return new RandomForestClassifier(true, model);
+  static load(model) {
+    if (model.name !== 'RFClassifier') {
+      throw new RangeError(`Invalid model: ${model.name}`);
     }
+
+    return new RandomForestClassifier(true, model);
+  }
 }
 
 exports.RandomForestClassifier = RandomForestClassifier; /**
@@ -9887,24 +10218,24 @@ exports.RandomForestClassifier = RandomForestClassifier; /**
                                                           */
 
 function mode(arr) {
-    return arr.sort((a, b) => arr.filter(v => v === a).length - arr.filter(v => v === b).length).pop();
+  return arr.sort((a, b) => arr.filter(v => v === a).length - arr.filter(v => v === b).length).pop();
 }
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.checkFloat = checkFloat;
 exports.examplesBaggingWithReplacement = examplesBaggingWithReplacement;
 exports.featureBagging = featureBagging;
 
-var _randomJs = __webpack_require__(74);
+var _randomJs = __webpack_require__(76);
 
 var _randomJs2 = _interopRequireDefault(_randomJs);
 
@@ -9915,7 +10246,7 @@ var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function checkFloat(n) {
-    return n > 0.0 && n <= 1.0;
+  return n > 0.0 && n <= 1.0;
 }
 
 /**
@@ -9927,29 +10258,29 @@ function checkFloat(n) {
  * @return {object} with new X and y.
  */
 function examplesBaggingWithReplacement(trainingSet, trainingValue, seed) {
-    var engine = _randomJs2.default.engines.mt19937();
-    var distribution = _randomJs2.default.integer(0, trainingSet.rows - 1);
-    if (seed === undefined) {
-        engine = engine.autoSeed();
-    } else if (Number.isInteger(seed)) {
-        engine = engine.seed(seed);
-    } else {
-        throw new RangeError('Expected seed must be undefined or integer not ' + seed);
-    }
+  var engine = _randomJs2.default.engines.mt19937();
+  var distribution = _randomJs2.default.integer(0, trainingSet.rows - 1);
+  if (seed === undefined) {
+    engine = engine.autoSeed();
+  } else if (Number.isInteger(seed)) {
+    engine = engine.seed(seed);
+  } else {
+    throw new RangeError(`Expected seed must be undefined or integer not ${seed}`);
+  }
 
-    var Xr = new Array(trainingSet.rows);
-    var yr = new Array(trainingSet.rows);
+  var Xr = new Array(trainingSet.rows);
+  var yr = new Array(trainingSet.rows);
 
-    for (var i = 0; i < trainingSet.rows; ++i) {
-        var index = distribution(engine);
-        Xr[i] = trainingSet[index];
-        yr[i] = trainingValue[index];
-    }
+  for (var i = 0; i < trainingSet.rows; ++i) {
+    var index = distribution(engine);
+    Xr[i] = trainingSet[index];
+    yr[i] = trainingValue[index];
+  }
 
-    return {
-        X: new _mlMatrix2.default(Xr),
-        y: yr
-    };
+  return {
+    X: new _mlMatrix2.default(Xr),
+    y: yr
+  };
 }
 
 /**
@@ -9962,50 +10293,50 @@ function examplesBaggingWithReplacement(trainingSet, trainingValue, seed) {
  * @return {object}
  */
 function featureBagging(trainingSet, n, replacement, seed) {
-    if (trainingSet.columns < n) {
-        throw new RangeError('N should be less or equal to the number of columns of X');
+  if (trainingSet.columns < n) {
+    throw new RangeError('N should be less or equal to the number of columns of X');
+  }
+
+  var distribution = _randomJs2.default.integer(0, trainingSet.columns - 1);
+  var engine = _randomJs2.default.engines.mt19937();
+  if (seed === undefined) {
+    engine = engine.autoSeed();
+  } else if (Number.isInteger(seed)) {
+    engine = engine.seed(seed);
+  } else {
+    throw new RangeError(`Expected seed must be undefined or integer not ${seed}`);
+  }
+
+  var toRet = new _mlMatrix2.default(trainingSet.rows, n);
+
+  if (replacement) {
+    var usedIndex = new Array(n);
+    for (var i = 0; i < n; ++i) {
+      var index = distribution(engine);
+      usedIndex[i] = index;
+      toRet.setColumn(i, trainingSet.getColumn(index));
     }
-
-    var distribution = _randomJs2.default.integer(0, trainingSet.columns - 1);
-    var engine = _randomJs2.default.engines.mt19937();
-    if (seed === undefined) {
-        engine = engine.autoSeed();
-    } else if (Number.isInteger(seed)) {
-        engine = engine.seed(seed);
-    } else {
-        throw new RangeError('Expected seed must be undefined or integer not ' + seed);
-    }
-
-    var toRet = new _mlMatrix2.default(trainingSet.rows, n);
-
-    if (replacement) {
-        var usedIndex = new Array(n);
-        for (var i = 0; i < n; ++i) {
-            var index = distribution(engine);
-            usedIndex[i] = index;
-            toRet.setColumn(i, trainingSet.getColumn(index));
-        }
-    } else {
-        usedIndex = new Set();
+  } else {
+    usedIndex = new Set();
+    index = distribution(engine);
+    for (i = 0; i < n; ++i) {
+      while (usedIndex.has(index)) {
         index = distribution(engine);
-        for (i = 0; i < n; ++i) {
-            while (usedIndex.has(index)) {
-                index = distribution(engine);
-            }
-            toRet.setColumn(i, trainingSet.getColumn(index));
-            usedIndex.add(index);
-        }
-        usedIndex = Array.from(usedIndex);
+      }
+      toRet.setColumn(i, trainingSet.getColumn(index));
+      usedIndex.add(index);
     }
+    usedIndex = Array.from(usedIndex);
+  }
 
-    return {
-        X: toRet,
-        usedIndex: usedIndex
-    };
+  return {
+    X: toRet,
+    usedIndex: usedIndex
+  };
 }
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10709,42 +11040,42 @@ var __WEBPACK_AMD_DEFINE_RESULT__;
 })(undefined);
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-    value: true
+  value: true
 });
 exports.RandomForestRegression = undefined;
-
-var _RandomForestBase = __webpack_require__(22);
 
 var _mlArrayMean = __webpack_require__(12);
 
 var _mlArrayMean2 = _interopRequireDefault(_mlArrayMean);
 
-var _mlArrayMedian = __webpack_require__(76);
+var _mlArrayMedian = __webpack_require__(78);
 
 var _mlArrayMedian2 = _interopRequireDefault(_mlArrayMedian);
+
+var _RandomForestBase = __webpack_require__(23);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var selectionMethods = {
-    mean: _mlArrayMean2.default,
-    median: _mlArrayMedian2.default
+  mean: _mlArrayMean2.default,
+  median: _mlArrayMedian2.default
 };
 
 var defaultOptions = {
-    maxFeatures: 1.0,
-    replacement: false,
-    nEstimators: 10,
-    treeOptions: {},
-    selectionMethod: 'mean',
-    seed: 42,
-    useSampleBagging: false
+  maxFeatures: 1.0,
+  replacement: false,
+  nEstimators: 10,
+  treeOptions: {},
+  selectionMethod: 'mean',
+  seed: 42,
+  useSampleBagging: false
 };
 
 /**
@@ -10752,8 +11083,7 @@ var defaultOptions = {
  * @augments RandomForestBase
  */
 class RandomForestRegression extends _RandomForestBase.RandomForestBase {
-
-    /**
+  /**
      * Create a new base random forest for a classifier or regression model.
      * @constructor
      * @param {object} options
@@ -10768,63 +11098,63 @@ class RandomForestRegression extends _RandomForestBase.RandomForestBase {
      * @param {boolean} [options.useSampleBagging=false] - use bagging over training samples.
      * @param {object} model - for load purposes.
      */
-    constructor(options, model) {
-        if (options === true) {
-            super(true, model.baseModel);
-            this.selectionMethod = model.selectionMethod;
-        } else {
-            options = Object.assign({}, defaultOptions, options);
+  constructor(options, model) {
+    if (options === true) {
+      super(true, model.baseModel);
+      this.selectionMethod = model.selectionMethod;
+    } else {
+      options = Object.assign({}, defaultOptions, options);
 
-            if (!(options.selectionMethod === 'mean' || options.selectionMethod === 'median')) {
-                throw new RangeError('Unsupported selection method ' + options.selectionMethod);
-            }
+      if (!(options.selectionMethod === 'mean' || options.selectionMethod === 'median')) {
+        throw new RangeError(`Unsupported selection method ${options.selectionMethod}`);
+      }
 
-            options.isClassifier = false;
+      options.isClassifier = false;
 
-            super(options);
-            this.selectionMethod = options.selectionMethod;
-        }
+      super(options);
+      this.selectionMethod = options.selectionMethod;
     }
+  }
 
-    /**
+  /**
      * retrieve the prediction given the selection method.
      * @param {Array} values - predictions of the estimators.
      * @return {number} prediction
      */
-    selection(values) {
-        return selectionMethods[this.selectionMethod](values);
-    }
+  selection(values) {
+    return selectionMethods[this.selectionMethod](values);
+  }
 
-    /**
+  /**
      * Export the current model to JSON.
      * @return {object} - Current model.
      */
-    toJSON() {
-        var baseModel = super.toJSON();
-        return {
-            baseModel: baseModel,
-            selectionMethod: this.selectionMethod,
-            name: 'RFRegression'
-        };
-    }
+  toJSON() {
+    var baseModel = super.toJSON();
+    return {
+      baseModel: baseModel,
+      selectionMethod: this.selectionMethod,
+      name: 'RFRegression'
+    };
+  }
 
-    /**
+  /**
      * Load a Decision tree classifier with the given model.
      * @param {object} model
      * @return {RandomForestRegression}
      */
-    static load(model) {
-        if (model.name !== 'RFRegression') {
-            throw new RangeError('Invalid model: ' + model.name);
-        }
-
-        return new RandomForestRegression(true, model);
+  static load(model) {
+    if (model.name !== 'RFRegression') {
+      throw new RangeError(`Invalid model: ${model.name}`);
     }
+
+    return new RandomForestRegression(true, model);
+  }
 }
 exports.RandomForestRegression = RandomForestRegression;
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10835,7 +11165,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = median;
 
-var _medianQuickselect = __webpack_require__(77);
+var _medianQuickselect = __webpack_require__(79);
 
 var _medianQuickselect2 = _interopRequireDefault(_medianQuickselect);
 
@@ -10859,14 +11189,14 @@ function median(input) {
 }
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 (function(){function d(c){for(var d=0,e=c.length-1,f=void 0,g=void 0,h=void 0,i=b(d,e);;){if(e<=d)return c[i];if(e==d+1)return c[d]>c[e]&&a(c,d,e),c[i];for(f=b(d,e),c[f]>c[e]&&a(c,f,e),c[d]>c[e]&&a(c,d,e),c[f]>c[d]&&a(c,f,d),a(c,f,d+1),g=d+1,h=e;;){do g++;while(c[d]>c[g]);do h--;while(c[h]>c[d]);if(h<g)break;a(c,g,h)}a(c,d,h),h<=i&&(d=g),h>=i&&(e=h-1)}}var a=function(a,b,c){var d;return d=[a[c],a[b]],a[b]=d[0],a[c]=d[1],d},b=function(a,b){return~~((a+b)/2)};'undefined'!=typeof module&&module.exports?module.exports=d:window.median=d})();
 
 /***/ }),
-/* 78 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10876,7 +11206,7 @@ var matrixLib = __webpack_require__(0);
 var Matrix = matrixLib.Matrix;
 var EVD = matrixLib.EVD;
 var SVD = matrixLib.SVD;
-var Stat = __webpack_require__(8);
+var Stat = __webpack_require__(9);
 var mean = Stat.mean;
 var stdev = Stat.standardDeviation;
 
@@ -11094,29 +11424,29 @@ class PCA {
 module.exports = PCA;
 
 /***/ }),
-/* 79 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.agnes = __webpack_require__(80);
-exports.diana = __webpack_require__(88);
+exports.agnes = __webpack_require__(82);
+exports.diana = __webpack_require__(90);
 //exports.birch = require('./birch');
 //exports.cure = require('./cure');
 //exports.chameleon = require('./chameleon');
 
 /***/ }),
-/* 80 */
+/* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var euclidean = __webpack_require__(1);
-var ClusterLeaf = __webpack_require__(24);
+var ClusterLeaf = __webpack_require__(25);
 var Cluster = __webpack_require__(13);
-var distanceMatrix = __webpack_require__(25);
+var distanceMatrix = __webpack_require__(26);
 
 /**
  * @private
@@ -11354,16 +11684,16 @@ function agnes(data, options) {
 module.exports = agnes;
 
 /***/ }),
-/* 81 */
+/* 83 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(82);
+module.exports = __webpack_require__(84);
 
 /***/ }),
-/* 82 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11739,7 +12069,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 }).call(undefined);
 
 /***/ }),
-/* 83 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12235,7 +12565,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(86);
+exports.isBuffer = __webpack_require__(88);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -12272,7 +12602,7 @@ exports.log = function () {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(87);
+exports.inherits = __webpack_require__(89);
 
 exports._extend = function (origin, add) {
   // Don't do anything if add isn't an object
@@ -12289,10 +12619,10 @@ exports._extend = function (origin, add) {
 function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(84), __webpack_require__(85)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(86), __webpack_require__(87)))
 
 /***/ }),
-/* 84 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12320,7 +12650,7 @@ try {
 module.exports = g;
 
 /***/ }),
-/* 85 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12513,7 +12843,7 @@ process.umask = function () {
 };
 
 /***/ }),
-/* 86 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12524,7 +12854,7 @@ module.exports = function isBuffer(arg) {
 };
 
 /***/ }),
-/* 87 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12555,14 +12885,14 @@ if (typeof Object.create === 'function') {
 }
 
 /***/ }),
-/* 88 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var euclidean = __webpack_require__(1);
-var ClusterLeaf = __webpack_require__(24);
+var ClusterLeaf = __webpack_require__(25);
 var Cluster = __webpack_require__(13);
 
 /**
@@ -12863,133 +13193,151 @@ function diana(data, options) {
 module.exports = diana;
 
 /***/ }),
-/* 89 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(26);
-var init = __webpack_require__(91);
-var KMeansResult = __webpack_require__(93);
-var squaredDistance = __webpack_require__(1).squared;
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = kmeans;
+
+var _mlDistanceEuclidean = __webpack_require__(1);
+
+var _mlDistanceEuclidean2 = _interopRequireDefault(_mlDistanceEuclidean);
+
+var _utils = __webpack_require__(27);
+
+var _initialization = __webpack_require__(93);
+
+var _KMeansResult = __webpack_require__(95);
+
+var _KMeansResult2 = _interopRequireDefault(_KMeansResult);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 var defaultOptions = {
-    maxIterations: 100,
-    tolerance: 1e-6,
-    withIterations: false,
-    initialization: 'mostDistant',
-    distanceFunction: squaredDistance
+  maxIterations: 100,
+  tolerance: 1e-6,
+  withIterations: false,
+  initialization: 'kmeans++',
+  distanceFunction: _mlDistanceEuclidean2.default.squared
 };
 
 /**
  * Each step operation for kmeans
  * @ignore
- * @param {Array<Array<Number>>} centers - the K centers in format [x,y,z,...]
- * @param {Array<Array<Number>>} data - the [x,y,z,...] points to cluster
- * @param {Array<Number>} clusterID - the cluster identifier for each data dot
- * @param {Number} K - Number of clusters
- * @param {Object} [options] - Option object
- * @param {Number} iterations - Current number of iterations
+ * @param {Array<Array<number>>} centers - K centers in format [x,y,z,...]
+ * @param {Array<Array<number>>} data - Points [x,y,z,...] to cluster
+ * @param {Array<number>} clusterID - Cluster identifier for each data dot
+ * @param {number} K - Number of clusters
+ * @param {object} [options] - Option object
+ * @param {number} iterations - Current number of iterations
  * @return {KMeansResult}
  */
 function step(centers, data, clusterID, K, options, iterations) {
-    clusterID = utils.updateClusterID(data, centers, clusterID, options.distanceFunction);
-    var newCenters = utils.updateCenters(data, clusterID, K);
-    var converged = utils.converged(newCenters, centers, options.distanceFunction, options.tolerance);
-    return new KMeansResult(clusterID, newCenters, converged, iterations, options.distanceFunction);
+  clusterID = (0, _utils.updateClusterID)(data, centers, clusterID, options.distanceFunction);
+  var newCenters = (0, _utils.updateCenters)(centers, data, clusterID, K);
+  var converged = (0, _utils.hasConverged)(newCenters, centers, options.distanceFunction, options.tolerance);
+  return new _KMeansResult2.default(clusterID, newCenters, converged, iterations, options.distanceFunction);
 }
 
 /**
  * Generator version for the algorithm
  * @ignore
- * @param {Array<Array<Number>>} centers - the K centers in format [x,y,z,...]
- * @param {Array<Array<Number>>} data - the [x,y,z,...] points to cluster
- * @param {Array<Number>} clusterID - the cluster identifier for each data dot
- * @param {Number} K - Number of clusters
- * @param {Object} [options] - Option object
+ * @param {Array<Array<number>>} centers - K centers in format [x,y,z,...]
+ * @param {Array<Array<number>>} data - Points [x,y,z,...] to cluster
+ * @param {Array<number>} clusterID - Cluster identifier for each data dot
+ * @param {number} K - Number of clusters
+ * @param {object} [options] - Option object
  */
 function* kmeansGenerator(centers, data, clusterID, K, options) {
-    var converged = false;
-    var stepNumber = 0;
-    var stepResult;
-    while (!converged && stepNumber < options.maxIterations) {
-        stepResult = step(centers, data, clusterID, K, options, ++stepNumber);
-        yield stepResult.computeInformation(data);
-        converged = stepResult.converged;
-        centers = stepResult.centroids;
-    }
+  var converged = false;
+  var stepNumber = 0;
+  var stepResult;
+  while (!converged && stepNumber < options.maxIterations) {
+    stepResult = step(centers, data, clusterID, K, options, ++stepNumber);
+    yield stepResult.computeInformation(data);
+    converged = stepResult.converged;
+    centers = stepResult.centroids;
+  }
 }
 
 /**
  * K-means algorithm
- * @param {Array<Array<Number>>} data - Points in the format to cluster [x,y,z,...]
- * @param {Number} K - Number of clusters
- * @param {Object} [options] - Option object
- * @param {Number} [options.maxIterations = 100] - Maximum of iterations allowed
- * @param {Number} [options.tolerance = 1e-6] - Error tolerance
- * @param {Boolean} [options.withIterations = false] - Store clusters and centroids for each iteration
- * @param {Function} [options.distanceFunction = squaredDistance] - Distance function to use between the points
- * @param {String|Array<Array<Number>>} [options.initialization = 'moreDistant'] - K centers in format [x,y,z,...] or a method for initialize the data:
+ * @param {Array<Array<number>>} data - Points in the format to cluster [x,y,z,...]
+ * @param {number} K - Number of clusters
+ * @param {object} [options] - Option object
+ * @param {number} [options.maxIterations = 100] - Maximum of iterations allowed
+ * @param {number} [options.tolerance = 1e-6] - Error tolerance
+ * @param {boolean} [options.withIterations = false] - Store clusters and centroids for each iteration
+ * @param {function} [options.distanceFunction = squaredDistance] - Distance function to use between the points
+ * @param {number} [options.seed] - Seed for random initialization.
+ * @param {string|Array<Array<number>>} [options.initialization = 'kmeans++'] - K centers in format [x,y,z,...] or a method for initialize the data:
+ *  * You can either specify your custom start centroids, or select one of the following initialization method:
+ *  * `'kmeans++'` will use the kmeans++ method as described by http://ilpubs.stanford.edu:8090/778/1/2006-13.pdf
  *  * `'random'` will choose K random different values.
  *  * `'mostDistant'` will choose the more distant points to a first random pick
- * @returns {KMeansResult} - Cluster identifier for each data dot and centroids with the following fields:
+ * @return {KMeansResult} - Cluster identifier for each data dot and centroids with the following fields:
  *  * `'clusters'`: Array of indexes for the clusters.
  *  * `'centroids'`: Array with the resulting centroids.
  *  * `'iterations'`: Number of iterations that took to converge
  */
 function kmeans(data, K, options) {
-    options = Object.assign({}, defaultOptions, options);
+  options = Object.assign({}, defaultOptions, options);
 
-    if (K <= 0 || K > data.length || !Number.isInteger(K)) {
-        throw new Error('K should be a positive integer bigger than the number of points');
-    }
+  if (K <= 0 || K > data.length || !Number.isInteger(K)) {
+    throw new Error('K should be a positive integer smaller than the number of points');
+  }
 
-    var centers;
-    if (Array.isArray(options.initialization)) {
-        if (options.initialization.length !== K) {
-            throw new Error('The initial centers should have the same length as K');
-        } else {
-            centers = options.initialization;
-        }
+  var centers;
+  if (Array.isArray(options.initialization)) {
+    if (options.initialization.length !== K) {
+      throw new Error('The initial centers should have the same length as K');
     } else {
-        switch (options.initialization) {
-            case 'random':
-                centers = init.random(data, K);
-                break;
-            case 'mostDistant':
-                centers = init.mostDistant(data, K, utils.calculateDistanceMatrix(data, options.distanceFunction));
-                break;
-            default:
-                throw new Error('Unknown initialization method: "' + options.initialization + '"');
-        }
+      centers = options.initialization;
     }
+  } else {
+    switch (options.initialization) {
+      case 'kmeans++':
+        centers = (0, _initialization.kmeanspp)(data, K, options);
+        break;
+      case 'random':
+        centers = (0, _initialization.random)(data, K, options.seed);
+        break;
+      case 'mostDistant':
+        centers = (0, _initialization.mostDistant)(data, K, (0, _utils.calculateDistanceMatrix)(data, options.distanceFunction), options.seed);
+        break;
+      default:
+        throw new Error(`Unknown initialization method: "${options.initialization}"`);
+    }
+  }
 
-    // infinite loop until convergence
-    if (options.maxIterations === 0) {
-        options.maxIterations = Number.MAX_VALUE;
-    }
+  // infinite loop until convergence
+  if (options.maxIterations === 0) {
+    options.maxIterations = Number.MAX_VALUE;
+  }
 
-    var clusterID = new Array(data.length);
-    if (options.withIterations) {
-        return kmeansGenerator(centers, data, clusterID, K, options);
-    } else {
-        var converged = false;
-        var stepNumber = 0;
-        var stepResult;
-        while (!converged && stepNumber < options.maxIterations) {
-            stepResult = step(centers, data, clusterID, K, options, ++stepNumber);
-            converged = stepResult.converged;
-            centers = stepResult.centroids;
-        }
-        return stepResult.computeInformation(data);
+  var clusterID = new Array(data.length);
+  if (options.withIterations) {
+    return kmeansGenerator(centers, data, clusterID, K, options);
+  } else {
+    var converged = false;
+    var stepNumber = 0;
+    var stepResult;
+    while (!converged && stepNumber < options.maxIterations) {
+      stepResult = step(centers, data, clusterID, K, options, ++stepNumber);
+      converged = stepResult.converged;
+      centers = stepResult.centroids;
     }
+    return stepResult.computeInformation(data);
+  }
 }
 
-module.exports = kmeans;
-
 /***/ }),
-/* 90 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13056,221 +13404,330 @@ function nearestVector(listVectors, vector, options) {
 module.exports = nearestVector;
 
 /***/ }),
-/* 91 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Picker = __webpack_require__(92).Picker;
-
-/**
- * Choose K different random points from the original data
- * @ignore
- * @param {Array<Array<Number>>} data - Points in the format to cluster [x,y,z,...]
- * @param {Number} K - Number of clusters
- * @return {Array<Array<Number>>} - Initial random points
- */
-function random(data, K) {
-    var rand = new Picker(data);
-    var ans = new Array(K);
-
-    for (var i = 0; i < K; ++i) {
-        ans[i] = rand.pick();
-    }
-    return ans;
-}
-
-/**
- * Chooses the most distant points to a first random pick
- * @ignore
- * @param {Array<Array<Number>>} data - Points in the format to cluster [x,y,z,...]
- * @param {Number} K - Number of clusters
- * @param {Array<Array<Number>>} distanceMatrix - matrix with the distance values
- * @return {Array<Array<Number>>} - Initial random points
- */
-function mostDistant(data, K, distanceMatrix) {
-    var ans = new Array(K);
-
-    // chooses a random point as initial cluster
-    ans[0] = Math.floor(Math.random() * data.length);
-
-    if (K > 1) {
-        // chooses the more distant point
-        var maxDist = { dist: -1, index: -1 };
-        for (var l = 0; l < data.length; ++l) {
-            if (distanceMatrix[ans[0]][l] > maxDist.dist) {
-                maxDist.dist = distanceMatrix[ans[0]][l];
-                maxDist.index = l;
-            }
-        }
-        ans[1] = maxDist.index;
-
-        if (K > 2) {
-            // chooses the set of points that maximises the min distance
-            for (var k = 2; k < K; ++k) {
-                var center = { dist: -1, index: -1 };
-                for (var m = 0; m < data.length; ++m) {
-
-                    // minimum distance to centers
-                    var minDistCent = { dist: Number.MAX_VALUE, index: -1 };
-                    for (var n = 0; n < k; ++n) {
-                        if (distanceMatrix[n][m] < minDistCent.dist && ans.indexOf(m) === -1) {
-                            minDistCent = {
-                                dist: distanceMatrix[n][m],
-                                index: m
-                            };
-                        }
-                    }
-
-                    if (minDistCent.dist !== Number.MAX_VALUE && minDistCent.dist > center.dist) {
-                        center = Object.assign({}, minDistCent);
-                    }
-                }
-
-                ans[k] = center.index;
-            }
-        }
-    }
-
-    return ans.map(index => data[index]);
-}
-
-exports.random = random;
-exports.mostDistant = mostDistant;
-
-/***/ }),
-/* 92 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-(function (undefined) {
-  'use strict';
-
-  // Node.js usage:
-  //
-  // var Picker = require('RandomSelection').Picker;
-  // var greetingPicker = new Picker(['hello', 'hi', 'howdy']);
-  // var greeting = greetingPicker.pick();
-
-  // Our namespace. Exported members will be attached to this.
-
-  var ns;
-
-  // Set our namespace based on whether we are running in Node.js or the browser.
-  if (typeof module !== 'undefined' && module.exports) {
-    // We are running in Node.
-    ns = module.exports;
-  } else {
-    // We are running in the browser.
-    // `this` is the `window`.
-    // Use window.RandomSelection as our namespace.
-    ns = this.RandomSelection = {};
-  }
-
-  // Gets a shallow copy of the given array.
-  function clone(arr) {
-    var newArr = [];
-    for (var i = 0; i < arr.length; i++) {
-      newArr.push(arr[i]);
-    }
-    return newArr;
-  }
-
-  // Gets a random option until all options have been returns. Then cycles again.
-  function pick() {
-    if (this._remainingOptions.length === 0) {
-      this._remainingOptions = clone(this._originalOptions);
-    }
-
-    var index = Math.floor(Math.random() * this._remainingOptions.length);
-    return this._remainingOptions.splice(index, 1)[0];
-  }
-
-  // Export our Picker object.
-  ns.Picker = function (arrayOfOptions) {
-    this._originalOptions = arrayOfOptions;
-    this._remainingOptions = [];
-  };
-
-  ns.Picker.prototype = {
-    pick: pick
-  };
-}).call(undefined);
-
-/***/ }),
 /* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var utils = __webpack_require__(26);
-var distanceSymbol = Symbol('distance');
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.random = random;
+exports.mostDistant = mostDistant;
+exports.kmeanspp = kmeanspp;
+
+var _mlRandom = __webpack_require__(28);
+
+var _mlRandom2 = _interopRequireDefault(_mlRandom);
+
+var _mlDistanceEuclidean = __webpack_require__(1);
+
+var _mlMatrix = __webpack_require__(0);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
- * Result of the kmeans algorithm
- * @param {Array<Number>} clusters - the cluster identifier for each data dot
- * @param {Array<Array<Object>>} centroids - the K centers in format [x,y,z,...], the error and size of the cluster
- * @param {Boolean} converged - Converge criteria satisfied
- * @param {Number} iterations - Current number of iterations
- * @param {Function} distance - (*Private*) Distance function to use between the points
- * @constructor
+ * Choose K different random points from the original data
+ * @ignore
+ * @param {Array<Array<number>>} data - Points in the format to cluster [x,y,z,...]
+ * @param {number} K - number of clusters
+ * @param {number} seed - seed for random number generation
+ * @return {Array<Array<number>>} - Initial random points
  */
-function KMeansResult(clusters, centroids, converged, iterations, distance) {
+function random(data, K, seed) {
+  var random = new _mlRandom2.default(seed);
+  return random.choice(data, { size: K });
+}
+
+/**
+ * Chooses the most distant points to a first random pick
+ * @ignore
+ * @param {Array<Array<number>>} data - Points in the format to cluster [x,y,z,...]
+ * @param {number} K - number of clusters
+ * @param {Array<Array<number>>} distanceMatrix - matrix with the distance values
+ * @param {number} seed - seed for random number generation
+ * @return {Array<Array<number>>} - Initial random points
+ */
+function mostDistant(data, K, distanceMatrix, seed) {
+  var random = new _mlRandom2.default(seed);
+  var ans = new Array(K);
+  // chooses a random point as initial cluster
+  ans[0] = Math.floor(random.random() * data.length);
+
+  if (K > 1) {
+    // chooses the more distant point
+    var maxDist = { dist: -1, index: -1 };
+    for (var l = 0; l < data.length; ++l) {
+      if (distanceMatrix[ans[0]][l] > maxDist.dist) {
+        maxDist.dist = distanceMatrix[ans[0]][l];
+        maxDist.index = l;
+      }
+    }
+    ans[1] = maxDist.index;
+
+    if (K > 2) {
+      // chooses the set of points that maximises the min distance
+      for (var k = 2; k < K; ++k) {
+        var center = { dist: -1, index: -1 };
+        for (var m = 0; m < data.length; ++m) {
+          // minimum distance to centers
+          var minDistCent = { dist: Number.MAX_VALUE, index: -1 };
+          for (var n = 0; n < k; ++n) {
+            if (distanceMatrix[n][m] < minDistCent.dist && ans.indexOf(m) === -1) {
+              minDistCent = {
+                dist: distanceMatrix[n][m],
+                index: m
+              };
+            }
+          }
+
+          if (minDistCent.dist !== Number.MAX_VALUE && minDistCent.dist > center.dist) {
+            center = Object.assign({}, minDistCent);
+          }
+        }
+
+        ans[k] = center.index;
+      }
+    }
+  }
+
+  return ans.map(index => data[index]);
+}
+
+// Implementation inspired from scikit
+function kmeanspp(X, K, options = {}) {
+  X = new _mlMatrix.Matrix(X);
+  var nSamples = X.length;
+  var random = new _mlRandom2.default(options.seed);
+  // Set the number of trials
+  var centers = [];
+  var localTrials = options.localTrials || 2 + Math.floor(Math.log(K));
+
+  // Pick the first center at random from the dataset
+  var firstCenterIdx = random.randInt(nSamples);
+  centers.push(X[firstCenterIdx].slice());
+
+  // Init closest distances
+  var closestDistSquared = [X.map(x => (0, _mlDistanceEuclidean.squared)(x, centers[0]))];
+  var cumSumClosestDistSquared = [cumSum(closestDistSquared[0])];
+  var factor = 1 / cumSumClosestDistSquared[0][nSamples - 1];
+  var probabilities = _mlMatrix.Matrix.mul(closestDistSquared, factor);
+
+  // Iterate over the remaining centers
+  for (var i = 1; i < K; i++) {
+    var candidateIdx = random.choice(nSamples, {
+      replace: true,
+      size: localTrials,
+      probabilities: probabilities[0]
+    });
+
+    var candidates = X.selection(candidateIdx, range(X[0].length));
+    var distanceToCandidates = euclidianDistances(candidates, X);
+
+    var bestCandidate = void 0;
+    var bestPot = void 0;
+    var bestDistSquared = void 0;
+
+    for (var j = 0; j < localTrials; j++) {
+      var newDistSquared = _mlMatrix.Matrix.min(closestDistSquared, [distanceToCandidates[j]]);
+      var newPot = newDistSquared.sum();
+      if (bestCandidate === undefined || newPot < bestPot) {
+        bestCandidate = candidateIdx[j];
+        bestPot = newPot;
+        bestDistSquared = newDistSquared;
+      }
+    }
+    centers[i] = X[bestCandidate].slice();
+    closestDistSquared = bestDistSquared;
+    cumSumClosestDistSquared = [cumSum(closestDistSquared[0])];
+    probabilities = _mlMatrix.Matrix.mul(closestDistSquared, 1 / cumSumClosestDistSquared[0][nSamples - 1]);
+  }
+  return centers;
+}
+
+function euclidianDistances(A, B) {
+  var result = new _mlMatrix.Matrix(A.length, B.length);
+  for (var i = 0; i < A.length; i++) {
+    for (var j = 0; j < B.length; j++) {
+      result.set(i, j, (0, _mlDistanceEuclidean.squared)(A.getRow(i), B.getRow(j)));
+    }
+  }
+  return result;
+}
+
+function range(l) {
+  var r = [];
+  for (var i = 0; i < l; i++) {
+    r.push(i);
+  }
+  return r;
+}
+
+function cumSum(arr) {
+  var cumSum = [arr[0]];
+  for (var i = 1; i < arr.length; i++) {
+    cumSum[i] = cumSum[i - 1] + arr[i];
+  }
+  return cumSum;
+}
+
+/***/ }),
+/* 94 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var PROB_TOLERANCE = 0.00000001;
+function randomChoice(values, options = {}, random = Math.random) {
+    var _options$size = options.size,
+        size = _options$size === undefined ? 1 : _options$size,
+        _options$replace = options.replace,
+        replace = _options$replace === undefined ? false : _options$replace,
+        probabilities = options.probabilities;
+
+    var valuesArr = void 0;
+    var cumSum = void 0;
+    if (typeof values === 'number') {
+        valuesArr = getArray(values);
+    } else {
+        valuesArr = values.slice();
+    }
+    if (probabilities) {
+        if (!replace) {
+            throw new Error('choice with probabilities and no replacement is not implemented');
+        }
+        // check input is sane
+        if (probabilities.length !== valuesArr.length) {
+            throw new Error('the length of probabilities option should be equal to the number of choices');
+        }
+        cumSum = [probabilities[0]];
+        for (var i = 1; i < probabilities.length; i++) {
+            cumSum[i] = cumSum[i - 1] + probabilities[i];
+        }
+        if (Math.abs(1 - cumSum[cumSum.length - 1]) > PROB_TOLERANCE) {
+            throw new Error(`probabilities should sum to 1, but instead sums to ${cumSum[cumSum.length - 1]}`);
+        }
+    }
+    if (replace === false && size > valuesArr.length) {
+        throw new Error('size option is too large');
+    }
+    var result = [];
+    for (var _i = 0; _i < size; _i++) {
+        var index = randomIndex(valuesArr.length, random, cumSum);
+        result.push(valuesArr[index]);
+        if (!replace) {
+            valuesArr.splice(index, 1);
+        }
+    }
+    return result;
+}
+function getArray(n) {
+    var arr = [];
+    for (var i = 0; i < n; i++) {
+        arr.push(i);
+    }
+    return arr;
+}
+function randomIndex(n, random, cumSum) {
+    var rand = random();
+    if (!cumSum) {
+        return Math.floor(rand * n);
+    } else {
+        var idx = 0;
+        while (rand > cumSum[idx]) {
+            idx++;
+        }
+        return idx;
+    }
+}
+exports.default = randomChoice;
+
+/***/ }),
+/* 95 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _utils = __webpack_require__(27);
+
+var distanceSymbol = Symbol('distance');
+
+class KMeansResult {
+  /**
+   * Result of the kmeans algorithm
+   * @param {Array<number>} clusters - the cluster identifier for each data dot
+   * @param {Array<Array<object>>} centroids - the K centers in format [x,y,z,...], the error and size of the cluster
+   * @param {boolean} converged - Converge criteria satisfied
+   * @param {number} iterations - Current number of iterations
+   * @param {function} distance - (*Private*) Distance function to use between the points
+   * @constructor
+   */
+  constructor(clusters, centroids, converged, iterations, distance) {
     this.clusters = clusters;
     this.centroids = centroids;
     this.converged = converged;
     this.iterations = iterations;
     this[distanceSymbol] = distance;
-}
+  }
 
-/**
- * Allows to compute for a new array of points their cluster id
- * @param {Array<Array<Number>>} data - the [x,y,z,...] points to cluster
- * @return {Array<Number>} - cluster id for each point
- */
-KMeansResult.prototype.nearest = function (data) {
+  /**
+   * Allows to compute for a new array of points their cluster id
+   * @param {Array<Array<number>>} data - the [x,y,z,...] points to cluster
+   * @return {Array<number>} - cluster id for each point
+   */
+  nearest(data) {
     var clusterID = new Array(data.length);
     var centroids = this.centroids.map(function (centroid) {
-        return centroid.centroid;
+      return centroid.centroid;
     });
-    return utils.updateClusterID(data, centroids, clusterID, this[distanceSymbol]);
-};
+    return (0, _utils.updateClusterID)(data, centroids, clusterID, this[distanceSymbol]);
+  }
 
-/**
- * Returns a KMeansResult with the error and size of the cluster
- * @ignore
- * @param {Array<Array<Number>>} data - the [x,y,z,...] points to cluster
- * @return {KMeansResult}
- */
-KMeansResult.prototype.computeInformation = function (data) {
+  /**
+   * Returns a KMeansResult with the error and size of the cluster
+   * @ignore
+   * @param {Array<Array<number>>} data - the [x,y,z,...] points to cluster
+   * @return {KMeansResult}
+   */
+  computeInformation(data) {
     var enrichedCentroids = this.centroids.map(function (centroid) {
-        return {
-            centroid: centroid,
-            error: 0,
-            size: 0
-        };
+      return {
+        centroid: centroid,
+        error: 0,
+        size: 0
+      };
     });
 
     for (var i = 0; i < data.length; i++) {
-        enrichedCentroids[this.clusters[i]].error += this[distanceSymbol](data[i], this.centroids[this.clusters[i]]);
-        enrichedCentroids[this.clusters[i]].size++;
+      enrichedCentroids[this.clusters[i]].error += this[distanceSymbol](data[i], this.centroids[this.clusters[i]]);
+      enrichedCentroids[this.clusters[i]].size++;
     }
 
     for (var j = 0; j < this.centroids.length; j++) {
+      if (enrichedCentroids[j].size) {
         enrichedCentroids[j].error /= enrichedCentroids[j].size;
+      } else {
+        enrichedCentroids[j].error = null;
+      }
     }
 
     return new KMeansResult(this.clusters, enrichedCentroids, this.converged, this.iterations, this[distanceSymbol]);
-};
-
-module.exports = KMeansResult;
+  }
+}
+exports.default = KMeansResult;
 
 /***/ }),
-/* 94 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13601,7 +14058,7 @@ SVM.prototype._applyWhitening = function (features) {
 module.exports = SVM;
 
 /***/ }),
-/* 95 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13629,7 +14086,7 @@ class GaussianKernel {
 module.exports = GaussianKernel;
 
 /***/ }),
-/* 96 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13662,7 +14119,7 @@ class PolynomialKernel {
 module.exports = PolynomialKernel;
 
 /***/ }),
-/* 97 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13693,7 +14150,7 @@ class ANOVAKernel {
 module.exports = ANOVAKernel;
 
 /***/ }),
-/* 98 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13719,7 +14176,7 @@ class CauchyKernel {
 module.exports = CauchyKernel;
 
 /***/ }),
-/* 99 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13747,7 +14204,7 @@ class ExponentialKernel {
 module.exports = ExponentialKernel;
 
 /***/ }),
-/* 100 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13768,7 +14225,7 @@ class HistogramIntersectionKernel {
 module.exports = HistogramIntersectionKernel;
 
 /***/ }),
-/* 101 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13795,7 +14252,7 @@ class LaplacianKernel {
 module.exports = LaplacianKernel;
 
 /***/ }),
-/* 102 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13821,7 +14278,7 @@ class MultiquadraticKernel {
 module.exports = MultiquadraticKernel;
 
 /***/ }),
-/* 103 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13848,7 +14305,7 @@ class RationalQuadraticKernel {
 module.exports = RationalQuadraticKernel;
 
 /***/ }),
-/* 104 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13878,7 +14335,7 @@ class SigmoidKernel {
 module.exports = SigmoidKernel;
 
 /***/ }),
-/* 105 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13888,7 +14345,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _GaussianNB = __webpack_require__(106);
+var _GaussianNB = __webpack_require__(108);
 
 Object.defineProperty(exports, 'GaussianNB', {
   enumerable: true,
@@ -13897,7 +14354,7 @@ Object.defineProperty(exports, 'GaussianNB', {
   }
 });
 
-var _MultinomialNB = __webpack_require__(107);
+var _MultinomialNB = __webpack_require__(109);
 
 Object.defineProperty(exports, 'MultinomialNB', {
   enumerable: true,
@@ -13907,7 +14364,7 @@ Object.defineProperty(exports, 'MultinomialNB', {
 });
 
 /***/ }),
-/* 106 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13926,7 +14383,7 @@ var _mlStat = __webpack_require__(4);
 
 var _mlStat2 = _interopRequireDefault(_mlStat);
 
-var _utils = __webpack_require__(27);
+var _utils = __webpack_require__(30);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -14081,7 +14538,7 @@ function calculateLogProbability(value, mean, C1, C2) {
 }
 
 /***/ }),
-/* 107 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14096,7 +14553,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _utils = __webpack_require__(27);
+var _utils = __webpack_require__(30);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -14195,7 +14652,7 @@ function matrixLog(i, j) {
 }
 
 /***/ }),
-/* 108 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14205,7 +14662,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _KDTree = __webpack_require__(109);
+var _KDTree = __webpack_require__(111);
 
 var _KDTree2 = _interopRequireDefault(_KDTree);
 
@@ -14336,7 +14793,7 @@ function getSinglePrediction(knn, currentCase) {
 }
 
 /***/ }),
-/* 109 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14624,7 +15081,7 @@ class BinaryHeap {
 }
 
 /***/ }),
-/* 110 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14634,7 +15091,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _pls = __webpack_require__(111);
+var _pls = __webpack_require__(113);
 
 Object.defineProperty(exports, 'PLS', {
   enumerable: true,
@@ -14643,7 +15100,7 @@ Object.defineProperty(exports, 'PLS', {
   }
 });
 
-var _kopls = __webpack_require__(112);
+var _kopls = __webpack_require__(114);
 
 Object.defineProperty(exports, 'KOPLS', {
   enumerable: true,
@@ -14653,7 +15110,7 @@ Object.defineProperty(exports, 'KOPLS', {
 });
 
 /***/ }),
-/* 111 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14668,11 +15125,11 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _matrix = __webpack_require__(8);
+var _matrix = __webpack_require__(9);
 
 var _matrix2 = _interopRequireDefault(_matrix);
 
-var _utils = __webpack_require__(28);
+var _utils = __webpack_require__(31);
 
 var Utils = _interopRequireWildcard(_utils);
 
@@ -14908,7 +15365,7 @@ function maxSumColIndex(data) {
 }
 
 /***/ }),
-/* 112 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14921,7 +15378,7 @@ exports.KOPLS = undefined;
 
 var _mlMatrix = __webpack_require__(0);
 
-var _utils = __webpack_require__(28);
+var _utils = __webpack_require__(31);
 
 /**
  * @class KOPLS
@@ -15150,16 +15607,16 @@ class KOPLS {
 exports.KOPLS = KOPLS;
 
 /***/ }),
-/* 113 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ConfusionMatrix = __webpack_require__(29);
+var ConfusionMatrix = __webpack_require__(32);
 
 var CV = {};
-var combinations = __webpack_require__(114);
+var combinations = __webpack_require__(116);
 
 /**
  * Performs a leave-one-out cross-validation (LOO-CV) of the given samples. In LOO-CV, 1 observation is used as the
@@ -15370,102 +15827,904 @@ function getTrainTest(features, labels, testIdx, trainIdx) {
 module.exports = CV;
 
 /***/ }),
-/* 114 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var defaultOptions = {
-    mode: 'index'
-};
+(function (global, factory) {
+	 true ? factory() : typeof define === 'function' && define.amd ? define(factory) : factory();
+})(undefined, function () {
+	'use strict';
 
-module.exports = function* (M, N, options) {
-    options = Object.assign({}, defaultOptions, options);
-    var a = new Array(N);
-    var c = new Array(M);
-    var b = new Array(N);
-    var p = new Array(N + 2);
-    var x, y, z;
+	function createCommonjsModule(fn, module) {
+		return module = { exports: {} }, fn(module, module.exports), module.exports;
+	}
 
-    // init a and b
-    for (var i = 0; i < N; i++) {
-        a[i] = i;
-        if (i < N - M) b[i] = 0;else b[i] = 1;
-    }
+	var runtime = createCommonjsModule(function (module) {
+		/**
+   * Copyright (c) 2014-present, Facebook, Inc.
+   *
+   * This source code is licensed under the MIT license found in the
+   * LICENSE file in the root directory of this source tree.
+   */
 
-    // init c
-    for (i = 0; i < M; i++) {
-        c[i] = N - M + i;
-    }
+		!function (global) {
 
-    // init p
-    for (i = 0; i < p.length; i++) {
-        if (i === 0) p[i] = N + 1;else if (i <= N - M) p[i] = 0;else if (i <= N) p[i] = i - N + M;else p[i] = -2;
-    }
+			var Op = Object.prototype;
+			var hasOwn = Op.hasOwnProperty;
+			var undefined; // More compressible than void 0.
+			var $Symbol = typeof Symbol === "function" ? Symbol : {};
+			var iteratorSymbol = $Symbol.iterator || "@@iterator";
+			var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
+			var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+			var runtime = global.regeneratorRuntime;
+			if (runtime) {
+				{
+					// If regeneratorRuntime is defined globally and we're in a module,
+					// make the exports object identical to regeneratorRuntime.
+					module.exports = runtime;
+				}
+				// Don't bother evaluating the rest of this file if the runtime was
+				// already defined globally.
+				return;
+			}
 
-    function twiddle() {
-        var i, j, k;
-        j = 1;
-        while (p[j] <= 0) {
-            j++;
-        }if (p[j - 1] === 0) {
-            for (i = j - 1; i !== 1; i--) {
-                p[i] = -1;
-            }p[j] = 0;
-            x = z = 0;
-            p[1] = 1;
-            y = j - 1;
-        } else {
-            if (j > 1) p[j - 1] = 0;
-            do {
-                j++;
-            } while (p[j] > 0);
-            k = j - 1;
-            i = j;
-            while (p[i] === 0) {
-                p[i++] = -1;
-            }if (p[i] === -1) {
-                p[i] = p[k];
-                z = p[k] - 1;
-                x = i - 1;
-                y = k - 1;
-                p[k] = -1;
-            } else {
-                if (i === p[0]) {
-                    return 0;
-                } else {
-                    p[j] = p[i];
-                    z = p[i] - 1;
-                    p[i] = 0;
-                    x = j - 1;
-                    y = i - 1;
-                }
-            }
-        }
-        return 1;
-    }
+			// Define the runtime globally (as expected by generated code) as either
+			// module.exports (if we're in a module) or a new, empty object.
+			runtime = global.regeneratorRuntime = module.exports;
 
-    if (options.mode === 'index') {
-        yield c.slice();
-        while (twiddle()) {
-            c[z] = a[x];
-            yield c.slice();
-        }
-    } else if (options.mode === 'mask') {
-        yield b.slice();
-        while (twiddle()) {
-            b[x] = 1;
-            b[y] = 0;
-            yield b.slice();
-        }
-    } else {
-        throw new Error('Invalid mode');
-    }
-};
+			function wrap(innerFn, outerFn, self, tryLocsList) {
+				// If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
+				var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
+				var generator = Object.create(protoGenerator.prototype);
+				var context = new Context(tryLocsList || []);
+
+				// The ._invoke method unifies the implementations of the .next,
+				// .throw, and .return methods.
+				generator._invoke = makeInvokeMethod(innerFn, self, context);
+
+				return generator;
+			}
+			runtime.wrap = wrap;
+
+			// Try/catch helper to minimize deoptimizations. Returns a completion
+			// record like context.tryEntries[i].completion. This interface could
+			// have been (and was previously) designed to take a closure to be
+			// invoked without arguments, but in all the cases we care about we
+			// already have an existing method we want to call, so there's no need
+			// to create a new function object. We can even get away with assuming
+			// the method takes exactly one argument, since that happens to be true
+			// in every case, so we don't have to touch the arguments object. The
+			// only additional allocation required is the completion record, which
+			// has a stable shape and so hopefully should be cheap to allocate.
+			function tryCatch(fn, obj, arg) {
+				try {
+					return { type: "normal", arg: fn.call(obj, arg) };
+				} catch (err) {
+					return { type: "throw", arg: err };
+				}
+			}
+
+			var GenStateSuspendedStart = "suspendedStart";
+			var GenStateSuspendedYield = "suspendedYield";
+			var GenStateExecuting = "executing";
+			var GenStateCompleted = "completed";
+
+			// Returning this object from the innerFn has the same effect as
+			// breaking out of the dispatch switch statement.
+			var ContinueSentinel = {};
+
+			// Dummy constructor functions that we use as the .constructor and
+			// .constructor.prototype properties for functions that return Generator
+			// objects. For full spec compliance, you may wish to configure your
+			// minifier not to mangle the names of these two functions.
+			function Generator() {}
+			function GeneratorFunction() {}
+			function GeneratorFunctionPrototype() {}
+
+			// This is a polyfill for %IteratorPrototype% for environments that
+			// don't natively support it.
+			var IteratorPrototype = {};
+			IteratorPrototype[iteratorSymbol] = function () {
+				return this;
+			};
+
+			var getProto = Object.getPrototypeOf;
+			var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+			if (NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+				// This environment has a native %IteratorPrototype%; use it instead
+				// of the polyfill.
+				IteratorPrototype = NativeIteratorPrototype;
+			}
+
+			var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
+			GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
+			GeneratorFunctionPrototype.constructor = GeneratorFunction;
+			GeneratorFunctionPrototype[toStringTagSymbol] = GeneratorFunction.displayName = "GeneratorFunction";
+
+			// Helper for defining the .next, .throw, and .return methods of the
+			// Iterator interface in terms of a single ._invoke method.
+			function defineIteratorMethods(prototype) {
+				["next", "throw", "return"].forEach(function (method) {
+					prototype[method] = function (arg) {
+						return this._invoke(method, arg);
+					};
+				});
+			}
+
+			runtime.isGeneratorFunction = function (genFun) {
+				var ctor = typeof genFun === "function" && genFun.constructor;
+				return ctor ? ctor === GeneratorFunction ||
+				// For the native GeneratorFunction constructor, the best we can
+				// do is to check its .name property.
+				(ctor.displayName || ctor.name) === "GeneratorFunction" : false;
+			};
+
+			runtime.mark = function (genFun) {
+				if (Object.setPrototypeOf) {
+					Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+				} else {
+					genFun.__proto__ = GeneratorFunctionPrototype;
+					if (!(toStringTagSymbol in genFun)) {
+						genFun[toStringTagSymbol] = "GeneratorFunction";
+					}
+				}
+				genFun.prototype = Object.create(Gp);
+				return genFun;
+			};
+
+			// Within the body of any async function, `await x` is transformed to
+			// `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+			// `hasOwn.call(value, "__await")` to determine if the yielded value is
+			// meant to be awaited.
+			runtime.awrap = function (arg) {
+				return { __await: arg };
+			};
+
+			function AsyncIterator(generator) {
+				function invoke(method, arg, resolve, reject) {
+					var record = tryCatch(generator[method], generator, arg);
+					if (record.type === "throw") {
+						reject(record.arg);
+					} else {
+						var result = record.arg;
+						var value = result.value;
+						if (value && typeof value === "object" && hasOwn.call(value, "__await")) {
+							return Promise.resolve(value.__await).then(function (value) {
+								invoke("next", value, resolve, reject);
+							}, function (err) {
+								invoke("throw", err, resolve, reject);
+							});
+						}
+
+						return Promise.resolve(value).then(function (unwrapped) {
+							// When a yielded Promise is resolved, its final value becomes
+							// the .value of the Promise<{value,done}> result for the
+							// current iteration. If the Promise is rejected, however, the
+							// result for this iteration will be rejected with the same
+							// reason. Note that rejections of yielded Promises are not
+							// thrown back into the generator function, as is the case
+							// when an awaited Promise is rejected. This difference in
+							// behavior between yield and await is important, because it
+							// allows the consumer to decide what to do with the yielded
+							// rejection (swallow it and continue, manually .throw it back
+							// into the generator, abandon iteration, whatever). With
+							// await, by contrast, there is no opportunity to examine the
+							// rejection reason outside the generator function, so the
+							// only option is to throw it from the await expression, and
+							// let the generator function handle the exception.
+							result.value = unwrapped;
+							resolve(result);
+						}, reject);
+					}
+				}
+
+				var previousPromise;
+
+				function enqueue(method, arg) {
+					function callInvokeWithMethodAndArg() {
+						return new Promise(function (resolve, reject) {
+							invoke(method, arg, resolve, reject);
+						});
+					}
+
+					return previousPromise =
+					// If enqueue has been called before, then we want to wait until
+					// all previous Promises have been resolved before calling invoke,
+					// so that results are always delivered in the correct order. If
+					// enqueue has not been called before, then it is important to
+					// call invoke immediately, without waiting on a callback to fire,
+					// so that the async generator function has the opportunity to do
+					// any necessary setup in a predictable way. This predictability
+					// is why the Promise constructor synchronously invokes its
+					// executor callback, and why async functions synchronously
+					// execute code before the first await. Since we implement simple
+					// async functions in terms of async generators, it is especially
+					// important to get this right, even though it requires care.
+					previousPromise ? previousPromise.then(callInvokeWithMethodAndArg,
+					// Avoid propagating failures to Promises returned by later
+					// invocations of the iterator.
+					callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
+				}
+
+				// Define the unified helper method that is used to implement .next,
+				// .throw, and .return (see defineIteratorMethods).
+				this._invoke = enqueue;
+			}
+
+			defineIteratorMethods(AsyncIterator.prototype);
+			AsyncIterator.prototype[asyncIteratorSymbol] = function () {
+				return this;
+			};
+			runtime.AsyncIterator = AsyncIterator;
+
+			// Note that simple async functions are implemented on top of
+			// AsyncIterator objects; they just return a Promise for the value of
+			// the final result produced by the iterator.
+			runtime.async = function (innerFn, outerFn, self, tryLocsList) {
+				var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList));
+
+				return runtime.isGeneratorFunction(outerFn) ? iter // If outerFn is a generator, return the full iterator.
+				: iter.next().then(function (result) {
+					return result.done ? result.value : iter.next();
+				});
+			};
+
+			function makeInvokeMethod(innerFn, self, context) {
+				var state = GenStateSuspendedStart;
+
+				return function invoke(method, arg) {
+					if (state === GenStateExecuting) {
+						throw new Error("Generator is already running");
+					}
+
+					if (state === GenStateCompleted) {
+						if (method === "throw") {
+							throw arg;
+						}
+
+						// Be forgiving, per 25.3.3.3.3 of the spec:
+						// https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+						return doneResult();
+					}
+
+					context.method = method;
+					context.arg = arg;
+
+					while (true) {
+						var delegate = context.delegate;
+						if (delegate) {
+							var delegateResult = maybeInvokeDelegate(delegate, context);
+							if (delegateResult) {
+								if (delegateResult === ContinueSentinel) continue;
+								return delegateResult;
+							}
+						}
+
+						if (context.method === "next") {
+							// Setting context._sent for legacy support of Babel's
+							// function.sent implementation.
+							context.sent = context._sent = context.arg;
+						} else if (context.method === "throw") {
+							if (state === GenStateSuspendedStart) {
+								state = GenStateCompleted;
+								throw context.arg;
+							}
+
+							context.dispatchException(context.arg);
+						} else if (context.method === "return") {
+							context.abrupt("return", context.arg);
+						}
+
+						state = GenStateExecuting;
+
+						var record = tryCatch(innerFn, self, context);
+						if (record.type === "normal") {
+							// If an exception is thrown from innerFn, we leave state ===
+							// GenStateExecuting and loop back for another invocation.
+							state = context.done ? GenStateCompleted : GenStateSuspendedYield;
+
+							if (record.arg === ContinueSentinel) {
+								continue;
+							}
+
+							return {
+								value: record.arg,
+								done: context.done
+							};
+						} else if (record.type === "throw") {
+							state = GenStateCompleted;
+							// Dispatch the exception by looping back around to the
+							// context.dispatchException(context.arg) call above.
+							context.method = "throw";
+							context.arg = record.arg;
+						}
+					}
+				};
+			}
+
+			// Call delegate.iterator[context.method](context.arg) and handle the
+			// result, either by returning a { value, done } result from the
+			// delegate iterator, or by modifying context.method and context.arg,
+			// setting context.delegate to null, and returning the ContinueSentinel.
+			function maybeInvokeDelegate(delegate, context) {
+				var method = delegate.iterator[context.method];
+				if (method === undefined) {
+					// A .throw or .return when the delegate iterator has no .throw
+					// method always terminates the yield* loop.
+					context.delegate = null;
+
+					if (context.method === "throw") {
+						if (delegate.iterator.return) {
+							// If the delegate iterator has a return method, give it a
+							// chance to clean up.
+							context.method = "return";
+							context.arg = undefined;
+							maybeInvokeDelegate(delegate, context);
+
+							if (context.method === "throw") {
+								// If maybeInvokeDelegate(context) changed context.method from
+								// "return" to "throw", let that override the TypeError below.
+								return ContinueSentinel;
+							}
+						}
+
+						context.method = "throw";
+						context.arg = new TypeError("The iterator does not provide a 'throw' method");
+					}
+
+					return ContinueSentinel;
+				}
+
+				var record = tryCatch(method, delegate.iterator, context.arg);
+
+				if (record.type === "throw") {
+					context.method = "throw";
+					context.arg = record.arg;
+					context.delegate = null;
+					return ContinueSentinel;
+				}
+
+				var info = record.arg;
+
+				if (!info) {
+					context.method = "throw";
+					context.arg = new TypeError("iterator result is not an object");
+					context.delegate = null;
+					return ContinueSentinel;
+				}
+
+				if (info.done) {
+					// Assign the result of the finished delegate to the temporary
+					// variable specified by delegate.resultName (see delegateYield).
+					context[delegate.resultName] = info.value;
+
+					// Resume execution at the desired location (see delegateYield).
+					context.next = delegate.nextLoc;
+
+					// If context.method was "throw" but the delegate handled the
+					// exception, let the outer generator proceed normally. If
+					// context.method was "next", forget context.arg since it has been
+					// "consumed" by the delegate iterator. If context.method was
+					// "return", allow the original .return call to continue in the
+					// outer generator.
+					if (context.method !== "return") {
+						context.method = "next";
+						context.arg = undefined;
+					}
+				} else {
+					// Re-yield the result returned by the delegate method.
+					return info;
+				}
+
+				// The delegate iterator is finished, so forget it and continue with
+				// the outer generator.
+				context.delegate = null;
+				return ContinueSentinel;
+			}
+
+			// Define Generator.prototype.{next,throw,return} in terms of the
+			// unified ._invoke helper method.
+			defineIteratorMethods(Gp);
+
+			Gp[toStringTagSymbol] = "Generator";
+
+			// A Generator should always return itself as the iterator object when the
+			// @@iterator function is called on it. Some browsers' implementations of the
+			// iterator prototype chain incorrectly implement this, causing the Generator
+			// object to not be returned from this call. This ensures that doesn't happen.
+			// See https://github.com/facebook/regenerator/issues/274 for more details.
+			Gp[iteratorSymbol] = function () {
+				return this;
+			};
+
+			Gp.toString = function () {
+				return "[object Generator]";
+			};
+
+			function pushTryEntry(locs) {
+				var entry = { tryLoc: locs[0] };
+
+				if (1 in locs) {
+					entry.catchLoc = locs[1];
+				}
+
+				if (2 in locs) {
+					entry.finallyLoc = locs[2];
+					entry.afterLoc = locs[3];
+				}
+
+				this.tryEntries.push(entry);
+			}
+
+			function resetTryEntry(entry) {
+				var record = entry.completion || {};
+				record.type = "normal";
+				delete record.arg;
+				entry.completion = record;
+			}
+
+			function Context(tryLocsList) {
+				// The root entry object (effectively a try statement without a catch
+				// or a finally block) gives us a place to store values thrown from
+				// locations where there is no enclosing try statement.
+				this.tryEntries = [{ tryLoc: "root" }];
+				tryLocsList.forEach(pushTryEntry, this);
+				this.reset(true);
+			}
+
+			runtime.keys = function (object) {
+				var keys = [];
+				for (var key in object) {
+					keys.push(key);
+				}
+				keys.reverse();
+
+				// Rather than returning an object with a next method, we keep
+				// things simple and return the next function itself.
+				return function next() {
+					while (keys.length) {
+						var key = keys.pop();
+						if (key in object) {
+							next.value = key;
+							next.done = false;
+							return next;
+						}
+					}
+
+					// To avoid creating an additional object, we just hang the .value
+					// and .done properties off the next function object itself. This
+					// also ensures that the minifier will not anonymize the function.
+					next.done = true;
+					return next;
+				};
+			};
+
+			function values(iterable) {
+				if (iterable) {
+					var iteratorMethod = iterable[iteratorSymbol];
+					if (iteratorMethod) {
+						return iteratorMethod.call(iterable);
+					}
+
+					if (typeof iterable.next === "function") {
+						return iterable;
+					}
+
+					if (!isNaN(iterable.length)) {
+						var i = -1,
+						    next = function next() {
+							while (++i < iterable.length) {
+								if (hasOwn.call(iterable, i)) {
+									next.value = iterable[i];
+									next.done = false;
+									return next;
+								}
+							}
+
+							next.value = undefined;
+							next.done = true;
+
+							return next;
+						};
+
+						return next.next = next;
+					}
+				}
+
+				// Return an iterator with no values.
+				return { next: doneResult };
+			}
+			runtime.values = values;
+
+			function doneResult() {
+				return { value: undefined, done: true };
+			}
+
+			Context.prototype = {
+				constructor: Context,
+
+				reset: function reset(skipTempReset) {
+					this.prev = 0;
+					this.next = 0;
+					// Resetting context._sent for legacy support of Babel's
+					// function.sent implementation.
+					this.sent = this._sent = undefined;
+					this.done = false;
+					this.delegate = null;
+
+					this.method = "next";
+					this.arg = undefined;
+
+					this.tryEntries.forEach(resetTryEntry);
+
+					if (!skipTempReset) {
+						for (var name in this) {
+							// Not sure about the optimal order of these conditions:
+							if (name.charAt(0) === "t" && hasOwn.call(this, name) && !isNaN(+name.slice(1))) {
+								this[name] = undefined;
+							}
+						}
+					}
+				},
+
+				stop: function stop() {
+					this.done = true;
+
+					var rootEntry = this.tryEntries[0];
+					var rootRecord = rootEntry.completion;
+					if (rootRecord.type === "throw") {
+						throw rootRecord.arg;
+					}
+
+					return this.rval;
+				},
+
+				dispatchException: function dispatchException(exception) {
+					if (this.done) {
+						throw exception;
+					}
+
+					var context = this;
+					function handle(loc, caught) {
+						record.type = "throw";
+						record.arg = exception;
+						context.next = loc;
+
+						if (caught) {
+							// If the dispatched exception was caught by a catch block,
+							// then let that catch block handle the exception normally.
+							context.method = "next";
+							context.arg = undefined;
+						}
+
+						return !!caught;
+					}
+
+					for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+						var entry = this.tryEntries[i];
+						var record = entry.completion;
+
+						if (entry.tryLoc === "root") {
+							// Exception thrown outside of any try block that could handle
+							// it, so set the completion value of the entire function to
+							// throw the exception.
+							return handle("end");
+						}
+
+						if (entry.tryLoc <= this.prev) {
+							var hasCatch = hasOwn.call(entry, "catchLoc");
+							var hasFinally = hasOwn.call(entry, "finallyLoc");
+
+							if (hasCatch && hasFinally) {
+								if (this.prev < entry.catchLoc) {
+									return handle(entry.catchLoc, true);
+								} else if (this.prev < entry.finallyLoc) {
+									return handle(entry.finallyLoc);
+								}
+							} else if (hasCatch) {
+								if (this.prev < entry.catchLoc) {
+									return handle(entry.catchLoc, true);
+								}
+							} else if (hasFinally) {
+								if (this.prev < entry.finallyLoc) {
+									return handle(entry.finallyLoc);
+								}
+							} else {
+								throw new Error("try statement without catch or finally");
+							}
+						}
+					}
+				},
+
+				abrupt: function abrupt(type, arg) {
+					for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+						var entry = this.tryEntries[i];
+						if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
+							var finallyEntry = entry;
+							break;
+						}
+					}
+
+					if (finallyEntry && (type === "break" || type === "continue") && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc) {
+						// Ignore the finally entry if control is not jumping to a
+						// location outside the try/catch block.
+						finallyEntry = null;
+					}
+
+					var record = finallyEntry ? finallyEntry.completion : {};
+					record.type = type;
+					record.arg = arg;
+
+					if (finallyEntry) {
+						this.method = "next";
+						this.next = finallyEntry.finallyLoc;
+						return ContinueSentinel;
+					}
+
+					return this.complete(record);
+				},
+
+				complete: function complete(record, afterLoc) {
+					if (record.type === "throw") {
+						throw record.arg;
+					}
+
+					if (record.type === "break" || record.type === "continue") {
+						this.next = record.arg;
+					} else if (record.type === "return") {
+						this.rval = this.arg = record.arg;
+						this.method = "return";
+						this.next = "end";
+					} else if (record.type === "normal" && afterLoc) {
+						this.next = afterLoc;
+					}
+
+					return ContinueSentinel;
+				},
+
+				finish: function finish(finallyLoc) {
+					for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+						var entry = this.tryEntries[i];
+						if (entry.finallyLoc === finallyLoc) {
+							this.complete(entry.completion, entry.afterLoc);
+							resetTryEntry(entry);
+							return ContinueSentinel;
+						}
+					}
+				},
+
+				"catch": function _catch(tryLoc) {
+					for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+						var entry = this.tryEntries[i];
+						if (entry.tryLoc === tryLoc) {
+							var record = entry.completion;
+							if (record.type === "throw") {
+								var thrown = record.arg;
+								resetTryEntry(entry);
+							}
+							return thrown;
+						}
+					}
+
+					// The context.catch method must only be called with a location
+					// argument that corresponds to a known catch block.
+					throw new Error("illegal catch attempt");
+				},
+
+				delegateYield: function delegateYield(iterable, resultName, nextLoc) {
+					this.delegate = {
+						iterator: values(iterable),
+						resultName: resultName,
+						nextLoc: nextLoc
+					};
+
+					if (this.method === "next") {
+						// Deliberately forget the last sent value so that we don't
+						// accidentally pass it on to the delegate.
+						this.arg = undefined;
+					}
+
+					return ContinueSentinel;
+				}
+			};
+		}(
+		// In sloppy mode, unbound `this` refers to the global object, fallback to
+		// Function constructor if we're in global strict mode. That is sadly a form
+		// of indirect eval which violates Content Security Policy.
+		function () {
+			return this;
+		}() || Function("return this")());
+	});
+
+	/**
+  * Copyright (c) 2014-present, Facebook, Inc.
+  *
+  * This source code is licensed under the MIT license found in the
+  * LICENSE file in the root directory of this source tree.
+  */
+
+	// This method of obtaining a reference to the global object needs to be
+	// kept identical to the way it is obtained in runtime.js
+	var g = function () {
+		return this;
+	}() || Function("return this")();
+
+	// Use `getOwnPropertyNames` because not all browsers support calling
+	// `hasOwnProperty` on the global `self` object in a worker. See #183.
+	var hadRuntime = g.regeneratorRuntime && Object.getOwnPropertyNames(g).indexOf("regeneratorRuntime") >= 0;
+
+	// Save the old regeneratorRuntime in case it needs to be restored later.
+	var oldRuntime = hadRuntime && g.regeneratorRuntime;
+
+	// Force reevalutation of runtime.js.
+	g.regeneratorRuntime = undefined;
+
+	var runtimeModule = runtime;
+
+	if (hadRuntime) {
+		// Restore the original runtime.
+		g.regeneratorRuntime = oldRuntime;
+	} else {
+		// Remove the global property added by runtime.js.
+		try {
+			delete g.regeneratorRuntime;
+		} catch (e) {
+			g.regeneratorRuntime = undefined;
+		}
+	}
+
+	var regenerator = runtimeModule;
+
+	var defaultOptions = {
+		mode: 'index'
+	};
+
+	module.exports = /*#__PURE__*/regenerator.mark(function _callee(M, N, options) {
+		var a, c, b, p, x, y, z, i, twiddle;
+		return regenerator.wrap(function _callee$(_context) {
+			while (1) {
+				switch (_context.prev = _context.next) {
+					case 0:
+						twiddle = function twiddle() {
+							var i, j, k;
+							j = 1;
+							while (p[j] <= 0) {
+								j++;
+							}
+							if (p[j - 1] === 0) {
+								for (i = j - 1; i !== 1; i--) {
+									p[i] = -1;
+								}
+								p[j] = 0;
+								x = z = 0;
+								p[1] = 1;
+								y = j - 1;
+							} else {
+								if (j > 1) {
+									p[j - 1] = 0;
+								}
+								do {
+									j++;
+								} while (p[j] > 0);
+								k = j - 1;
+								i = j;
+								while (p[i] === 0) {
+									p[i++] = -1;
+								}
+								if (p[i] === -1) {
+									p[i] = p[k];
+									z = p[k] - 1;
+									x = i - 1;
+									y = k - 1;
+									p[k] = -1;
+								} else {
+									if (i === p[0]) {
+										return 0;
+									} else {
+										p[j] = p[i];
+										z = p[i] - 1;
+										p[i] = 0;
+										x = j - 1;
+										y = i - 1;
+									}
+								}
+							}
+							return 1;
+						};
+
+						options = Object.assign({}, defaultOptions, options);
+						a = new Array(N);
+						c = new Array(M);
+						b = new Array(N);
+						p = new Array(N + 2);
+
+						// init a and b
+						for (i = 0; i < N; i++) {
+							a[i] = i;
+							if (i < N - M) b[i] = 0;else b[i] = 1;
+						}
+
+						// init c
+						for (i = 0; i < M; i++) {
+							c[i] = N - M + i;
+						}
+
+						// init p
+						for (i = 0; i < p.length; i++) {
+							if (i === 0) p[i] = N + 1;else if (i <= N - M) p[i] = 0;else if (i <= N) p[i] = i - N + M;else p[i] = -2;
+						}
+
+						if (!(options.mode === 'index')) {
+							_context.next = 20;
+							break;
+						}
+
+						_context.next = 12;
+						return c.slice();
+
+					case 12:
+						if (!twiddle()) {
+							_context.next = 18;
+							break;
+						}
+
+						c[z] = a[x];
+						_context.next = 16;
+						return c.slice();
+
+					case 16:
+						_context.next = 12;
+						break;
+
+					case 18:
+						_context.next = 33;
+						break;
+
+					case 20:
+						if (!(options.mode === 'mask')) {
+							_context.next = 32;
+							break;
+						}
+
+						_context.next = 23;
+						return b.slice();
+
+					case 23:
+						if (!twiddle()) {
+							_context.next = 30;
+							break;
+						}
+
+						b[x] = 1;
+						b[y] = 0;
+						_context.next = 28;
+						return b.slice();
+
+					case 28:
+						_context.next = 23;
+						break;
+
+					case 30:
+						_context.next = 33;
+						break;
+
+					case 32:
+						throw new Error('Invalid mode');
+
+					case 33:
+					case 'end':
+						return _context.stop();
+				}
+			}
+		}, _callee, this);
+	});
+});
 
 /***/ }),
-/* 115 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15473,10 +16732,10 @@ module.exports = function* (M, N, options) {
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var Layer = __webpack_require__(30);
-var OutputLayer = __webpack_require__(116);
-var Utils = __webpack_require__(31);
-var ACTIVATION_FUNCTIONS = __webpack_require__(32);
+var Layer = __webpack_require__(33);
+var OutputLayer = __webpack_require__(118);
+var Utils = __webpack_require__(34);
+var ACTIVATION_FUNCTIONS = __webpack_require__(35);
 
 class FeedForwardNeuralNetworks {
 
@@ -15688,13 +16947,13 @@ class FeedForwardNeuralNetworks {
 module.exports = FeedForwardNeuralNetworks;
 
 /***/ }),
-/* 116 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Layer = __webpack_require__(30);
+var Layer = __webpack_require__(33);
 
 class OutputLayer extends Layer {
     constructor(options) {
@@ -15717,14 +16976,14 @@ class OutputLayer extends Layer {
 module.exports = OutputLayer;
 
 /***/ }),
-/* 117 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var NodeSquare = __webpack_require__(33),
-    NodeHexagonal = __webpack_require__(118);
+var NodeSquare = __webpack_require__(36),
+    NodeHexagonal = __webpack_require__(120);
 
 var defaultOptions = {
     fields: 3,
@@ -16146,13 +17405,13 @@ function getMaxDistance(distance, numWeights) {
 module.exports = SOM;
 
 /***/ }),
-/* 118 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var NodeSquare = __webpack_require__(33);
+var NodeSquare = __webpack_require__(36);
 
 function NodeHexagonal(x, y, weights, som) {
 
@@ -16183,7 +17442,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 module.exports = NodeHexagonal;
 
 /***/ }),
-/* 119 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16211,7 +17470,7 @@ function maybeToPrecision(value, digits) {
 }
 
 /***/ }),
-/* 120 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16231,7 +17490,7 @@ function checkArraySize(x, y) {
 }
 
 /***/ }),
-/* 121 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16309,7 +17568,7 @@ function regress(er, x, y) {
 }
 
 /***/ }),
-/* 122 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16390,7 +17649,7 @@ function regress(pr, x, y) {
 }
 
 /***/ }),
-/* 123 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16413,9 +17672,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 class MultivariateLinearRegression extends _mlRegressionBase2.default {
   constructor(x, y, options = {}) {
     var _options$intercept = options.intercept,
-        intercept = _options$intercept === undefined ? true : _options$intercept;
+        intercept = _options$intercept === undefined ? true : _options$intercept,
+        _options$statistics = options.statistics,
+        statistics = _options$statistics === undefined ? true : _options$statistics;
 
     super();
+    this.statistics = statistics;
     if (x === true) {
       this.weights = y.weights;
       this.inputs = y.inputs;
@@ -16432,18 +17694,21 @@ class MultivariateLinearRegression extends _mlRegressionBase2.default {
       this.outputs = y[0].length;
       if (intercept) this.inputs--;
       this.intercept = intercept;
-      /*
-       * Let's add some basic statistics about the beta's to be able to interpret them.
-       * source: http://dept.stat.lsa.umich.edu/~kshedden/Courses/Stat401/Notes/401-multreg.pdf
-       * validated against Excel Regression AddIn
-       */
-      var fittedValues = x.mmul(beta);
-      var residuals = new _mlMatrix2.default(y).addM(fittedValues.neg());
-      var variance = residuals.to2DArray().map(ri => Math.pow(ri[0], 2)).reduce((a, b) => a + b) / (y.length - x.columns);
-      this.stdError = Math.sqrt(variance);
-      this.stdErrorMatrix = x.transposeView().mmul(x).pseudoInverse().mul(variance);
-      this.stdErrors = this.stdErrorMatrix.diagonal().map(d => Math.sqrt(d));
-      this.tStats = this.weights.map((d, i) => this.stdErrors[i] === 0 ? 0 : d[0] / this.stdErrors[i]);
+      if (statistics) {
+        /*
+         * Let's add some basic statistics about the beta's to be able to interpret them.
+         * source: http://dept.stat.lsa.umich.edu/~kshedden/Courses/Stat401/Notes/401-multreg.pdf
+         * validated against Excel Regression AddIn
+         * test: "datamining statistics test"
+         */
+        var fittedValues = x.mmul(beta);
+        var residuals = new _mlMatrix2.default(y).addM(fittedValues.neg());
+        var variance = residuals.to2DArray().map(ri => Math.pow(ri[0], 2)).reduce((a, b) => a + b) / (y.length - x.columns);
+        this.stdError = Math.sqrt(variance);
+        this.stdErrorMatrix = x.transposeView().mmul(x).pseudoInverse().mul(variance);
+        this.stdErrors = this.stdErrorMatrix.diagonal().map(d => Math.sqrt(d));
+        this.tStats = this.weights.map((d, i) => this.stdErrors[i] === 0 ? 0 : d[0] / this.stdErrors[i]);
+      }
     }
   }
 
@@ -16490,20 +17755,20 @@ class MultivariateLinearRegression extends _mlRegressionBase2.default {
       inputs: this.inputs,
       outputs: this.outputs,
       intercept: this.intercept,
-      summary: {
+      summary: this.statistics ? {
         regressionStatistics: {
           standardError: this.stdError,
           observations: this.outputs
         },
         variables: this.weights.map((d, i) => {
           return {
-            label: i === this.weights.length ? 'Intercept' : `X Variable ${i + 1}`,
+            label: i === this.weights.length - 1 ? 'Intercept' : `X Variable ${i + 1}`,
             coefficients: d,
             standardError: this.stdErrors[i],
             tStat: this.tStats[i]
           };
         })
-      }
+      } : undefined
     };
   }
 
@@ -16517,7 +17782,7 @@ class MultivariateLinearRegression extends _mlRegressionBase2.default {
 exports.default = MultivariateLinearRegression;
 
 /***/ }),
-/* 124 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16598,7 +17863,7 @@ class KernelRidgeRegression extends _mlRegressionBase2.default {
 exports.default = KernelRidgeRegression;
 
 /***/ }),
-/* 125 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16799,7 +18064,7 @@ function abs(i, j) {
 }
 
 /***/ }),
-/* 126 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16912,7 +18177,7 @@ function theilSen(regression, x, y) {
 }
 
 /***/ }),
-/* 127 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17128,7 +18393,7 @@ function residualsMedian(residuals) {
 }
 
 /***/ }),
-/* 128 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17142,7 +18407,7 @@ var _mlRegressionBase = __webpack_require__(2);
 
 var _mlRegressionBase2 = _interopRequireDefault(_mlRegressionBase);
 
-var _mlRegressionPolynomial = __webpack_require__(35);
+var _mlRegressionPolynomial = __webpack_require__(38);
 
 var _mlRegressionPolynomial2 = _interopRequireDefault(_mlRegressionPolynomial);
 
@@ -17216,7 +18481,7 @@ class PotentialRegression extends _mlRegressionBase2.default {
 exports.default = PotentialRegression;
 
 /***/ }),
-/* 129 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17382,7 +18647,7 @@ function levenbergMarquardt(data, parameterizedFunction, options = {}) {
 module.exports = levenbergMarquardt;
 
 /***/ }),
-/* 130 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17393,7 +18658,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.SparseMatrix = undefined;
 
-var _mlHashTable = __webpack_require__(36);
+var _mlHashTable = __webpack_require__(39);
 
 var _mlHashTable2 = _interopRequireDefault(_mlHashTable);
 
@@ -17715,7 +18980,7 @@ function fillTemplateFunction(template, values) {
 }
 
 /***/ }),
-/* 131 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17733,14 +18998,14 @@ function newArray(n, value) {
 }
 
 /***/ }),
-/* 132 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var binarySearch = __webpack_require__(37);
-var sortAsc = __webpack_require__(38).asc;
+var binarySearch = __webpack_require__(40);
+var sortAsc = __webpack_require__(41).asc;
 
 var largestPrime = 0x7fffffff;
 
@@ -17801,7 +19066,7 @@ exports.nextPrime = nextPrime;
 exports.largestPrime = largestPrime;
 
 /***/ }),
-/* 133 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17812,59 +19077,59 @@ module.exports = Number.isNaN || function (x) {
 };
 
 /***/ }),
-/* 134 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.additiveSymmetric = __webpack_require__(135);
-exports.avg = __webpack_require__(136);
-exports.bhattacharyya = __webpack_require__(137);
-exports.canberra = __webpack_require__(138);
-exports.chebyshev = __webpack_require__(139);
-exports.clark = __webpack_require__(140);
-exports.czekanowski = __webpack_require__(141);
-exports.dice = __webpack_require__(41);
-exports.divergence = __webpack_require__(142);
+exports.additiveSymmetric = __webpack_require__(137);
+exports.avg = __webpack_require__(138);
+exports.bhattacharyya = __webpack_require__(139);
+exports.canberra = __webpack_require__(140);
+exports.chebyshev = __webpack_require__(141);
+exports.clark = __webpack_require__(142);
+exports.czekanowski = __webpack_require__(143);
+exports.dice = __webpack_require__(44);
+exports.divergence = __webpack_require__(144);
 exports.euclidean = __webpack_require__(1);
-exports.fidelity = __webpack_require__(143);
-exports.gower = __webpack_require__(144);
-exports.harmonicMean = __webpack_require__(145);
-exports.hellinger = __webpack_require__(146);
-exports.innerProduct = __webpack_require__(147);
-exports.intersection = __webpack_require__(42);
-exports.jaccard = __webpack_require__(43);
-exports.jeffreys = __webpack_require__(148);
-exports.jensenDifference = __webpack_require__(149);
-exports.jensenShannon = __webpack_require__(150);
-exports.kdivergence = __webpack_require__(151);
-exports.kulczynski = __webpack_require__(44);
-exports.kullbackLeibler = __webpack_require__(152);
-exports.kumarHassebrook = __webpack_require__(153);
-exports.kumarJohnson = __webpack_require__(154);
-exports.lorentzian = __webpack_require__(155);
-exports.manhattan = __webpack_require__(156);
-exports.matusita = __webpack_require__(157);
-exports.minkowski = __webpack_require__(158);
-exports.motyka = __webpack_require__(45);
-exports.neyman = __webpack_require__(159);
-exports.pearson = __webpack_require__(160);
-exports.probabilisticSymmetric = __webpack_require__(161);
-exports.ruzicka = __webpack_require__(162);
-exports.soergel = __webpack_require__(163);
-exports.sorensen = __webpack_require__(164);
-exports.squared = __webpack_require__(165);
-exports.squaredChord = __webpack_require__(46);
+exports.fidelity = __webpack_require__(145);
+exports.gower = __webpack_require__(146);
+exports.harmonicMean = __webpack_require__(147);
+exports.hellinger = __webpack_require__(148);
+exports.innerProduct = __webpack_require__(149);
+exports.intersection = __webpack_require__(45);
+exports.jaccard = __webpack_require__(46);
+exports.jeffreys = __webpack_require__(150);
+exports.jensenDifference = __webpack_require__(151);
+exports.jensenShannon = __webpack_require__(152);
+exports.kdivergence = __webpack_require__(153);
+exports.kulczynski = __webpack_require__(47);
+exports.kullbackLeibler = __webpack_require__(154);
+exports.kumarHassebrook = __webpack_require__(155);
+exports.kumarJohnson = __webpack_require__(156);
+exports.lorentzian = __webpack_require__(157);
+exports.manhattan = __webpack_require__(158);
+exports.matusita = __webpack_require__(159);
+exports.minkowski = __webpack_require__(160);
+exports.motyka = __webpack_require__(48);
+exports.neyman = __webpack_require__(161);
+exports.pearson = __webpack_require__(162);
+exports.probabilisticSymmetric = __webpack_require__(163);
+exports.ruzicka = __webpack_require__(164);
+exports.soergel = __webpack_require__(165);
+exports.sorensen = __webpack_require__(166);
+exports.squared = __webpack_require__(167);
+exports.squaredChord = __webpack_require__(49);
 exports.squaredEuclidean = __webpack_require__(1).squared;
-exports.taneja = __webpack_require__(166);
-exports.tanimoto = __webpack_require__(167);
-exports.topsoe = __webpack_require__(168);
-exports.tree = __webpack_require__(169);
-exports.waveHedges = __webpack_require__(170);
+exports.taneja = __webpack_require__(168);
+exports.tanimoto = __webpack_require__(169);
+exports.topsoe = __webpack_require__(170);
+exports.tree = __webpack_require__(171);
+exports.waveHedges = __webpack_require__(172);
 
 /***/ }),
-/* 135 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17881,7 +19146,7 @@ module.exports = function additiveSymmetric(a, b) {
 };
 
 /***/ }),
-/* 136 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17903,7 +19168,7 @@ module.exports = function avg(a, b) {
 };
 
 /***/ }),
-/* 137 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17919,7 +19184,7 @@ module.exports = function bhattacharyya(a, b) {
 };
 
 /***/ }),
-/* 138 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17935,7 +19200,7 @@ module.exports = function canberra(a, b) {
 };
 
 /***/ }),
-/* 139 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17955,7 +19220,7 @@ module.exports = function chebyshev(a, b) {
 };
 
 /***/ }),
-/* 140 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17972,20 +19237,20 @@ module.exports = function clark(a, b) {
 };
 
 /***/ }),
-/* 141 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var czekanowskiSimilarity = __webpack_require__(40);
+var czekanowskiSimilarity = __webpack_require__(43);
 
 module.exports = function czekanowskiDistance(a, b) {
     return 1 - czekanowskiSimilarity(a, b);
 };
 
 /***/ }),
-/* 142 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18002,7 +19267,7 @@ module.exports = function divergence(a, b) {
 };
 
 /***/ }),
-/* 143 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18018,7 +19283,7 @@ module.exports = function fidelity(a, b) {
 };
 
 /***/ }),
-/* 144 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18034,7 +19299,7 @@ module.exports = function gower(a, b) {
 };
 
 /***/ }),
-/* 145 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18050,7 +19315,7 @@ module.exports = function harmonicMean(a, b) {
 };
 
 /***/ }),
-/* 146 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18066,7 +19331,7 @@ module.exports = function hellinger(a, b) {
 };
 
 /***/ }),
-/* 147 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18082,7 +19347,7 @@ module.exports = function innerProduct(a, b) {
 };
 
 /***/ }),
-/* 148 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18098,7 +19363,7 @@ module.exports = function jeffreys(a, b) {
 };
 
 /***/ }),
-/* 149 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18114,7 +19379,7 @@ module.exports = function jensenDifference(a, b) {
 };
 
 /***/ }),
-/* 150 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18132,7 +19397,7 @@ module.exports = function jensenShannon(a, b) {
 };
 
 /***/ }),
-/* 151 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18148,7 +19413,7 @@ module.exports = function kdivergence(a, b) {
 };
 
 /***/ }),
-/* 152 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18164,7 +19429,7 @@ module.exports = function kullbackLeibler(a, b) {
 };
 
 /***/ }),
-/* 153 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18184,7 +19449,7 @@ module.exports = function kumarHassebrook(a, b) {
 };
 
 /***/ }),
-/* 154 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18200,7 +19465,7 @@ module.exports = function kumarJohnson(a, b) {
 };
 
 /***/ }),
-/* 155 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18216,7 +19481,7 @@ module.exports = function lorentzian(a, b) {
 };
 
 /***/ }),
-/* 156 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18233,7 +19498,7 @@ module.exports = function manhattan(a, b) {
 };
 
 /***/ }),
-/* 157 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18249,7 +19514,7 @@ module.exports = function matusita(a, b) {
 };
 
 /***/ }),
-/* 158 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18266,7 +19531,7 @@ module.exports = function minkowski(a, b, p) {
 };
 
 /***/ }),
-/* 159 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18283,7 +19548,7 @@ module.exports = function neyman(a, b) {
 };
 
 /***/ }),
-/* 160 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18300,7 +19565,7 @@ module.exports = function pearson(a, b) {
 };
 
 /***/ }),
-/* 161 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18317,7 +19582,7 @@ module.exports = function probabilisticSymmetric(a, b) {
 };
 
 /***/ }),
-/* 162 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18335,7 +19600,7 @@ module.exports = function ruzicka(a, b) {
 };
 
 /***/ }),
-/* 163 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18353,7 +19618,7 @@ module.exports = function soergel(a, b) {
 };
 
 /***/ }),
-/* 164 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18371,7 +19636,7 @@ module.exports = function sorensen(a, b) {
 };
 
 /***/ }),
-/* 165 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18388,7 +19653,7 @@ module.exports = function squared(a, b) {
 };
 
 /***/ }),
-/* 166 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18404,13 +19669,13 @@ module.exports = function taneja(a, b) {
 };
 
 /***/ }),
-/* 167 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var tanimotoS = __webpack_require__(47);
+var tanimotoS = __webpack_require__(50);
 
 module.exports = function tanimoto(a, b, bitvector) {
     if (bitvector) return 1 - tanimotoS(a, b, bitvector);else {
@@ -18428,7 +19693,7 @@ module.exports = function tanimoto(a, b, bitvector) {
 };
 
 /***/ }),
-/* 168 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18444,7 +19709,7 @@ module.exports = function topsoe(a, b) {
 };
 
 /***/ }),
-/* 169 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18556,7 +19821,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 170 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18572,48 +19837,22 @@ module.exports = function waveHedges(a, b) {
 };
 
 /***/ }),
-/* 171 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.cosine = __webpack_require__(48);
-exports.czekanowski = __webpack_require__(40);
-exports.dice = __webpack_require__(172);
-exports.intersection = __webpack_require__(173);
-exports.jaccard = __webpack_require__(174);
-exports.kulczynski = __webpack_require__(175);
-exports.motyka = __webpack_require__(176);
-exports.pearson = __webpack_require__(177);
-exports.squaredChord = __webpack_require__(178);
-exports.tanimoto = __webpack_require__(47);
-
-/***/ }),
-/* 172 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var diceD = __webpack_require__(41);
-
-module.exports = function dice(a, b) {
-    return 1 - diceD(a, b);
-};
-
-/***/ }),
 /* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var intersectionD = __webpack_require__(42);
-
-module.exports = function intersection(a, b) {
-    return 1 - intersectionD(a, b);
-};
+exports.cosine = __webpack_require__(51);
+exports.czekanowski = __webpack_require__(43);
+exports.dice = __webpack_require__(174);
+exports.intersection = __webpack_require__(175);
+exports.jaccard = __webpack_require__(176);
+exports.kulczynski = __webpack_require__(177);
+exports.motyka = __webpack_require__(178);
+exports.pearson = __webpack_require__(179);
+exports.squaredChord = __webpack_require__(180);
+exports.tanimoto = __webpack_require__(50);
 
 /***/ }),
 /* 174 */
@@ -18622,10 +19861,10 @@ module.exports = function intersection(a, b) {
 "use strict";
 
 
-var jaccardD = __webpack_require__(43);
+var diceD = __webpack_require__(44);
 
-module.exports = function jaccard(a, b) {
-    return 1 - jaccardD(a, b);
+module.exports = function dice(a, b) {
+    return 1 - diceD(a, b);
 };
 
 /***/ }),
@@ -18635,10 +19874,10 @@ module.exports = function jaccard(a, b) {
 "use strict";
 
 
-var kulczynskiD = __webpack_require__(44);
+var intersectionD = __webpack_require__(45);
 
-module.exports = function kulczynski(a, b) {
-    return 1 / kulczynskiD(a, b);
+module.exports = function intersection(a, b) {
+    return 1 - intersectionD(a, b);
 };
 
 /***/ }),
@@ -18648,10 +19887,10 @@ module.exports = function kulczynski(a, b) {
 "use strict";
 
 
-var motykaD = __webpack_require__(45);
+var jaccardD = __webpack_require__(46);
 
-module.exports = function motyka(a, b) {
-    return 1 - motykaD(a, b);
+module.exports = function jaccard(a, b) {
+    return 1 - jaccardD(a, b);
 };
 
 /***/ }),
@@ -18661,8 +19900,34 @@ module.exports = function motyka(a, b) {
 "use strict";
 
 
+var kulczynskiD = __webpack_require__(47);
+
+module.exports = function kulczynski(a, b) {
+    return 1 / kulczynskiD(a, b);
+};
+
+/***/ }),
+/* 178 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var motykaD = __webpack_require__(48);
+
+module.exports = function motyka(a, b) {
+    return 1 - motykaD(a, b);
+};
+
+/***/ }),
+/* 179 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var stat = __webpack_require__(4).array;
-var cosine = __webpack_require__(48);
+var cosine = __webpack_require__(51);
 
 module.exports = function pearson(a, b) {
     var avgA = stat.mean(a);
@@ -18679,147 +19944,26 @@ module.exports = function pearson(a, b) {
 };
 
 /***/ }),
-/* 178 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var squaredChordD = __webpack_require__(46);
-
-module.exports = function squaredChord(a, b) {
-    return 1 - squaredChordD(a, b);
-};
-
-/***/ }),
-/* 179 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];descriptor.enumerable = descriptor.enumerable || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object.defineProperty(target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
-}();
-
-function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
-
-var LOOP = 8;
-var FLOAT_MUL = 1 / 16777216;
-
-function multiply_uint32(n, m) {
-    n >>>= 0;
-    m >>>= 0;
-    var nlo = n & 0xffff;
-    var nhi = n - nlo;
-    return (nhi * m >>> 0) + nlo * m >>> 0;
-}
-
-var XSadd = function () {
-    function XSadd() {
-        var seed = arguments.length <= 0 || arguments[0] === undefined ? Date.now() : arguments[0];
-
-        _classCallCheck(this, XSadd);
-
-        this.state = new Uint32Array(4);
-        this.init(seed);
-    }
-
-    _createClass(XSadd, [{
-        key: "init",
-        value: function init(seed) {
-            this.state[0] = seed;
-            this.state[1] = 0;
-            this.state[2] = 0;
-            this.state[3] = 0;
-            for (var i = 1; i < LOOP; i++) {
-                this.state[i & 3] ^= i + multiply_uint32(1812433253, this.state[i - 1 & 3] ^ this.state[i - 1 & 3] >>> 30 >>> 0) >>> 0;
-            }
-            period_certification(this);
-            for (var i = 0; i < LOOP; i++) {
-                next_state(this);
-            }
-        }
-
-        /**
-         * Returns a 32-bit integer r (0 <= r < 2^32)
-         */
-    }, {
-        key: "getUint32",
-        value: function getUint32() {
-            next_state(this);
-            return this.state[3] + this.state[2] >>> 0;
-        }
-
-        /**
-         * Returns a floating point number r (0.0 <= r < 1.0)
-         */
-    }, {
-        key: "getFloat",
-        value: function getFloat() {
-            return (this.getUint32() >>> 8) * FLOAT_MUL;
-        }
-    }, {
-        key: "random",
-        get: function get() {
-            if (!this._random) {
-                this._random = this.getFloat.bind(this);
-            }
-            return this._random;
-        }
-    }]);
-
-    return XSadd;
-}();
-
-exports["default"] = XSadd;
-
-function period_certification(xsadd) {
-    if (xsadd.state[0] === 0 && xsadd.state[1] === 0 && xsadd.state[2] === 0 && xsadd.state[3] === 0) {
-        xsadd.state[0] = 88; // X
-        xsadd.state[1] = 83; // S
-        xsadd.state[2] = 65; // A
-        xsadd.state[3] = 68; // D
-    }
-}
-
-var sh1 = 15;
-var sh2 = 18;
-var sh3 = 11;
-function next_state(xsadd) {
-    var t = xsadd.state[0];
-    t ^= t << sh1;
-    t ^= t >>> sh2;
-    t ^= xsadd.state[3] << sh3;
-    xsadd.state[0] = xsadd.state[1];
-    xsadd.state[1] = xsadd.state[2];
-    xsadd.state[2] = xsadd.state[3];
-    xsadd.state[3] = t;
-}
-module.exports = exports["default"];
-
-/***/ }),
 /* 180 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var measures = __webpack_require__(181);
+var squaredChordD = __webpack_require__(49);
+
+module.exports = function squaredChord(a, b) {
+    return 1 - squaredChordD(a, b);
+};
+
+/***/ }),
+/* 181 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var measures = __webpack_require__(182);
 
 class Performance {
     /**
@@ -19047,7 +20191,7 @@ Performance.names = {
 module.exports = Performance;
 
 /***/ }),
-/* 181 */
+/* 182 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19192,7 +20336,7 @@ exports.threshold = pred => {
 };
 
 /***/ }),
-/* 182 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19201,7 +20345,7 @@ exports.threshold = pred => {
 var matrixLib = __webpack_require__(0);
 var Matrix = matrixLib.Matrix;
 var inverse = matrixLib.inverse;
-var padArray = __webpack_require__(49);
+var padArray = __webpack_require__(52);
 var extend = __webpack_require__(16);
 
 var defaultOptions = {
@@ -19274,7 +20418,7 @@ function SavitzkyGolay(data, h, options) {
 module.exports = SavitzkyGolay;
 
 /***/ }),
-/* 183 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19437,13 +20581,13 @@ function guessWindowSize(data, h){
 module.exports = SavitzkyGolay;
 
 /***/ }),
-/* 184 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var eightBits = __webpack_require__(185);
+var eightBits = __webpack_require__(186);
 
 /**
  * Count the number of true values in an array
@@ -19625,7 +20769,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 185 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19647,19 +20791,19 @@ for (var i = 0; i < 256; i++) {
 module.exports = ans;
 
 /***/ }),
-/* 186 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = exports = __webpack_require__(187);
+module.exports = exports = __webpack_require__(188);
 
-exports.getEquallySpacedData = __webpack_require__(188).getEquallySpacedData;
-exports.SNV = __webpack_require__(189).SNV;
+exports.getEquallySpacedData = __webpack_require__(189).getEquallySpacedData;
+exports.SNV = __webpack_require__(190).SNV;
 
 /***/ }),
-/* 187 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19887,7 +21031,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 188 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20155,7 +21299,7 @@ exports.getEquallySpacedData = getEquallySpacedData;
 exports.integral = integral;
 
 /***/ }),
-/* 189 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
