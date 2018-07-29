@@ -87,7 +87,7 @@ It will be available as the global `ML` variable. The package is in UMD format a
 * Pad array: [`ML.padArray`](https://github.com/mljs/pad-array)
 * Binary search: [`ML.binarySearch`](https://github.com/darkskyapp/binary-search)
 * Number comparison functions for sorting: [`ML.numSort`](https://github.com/sindresorhus/num-sort)
-* Random number generation: [`ML.Random`](https://github.com/mljs/ml-random)
+* Random number generation: [`ML.Random`](https://github.com/mljs/random)
 
 ## License
 
