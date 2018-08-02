@@ -72,13 +72,13 @@ It will be available as the global `ML` variable. The package is in UMD format a
 
 ### [`ML.Array`](https://github.com/mljs/array)
 
-* [`ML.Array.min`](https://github.com/mljs/array/packages/array-min)
-* [`ML.Array.max`](https://github.com/mljs/array/packages/array-max)
-* [`ML.Array.median`](https://github.com/mljs/array/packages/array-median)
-* [`ML.Array.mean`](https://github.com/mljs/array/packages/array-mean)
-* [`ML.Array.rescale`](https://github.com/mljs/array/packages/array-rescale)
-* [`ML.Array.standardDeviation`](https://github.com/mljs/array/packages/array-standardDeviation)
-* [`ML.Array.variance`](https://github.com/mljs/array/packages/array-variance)
+* [`ML.Array.min`](https://github.com/mljs/array/tree/master/packages/array-min)
+* [`ML.Array.max`](https://github.com/mljs/array/tree/master/packages/array-max)
+* [`ML.Array.median`](https://github.com/mljs/array/tree/master/packages/array-median)
+* [`ML.Array.mean`](https://github.com/mljs/array/tree/master/packages/array-mean)
+* [`ML.Array.rescale`](https://github.com/mljs/array/tree/master/packages/array-rescale)
+* [`ML.Array.standardDeviation`](https://github.com/mljs/array/tree/master/packages/array-standard-deviation)
+* [`ML.Array.variance`](https://github.com/mljs/array/tree/master/packages/array-variance)
 
 
 ### Statistics
