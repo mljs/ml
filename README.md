@@ -70,6 +70,17 @@ It will be available as the global `ML` variable. The package is in UMD format a
 * Distance matrix: [`ML.distanceMatrix`](https://github.com/mljs/distance-matrix)
 * XORShift-add RNG: [`ML.XSadd`](https://github.com/mljs/xsadd)
 
+### [`ML.Array`](https://github.com/mljs/array)
+
+* [`ML.Array.min`](https://github.com/mljs/array/packages/array-min)
+* [`ML.Array.max`](https://github.com/mljs/array/packages/array-max)
+* [`ML.Array.median`](https://github.com/mljs/array/packages/array-median)
+* [`ML.Array.mean`](https://github.com/mljs/array/packages/array-mean)
+* [`ML.Array.rescale`](https://github.com/mljs/array/packages/array-rescale)
+* [`ML.Array.standardDeviation`](https://github.com/mljs/array/packages/array-standardDeviation)
+* [`ML.Array.variance`](https://github.com/mljs/array/packages/array-variance)
+
+
 ### Statistics
 
 * Performance (ROC curve): [`ML.Performance`](https://github.com/mljs/performance)

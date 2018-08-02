@@ -78,3 +78,15 @@ ML.Regression = require('ml-regression');
 ML.MatrixUtil = require('ml-matrix');
 ML.ArrayStat = require('ml-stat').array;
 ML.MatrixStat = require('ml-stat').matrix;
+
+ML.Array = {
+    min: require('ml-array-min').default,
+    max: require('ml-array-max').default,
+    median: require('ml-array-median').default,
+    mean: require('ml-array-mean').default,
+    mode: require('ml-array-mode').default,
+    rescale: require('ml-array-rescale').default,
+    standardDeviation: require('ml-array-standard-deviation').default,
+    variance: require('ml-array-variance').default,
+}
+
