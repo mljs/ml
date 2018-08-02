@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v3.3.0
+ * @version v3.4.0
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -76,7 +76,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 53);
+/******/ 	return __webpack_require__(__webpack_require__.s = 57);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -114,7 +114,7 @@ Object.defineProperty(exports, 'abstractMatrix', {
   }
 });
 
-var _wrap = __webpack_require__(66);
+var _wrap = __webpack_require__(68);
 
 Object.defineProperty(exports, 'wrap', {
   enumerable: true,
@@ -123,7 +123,7 @@ Object.defineProperty(exports, 'wrap', {
   }
 });
 
-var _WrapperMatrix2D = __webpack_require__(20);
+var _WrapperMatrix2D = __webpack_require__(22);
 
 Object.defineProperty(exports, 'WrapperMatrix2D', {
   enumerable: true,
@@ -132,7 +132,7 @@ Object.defineProperty(exports, 'WrapperMatrix2D', {
   }
 });
 
-var _WrapperMatrix1D = __webpack_require__(19);
+var _WrapperMatrix1D = __webpack_require__(21);
 
 Object.defineProperty(exports, 'WrapperMatrix1D', {
   enumerable: true,
@@ -141,7 +141,7 @@ Object.defineProperty(exports, 'WrapperMatrix1D', {
   }
 });
 
-var _decompositions = __webpack_require__(67);
+var _decompositions = __webpack_require__(69);
 
 Object.defineProperty(exports, 'solve', {
   enumerable: true,
@@ -156,7 +156,7 @@ Object.defineProperty(exports, 'inverse', {
   }
 });
 
-var _linearDependencies = __webpack_require__(68);
+var _linearDependencies = __webpack_require__(70);
 
 Object.defineProperty(exports, 'linearDependencies', {
   enumerable: true,
@@ -165,7 +165,7 @@ Object.defineProperty(exports, 'linearDependencies', {
   }
 });
 
-var _svd = __webpack_require__(8);
+var _svd = __webpack_require__(9);
 
 Object.defineProperty(exports, 'SingularValueDecomposition', {
   enumerable: true,
@@ -180,7 +180,7 @@ Object.defineProperty(exports, 'SVD', {
   }
 });
 
-var _evd = __webpack_require__(69);
+var _evd = __webpack_require__(71);
 
 Object.defineProperty(exports, 'EigenvalueDecomposition', {
   enumerable: true,
@@ -195,7 +195,7 @@ Object.defineProperty(exports, 'EVD', {
   }
 });
 
-var _cholesky = __webpack_require__(70);
+var _cholesky = __webpack_require__(72);
 
 Object.defineProperty(exports, 'CholeskyDecomposition', {
   enumerable: true,
@@ -210,7 +210,7 @@ Object.defineProperty(exports, 'CHO', {
   }
 });
 
-var _lu = __webpack_require__(10);
+var _lu = __webpack_require__(12);
 
 Object.defineProperty(exports, 'LuDecomposition', {
   enumerable: true,
@@ -225,7 +225,7 @@ Object.defineProperty(exports, 'LU', {
   }
 });
 
-var _qr = __webpack_require__(21);
+var _qr = __webpack_require__(23);
 
 Object.defineProperty(exports, 'QrDecomposition', {
   enumerable: true,
@@ -275,7 +275,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _maybeToPrecision = __webpack_require__(121);
+var _maybeToPrecision = __webpack_require__(122);
 
 Object.defineProperty(exports, 'maybeToPrecision', {
     enumerable: true,
@@ -284,7 +284,7 @@ Object.defineProperty(exports, 'maybeToPrecision', {
     }
 });
 
-var _checkArrayLength = __webpack_require__(122);
+var _checkArrayLength = __webpack_require__(123);
 
 Object.defineProperty(exports, 'checkArrayLength', {
     enumerable: true,
@@ -422,8 +422,8 @@ exports.default = BaseView;
 "use strict";
 
 
-exports.array = __webpack_require__(24);
-exports.matrix = __webpack_require__(9);
+exports.array = __webpack_require__(27);
+exports.matrix = __webpack_require__(10);
 
 /***/ }),
 /* 5 */
@@ -770,53 +770,53 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = AbstractMatrix;
 
-var _mlArrayRescale = __webpack_require__(55);
+var _mlArrayRescale = __webpack_require__(19);
 
 var _mlArrayRescale2 = _interopRequireDefault(_mlArrayRescale);
 
-var _lu = __webpack_require__(10);
+var _lu = __webpack_require__(12);
 
 var _lu2 = _interopRequireDefault(_lu);
 
-var _svd = __webpack_require__(8);
+var _svd = __webpack_require__(9);
 
 var _svd2 = _interopRequireDefault(_svd);
 
 var _util = __webpack_require__(6);
 
-var _transpose = __webpack_require__(57);
+var _transpose = __webpack_require__(59);
 
 var _transpose2 = _interopRequireDefault(_transpose);
 
-var _row = __webpack_require__(58);
+var _row = __webpack_require__(60);
 
 var _row2 = _interopRequireDefault(_row);
 
-var _sub = __webpack_require__(59);
+var _sub = __webpack_require__(61);
 
 var _sub2 = _interopRequireDefault(_sub);
 
-var _selection = __webpack_require__(60);
+var _selection = __webpack_require__(62);
 
 var _selection2 = _interopRequireDefault(_selection);
 
-var _rowSelection = __webpack_require__(61);
+var _rowSelection = __webpack_require__(63);
 
 var _rowSelection2 = _interopRequireDefault(_rowSelection);
 
-var _columnSelection = __webpack_require__(62);
+var _columnSelection = __webpack_require__(64);
 
 var _columnSelection2 = _interopRequireDefault(_columnSelection);
 
-var _column = __webpack_require__(63);
+var _column = __webpack_require__(65);
 
 var _column2 = _interopRequireDefault(_column);
 
-var _flipRow = __webpack_require__(64);
+var _flipRow = __webpack_require__(66);
 
 var _flipRow2 = _interopRequireDefault(_flipRow);
 
-var _flipColumn = __webpack_require__(65);
+var _flipColumn = __webpack_require__(67);
 
 var _flipColumn2 = _interopRequireDefault(_flipColumn);
 
@@ -2664,12 +2664,44 @@ function AbstractMatrix(superCtor) {
 
 
 Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = mean;
+/**
+ * Computes the mean of the given values
+ * @param {Array<number>} input
+ * @return {number}
+ */
+function mean(input) {
+    if (!Array.isArray(input)) {
+        throw new Error('input must be an array');
+    }
+
+    if (input.length === 0) {
+        throw new Error('input must not be empty');
+    }
+
+    var sum = 0;
+    for (var i = 0; i < input.length; i++) {
+        sum += input[i];
+    }
+    return sum / input.length;
+}
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
 var _index = __webpack_require__(0);
 
-var _util = __webpack_require__(11);
+var _util = __webpack_require__(13);
 
 /**
  * @class SingularValueDecomposition
@@ -3256,13 +3288,13 @@ class SingularValueDecomposition {
 exports.default = SingularValueDecomposition;
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var arrayStat = __webpack_require__(24);
+var arrayStat = __webpack_require__(27);
 
 function compareNumbers(a, b) {
     return a - b;
@@ -3910,7 +3942,39 @@ exports.weightedScatter = function weightedScatter(matrix, weights, means, facto
 };
 
 /***/ }),
-/* 10 */
+/* 11 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = max;
+/**
+ * Computes the maximum of the given values
+ * @param {Array<number>} input
+ * @return {number}
+ */
+function max(input) {
+    if (!Array.isArray(input)) {
+        throw new Error('input must be an array');
+    }
+
+    if (input.length === 0) {
+        throw new Error('input must not be empty');
+    }
+
+    var max = input[0];
+    for (var i = 1; i < input.length; i++) {
+        if (input[i] > max) max = input[i];
+    }
+    return max;
+}
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4123,7 +4187,7 @@ class LuDecomposition {
 exports.default = LuDecomposition;
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4159,45 +4223,13 @@ function getFilled2DArray(rows, columns, value) {
 }
 
 /***/ }),
-/* 12 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = mean;
-/**
- * Computes the mean of the given values
- * @param {Array<number>} input
- * @return {number}
- */
-function mean(input) {
-    if (!Array.isArray(input)) {
-        throw new Error('input must be an array');
-    }
-
-    if (input.length === 0) {
-        throw new Error('input must not be empty');
-    }
-
-    var sum = 0;
-    for (var i = 0; i < input.length; i++) {
-        sum += input[i];
-    }
-    return sum / input.length;
-}
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var Heap = __webpack_require__(83);
+var Heap = __webpack_require__(84);
 
 function Cluster() {
     this.children = [];
@@ -4278,7 +4310,7 @@ Cluster.prototype.traverse = function (cb) {
 module.exports = Cluster;
 
 /***/ }),
-/* 14 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4286,16 +4318,16 @@ module.exports = Cluster;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var GaussianKernel = __webpack_require__(97);
-var PolynomialKernel = __webpack_require__(98);
-var ANOVAKernel = __webpack_require__(99);
-var CauchyKernel = __webpack_require__(100);
-var ExponentialKernel = __webpack_require__(101);
-var HistogramKernel = __webpack_require__(102);
-var LaplacianKernel = __webpack_require__(103);
-var MultiquadraticKernel = __webpack_require__(104);
-var RationalKernel = __webpack_require__(105);
-var SigmoidKernel = __webpack_require__(106);
+var GaussianKernel = __webpack_require__(98);
+var PolynomialKernel = __webpack_require__(99);
+var ANOVAKernel = __webpack_require__(100);
+var CauchyKernel = __webpack_require__(101);
+var ExponentialKernel = __webpack_require__(102);
+var HistogramKernel = __webpack_require__(103);
+var LaplacianKernel = __webpack_require__(104);
+var MultiquadraticKernel = __webpack_require__(105);
+var RationalKernel = __webpack_require__(106);
+var SigmoidKernel = __webpack_require__(107);
 
 var kernelType = {
     gaussian: GaussianKernel,
@@ -4368,7 +4400,7 @@ class Kernel {
 module.exports = Kernel;
 
 /***/ }),
-/* 15 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4464,7 +4496,7 @@ function regress(slr, x, y) {
 }
 
 /***/ }),
-/* 16 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4587,7 +4619,7 @@ module.exports = function extend() {
 };
 
 /***/ }),
-/* 17 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4597,7 +4629,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _DecisionTreeClassifier = __webpack_require__(54);
+var _DecisionTreeClassifier = __webpack_require__(58);
 
 Object.defineProperty(exports, 'DecisionTreeClassifier', {
   enumerable: true,
@@ -4606,7 +4638,7 @@ Object.defineProperty(exports, 'DecisionTreeClassifier', {
   }
 });
 
-var _DecisionTreeRegression = __webpack_require__(72);
+var _DecisionTreeRegression = __webpack_require__(74);
 
 Object.defineProperty(exports, 'DecisionTreeRegression', {
   enumerable: true,
@@ -4616,7 +4648,7 @@ Object.defineProperty(exports, 'DecisionTreeRegression', {
 });
 
 /***/ }),
-/* 18 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4625,13 +4657,77 @@ Object.defineProperty(exports, 'DecisionTreeRegression', {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.default = max;
+exports.default = rescale;
+
+var _mlArrayMax = __webpack_require__(11);
+
+var _mlArrayMax2 = _interopRequireDefault(_mlArrayMax);
+
+var _mlArrayMin = __webpack_require__(20);
+
+var _mlArrayMin2 = _interopRequireDefault(_mlArrayMin);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function rescale(input, options = {}) {
+    if (!Array.isArray(input)) {
+        throw new TypeError('input must be an array');
+    } else if (input.length === 0) {
+        throw new TypeError('input must not be empty');
+    }
+
+    var output = void 0;
+    if (options.output !== undefined) {
+        if (!Array.isArray(options.output)) {
+            throw new TypeError('output option must be an array if specified');
+        }
+        output = options.output;
+    } else {
+        output = new Array(input.length);
+    }
+
+    var currentMin = (0, _mlArrayMin2.default)(input);
+    var currentMax = (0, _mlArrayMax2.default)(input);
+
+    if (currentMin === currentMax) {
+        throw new RangeError('minimum and maximum input values are equal. Cannot rescale a constant array');
+    }
+
+    var _options$min = options.min,
+        minValue = _options$min === undefined ? options.autoMinMax ? currentMin : 0 : _options$min,
+        _options$max = options.max,
+        maxValue = _options$max === undefined ? options.autoMinMax ? currentMax : 1 : _options$max;
+
+
+    if (minValue >= maxValue) {
+        throw new RangeError('min option must be smaller than max option');
+    }
+
+    var factor = (maxValue - minValue) / (currentMax - currentMin);
+    for (var i = 0; i < input.length; i++) {
+        output[i] = (input[i] - currentMin) * factor + minValue;
+    }
+
+    return output;
+}
+
+/***/ }),
+/* 20 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = min;
 /**
- * Computes the maximum of the given values
+ * Computes the minimum of the given values
  * @param {Array<number>} input
  * @return {number}
  */
-function max(input) {
+function min(input) {
     if (!Array.isArray(input)) {
         throw new Error('input must be an array');
     }
@@ -4640,15 +4736,15 @@ function max(input) {
         throw new Error('input must not be empty');
     }
 
-    var max = input[0];
+    var min = input[0];
     for (var i = 1; i < input.length; i++) {
-        if (input[i] > max) max = input[i];
+        if (input[i] < min) min = input[i];
     }
-    return max;
+    return min;
 }
 
 /***/ }),
-/* 19 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4711,7 +4807,7 @@ class WrapperMatrix1D extends (0, _abstractMatrix2.default)() {
 exports.default = WrapperMatrix1D;
 
 /***/ }),
-/* 20 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4759,7 +4855,7 @@ class WrapperMatrix2D extends (0, _abstractMatrix2.default)() {
 exports.default = WrapperMatrix2D;
 
 /***/ }),
-/* 21 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4771,7 +4867,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _index = __webpack_require__(0);
 
-var _util = __webpack_require__(11);
+var _util = __webpack_require__(13);
 
 /**
  * @class QrDecomposition
@@ -4945,7 +5041,7 @@ class QrDecomposition {
 exports.default = QrDecomposition;
 
 /***/ }),
-/* 22 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4959,11 +5055,11 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _utils = __webpack_require__(71);
+var _utils = __webpack_require__(73);
 
 var Utils = _interopRequireWildcard(_utils);
 
-var _mlArrayMean = __webpack_require__(12);
+var _mlArrayMean = __webpack_require__(8);
 
 var _mlArrayMean2 = _interopRequireDefault(_mlArrayMean);
 
@@ -5193,7 +5289,7 @@ class TreeNode {
 exports.default = TreeNode;
 
 /***/ }),
-/* 23 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5204,11 +5300,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RandomForestBase = undefined;
 
-var _mlCart = __webpack_require__(17);
+var _mlCart = __webpack_require__(18);
 
 var _mlMatrix = __webpack_require__(0);
 
-var _utils = __webpack_require__(75);
+var _utils = __webpack_require__(77);
 
 var Utils = _interopRequireWildcard(_utils);
 
@@ -5360,7 +5456,42 @@ class RandomForestBase {
 exports.RandomForestBase = RandomForestBase;
 
 /***/ }),
-/* 24 */
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = median;
+
+var _medianQuickselect = __webpack_require__(80);
+
+var _medianQuickselect2 = _interopRequireDefault(_medianQuickselect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Computes the median of the given values
+ * @param {Array<number>} input
+ * @return {number}
+ */
+function median(input) {
+    if (!Array.isArray(input)) {
+        throw new Error('input must be an array');
+    }
+
+    if (input.length === 0) {
+        throw new Error('input must not be empty');
+    }
+
+    return (0, _medianQuickselect2.default)(input.slice());
+}
+
+/***/ }),
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5850,14 +5981,14 @@ exports.cumulativeSum = function cumulativeSum(array) {
 };
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Cluster = __webpack_require__(13);
-var util = __webpack_require__(85);
+var Cluster = __webpack_require__(14);
+var util = __webpack_require__(86);
 
 function ClusterLeaf(index) {
     Cluster.call(this);
@@ -5871,7 +6002,7 @@ util.inherits(ClusterLeaf, Cluster);
 module.exports = ClusterLeaf;
 
 /***/ }),
-/* 26 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5909,7 +6040,7 @@ function distanceMatrix(data, distanceFn) {
 module.exports = distanceMatrix;
 
 /***/ }),
-/* 27 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -5923,7 +6054,7 @@ exports.updateClusterID = updateClusterID;
 exports.updateCenters = updateCenters;
 exports.hasConverged = hasConverged;
 
-var _mlNearestVector = __webpack_require__(92);
+var _mlNearestVector = __webpack_require__(93);
 
 var _mlNearestVector2 = _interopRequireDefault(_mlNearestVector);
 
@@ -6035,7 +6166,7 @@ function hasConverged(centers, oldCenters, distanceFunction, tolerance) {
 }
 
 /***/ }),
-/* 28 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6045,14 +6176,14 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _choice = __webpack_require__(94);
+var _choice = __webpack_require__(95);
 
 var _choice2 = _interopRequireDefault(_choice);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 // tslint:disable-next-line
-var XSAdd = __webpack_require__(29);
+var XSAdd = __webpack_require__(32);
 
 /**
  * @classdesc Random class
@@ -6110,7 +6241,7 @@ class Random {
 exports.default = Random;
 
 /***/ }),
-/* 29 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6231,7 +6362,7 @@ function next_state(xsadd) {
 module.exports = exports["default"];
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6281,7 +6412,7 @@ function separateClasses(X, y) {
 }
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6299,7 +6430,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _matrix = __webpack_require__(9);
+var _matrix = __webpack_require__(10);
 
 var _matrix2 = _interopRequireDefault(_matrix);
 
@@ -6367,7 +6498,7 @@ function initializeMatrices(array, isMatrix) {
 }
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6760,7 +6891,7 @@ class ConfusionMatrix {
 module.exports = ConfusionMatrix;
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6768,8 +6899,8 @@ module.exports = ConfusionMatrix;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var Utils = __webpack_require__(34);
-var ACTIVATION_FUNCTIONS = __webpack_require__(35);
+var Utils = __webpack_require__(37);
+var ACTIVATION_FUNCTIONS = __webpack_require__(38);
 
 class Layer {
     /**
@@ -6894,7 +7025,7 @@ class Layer {
 module.exports = Layer;
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6966,7 +7097,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 35 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7060,7 +7191,7 @@ var ACTIVATION_FUNCTIONS = {
 module.exports = ACTIVATION_FUNCTIONS;
 
 /***/ }),
-/* 36 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7171,7 +7302,7 @@ NodeSquare.prototype.getPosition = function getPosition(element) {
 module.exports = NodeSquare;
 
 /***/ }),
-/* 37 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7182,7 +7313,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RobustPolynomialRegression = exports.TheilSenRegression = exports.PolinomialFitting2D = exports.KRR = exports.KernelRidgeRegression = exports.NonLinearRegression = exports.NLR = exports.MultivariateLinearRegression = exports.PowerRegression = exports.ExponentialRegression = exports.PolynomialRegression = exports.SLR = exports.SimpleLinearRegression = undefined;
 
-var _mlRegressionSimpleLinear = __webpack_require__(15);
+var _mlRegressionSimpleLinear = __webpack_require__(16);
 
 Object.defineProperty(exports, 'SimpleLinearRegression', {
     enumerable: true,
@@ -7197,7 +7328,7 @@ Object.defineProperty(exports, 'SLR', {
     }
 });
 
-var _mlRegressionPolynomial = __webpack_require__(38);
+var _mlRegressionPolynomial = __webpack_require__(41);
 
 Object.defineProperty(exports, 'PolynomialRegression', {
     enumerable: true,
@@ -7206,7 +7337,7 @@ Object.defineProperty(exports, 'PolynomialRegression', {
     }
 });
 
-var _mlRegressionExponential = __webpack_require__(123);
+var _mlRegressionExponential = __webpack_require__(124);
 
 Object.defineProperty(exports, 'ExponentialRegression', {
     enumerable: true,
@@ -7215,7 +7346,7 @@ Object.defineProperty(exports, 'ExponentialRegression', {
     }
 });
 
-var _mlRegressionPower = __webpack_require__(124);
+var _mlRegressionPower = __webpack_require__(125);
 
 Object.defineProperty(exports, 'PowerRegression', {
     enumerable: true,
@@ -7224,7 +7355,7 @@ Object.defineProperty(exports, 'PowerRegression', {
     }
 });
 
-var _mlRegressionMultivariateLinear = __webpack_require__(125);
+var _mlRegressionMultivariateLinear = __webpack_require__(126);
 
 Object.defineProperty(exports, 'MultivariateLinearRegression', {
     enumerable: true,
@@ -7233,7 +7364,7 @@ Object.defineProperty(exports, 'MultivariateLinearRegression', {
     }
 });
 
-var _kernelRidgeRegression = __webpack_require__(126);
+var _kernelRidgeRegression = __webpack_require__(127);
 
 Object.defineProperty(exports, 'KernelRidgeRegression', {
     enumerable: true,
@@ -7248,7 +7379,7 @@ Object.defineProperty(exports, 'KRR', {
     }
 });
 
-var _polyFitRegression2d = __webpack_require__(127);
+var _polyFitRegression2d = __webpack_require__(128);
 
 Object.defineProperty(exports, 'PolinomialFitting2D', {
     enumerable: true,
@@ -7257,7 +7388,7 @@ Object.defineProperty(exports, 'PolinomialFitting2D', {
     }
 });
 
-var _mlRegressionTheilSen = __webpack_require__(128);
+var _mlRegressionTheilSen = __webpack_require__(129);
 
 Object.defineProperty(exports, 'TheilSenRegression', {
     enumerable: true,
@@ -7266,7 +7397,7 @@ Object.defineProperty(exports, 'TheilSenRegression', {
     }
 });
 
-var _mlRegressionRobustPolynomial = __webpack_require__(129);
+var _mlRegressionRobustPolynomial = __webpack_require__(130);
 
 Object.defineProperty(exports, 'RobustPolynomialRegression', {
     enumerable: true,
@@ -7275,7 +7406,7 @@ Object.defineProperty(exports, 'RobustPolynomialRegression', {
     }
 });
 
-var _potentialRegression = __webpack_require__(130);
+var _potentialRegression = __webpack_require__(131);
 
 var _potentialRegression2 = _interopRequireDefault(_potentialRegression);
 
@@ -7288,7 +7419,7 @@ exports.NLR = NLR;
 exports.NonLinearRegression = NLR;
 
 /***/ }),
-/* 38 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7430,15 +7561,15 @@ function regress(pr, x, y, degree) {
 }
 
 /***/ }),
-/* 39 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var newArray = __webpack_require__(133);
+var newArray = __webpack_require__(134);
 
-var primeFinder = __webpack_require__(134);
+var primeFinder = __webpack_require__(135);
 var nextPrime = primeFinder.nextPrime;
 var largestPrime = primeFinder.largestPrime;
 
@@ -7738,7 +7869,7 @@ function chooseShrinkCapacity(size, minLoad, maxLoad) {
 }
 
 /***/ }),
-/* 40 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7778,13 +7909,13 @@ module.exports = function (haystack, needle, comparator, low, high) {
 };
 
 /***/ }),
-/* 41 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var numberIsNan = __webpack_require__(135);
+var numberIsNan = __webpack_require__(136);
 
 function assertNum(x) {
 	if (typeof x !== 'number' || numberIsNan(x)) {
@@ -7805,17 +7936,17 @@ exports.desc = function (a, b) {
 };
 
 /***/ }),
-/* 42 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.distance = __webpack_require__(136);
-exports.similarity = __webpack_require__(173);
+exports.distance = __webpack_require__(137);
+exports.similarity = __webpack_require__(174);
 
 /***/ }),
-/* 43 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7832,7 +7963,7 @@ module.exports = function czekanowskiSimilarity(a, b) {
 };
 
 /***/ }),
-/* 44 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7852,7 +7983,7 @@ module.exports = function dice(a, b) {
 };
 
 /***/ }),
-/* 45 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7868,7 +7999,7 @@ module.exports = function intersection(a, b) {
 };
 
 /***/ }),
-/* 46 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7890,7 +8021,7 @@ module.exports = function jaccard(a, b) {
 };
 
 /***/ }),
-/* 47 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7908,7 +8039,7 @@ module.exports = function kulczynski(a, b) {
 };
 
 /***/ }),
-/* 48 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7926,7 +8057,7 @@ module.exports = function motyka(a, b) {
 };
 
 /***/ }),
-/* 49 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7942,7 +8073,7 @@ module.exports = function squaredChord(a, b) {
 };
 
 /***/ }),
-/* 50 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7973,7 +8104,7 @@ module.exports = function tanimoto(a, b, bitvector) {
 };
 
 /***/ }),
-/* 51 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7993,13 +8124,13 @@ module.exports = function cosine(a, b) {
 };
 
 /***/ }),
-/* 52 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var extend = __webpack_require__(16);
+var extend = __webpack_require__(17);
 
 var defaultOptions = {
     size: 1,
@@ -8087,40 +8218,77 @@ function padArray(data, options) {
 module.exports = padArray;
 
 /***/ }),
-/* 53 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var mlCart = __webpack_require__(17);
-var mlRandomForest = __webpack_require__(73);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+exports.default = function (values, options = {}) {
+    var _options$unbiased = options.unbiased,
+        unbiased = _options$unbiased === undefined ? true : _options$unbiased,
+        _options$mean = options.mean,
+        mean = _options$mean === undefined ? (0, _mlArrayMean2.default)(values) : _options$mean;
+
+    var sqrError = 0;
+
+    for (var i = 0; i < values.length; i++) {
+        var x = values[i] - mean;
+        sqrError += x * x;
+    }
+
+    if (unbiased) {
+        return sqrError / (values.length - 1);
+    } else {
+        return sqrError / values.length;
+    }
+};
+
+var _mlArrayMean = __webpack_require__(8);
+
+var _mlArrayMean2 = _interopRequireDefault(_mlArrayMean);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/***/ }),
+/* 57 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var mlCart = __webpack_require__(18);
+var mlRandomForest = __webpack_require__(75);
 
 var ML = exports;
 
 // Try to keep this list in the same structure as the README.
 
 // Unsupervised learning
-ML.PCA = __webpack_require__(80);
-ML.HClust = __webpack_require__(81);
-ML.KMeans = __webpack_require__(91);
+ML.PCA = __webpack_require__(81);
+ML.HClust = __webpack_require__(82);
+ML.KMeans = __webpack_require__(92);
 
 // Supervised learning
-ML.SVM = __webpack_require__(96);
-ML.NaiveBayes = __webpack_require__(107);
-ML.KNN = __webpack_require__(110);
-ML.PLS = __webpack_require__(112);
-ML.CrossValidation = __webpack_require__(115);
-ML.ConfusionMatrix = __webpack_require__(32);
+ML.SVM = __webpack_require__(97);
+ML.NaiveBayes = __webpack_require__(108);
+ML.KNN = __webpack_require__(111);
+ML.PLS = __webpack_require__(113);
+ML.CrossValidation = __webpack_require__(116);
+ML.ConfusionMatrix = __webpack_require__(35);
 ML.DecisionTreeClassifier = mlCart.DecisionTreeClassifier;
 ML.RandomForestClassifier = mlRandomForest.RandomForestClassifier;
 
 // Artificial neural networks
-ML.FNN = __webpack_require__(117);
-ML.SOM = __webpack_require__(119);
+ML.FNN = __webpack_require__(118);
+ML.SOM = __webpack_require__(120);
 
 // Regression
-var Regression = __webpack_require__(37);
+var Regression = __webpack_require__(40);
 ML.SimpleLinearRegression = Regression.SimpleLinearRegression;
 ML.PolynomialRegression = Regression.PolynomialRegression;
 ML.MultivariateLinearRegression = Regression.MultivariateLinearRegression;
@@ -8132,7 +8300,7 @@ ML.DecisionTreeRegression = mlCart.DecisionTreeRegression;
 ML.RandomForestRegression = mlRandomForest.RandomForestRegression;
 
 // Optimization
-ML.levenbergMarquardt = __webpack_require__(131);
+ML.levenbergMarquardt = __webpack_require__(132);
 
 // Math
 var Matrix = __webpack_require__(0);
@@ -8143,37 +8311,48 @@ ML.CholeskyDecomposition = Matrix.CholeskyDecomposition;
 ML.LuDecomposition = Matrix.LuDecomposition;
 ML.QrDecomposition = Matrix.QrDecomposition;
 
-ML.SparseMatrix = __webpack_require__(132);
-ML.Kernel = __webpack_require__(14);
-ML.Distance = __webpack_require__(42).distance;
-ML.Similarity = __webpack_require__(42).similarity;
-ML.distanceMatrix = __webpack_require__(26);
-ML.XSadd = __webpack_require__(29);
+ML.SparseMatrix = __webpack_require__(133);
+ML.Kernel = __webpack_require__(15);
+ML.Distance = __webpack_require__(45).distance;
+ML.Similarity = __webpack_require__(45).similarity;
+ML.distanceMatrix = __webpack_require__(29);
+ML.XSadd = __webpack_require__(32);
 
 // Statistics
-ML.Performance = __webpack_require__(181);
+ML.Performance = __webpack_require__(182);
 
 // Data preprocessing
-ML.savitzkyGolay = __webpack_require__(183);
-ML.savitzkyGolayGeneralized = __webpack_require__(184);
+ML.savitzkyGolay = __webpack_require__(184);
+ML.savitzkyGolayGeneralized = __webpack_require__(185);
 
 // Utility
-ML.BitArray = __webpack_require__(185);
-ML.HashTable = __webpack_require__(39);
-ML.padArray = __webpack_require__(52);
-ML.binarySearch = __webpack_require__(40);
-ML.numSort = __webpack_require__(41);
-ML.Random = __webpack_require__(28);
+ML.BitArray = __webpack_require__(186);
+ML.HashTable = __webpack_require__(42);
+ML.padArray = __webpack_require__(55);
+ML.binarySearch = __webpack_require__(43);
+ML.numSort = __webpack_require__(44);
+ML.Random = __webpack_require__(31);
 
 // Undocumented/deprecated packages
-ML.ArrayUtils = __webpack_require__(187);
-ML.Regression = __webpack_require__(37);
+ML.ArrayUtils = __webpack_require__(188);
+ML.Regression = __webpack_require__(40);
 ML.MatrixUtil = __webpack_require__(0);
 ML.ArrayStat = __webpack_require__(4).array;
 ML.MatrixStat = __webpack_require__(4).matrix;
 
+ML.Array = {
+    min: __webpack_require__(20).default,
+    max: __webpack_require__(11).default,
+    median: __webpack_require__(26).default,
+    mean: __webpack_require__(8).default,
+    mode: __webpack_require__(192).default,
+    rescale: __webpack_require__(19).default,
+    standardDeviation: __webpack_require__(193).default,
+    variance: __webpack_require__(56).default
+};
+
 /***/ }),
-/* 54 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8188,7 +8367,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _TreeNode = __webpack_require__(22);
+var _TreeNode = __webpack_require__(24);
 
 var _TreeNode2 = _interopRequireDefault(_TreeNode);
 
@@ -8279,103 +8458,7 @@ class DecisionTreeClassifier {
 exports.DecisionTreeClassifier = DecisionTreeClassifier;
 
 /***/ }),
-/* 55 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = rescale;
-
-var _mlArrayMax = __webpack_require__(18);
-
-var _mlArrayMax2 = _interopRequireDefault(_mlArrayMax);
-
-var _mlArrayMin = __webpack_require__(56);
-
-var _mlArrayMin2 = _interopRequireDefault(_mlArrayMin);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function rescale(input, options = {}) {
-    if (!Array.isArray(input)) {
-        throw new TypeError('input must be an array');
-    } else if (input.length === 0) {
-        throw new TypeError('input must not be empty');
-    }
-
-    var output = void 0;
-    if (options.output !== undefined) {
-        if (!Array.isArray(options.output)) {
-            throw new TypeError('output option must be an array if specified');
-        }
-        output = options.output;
-    } else {
-        output = new Array(input.length);
-    }
-
-    var currentMin = (0, _mlArrayMin2.default)(input);
-    var currentMax = (0, _mlArrayMax2.default)(input);
-
-    if (currentMin === currentMax) {
-        throw new RangeError('minimum and maximum input values are equal. Cannot rescale a constant array');
-    }
-
-    var _options$min = options.min,
-        minValue = _options$min === undefined ? options.autoMinMax ? currentMin : 0 : _options$min,
-        _options$max = options.max,
-        maxValue = _options$max === undefined ? options.autoMinMax ? currentMax : 1 : _options$max;
-
-
-    if (minValue >= maxValue) {
-        throw new RangeError('min option must be smaller than max option');
-    }
-
-    var factor = (maxValue - minValue) / (currentMax - currentMin);
-    for (var i = 0; i < input.length; i++) {
-        output[i] = (input[i] - currentMin) * factor + minValue;
-    }
-
-    return output;
-}
-
-/***/ }),
-/* 56 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = min;
-/**
- * Computes the minimum of the given values
- * @param {Array<number>} input
- * @return {number}
- */
-function min(input) {
-    if (!Array.isArray(input)) {
-        throw new Error('input must be an array');
-    }
-
-    if (input.length === 0) {
-        throw new Error('input must not be empty');
-    }
-
-    var min = input[0];
-    for (var i = 1; i < input.length; i++) {
-        if (input[i] < min) min = input[i];
-    }
-    return min;
-}
-
-/***/ }),
-/* 57 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8408,7 +8491,7 @@ class MatrixTransposeView extends _base2.default {
 exports.default = MatrixTransposeView;
 
 /***/ }),
-/* 58 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8442,7 +8525,7 @@ class MatrixRowView extends _base2.default {
 exports.default = MatrixRowView;
 
 /***/ }),
-/* 59 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8480,7 +8563,7 @@ class MatrixSubView extends _base2.default {
 exports.default = MatrixSubView;
 
 /***/ }),
-/* 60 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8518,7 +8601,7 @@ class MatrixSelectionView extends _base2.default {
 exports.default = MatrixSelectionView;
 
 /***/ }),
-/* 61 */
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8555,7 +8638,7 @@ class MatrixRowSelectionView extends _base2.default {
 exports.default = MatrixRowSelectionView;
 
 /***/ }),
-/* 62 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8592,7 +8675,7 @@ class MatrixColumnSelectionView extends _base2.default {
 exports.default = MatrixColumnSelectionView;
 
 /***/ }),
-/* 63 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8626,7 +8709,7 @@ class MatrixColumnView extends _base2.default {
 exports.default = MatrixColumnView;
 
 /***/ }),
-/* 64 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8659,7 +8742,7 @@ class MatrixFlipRowView extends _base2.default {
 exports.default = MatrixFlipRowView;
 
 /***/ }),
-/* 65 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8692,7 +8775,7 @@ class MatrixFlipColumnView extends _base2.default {
 exports.default = MatrixFlipColumnView;
 
 /***/ }),
-/* 66 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8703,11 +8786,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.wrap = wrap;
 
-var _WrapperMatrix1D = __webpack_require__(19);
+var _WrapperMatrix1D = __webpack_require__(21);
 
 var _WrapperMatrix1D2 = _interopRequireDefault(_WrapperMatrix1D);
 
-var _WrapperMatrix2D = __webpack_require__(20);
+var _WrapperMatrix2D = __webpack_require__(22);
 
 var _WrapperMatrix2D2 = _interopRequireDefault(_WrapperMatrix2D);
 
@@ -8732,7 +8815,7 @@ function wrap(array, options) {
 }
 
 /***/ }),
-/* 67 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8744,15 +8827,15 @@ Object.defineProperty(exports, "__esModule", {
 exports.inverse = inverse;
 exports.solve = solve;
 
-var _lu = __webpack_require__(10);
+var _lu = __webpack_require__(12);
 
 var _lu2 = _interopRequireDefault(_lu);
 
-var _qr = __webpack_require__(21);
+var _qr = __webpack_require__(23);
 
 var _qr2 = _interopRequireDefault(_qr);
 
-var _svd = __webpack_require__(8);
+var _svd = __webpack_require__(9);
 
 var _svd2 = _interopRequireDefault(_svd);
 
@@ -8793,7 +8876,7 @@ function solve(leftHandSide, rightHandSide, useSVD = false) {
 }
 
 /***/ }),
-/* 68 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8804,7 +8887,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.linearDependencies = linearDependencies;
 
-var _mlArrayMax = __webpack_require__(18);
+var _mlArrayMax = __webpack_require__(11);
 
 var _mlArrayMax2 = _interopRequireDefault(_mlArrayMax);
 
@@ -8812,7 +8895,7 @@ var _matrix = __webpack_require__(5);
 
 var _matrix2 = _interopRequireDefault(_matrix);
 
-var _svd = __webpack_require__(8);
+var _svd = __webpack_require__(9);
 
 var _svd2 = _interopRequireDefault(_svd);
 
@@ -8877,7 +8960,7 @@ function linearDependencies(matrix, options = {}) {
 }
 
 /***/ }),
-/* 69 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8889,7 +8972,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _index = __webpack_require__(0);
 
-var _util = __webpack_require__(11);
+var _util = __webpack_require__(13);
 
 /**
  * @class EigenvalueDecomposition
@@ -9678,7 +9761,7 @@ function cdiv(xr, xi, yr, yi) {
 }
 
 /***/ }),
-/* 70 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9788,7 +9871,7 @@ class CholeskyDecomposition {
 exports.default = CholeskyDecomposition;
 
 /***/ }),
-/* 71 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9811,7 +9894,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _mlArrayMean = __webpack_require__(12);
+var _mlArrayMean = __webpack_require__(8);
 
 var _mlArrayMean2 = _interopRequireDefault(_mlArrayMean);
 
@@ -9989,7 +10072,7 @@ function zip(a, b) {
 }
 
 /***/ }),
-/* 72 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10004,7 +10087,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _TreeNode = __webpack_require__(22);
+var _TreeNode = __webpack_require__(24);
 
 var _TreeNode2 = _interopRequireDefault(_TreeNode);
 
@@ -10097,7 +10180,7 @@ class DecisionTreeRegression {
 exports.DecisionTreeRegression = DecisionTreeRegression;
 
 /***/ }),
-/* 73 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10107,7 +10190,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _RandomForestClassifier = __webpack_require__(74);
+var _RandomForestClassifier = __webpack_require__(76);
 
 Object.defineProperty(exports, 'RandomForestClassifier', {
   enumerable: true,
@@ -10116,7 +10199,7 @@ Object.defineProperty(exports, 'RandomForestClassifier', {
   }
 });
 
-var _RandomForestRegression = __webpack_require__(77);
+var _RandomForestRegression = __webpack_require__(79);
 
 Object.defineProperty(exports, 'RandomForestRegression', {
   enumerable: true,
@@ -10126,7 +10209,7 @@ Object.defineProperty(exports, 'RandomForestRegression', {
 });
 
 /***/ }),
-/* 74 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10137,7 +10220,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RandomForestClassifier = undefined;
 
-var _RandomForestBase = __webpack_require__(23);
+var _RandomForestBase = __webpack_require__(25);
 
 var defaultOptions = {
   maxFeatures: 1.0,
@@ -10222,7 +10305,7 @@ function mode(arr) {
 }
 
 /***/ }),
-/* 75 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10235,7 +10318,7 @@ exports.checkFloat = checkFloat;
 exports.examplesBaggingWithReplacement = examplesBaggingWithReplacement;
 exports.featureBagging = featureBagging;
 
-var _randomJs = __webpack_require__(76);
+var _randomJs = __webpack_require__(78);
 
 var _randomJs2 = _interopRequireDefault(_randomJs);
 
@@ -10336,7 +10419,7 @@ function featureBagging(trainingSet, n, replacement, seed) {
 }
 
 /***/ }),
-/* 76 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11040,7 +11123,7 @@ var __WEBPACK_AMD_DEFINE_RESULT__;
 })(undefined);
 
 /***/ }),
-/* 77 */
+/* 79 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11051,15 +11134,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.RandomForestRegression = undefined;
 
-var _mlArrayMean = __webpack_require__(12);
+var _mlArrayMean = __webpack_require__(8);
 
 var _mlArrayMean2 = _interopRequireDefault(_mlArrayMean);
 
-var _mlArrayMedian = __webpack_require__(78);
+var _mlArrayMedian = __webpack_require__(26);
 
 var _mlArrayMedian2 = _interopRequireDefault(_mlArrayMedian);
 
-var _RandomForestBase = __webpack_require__(23);
+var _RandomForestBase = __webpack_require__(25);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11154,49 +11237,14 @@ class RandomForestRegression extends _RandomForestBase.RandomForestBase {
 exports.RandomForestRegression = RandomForestRegression;
 
 /***/ }),
-/* 78 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.default = median;
-
-var _medianQuickselect = __webpack_require__(79);
-
-var _medianQuickselect2 = _interopRequireDefault(_medianQuickselect);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-/**
- * Computes the median of the given values
- * @param {Array<number>} input
- * @return {number}
- */
-function median(input) {
-    if (!Array.isArray(input)) {
-        throw new Error('input must be an array');
-    }
-
-    if (input.length === 0) {
-        throw new Error('input must not be empty');
-    }
-
-    return (0, _medianQuickselect2.default)(input.slice());
-}
-
-/***/ }),
-/* 79 */
+/* 80 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 (function(){function d(c){for(var d=0,e=c.length-1,f=void 0,g=void 0,h=void 0,i=b(d,e);;){if(e<=d)return c[i];if(e==d+1)return c[d]>c[e]&&a(c,d,e),c[i];for(f=b(d,e),c[f]>c[e]&&a(c,f,e),c[d]>c[e]&&a(c,d,e),c[f]>c[d]&&a(c,f,d),a(c,f,d+1),g=d+1,h=e;;){do g++;while(c[d]>c[g]);do h--;while(c[h]>c[d]);if(h<g)break;a(c,g,h)}a(c,d,h),h<=i&&(d=g),h>=i&&(e=h-1)}}var a=function(a,b,c){var d;return d=[a[c],a[b]],a[b]=d[0],a[c]=d[1],d},b=function(a,b){return~~((a+b)/2)};'undefined'!=typeof module&&module.exports?module.exports=d:window.median=d})();
 
 /***/ }),
-/* 80 */
+/* 81 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11206,7 +11254,7 @@ var matrixLib = __webpack_require__(0);
 var Matrix = matrixLib.Matrix;
 var EVD = matrixLib.EVD;
 var SVD = matrixLib.SVD;
-var Stat = __webpack_require__(9);
+var Stat = __webpack_require__(10);
 var mean = Stat.mean;
 var stdev = Stat.standardDeviation;
 
@@ -11424,29 +11472,29 @@ class PCA {
 module.exports = PCA;
 
 /***/ }),
-/* 81 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.agnes = __webpack_require__(82);
-exports.diana = __webpack_require__(90);
-//exports.birch = require('./birch');
-//exports.cure = require('./cure');
-//exports.chameleon = require('./chameleon');
-
-/***/ }),
 /* 82 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
+exports.agnes = __webpack_require__(83);
+exports.diana = __webpack_require__(91);
+//exports.birch = require('./birch');
+//exports.cure = require('./cure');
+//exports.chameleon = require('./chameleon');
+
+/***/ }),
+/* 83 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var euclidean = __webpack_require__(1);
-var ClusterLeaf = __webpack_require__(25);
-var Cluster = __webpack_require__(13);
-var distanceMatrix = __webpack_require__(26);
+var ClusterLeaf = __webpack_require__(28);
+var Cluster = __webpack_require__(14);
+var distanceMatrix = __webpack_require__(29);
 
 /**
  * @private
@@ -11684,16 +11732,16 @@ function agnes(data, options) {
 module.exports = agnes;
 
 /***/ }),
-/* 83 */
+/* 84 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = __webpack_require__(84);
+module.exports = __webpack_require__(85);
 
 /***/ }),
-/* 84 */
+/* 85 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12069,7 +12117,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 }).call(undefined);
 
 /***/ }),
-/* 85 */
+/* 86 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12565,7 +12613,7 @@ function isPrimitive(arg) {
 }
 exports.isPrimitive = isPrimitive;
 
-exports.isBuffer = __webpack_require__(88);
+exports.isBuffer = __webpack_require__(89);
 
 function objectToString(o) {
   return Object.prototype.toString.call(o);
@@ -12602,7 +12650,7 @@ exports.log = function () {
  *     prototype.
  * @param {function} superCtor Constructor function to inherit prototype from.
  */
-exports.inherits = __webpack_require__(89);
+exports.inherits = __webpack_require__(90);
 
 exports._extend = function (origin, add) {
   // Don't do anything if add isn't an object
@@ -12619,10 +12667,10 @@ exports._extend = function (origin, add) {
 function hasOwnProperty(obj, prop) {
   return Object.prototype.hasOwnProperty.call(obj, prop);
 }
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(86), __webpack_require__(87)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(87), __webpack_require__(88)))
 
 /***/ }),
-/* 86 */
+/* 87 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12650,7 +12698,7 @@ try {
 module.exports = g;
 
 /***/ }),
-/* 87 */
+/* 88 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12843,7 +12891,7 @@ process.umask = function () {
 };
 
 /***/ }),
-/* 88 */
+/* 89 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12854,7 +12902,7 @@ module.exports = function isBuffer(arg) {
 };
 
 /***/ }),
-/* 89 */
+/* 90 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12885,15 +12933,15 @@ if (typeof Object.create === 'function') {
 }
 
 /***/ }),
-/* 90 */
+/* 91 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 var euclidean = __webpack_require__(1);
-var ClusterLeaf = __webpack_require__(25);
-var Cluster = __webpack_require__(13);
+var ClusterLeaf = __webpack_require__(28);
+var Cluster = __webpack_require__(14);
 
 /**
  * @private
@@ -13193,7 +13241,7 @@ function diana(data, options) {
 module.exports = diana;
 
 /***/ }),
-/* 91 */
+/* 92 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13208,11 +13256,11 @@ var _mlDistanceEuclidean = __webpack_require__(1);
 
 var _mlDistanceEuclidean2 = _interopRequireDefault(_mlDistanceEuclidean);
 
-var _utils = __webpack_require__(27);
+var _utils = __webpack_require__(30);
 
-var _initialization = __webpack_require__(93);
+var _initialization = __webpack_require__(94);
 
-var _KMeansResult = __webpack_require__(95);
+var _KMeansResult = __webpack_require__(96);
 
 var _KMeansResult2 = _interopRequireDefault(_KMeansResult);
 
@@ -13337,7 +13385,7 @@ function kmeans(data, K, options) {
 }
 
 /***/ }),
-/* 92 */
+/* 93 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13404,7 +13452,7 @@ function nearestVector(listVectors, vector, options) {
 module.exports = nearestVector;
 
 /***/ }),
-/* 93 */
+/* 94 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13417,7 +13465,7 @@ exports.random = random;
 exports.mostDistant = mostDistant;
 exports.kmeanspp = kmeanspp;
 
-var _mlRandom = __webpack_require__(28);
+var _mlRandom = __webpack_require__(31);
 
 var _mlRandom2 = _interopRequireDefault(_mlRandom);
 
@@ -13573,7 +13621,7 @@ function cumSum(arr) {
 }
 
 /***/ }),
-/* 94 */
+/* 95 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13648,7 +13696,7 @@ function randomIndex(n, random, cumSum) {
 exports.default = randomChoice;
 
 /***/ }),
-/* 95 */
+/* 96 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -13658,7 +13706,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _utils = __webpack_require__(27);
+var _utils = __webpack_require__(30);
 
 var distanceSymbol = Symbol('distance');
 
@@ -13727,13 +13775,13 @@ class KMeansResult {
 exports.default = KMeansResult;
 
 /***/ }),
-/* 96 */
+/* 97 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Kernel = __webpack_require__(14);
+var Kernel = __webpack_require__(15);
 var stat = __webpack_require__(4).array;
 
 var defaultOptions = {
@@ -14058,7 +14106,7 @@ SVM.prototype._applyWhitening = function (features) {
 module.exports = SVM;
 
 /***/ }),
-/* 97 */
+/* 98 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14086,7 +14134,7 @@ class GaussianKernel {
 module.exports = GaussianKernel;
 
 /***/ }),
-/* 98 */
+/* 99 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14119,7 +14167,7 @@ class PolynomialKernel {
 module.exports = PolynomialKernel;
 
 /***/ }),
-/* 99 */
+/* 100 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14150,7 +14198,7 @@ class ANOVAKernel {
 module.exports = ANOVAKernel;
 
 /***/ }),
-/* 100 */
+/* 101 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14176,7 +14224,7 @@ class CauchyKernel {
 module.exports = CauchyKernel;
 
 /***/ }),
-/* 101 */
+/* 102 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14204,7 +14252,7 @@ class ExponentialKernel {
 module.exports = ExponentialKernel;
 
 /***/ }),
-/* 102 */
+/* 103 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14225,7 +14273,7 @@ class HistogramIntersectionKernel {
 module.exports = HistogramIntersectionKernel;
 
 /***/ }),
-/* 103 */
+/* 104 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14252,7 +14300,7 @@ class LaplacianKernel {
 module.exports = LaplacianKernel;
 
 /***/ }),
-/* 104 */
+/* 105 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14278,7 +14326,7 @@ class MultiquadraticKernel {
 module.exports = MultiquadraticKernel;
 
 /***/ }),
-/* 105 */
+/* 106 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14305,7 +14353,7 @@ class RationalQuadraticKernel {
 module.exports = RationalQuadraticKernel;
 
 /***/ }),
-/* 106 */
+/* 107 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14335,7 +14383,7 @@ class SigmoidKernel {
 module.exports = SigmoidKernel;
 
 /***/ }),
-/* 107 */
+/* 108 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14345,7 +14393,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _GaussianNB = __webpack_require__(108);
+var _GaussianNB = __webpack_require__(109);
 
 Object.defineProperty(exports, 'GaussianNB', {
   enumerable: true,
@@ -14354,7 +14402,7 @@ Object.defineProperty(exports, 'GaussianNB', {
   }
 });
 
-var _MultinomialNB = __webpack_require__(109);
+var _MultinomialNB = __webpack_require__(110);
 
 Object.defineProperty(exports, 'MultinomialNB', {
   enumerable: true,
@@ -14364,7 +14412,7 @@ Object.defineProperty(exports, 'MultinomialNB', {
 });
 
 /***/ }),
-/* 108 */
+/* 109 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14383,7 +14431,7 @@ var _mlStat = __webpack_require__(4);
 
 var _mlStat2 = _interopRequireDefault(_mlStat);
 
-var _utils = __webpack_require__(30);
+var _utils = __webpack_require__(33);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -14538,7 +14586,7 @@ function calculateLogProbability(value, mean, C1, C2) {
 }
 
 /***/ }),
-/* 109 */
+/* 110 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14553,7 +14601,7 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _utils = __webpack_require__(30);
+var _utils = __webpack_require__(33);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -14652,7 +14700,7 @@ function matrixLog(i, j) {
 }
 
 /***/ }),
-/* 110 */
+/* 111 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -14662,7 +14710,7 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _KDTree = __webpack_require__(111);
+var _KDTree = __webpack_require__(112);
 
 var _KDTree2 = _interopRequireDefault(_KDTree);
 
@@ -14793,7 +14841,7 @@ function getSinglePrediction(knn, currentCase) {
 }
 
 /***/ }),
-/* 111 */
+/* 112 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15081,7 +15129,7 @@ class BinaryHeap {
 }
 
 /***/ }),
-/* 112 */
+/* 113 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15091,7 +15139,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _pls = __webpack_require__(113);
+var _pls = __webpack_require__(114);
 
 Object.defineProperty(exports, 'PLS', {
   enumerable: true,
@@ -15100,7 +15148,7 @@ Object.defineProperty(exports, 'PLS', {
   }
 });
 
-var _kopls = __webpack_require__(114);
+var _kopls = __webpack_require__(115);
 
 Object.defineProperty(exports, 'KOPLS', {
   enumerable: true,
@@ -15110,7 +15158,7 @@ Object.defineProperty(exports, 'KOPLS', {
 });
 
 /***/ }),
-/* 113 */
+/* 114 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15125,11 +15173,11 @@ var _mlMatrix = __webpack_require__(0);
 
 var _mlMatrix2 = _interopRequireDefault(_mlMatrix);
 
-var _matrix = __webpack_require__(9);
+var _matrix = __webpack_require__(10);
 
 var _matrix2 = _interopRequireDefault(_matrix);
 
-var _utils = __webpack_require__(31);
+var _utils = __webpack_require__(34);
 
 var Utils = _interopRequireWildcard(_utils);
 
@@ -15365,7 +15413,7 @@ function maxSumColIndex(data) {
 }
 
 /***/ }),
-/* 114 */
+/* 115 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -15378,7 +15426,7 @@ exports.KOPLS = undefined;
 
 var _mlMatrix = __webpack_require__(0);
 
-var _utils = __webpack_require__(31);
+var _utils = __webpack_require__(34);
 
 /**
  * @class KOPLS
@@ -15607,16 +15655,16 @@ class KOPLS {
 exports.KOPLS = KOPLS;
 
 /***/ }),
-/* 115 */
+/* 116 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var ConfusionMatrix = __webpack_require__(32);
+var ConfusionMatrix = __webpack_require__(35);
 
 var CV = {};
-var combinations = __webpack_require__(116);
+var combinations = __webpack_require__(117);
 
 /**
  * Performs a leave-one-out cross-validation (LOO-CV) of the given samples. In LOO-CV, 1 observation is used as the
@@ -15827,7 +15875,7 @@ function getTrainTest(features, labels, testIdx, trainIdx) {
 module.exports = CV;
 
 /***/ }),
-/* 116 */
+/* 117 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16724,7 +16772,7 @@ module.exports = CV;
 });
 
 /***/ }),
-/* 117 */
+/* 118 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -16732,10 +16780,10 @@ module.exports = CV;
 
 var Matrix = __webpack_require__(0).Matrix;
 
-var Layer = __webpack_require__(33);
-var OutputLayer = __webpack_require__(118);
-var Utils = __webpack_require__(34);
-var ACTIVATION_FUNCTIONS = __webpack_require__(35);
+var Layer = __webpack_require__(36);
+var OutputLayer = __webpack_require__(119);
+var Utils = __webpack_require__(37);
+var ACTIVATION_FUNCTIONS = __webpack_require__(38);
 
 class FeedForwardNeuralNetworks {
 
@@ -16947,13 +16995,13 @@ class FeedForwardNeuralNetworks {
 module.exports = FeedForwardNeuralNetworks;
 
 /***/ }),
-/* 118 */
+/* 119 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var Layer = __webpack_require__(33);
+var Layer = __webpack_require__(36);
 
 class OutputLayer extends Layer {
     constructor(options) {
@@ -16976,14 +17024,14 @@ class OutputLayer extends Layer {
 module.exports = OutputLayer;
 
 /***/ }),
-/* 119 */
+/* 120 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var NodeSquare = __webpack_require__(36),
-    NodeHexagonal = __webpack_require__(120);
+var NodeSquare = __webpack_require__(39),
+    NodeHexagonal = __webpack_require__(121);
 
 var defaultOptions = {
     fields: 3,
@@ -17405,13 +17453,13 @@ function getMaxDistance(distance, numWeights) {
 module.exports = SOM;
 
 /***/ }),
-/* 120 */
+/* 121 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var NodeSquare = __webpack_require__(36);
+var NodeSquare = __webpack_require__(39);
 
 function NodeHexagonal(x, y, weights, som) {
 
@@ -17442,7 +17490,7 @@ NodeHexagonal.prototype.getPosition = function getPosition() {
 module.exports = NodeHexagonal;
 
 /***/ }),
-/* 121 */
+/* 122 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17470,7 +17518,7 @@ function maybeToPrecision(value, digits) {
 }
 
 /***/ }),
-/* 122 */
+/* 123 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17490,7 +17538,7 @@ function checkArraySize(x, y) {
 }
 
 /***/ }),
-/* 123 */
+/* 124 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17504,7 +17552,7 @@ var _mlRegressionBase = __webpack_require__(2);
 
 var _mlRegressionBase2 = _interopRequireDefault(_mlRegressionBase);
 
-var _mlRegressionSimpleLinear = __webpack_require__(15);
+var _mlRegressionSimpleLinear = __webpack_require__(16);
 
 var _mlRegressionSimpleLinear2 = _interopRequireDefault(_mlRegressionSimpleLinear);
 
@@ -17568,7 +17616,7 @@ function regress(er, x, y) {
 }
 
 /***/ }),
-/* 124 */
+/* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17582,7 +17630,7 @@ var _mlRegressionBase = __webpack_require__(2);
 
 var _mlRegressionBase2 = _interopRequireDefault(_mlRegressionBase);
 
-var _mlRegressionSimpleLinear = __webpack_require__(15);
+var _mlRegressionSimpleLinear = __webpack_require__(16);
 
 var _mlRegressionSimpleLinear2 = _interopRequireDefault(_mlRegressionSimpleLinear);
 
@@ -17649,7 +17697,7 @@ function regress(pr, x, y) {
 }
 
 /***/ }),
-/* 125 */
+/* 126 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17782,7 +17830,7 @@ class MultivariateLinearRegression extends _mlRegressionBase2.default {
 exports.default = MultivariateLinearRegression;
 
 /***/ }),
-/* 126 */
+/* 127 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -17794,7 +17842,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _mlMatrix = __webpack_require__(0);
 
-var _mlKernel = __webpack_require__(14);
+var _mlKernel = __webpack_require__(15);
 
 var _mlKernel2 = _interopRequireDefault(_mlKernel);
 
@@ -17863,7 +17911,7 @@ class KernelRidgeRegression extends _mlRegressionBase2.default {
 exports.default = KernelRidgeRegression;
 
 /***/ }),
-/* 127 */
+/* 128 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18064,7 +18112,7 @@ function abs(i, j) {
 }
 
 /***/ }),
-/* 128 */
+/* 129 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18177,7 +18225,7 @@ function theilSen(regression, x, y) {
 }
 
 /***/ }),
-/* 129 */
+/* 130 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18393,7 +18441,7 @@ function residualsMedian(residuals) {
 }
 
 /***/ }),
-/* 130 */
+/* 131 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18407,7 +18455,7 @@ var _mlRegressionBase = __webpack_require__(2);
 
 var _mlRegressionBase2 = _interopRequireDefault(_mlRegressionBase);
 
-var _mlRegressionPolynomial = __webpack_require__(38);
+var _mlRegressionPolynomial = __webpack_require__(41);
 
 var _mlRegressionPolynomial2 = _interopRequireDefault(_mlRegressionPolynomial);
 
@@ -18481,7 +18529,7 @@ class PotentialRegression extends _mlRegressionBase2.default {
 exports.default = PotentialRegression;
 
 /***/ }),
-/* 131 */
+/* 132 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18647,7 +18695,7 @@ function levenbergMarquardt(data, parameterizedFunction, options = {}) {
 module.exports = levenbergMarquardt;
 
 /***/ }),
-/* 132 */
+/* 133 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18658,7 +18706,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.SparseMatrix = undefined;
 
-var _mlHashTable = __webpack_require__(39);
+var _mlHashTable = __webpack_require__(42);
 
 var _mlHashTable2 = _interopRequireDefault(_mlHashTable);
 
@@ -18980,7 +19028,7 @@ function fillTemplateFunction(template, values) {
 }
 
 /***/ }),
-/* 133 */
+/* 134 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18998,14 +19046,14 @@ function newArray(n, value) {
 }
 
 /***/ }),
-/* 134 */
+/* 135 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var binarySearch = __webpack_require__(40);
-var sortAsc = __webpack_require__(41).asc;
+var binarySearch = __webpack_require__(43);
+var sortAsc = __webpack_require__(44).asc;
 
 var largestPrime = 0x7fffffff;
 
@@ -19066,7 +19114,7 @@ exports.nextPrime = nextPrime;
 exports.largestPrime = largestPrime;
 
 /***/ }),
-/* 135 */
+/* 136 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19077,59 +19125,59 @@ module.exports = Number.isNaN || function (x) {
 };
 
 /***/ }),
-/* 136 */
+/* 137 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-exports.additiveSymmetric = __webpack_require__(137);
-exports.avg = __webpack_require__(138);
-exports.bhattacharyya = __webpack_require__(139);
-exports.canberra = __webpack_require__(140);
-exports.chebyshev = __webpack_require__(141);
-exports.clark = __webpack_require__(142);
-exports.czekanowski = __webpack_require__(143);
-exports.dice = __webpack_require__(44);
-exports.divergence = __webpack_require__(144);
+exports.additiveSymmetric = __webpack_require__(138);
+exports.avg = __webpack_require__(139);
+exports.bhattacharyya = __webpack_require__(140);
+exports.canberra = __webpack_require__(141);
+exports.chebyshev = __webpack_require__(142);
+exports.clark = __webpack_require__(143);
+exports.czekanowski = __webpack_require__(144);
+exports.dice = __webpack_require__(47);
+exports.divergence = __webpack_require__(145);
 exports.euclidean = __webpack_require__(1);
-exports.fidelity = __webpack_require__(145);
-exports.gower = __webpack_require__(146);
-exports.harmonicMean = __webpack_require__(147);
-exports.hellinger = __webpack_require__(148);
-exports.innerProduct = __webpack_require__(149);
-exports.intersection = __webpack_require__(45);
-exports.jaccard = __webpack_require__(46);
-exports.jeffreys = __webpack_require__(150);
-exports.jensenDifference = __webpack_require__(151);
-exports.jensenShannon = __webpack_require__(152);
-exports.kdivergence = __webpack_require__(153);
-exports.kulczynski = __webpack_require__(47);
-exports.kullbackLeibler = __webpack_require__(154);
-exports.kumarHassebrook = __webpack_require__(155);
-exports.kumarJohnson = __webpack_require__(156);
-exports.lorentzian = __webpack_require__(157);
-exports.manhattan = __webpack_require__(158);
-exports.matusita = __webpack_require__(159);
-exports.minkowski = __webpack_require__(160);
-exports.motyka = __webpack_require__(48);
-exports.neyman = __webpack_require__(161);
-exports.pearson = __webpack_require__(162);
-exports.probabilisticSymmetric = __webpack_require__(163);
-exports.ruzicka = __webpack_require__(164);
-exports.soergel = __webpack_require__(165);
-exports.sorensen = __webpack_require__(166);
-exports.squared = __webpack_require__(167);
-exports.squaredChord = __webpack_require__(49);
+exports.fidelity = __webpack_require__(146);
+exports.gower = __webpack_require__(147);
+exports.harmonicMean = __webpack_require__(148);
+exports.hellinger = __webpack_require__(149);
+exports.innerProduct = __webpack_require__(150);
+exports.intersection = __webpack_require__(48);
+exports.jaccard = __webpack_require__(49);
+exports.jeffreys = __webpack_require__(151);
+exports.jensenDifference = __webpack_require__(152);
+exports.jensenShannon = __webpack_require__(153);
+exports.kdivergence = __webpack_require__(154);
+exports.kulczynski = __webpack_require__(50);
+exports.kullbackLeibler = __webpack_require__(155);
+exports.kumarHassebrook = __webpack_require__(156);
+exports.kumarJohnson = __webpack_require__(157);
+exports.lorentzian = __webpack_require__(158);
+exports.manhattan = __webpack_require__(159);
+exports.matusita = __webpack_require__(160);
+exports.minkowski = __webpack_require__(161);
+exports.motyka = __webpack_require__(51);
+exports.neyman = __webpack_require__(162);
+exports.pearson = __webpack_require__(163);
+exports.probabilisticSymmetric = __webpack_require__(164);
+exports.ruzicka = __webpack_require__(165);
+exports.soergel = __webpack_require__(166);
+exports.sorensen = __webpack_require__(167);
+exports.squared = __webpack_require__(168);
+exports.squaredChord = __webpack_require__(52);
 exports.squaredEuclidean = __webpack_require__(1).squared;
-exports.taneja = __webpack_require__(168);
-exports.tanimoto = __webpack_require__(169);
-exports.topsoe = __webpack_require__(170);
-exports.tree = __webpack_require__(171);
-exports.waveHedges = __webpack_require__(172);
+exports.taneja = __webpack_require__(169);
+exports.tanimoto = __webpack_require__(170);
+exports.topsoe = __webpack_require__(171);
+exports.tree = __webpack_require__(172);
+exports.waveHedges = __webpack_require__(173);
 
 /***/ }),
-/* 137 */
+/* 138 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19146,7 +19194,7 @@ module.exports = function additiveSymmetric(a, b) {
 };
 
 /***/ }),
-/* 138 */
+/* 139 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19168,7 +19216,7 @@ module.exports = function avg(a, b) {
 };
 
 /***/ }),
-/* 139 */
+/* 140 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19184,7 +19232,7 @@ module.exports = function bhattacharyya(a, b) {
 };
 
 /***/ }),
-/* 140 */
+/* 141 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19200,7 +19248,7 @@ module.exports = function canberra(a, b) {
 };
 
 /***/ }),
-/* 141 */
+/* 142 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19220,7 +19268,7 @@ module.exports = function chebyshev(a, b) {
 };
 
 /***/ }),
-/* 142 */
+/* 143 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19237,20 +19285,20 @@ module.exports = function clark(a, b) {
 };
 
 /***/ }),
-/* 143 */
+/* 144 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var czekanowskiSimilarity = __webpack_require__(43);
+var czekanowskiSimilarity = __webpack_require__(46);
 
 module.exports = function czekanowskiDistance(a, b) {
     return 1 - czekanowskiSimilarity(a, b);
 };
 
 /***/ }),
-/* 144 */
+/* 145 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19267,7 +19315,7 @@ module.exports = function divergence(a, b) {
 };
 
 /***/ }),
-/* 145 */
+/* 146 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19283,7 +19331,7 @@ module.exports = function fidelity(a, b) {
 };
 
 /***/ }),
-/* 146 */
+/* 147 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19299,7 +19347,7 @@ module.exports = function gower(a, b) {
 };
 
 /***/ }),
-/* 147 */
+/* 148 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19315,7 +19363,7 @@ module.exports = function harmonicMean(a, b) {
 };
 
 /***/ }),
-/* 148 */
+/* 149 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19331,7 +19379,7 @@ module.exports = function hellinger(a, b) {
 };
 
 /***/ }),
-/* 149 */
+/* 150 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19347,7 +19395,7 @@ module.exports = function innerProduct(a, b) {
 };
 
 /***/ }),
-/* 150 */
+/* 151 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19363,7 +19411,7 @@ module.exports = function jeffreys(a, b) {
 };
 
 /***/ }),
-/* 151 */
+/* 152 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19379,7 +19427,7 @@ module.exports = function jensenDifference(a, b) {
 };
 
 /***/ }),
-/* 152 */
+/* 153 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19397,7 +19445,7 @@ module.exports = function jensenShannon(a, b) {
 };
 
 /***/ }),
-/* 153 */
+/* 154 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19413,7 +19461,7 @@ module.exports = function kdivergence(a, b) {
 };
 
 /***/ }),
-/* 154 */
+/* 155 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19429,7 +19477,7 @@ module.exports = function kullbackLeibler(a, b) {
 };
 
 /***/ }),
-/* 155 */
+/* 156 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19449,7 +19497,7 @@ module.exports = function kumarHassebrook(a, b) {
 };
 
 /***/ }),
-/* 156 */
+/* 157 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19465,7 +19513,7 @@ module.exports = function kumarJohnson(a, b) {
 };
 
 /***/ }),
-/* 157 */
+/* 158 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19481,7 +19529,7 @@ module.exports = function lorentzian(a, b) {
 };
 
 /***/ }),
-/* 158 */
+/* 159 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19498,7 +19546,7 @@ module.exports = function manhattan(a, b) {
 };
 
 /***/ }),
-/* 159 */
+/* 160 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19514,7 +19562,7 @@ module.exports = function matusita(a, b) {
 };
 
 /***/ }),
-/* 160 */
+/* 161 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19531,7 +19579,7 @@ module.exports = function minkowski(a, b, p) {
 };
 
 /***/ }),
-/* 161 */
+/* 162 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19548,7 +19596,7 @@ module.exports = function neyman(a, b) {
 };
 
 /***/ }),
-/* 162 */
+/* 163 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19565,7 +19613,7 @@ module.exports = function pearson(a, b) {
 };
 
 /***/ }),
-/* 163 */
+/* 164 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19582,7 +19630,7 @@ module.exports = function probabilisticSymmetric(a, b) {
 };
 
 /***/ }),
-/* 164 */
+/* 165 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19600,7 +19648,7 @@ module.exports = function ruzicka(a, b) {
 };
 
 /***/ }),
-/* 165 */
+/* 166 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19618,7 +19666,7 @@ module.exports = function soergel(a, b) {
 };
 
 /***/ }),
-/* 166 */
+/* 167 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19636,7 +19684,7 @@ module.exports = function sorensen(a, b) {
 };
 
 /***/ }),
-/* 167 */
+/* 168 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19653,7 +19701,7 @@ module.exports = function squared(a, b) {
 };
 
 /***/ }),
-/* 168 */
+/* 169 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19669,13 +19717,13 @@ module.exports = function taneja(a, b) {
 };
 
 /***/ }),
-/* 169 */
+/* 170 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var tanimotoS = __webpack_require__(50);
+var tanimotoS = __webpack_require__(53);
 
 module.exports = function tanimoto(a, b, bitvector) {
     if (bitvector) return 1 - tanimotoS(a, b, bitvector);else {
@@ -19693,7 +19741,7 @@ module.exports = function tanimoto(a, b, bitvector) {
 };
 
 /***/ }),
-/* 170 */
+/* 171 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19709,7 +19757,7 @@ module.exports = function topsoe(a, b) {
 };
 
 /***/ }),
-/* 171 */
+/* 172 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19821,7 +19869,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 172 */
+/* 173 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -19837,35 +19885,22 @@ module.exports = function waveHedges(a, b) {
 };
 
 /***/ }),
-/* 173 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.cosine = __webpack_require__(51);
-exports.czekanowski = __webpack_require__(43);
-exports.dice = __webpack_require__(174);
-exports.intersection = __webpack_require__(175);
-exports.jaccard = __webpack_require__(176);
-exports.kulczynski = __webpack_require__(177);
-exports.motyka = __webpack_require__(178);
-exports.pearson = __webpack_require__(179);
-exports.squaredChord = __webpack_require__(180);
-exports.tanimoto = __webpack_require__(50);
-
-/***/ }),
 /* 174 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var diceD = __webpack_require__(44);
-
-module.exports = function dice(a, b) {
-    return 1 - diceD(a, b);
-};
+exports.cosine = __webpack_require__(54);
+exports.czekanowski = __webpack_require__(46);
+exports.dice = __webpack_require__(175);
+exports.intersection = __webpack_require__(176);
+exports.jaccard = __webpack_require__(177);
+exports.kulczynski = __webpack_require__(178);
+exports.motyka = __webpack_require__(179);
+exports.pearson = __webpack_require__(180);
+exports.squaredChord = __webpack_require__(181);
+exports.tanimoto = __webpack_require__(53);
 
 /***/ }),
 /* 175 */
@@ -19874,10 +19909,10 @@ module.exports = function dice(a, b) {
 "use strict";
 
 
-var intersectionD = __webpack_require__(45);
+var diceD = __webpack_require__(47);
 
-module.exports = function intersection(a, b) {
-    return 1 - intersectionD(a, b);
+module.exports = function dice(a, b) {
+    return 1 - diceD(a, b);
 };
 
 /***/ }),
@@ -19887,10 +19922,10 @@ module.exports = function intersection(a, b) {
 "use strict";
 
 
-var jaccardD = __webpack_require__(46);
+var intersectionD = __webpack_require__(48);
 
-module.exports = function jaccard(a, b) {
-    return 1 - jaccardD(a, b);
+module.exports = function intersection(a, b) {
+    return 1 - intersectionD(a, b);
 };
 
 /***/ }),
@@ -19900,10 +19935,10 @@ module.exports = function jaccard(a, b) {
 "use strict";
 
 
-var kulczynskiD = __webpack_require__(47);
+var jaccardD = __webpack_require__(49);
 
-module.exports = function kulczynski(a, b) {
-    return 1 / kulczynskiD(a, b);
+module.exports = function jaccard(a, b) {
+    return 1 - jaccardD(a, b);
 };
 
 /***/ }),
@@ -19913,10 +19948,10 @@ module.exports = function kulczynski(a, b) {
 "use strict";
 
 
-var motykaD = __webpack_require__(48);
+var kulczynskiD = __webpack_require__(50);
 
-module.exports = function motyka(a, b) {
-    return 1 - motykaD(a, b);
+module.exports = function kulczynski(a, b) {
+    return 1 / kulczynskiD(a, b);
 };
 
 /***/ }),
@@ -19926,8 +19961,21 @@ module.exports = function motyka(a, b) {
 "use strict";
 
 
+var motykaD = __webpack_require__(51);
+
+module.exports = function motyka(a, b) {
+    return 1 - motykaD(a, b);
+};
+
+/***/ }),
+/* 180 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
 var stat = __webpack_require__(4).array;
-var cosine = __webpack_require__(51);
+var cosine = __webpack_require__(54);
 
 module.exports = function pearson(a, b) {
     var avgA = stat.mean(a);
@@ -19944,26 +19992,26 @@ module.exports = function pearson(a, b) {
 };
 
 /***/ }),
-/* 180 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-var squaredChordD = __webpack_require__(49);
-
-module.exports = function squaredChord(a, b) {
-    return 1 - squaredChordD(a, b);
-};
-
-/***/ }),
 /* 181 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var measures = __webpack_require__(182);
+var squaredChordD = __webpack_require__(52);
+
+module.exports = function squaredChord(a, b) {
+    return 1 - squaredChordD(a, b);
+};
+
+/***/ }),
+/* 182 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var measures = __webpack_require__(183);
 
 class Performance {
     /**
@@ -20191,7 +20239,7 @@ Performance.names = {
 module.exports = Performance;
 
 /***/ }),
-/* 182 */
+/* 183 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20336,7 +20384,7 @@ exports.threshold = pred => {
 };
 
 /***/ }),
-/* 183 */
+/* 184 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20345,8 +20393,8 @@ exports.threshold = pred => {
 var matrixLib = __webpack_require__(0);
 var Matrix = matrixLib.Matrix;
 var inverse = matrixLib.inverse;
-var padArray = __webpack_require__(52);
-var extend = __webpack_require__(16);
+var padArray = __webpack_require__(55);
+var extend = __webpack_require__(17);
 
 var defaultOptions = {
     windowSize: 5,
@@ -20418,14 +20466,14 @@ function SavitzkyGolay(data, h, options) {
 module.exports = SavitzkyGolay;
 
 /***/ }),
-/* 184 */
+/* 185 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 //Code translate from Pascal source in http://pubs.acs.org/doi/pdf/10.1021/ac00205a007
-var extend = __webpack_require__(16);
+var extend = __webpack_require__(17);
 var stat = __webpack_require__(4);
 
 var defaultOptions = {
@@ -20581,13 +20629,13 @@ function guessWindowSize(data, h){
 module.exports = SavitzkyGolay;
 
 /***/ }),
-/* 185 */
+/* 186 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var eightBits = __webpack_require__(186);
+var eightBits = __webpack_require__(187);
 
 /**
  * Count the number of true values in an array
@@ -20769,7 +20817,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 186 */
+/* 187 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -20791,19 +20839,19 @@ for (var i = 0; i < 256; i++) {
 module.exports = ans;
 
 /***/ }),
-/* 187 */
+/* 188 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-module.exports = exports = __webpack_require__(188);
+module.exports = exports = __webpack_require__(189);
 
-exports.getEquallySpacedData = __webpack_require__(189).getEquallySpacedData;
-exports.SNV = __webpack_require__(190).SNV;
+exports.getEquallySpacedData = __webpack_require__(190).getEquallySpacedData;
+exports.SNV = __webpack_require__(191).SNV;
 
 /***/ }),
-/* 188 */
+/* 189 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21031,7 +21079,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 189 */
+/* 190 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21299,7 +21347,7 @@ exports.getEquallySpacedData = getEquallySpacedData;
 exports.integral = integral;
 
 /***/ }),
-/* 190 */
+/* 191 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -21322,6 +21370,84 @@ function SNV(data) {
         result[i] = (result[i] - mean) / std;
     }
     return result;
+}
+
+/***/ }),
+/* 192 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.default = mode;
+/**
+ * Computes the mode of the given values
+ * @param {Array<number>} input
+ * @return {number}
+ */
+function mode(input) {
+    if (!Array.isArray(input)) {
+        throw new Error('input must be an array');
+    }
+    if (input.length === 0) {
+        throw new Error('input must not be empty');
+    }
+
+    var maxValue = 0;
+    var maxCount = 0;
+    var count = 0;
+    var counts = {};
+
+    for (var i = 0; i < input.length; ++i) {
+        var element = input[i];
+        count = counts[element];
+        if (count) {
+            counts[element]++;
+            count++;
+        } else {
+            counts[element] = count = 1;
+        }
+
+        if (count > maxCount) {
+            maxCount = count;
+            maxValue = input[i];
+        }
+    }
+
+    return maxValue;
+}
+
+/***/ }),
+/* 193 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.default = standardDeviation;
+
+var _mlArrayVariance = __webpack_require__(56);
+
+var _mlArrayVariance2 = _interopRequireDefault(_mlArrayVariance);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Computes the standard deviation of the given values
+ * @param {Array} values
+ * @param {object} [options]
+ * @param {boolean} [options.unbiased = true] - if true, divide by (n-1); if false, divide by n.
+ * @param {number} [options.mean = arrayMean] - precalculated mean, if any.
+ * @return {number}
+ */
+function standardDeviation(values, options = {}) {
+  return Math.sqrt((0, _mlArrayVariance2.default)(values, options));
 }
 
 /***/ })
