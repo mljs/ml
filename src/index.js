@@ -55,7 +55,7 @@ ML.Kernel = require('ml-kernel');
 ML.Distance = require('ml-distance').distance;
 ML.Similarity = require('ml-distance').similarity;
 ML.distanceMatrix = require('ml-distance-matrix');
-ML.XSadd = require('ml-xsadd');
+ML.XSadd = require('ml-xsadd').default;
 
 // Statistics
 ML.Performance = require('ml-performance');
@@ -80,13 +80,12 @@ ML.ArrayStat = require('ml-stat').array;
 ML.MatrixStat = require('ml-stat').matrix;
 
 ML.Array = {
-    min: require('ml-array-min').default,
-    max: require('ml-array-max').default,
-    median: require('ml-array-median').default,
-    mean: require('ml-array-mean').default,
-    mode: require('ml-array-mode').default,
-    rescale: require('ml-array-rescale').default,
-    standardDeviation: require('ml-array-standard-deviation').default,
-    variance: require('ml-array-variance').default,
-}
-
+  min: require('ml-array-min').default,
+  max: require('ml-array-max').default,
+  median: require('ml-array-median').default,
+  mean: require('ml-array-mean').default,
+  mode: require('ml-array-mode').default,
+  rescale: require('ml-array-rescale').default,
+  standardDeviation: require('ml-array-standard-deviation').default,
+  variance: require('ml-array-variance').default
+};
