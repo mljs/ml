@@ -70,7 +70,7 @@ ML.HashTable = require('ml-hash-table');
 ML.padArray = require('ml-pad-array');
 ML.binarySearch = require('binary-search');
 ML.numSort = require('num-sort');
-ML.Random = require('ml-random');
+ML.Random = require('ml-random').default;
 
 // Undocumented/deprecated packages
 ML.ArrayUtils = require('ml-array-utils');
