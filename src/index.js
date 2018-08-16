@@ -89,3 +89,13 @@ ML.Array = {
   standardDeviation: require('ml-array-standard-deviation').default,
   variance: require('ml-array-variance').default
 };
+
+ML.ArrayXY = {
+  centroidsMerge: require('ml-array-xy-centroids-merge').default,
+  closestX: require('ml-arrayxy-closestx').default,
+  maxMerge: require('ml-array-xy-max-merge').default,
+  maxY: require('ml-array-xy-max-y').default,
+  sortX: require('ml-array-xy-sort-x').default,
+  uniqueX: require('ml-arrayxy-uniquex').default,
+  weightedMerge: require('ml-array-xy-weighted-merge').default
+};
