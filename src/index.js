@@ -85,7 +85,9 @@ ML.Array = {
   median: require('ml-array-median').default,
   mean: require('ml-array-mean').default,
   mode: require('ml-array-mode').default,
+  normed: require('ml-array-normed').default,
   rescale: require('ml-array-rescale').default,
+  sequentialFill: require('ml-array-sequential-fill').default,
   standardDeviation: require('ml-array-standard-deviation').default,
   variance: require('ml-array-variance').default
 };
