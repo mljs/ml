@@ -76,7 +76,10 @@ It will be available as the global `ML` variable. The package is in UMD format a
 - [`ML.Array.max`](https://github.com/mljs/array/tree/master/packages/array-max)
 - [`ML.Array.median`](https://github.com/mljs/array/tree/master/packages/array-median)
 - [`ML.Array.mean`](https://github.com/mljs/array/tree/master/packages/array-mean)
+- [`ML.Array.mode`](https://github.com/mljs/array/tree/master/packages/array-mode)
+- [`ML.Array.normed`](https://github.com/mljs/array/tree/master/packages/array-normed)
 - [`ML.Array.rescale`](https://github.com/mljs/array/tree/master/packages/array-rescale)
+- [`ML.Array.sequentialFill`](https://github.com/mljs/array/tree/master/packages/'ml-array-sequential-fill)
 - [`ML.Array.standardDeviation`](https://github.com/mljs/array/tree/master/packages/array-standard-deviation)
 - [`ML.Array.variance`](https://github.com/mljs/array/tree/master/packages/array-variance)
 
