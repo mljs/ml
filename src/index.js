@@ -99,5 +99,7 @@ ML.ArrayXY = {
   maxY: require('ml-array-xy-max-y').default,
   sortX: require('ml-array-xy-sort-x').default,
   uniqueX: require('ml-arrayxy-uniquex').default,
-  weightedMerge: require('ml-array-xy-weighted-merge').default
+  weightedMerge: require('ml-array-xy-weighted-merge').default,
+  equallySpaced: require('ml-array-xy-equally-spaced').default,
+  filterX: require('ml-array-xy-filter-x').default
 };
