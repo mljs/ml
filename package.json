@@ -50,7 +50,7 @@
     "ml-array-xy-filter-x": "0.0.5",
     "ml-array-xy-max-merge": "^0.2.5",
     "ml-array-xy-max-y": "^0.2.7",
-    "ml-array-xy-sort-x": "^0.2.5",
+    "ml-array-xy-sort-x": "^1.0.0",
     "ml-array-xy-weighted-merge": "^0.2.7",
     "ml-arrayxy-closestx": "^1.2.4",
     "ml-arrayxy-uniquex": "^0.2.6",
