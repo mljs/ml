@@ -111,7 +111,6 @@ let result = ML.ArrayXY.sortX({x: [2,3,1], y: [4,6,2]});
 
 - Principal component analysis (PCA): [`ML.PrincipalComponentAnalysis`](https://github.com/mljs/pca)
 - Savitzky-Golay filter: [`ML.savitzkyGolay`](https://github.com/mljs/savitzky-golay)
-- Savitzky-Golay generalized: [`ML.savitzkyGolayGeneralized`](https://github.com/mljs/savitzky-golay-generalized)
 
 ### Utility
 

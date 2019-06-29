@@ -62,7 +62,6 @@ ML.Performance = require('ml-performance');
 
 // Data preprocessing
 ML.savitzkyGolay = require('ml-savitzky-golay');
-ML.savitzkyGolayGeneralized = require('ml-savitzky-golay-generalized');
 
 // Utility
 ML.BitArray = require('ml-bit-array');
