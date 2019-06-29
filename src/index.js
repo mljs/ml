@@ -74,8 +74,6 @@ ML.Random = require('ml-random').default;
 ML.ArrayUtils = require('ml-array-utils');
 ML.Regression = require('ml-regression');
 ML.MatrixUtil = require('ml-matrix');
-ML.ArrayStat = require('ml-stat').array;
-ML.MatrixStat = require('ml-stat').matrix;
 
 ML.Array = {
   min: require('ml-array-min').default,
