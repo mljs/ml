@@ -55,7 +55,7 @@
     "ml-arrayxy-closestx": "^1.2.4",
     "ml-arrayxy-uniquex": "^0.2.6",
     "ml-bit-array": "^1.0.0",
-    "ml-cart": "^1.0.8",
+    "ml-cart": "^2.0.0",
     "ml-confusion-matrix": "^0.3.0",
     "ml-cross-validation": "^1.2.0",
     "ml-distance": "^2.1.1",
