@@ -53,7 +53,7 @@
     "ml-array-xy-sort-x": "^0.2.5",
     "ml-array-xy-weighted-merge": "^0.2.7",
     "ml-arrayxy-closestx": "^1.2.4",
-    "ml-arrayxy-uniquex": "^0.2.6",
+    "ml-arrayxy-uniquex": "^1.0.0",
     "ml-bit-array": "^1.0.0",
     "ml-cart": "^2.0.0",
     "ml-confusion-matrix": "^0.3.0",
