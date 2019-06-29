@@ -48,7 +48,7 @@
     "ml-array-xy-centroids-merge": "^0.2.5",
     "ml-array-xy-equally-spaced": "^0.2.9",
     "ml-array-xy-filter-x": "0.0.5",
-    "ml-array-xy-max-merge": "^0.2.5",
+    "ml-array-xy-max-merge": "^1.0.0",
     "ml-array-xy-max-y": "^0.2.7",
     "ml-array-xy-sort-x": "^0.2.5",
     "ml-array-xy-weighted-merge": "^0.2.7",
