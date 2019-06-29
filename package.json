@@ -75,7 +75,7 @@
     "ml-pls": "^2.0.0",
     "ml-random": "^0.5.0",
     "ml-random-forest": "^1.0.3",
-    "ml-regression": "^4.4.2",
+    "ml-regression": "^5.0.0",
     "ml-savitzky-golay": "^3.0.0",
     "ml-savitzky-golay-generalized": "^1.1.1",
     "ml-som": "^0.0.6",
