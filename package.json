@@ -72,7 +72,7 @@
     "ml-pad-array": "^1.0.0",
     "ml-pca": "^2.1.0",
     "ml-performance": "^0.2.0",
-    "ml-pls": "^1.0.0",
+    "ml-pls": "^2.0.0",
     "ml-random": "^0.5.0",
     "ml-random-forest": "^1.0.3",
     "ml-regression": "^4.4.2",
