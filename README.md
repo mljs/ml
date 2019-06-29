@@ -25,7 +25,6 @@ It will be available as the global `ML` variable. The package is in UMD format a
 
 ### Supervised learning
 
-- Support vector machines: [`ML.SVM`](https://github.com/mljs/svm)
 - Naive Bayes: [`ML.NaiveBayes`](https://github.com/mljs/naive-bayes)
 - K-Nearest Neighbor (KNN): [`ML.KNN`](https://github.com/mljs/knn)
 - Partial least squares (PLS): [`ML.PLS`](https://github.com/mljs/pls)

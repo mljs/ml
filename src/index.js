@@ -13,7 +13,6 @@ ML.HClust = require('ml-hclust');
 ML.KMeans = require('ml-kmeans');
 
 // Supervised learning
-ML.SVM = require('ml-svm');
 ML.NaiveBayes = require('ml-naivebayes');
 ML.KNN = require('ml-knn');
 ML.PLS = require('ml-pls');
