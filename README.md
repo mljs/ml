@@ -125,7 +125,3 @@ let result = ML.ArrayXY.sortX({x: [2,3,1], y: [4,6,2]});
 ## License
 
 [MIT](./LICENSE)
-
-```
-
-```
