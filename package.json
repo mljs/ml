@@ -66,7 +66,7 @@
     "ml-kernel": "^3.0.0",
     "ml-kmeans": "^4.2.1",
     "ml-knn": "^2.1.3",
-    "ml-levenberg-marquardt": "^1.0.4",
+    "ml-levenberg-marquardt": "^2.0.0",
     "ml-matrix": "^6.1.2",
     "ml-naivebayes": "^4.0.0",
     "ml-pad-array": "^2.0.0",
