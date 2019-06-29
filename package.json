@@ -60,7 +60,7 @@
     "ml-cross-validation": "^1.2.0",
     "ml-distance": "^2.1.1",
     "ml-distance-matrix": "^1.0.0",
-    "ml-fnn": "^4.0.0",
+    "ml-fnn": "^5.0.0",
     "ml-hash-table": "^0.2.1",
     "ml-hclust": "^2.0.0",
     "ml-kernel": "^3.0.0",
