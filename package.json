@@ -69,7 +69,7 @@
     "ml-levenberg-marquardt": "^1.0.4",
     "ml-matrix": "^6.1.2",
     "ml-naivebayes": "^4.0.0",
-    "ml-pad-array": "^1.0.0",
+    "ml-pad-array": "^2.0.0",
     "ml-pca": "^3.0.0",
     "ml-performance": "^0.2.0",
     "ml-pls": "^2.0.0",
