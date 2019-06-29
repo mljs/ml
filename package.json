@@ -78,7 +78,7 @@
     "ml-regression": "^5.0.0",
     "ml-savitzky-golay": "^4.0.0",
     "ml-som": "^0.0.6",
-    "ml-sparse-matrix": "^1.0.0",
+    "ml-sparse-matrix": "^2.0.0",
     "ml-stat": "^1.3.3",
     "ml-xsadd": "^2.0.0",
     "num-sort": "^2.0.0"
