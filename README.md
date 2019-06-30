@@ -28,6 +28,7 @@ It will be available as the global `ML` variable. The package is in UMD format a
 - Naive Bayes: [`ML.NaiveBayes`](https://github.com/mljs/naive-bayes)
 - K-Nearest Neighbor (KNN): [`ML.KNN`](https://github.com/mljs/knn)
 - Partial least squares (PLS): [`ML.PLS`](https://github.com/mljs/pls)
+- K-OPLS: [`ML.KOPLS`](https://github.com/mljs/pls)
 - Cross-validation: [`ML.CrossValidation`](https://github.com/mljs/cross-validation)
 - Confusion matrix: [`ML.ConfusionMatrix`](https://github.com/mljs/confusion-matrix)
 - Decision tree classifier: [`ML.DecisionTreeClassifier`](https://github.com/mljs/decision-tree-cart)

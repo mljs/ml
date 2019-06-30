@@ -1,101 +1,129 @@
-'use strict';
-
-const mlCart = require('ml-cart');
-const mlRandomForest = require('ml-random-forest');
-
-const ML = exports;
+import { DecisionTreeClassifier, DecisionTreeRegression } from 'ml-cart';
+import {
+  RandomForestClassifier,
+  RandomForestRegression
+} from 'ml-random-forest';
 
 // Try to keep this list in the same structure as the README.
 
 // Unsupervised learning
-ML.PCA = require('ml-pca');
-ML.HClust = require('ml-hclust');
-ML.KMeans = require('ml-kmeans');
+export { PCA } from 'ml-pca';
+import * as HClust from 'ml-hclust';
+export { HClust };
+export { default as KMeans } from 'ml-kmeans';
 
 // Supervised learning
-ML.NaiveBayes = require('ml-naivebayes');
-ML.KNN = require('ml-knn');
-ML.PLS = require('ml-pls');
-ML.CrossValidation = require('ml-cross-validation');
-ML.ConfusionMatrix = require('ml-confusion-matrix');
-ML.DecisionTreeClassifier = mlCart.DecisionTreeClassifier;
-ML.RandomForestClassifier = mlRandomForest.RandomForestClassifier;
+import * as NaiveBayes from 'ml-naivebayes';
+export { NaiveBayes };
+export { default as KNN } from 'ml-knn';
+export { PLS, KOPLS } from 'ml-pls';
+export { default as CrossValidation } from 'ml-cross-validation';
+export { default as ConfusionMatrix } from 'ml-confusion-matrix';
+export { DecisionTreeClassifier };
+export { RandomForestClassifier };
 
 // Artificial neural networks
-ML.FNN = require('ml-fnn');
-ML.SOM = require('ml-som');
+export { default as FNN } from 'ml-fnn';
+export { default as SOM } from 'ml-som';
 
 // Regression
-const Regression = require('ml-regression');
-ML.SimpleLinearRegression = Regression.SimpleLinearRegression;
-ML.PolynomialRegression = Regression.PolynomialRegression;
-ML.MultivariateLinearRegression = Regression.MultivariateLinearRegression;
-ML.PowerRegression = Regression.PowerRegression;
-ML.ExponentialRegression = Regression.ExponentialRegression;
-ML.TheilSenRegression = Regression.TheilSenRegression;
-ML.RobustPolynomialRegression = Regression.RobustPolynomialRegression;
-ML.DecisionTreeRegression = mlCart.DecisionTreeRegression;
-ML.RandomForestRegression = mlRandomForest.RandomForestRegression;
+export {
+  SimpleLinearRegression,
+  PolynomialRegression,
+  MultivariateLinearRegression,
+  PowerRegression,
+  ExponentialRegression,
+  TheilSenRegression,
+  RobustPolynomialRegression
+} from 'ml-regression';
+export { DecisionTreeRegression };
+export { RandomForestRegression };
 
 // Optimization
-ML.levenbergMarquardt = require('ml-levenberg-marquardt');
+export { default as levenbergMarquardt } from 'ml-levenberg-marquardt';
 
 // Math
-const Matrix = require('ml-matrix');
-ML.Matrix = Matrix.Matrix;
-ML.SVD = Matrix.SVD;
-ML.EVD = Matrix.EVD;
-ML.CholeskyDecomposition = Matrix.CholeskyDecomposition;
-ML.LuDecomposition = Matrix.LuDecomposition;
-ML.QrDecomposition = Matrix.QrDecomposition;
-
-ML.SparseMatrix = require('ml-sparse-matrix');
-ML.Kernel = require('ml-kernel');
-ML.Distance = require('ml-distance').distance;
-ML.Similarity = require('ml-distance').similarity;
-ML.distanceMatrix = require('ml-distance-matrix');
-ML.XSadd = require('ml-xsadd').default;
-
-// Statistics
-ML.Performance = require('ml-performance');
-
-// Data preprocessing
-ML.savitzkyGolay = require('ml-savitzky-golay');
-
-// Utility
-ML.BitArray = require('ml-bit-array');
-ML.HashTable = require('ml-hash-table');
-ML.padArray = require('ml-pad-array');
-ML.binarySearch = require('binary-search');
-ML.numSort = require('num-sort');
-ML.Random = require('ml-random').default;
-
-// Undocumented/deprecated packages
-ML.ArrayUtils = require('ml-array-utils');
-ML.Regression = require('ml-regression');
-ML.MatrixUtil = require('ml-matrix');
-
-ML.Array = {
-  min: require('ml-array-min').default,
-  max: require('ml-array-max').default,
-  median: require('ml-array-median').default,
-  mean: require('ml-array-mean').default,
-  mode: require('ml-array-mode').default,
-  normed: require('ml-array-normed').default,
-  rescale: require('ml-array-rescale').default,
-  sequentialFill: require('ml-array-sequential-fill').default,
-  standardDeviation: require('ml-array-standard-deviation').default,
-  variance: require('ml-array-variance').default
+import * as MatrixLib from 'ml-matrix';
+const {
+  Matrix,
+  SVD,
+  EVD,
+  CholeskyDecomposition,
+  LuDecomposition,
+  QrDecomposition
+} = MatrixLib;
+export {
+  MatrixLib,
+  Matrix,
+  SVD,
+  EVD,
+  CholeskyDecomposition,
+  LuDecomposition,
+  QrDecomposition
 };
 
-ML.ArrayXY = {
-  centroidsMerge: require('ml-array-xy-centroids-merge').default,
-  closestX: require('ml-arrayxy-closestx').default,
-  maxMerge: require('ml-array-xy-max-merge').default,
-  maxY: require('ml-array-xy-max-y').default,
-  sortX: require('ml-array-xy-sort-x').default,
-  uniqueX: require('ml-arrayxy-uniquex').default,
-  weightedMerge: require('ml-array-xy-weighted-merge').default,
-  equallySpaced: require('ml-array-xy-equally-spaced').default,
-  filterX: require('ml-array-xy-filter-x').default
+export { SparseMatrix } from 'ml-sparse-matrix';
+export { default as Kernel } from 'ml-kernel';
+import { distance, similarity } from 'ml-distance';
+export { distance as Distance, similarity as Similarity };
+export { default as distanceMatrix } from 'ml-distance-matrix';
+export { default as XSadd } from 'ml-xsadd';
+
+// Statistics
+export { default as Performance } from 'ml-performance';
+
+// Data preprocessing
+export { default as savitzkyGolay } from 'ml-savitzky-golay';
+
+// Utility
+export { default as BitArray } from 'ml-bit-array';
+export { default as HashTable } from 'ml-hash-table';
+export { default as padArray } from 'ml-pad-array';
+export { default as binarySearch } from 'binary-search';
+import * as numSort from 'num-sort';
+export { numSort };
+export { default as Random } from 'ml-random';
+
+import min from 'ml-array-min';
+import max from 'ml-array-max';
+import median from 'ml-array-median';
+import mean from 'ml-array-mean';
+import mode from 'ml-array-mode';
+import normed from 'ml-array-normed';
+import rescale from 'ml-array-rescale';
+import sequentialFill from 'ml-array-sequential-fill';
+import standardDeviation from 'ml-array-standard-deviation';
+import variance from 'ml-array-variance';
+export const Array = {
+  min,
+  max,
+  median,
+  mean,
+  mode,
+  normed,
+  rescale,
+  sequentialFill,
+  standardDeviation,
+  variance
+};
+
+import centroidsMerge from 'ml-array-xy-centroids-merge';
+import closestX from 'ml-arrayxy-closestx';
+import maxMerge from 'ml-array-xy-max-merge';
+import maxY from 'ml-array-xy-max-y';
+import sortX from 'ml-array-xy-sort-x';
+import uniqueX from 'ml-arrayxy-uniquex';
+import weightedMerge from 'ml-array-xy-weighted-merge';
+import equallySpaced from 'ml-array-xy-equally-spaced';
+import filterX from 'ml-array-xy-filter-x';
+export const ArrayXY = {
+  centroidsMerge,
+  closestX,
+  maxMerge,
+  maxY,
+  sortX,
+  uniqueX,
+  weightedMerge,
+  equallySpaced,
+  filterX
 };

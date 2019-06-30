@@ -4,12 +4,15 @@
   "description": "Machine learning tools",
   "main": "src/index.js",
   "scripts": {
-    "test": "node -p \"void(require('./'));console.log('OK')\"",
-    "build": "cheminfo build --root ML"
+    "compile": "rollup -c",
+    "build": "cheminfo-build --root ML",
+    "prepublishOnly": "npm run compile",
+    "test": "node -r esm -e \"import './';console.log('OK');\""
   },
   "files": [
     "src",
-    "dist"
+    "dist",
+    "lib"
   ],
   "repository": {
     "type": "git",
@@ -43,7 +46,6 @@
     "ml-array-rescale": "^1.2.1",
     "ml-array-sequential-fill": "^1.1.1",
     "ml-array-standard-deviation": "^1.1.1",
-    "ml-array-utils": "^0.4.0",
     "ml-array-variance": "^1.1.1",
     "ml-array-xy-centroids-merge": "^1.0.0",
     "ml-array-xy-equally-spaced": "^1.0.0",
@@ -83,9 +85,8 @@
     "num-sort": "^2.0.0"
   },
   "devDependencies": {
-    "babel-plugin-remove-comments": "^2.0.0",
-    "babel-preset-babili": "^0.1.4",
-    "babel-preset-es2015": "^6.24.1",
-    "cheminfo-tools": "^1.23.3"
+    "cheminfo-build": "^1.0.0",
+    "esm": "^3.2.25",
+    "rollup": "^1.16.3"
   }
 }
