@@ -10,10 +10,10 @@ We prefix all our npm package names with `ml-` (eg. ml-matrix) so they are easy 
 To include the ml.js library in a web page:
 
 ```html
-<script src="https://www.lactame.com/lib/ml/3.3.0/ml.min.js"></script>
+<script src="https://www.lactame.com/lib/ml/4.0.0/ml.min.js"></script>
 ```
 
-It will be available as the global `ML` variable. The package is in UMD format and can be "required" within webpack or requireJS.
+It will be available as the global `ML` variable. The package is in UMD format.
 
 ## List of included libraries
 
@@ -89,8 +89,8 @@ Functions dealing with an object containing 2 properties x and y, both arrays.
 
 Example:
 
-```
-let result = ML.ArrayXY.sortX({x: [2,3,1], y: [4,6,2]});
+```js
+let result = ML.ArrayXY.sortX({ x: [2, 3, 1], y: [4, 6, 2] });
 // result = {x: [1,2,3], y: [2,4,6]}
 ```
 
