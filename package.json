@@ -61,7 +61,7 @@
     "ml-confusion-matrix": "^0.3.0",
     "ml-cross-validation": "^1.2.0",
     "ml-distance": "^3.0.0",
-    "ml-distance-matrix": "^1.0.0",
+    "ml-distance-matrix": "^2.0.0",
     "ml-fnn": "^5.0.0",
     "ml-hash-table": "^1.0.0",
     "ml-hclust": "^2.0.0",
