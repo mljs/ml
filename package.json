@@ -64,7 +64,7 @@
     "ml-distance-matrix": "^2.0.0",
     "ml-fnn": "^5.0.0",
     "ml-hash-table": "^1.0.0",
-    "ml-hclust": "^2.0.0",
+    "ml-hclust": "^3.0.0",
     "ml-kernel": "^3.0.0",
     "ml-kmeans": "^5.0.0",
     "ml-knn": "^3.0.0",
