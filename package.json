@@ -69,7 +69,7 @@
     "ml-kmeans": "^5.0.0",
     "ml-knn": "^3.0.0",
     "ml-levenberg-marquardt": "^2.0.0",
-    "ml-matrix": "^6.1.2",
+    "ml-matrix": "^6.2.0",
     "ml-naivebayes": "^4.0.0",
     "ml-pad-array": "^2.0.0",
     "ml-pca": "^4.0.0",
@@ -85,8 +85,8 @@
     "num-sort": "^2.0.0"
   },
   "devDependencies": {
-    "cheminfo-build": "^1.0.0",
+    "cheminfo-build": "^1.0.1",
     "esm": "^3.2.25",
-    "rollup": "^1.16.3"
+    "rollup": "^1.17.0"
   }
 }
