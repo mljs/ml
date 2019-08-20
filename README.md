@@ -54,6 +54,7 @@ It will be available as the global `ML` variable. The package is in UMD format.
 ### Optimization
 
 - Levenberg-Marquardt: [`ML.levenbergMarquardt`](https://github.com/mljs/levenberg-marquardt)
+- Fast Combinatorial Non-negative Least Squares: [`ML.FCNNLS`](https://github.com/mljs/fcnnls)
 
 ### Math
 
@@ -109,7 +110,7 @@ let result = ML.ArrayXY.sortX({ x: [2, 3, 1], y: [4, 6, 2] });
 
 ### Data preprocessing
 
-- Principal component analysis (PCA): [`ML.PrincipalComponentAnalysis`](https://github.com/mljs/pca)
+- Principal component analysis (PCA): [`ML.PCA`](https://github.com/mljs/pca)
 - Savitzky-Golay filter: [`ML.savitzkyGolay`](https://github.com/mljs/savitzky-golay)
 
 ### Utility
