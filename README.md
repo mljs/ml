@@ -54,6 +54,7 @@ It will be available as the global `ML` variable. The package is in UMD format.
 ### Optimization
 
 - Levenberg-Marquardt: [`ML.levenbergMarquardt`](https://github.com/mljs/levenberg-marquardt)
+- Fast Combinatorial Non-negative Least Squares: [`ML.FCNNLS`](https://github.com/mljs/fcnnls)
 
 ### Math
 

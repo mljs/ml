@@ -41,6 +41,8 @@ export { RandomForestRegression };
 
 // Optimization
 export { default as levenbergMarquardt } from 'ml-levenberg-marquardt';
+import * as FCNNLS from 'ml-fcnnls';
+export { FCNNLS };
 
 // Math
 import * as MatrixLib from 'ml-matrix';
