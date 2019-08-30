@@ -94,6 +94,7 @@ import mode from 'ml-array-mode';
 import normed from 'ml-array-normed';
 import rescale from 'ml-array-rescale';
 import sequentialFill from 'ml-array-sequential-fill';
+import sum from 'ml-array-sum';
 import standardDeviation from 'ml-array-standard-deviation';
 import variance from 'ml-array-variance';
 export const Array = {
@@ -106,6 +107,7 @@ export const Array = {
   rescale,
   sequentialFill,
   standardDeviation,
+  sum,
   variance
 };
 
