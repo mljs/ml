@@ -48,7 +48,7 @@
     "ml-array-standard-deviation": "^1.1.2",
     "ml-array-variance": "^1.1.2",
     "ml-array-xy-centroids-merge": "^1.0.0",
-    "ml-array-xy-covariance": "^0.1.0",
+    "ml-array-xy-covariance": "^0.2.0",
     "ml-array-xy-equally-spaced": "^1.0.0",
     "ml-array-xy-filter-x": "1.0.0",
     "ml-array-xy-max-merge": "^1.0.0",
