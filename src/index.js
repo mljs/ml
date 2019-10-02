@@ -113,6 +113,7 @@ export const Array = {
 
 import centroidsMerge from 'ml-array-xy-centroids-merge';
 import closestX from 'ml-arrayxy-closestx';
+import covariance from 'ml-array-xy-covariance';
 import maxMerge from 'ml-array-xy-max-merge';
 import maxY from 'ml-array-xy-max-y';
 import sortX from 'ml-array-xy-sort-x';
@@ -123,6 +124,7 @@ import filterX from 'ml-array-xy-filter-x';
 export const ArrayXY = {
   centroidsMerge,
   closestX,
+  covariance,
   maxMerge,
   maxY,
   sortX,
