@@ -87,7 +87,7 @@
     "num-sort": "^2.0.0"
   },
   "devDependencies": {
-    "cheminfo-build": "^1.0.2",
+    "cheminfo-build": "^1.0.3",
     "esm": "^3.2.25",
     "rollup": "^1.23.1"
   }
