@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v5.0.0
+ * @version v5.1.0
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -33,13 +33,13 @@
       throw new TypeError('input must not be empty');
     }
 
-    var max = input[0];
+    var maxValue = input[0];
 
     for (var i = 1; i < input.length; i++) {
-      if (input[i] > max) max = input[i];
+      if (input[i] > maxValue) maxValue = input[i];
     }
 
-    return max;
+    return maxValue;
   }
 
   /**
@@ -57,13 +57,13 @@
       throw new TypeError('input must not be empty');
     }
 
-    var min = input[0];
+    var minValue = input[0];
 
     for (var i = 1; i < input.length; i++) {
-      if (input[i] < min) min = input[i];
+      if (input[i] < minValue) minValue = input[i];
     }
 
-    return min;
+    return minValue;
   }
 
   function rescale(input) {
@@ -3749,7 +3749,7 @@
               s += qr.get(i, k) * X.get(i, j);
             }
 
-            s = -s / qr[k][k];
+            s = -s / qr.get(k, k);
 
             for (i = k; i < rows; i++) {
               X.set(i, j, X.get(i, j) + s * qr.get(i, k));
@@ -5583,6 +5583,7 @@
 
 
   var MatrixLib = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     AbstractMatrix: AbstractMatrix,
     'default': Matrix,
     Matrix: Matrix,
@@ -5625,7 +5626,7 @@
    * @return {number}
    */
 
-  function mean(input) {
+  function sum(input) {
     if (!src(input)) {
       throw new TypeError('input must be an array');
     }
@@ -5634,13 +5635,23 @@
       throw new TypeError('input must not be empty');
     }
 
-    var sum = 0;
+    var sumValue = 0;
 
     for (var i = 0; i < input.length; i++) {
-      sum += input[i];
+      sumValue += input[i];
     }
 
-    return sum / input.length;
+    return sumValue;
+  }
+
+  /**
+   * Computes the mean of the given values
+   * @param {Array<number>} input
+   * @return {number}
+   */
+
+  function mean(input) {
+    return sum(input) / input.length;
   }
 
   /**
@@ -7551,6 +7562,7 @@
   }
 
   var euclidean$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     squaredEuclidean: squaredEuclidean,
     euclidean: euclidean
   });
@@ -8309,6 +8321,7 @@
   // export * from './chameleon';
 
   var index = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     agnes: agnes
   });
 
@@ -9364,6 +9377,7 @@
 
 
   var index$1 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     GaussianNB: GaussianNB,
     MultinomialNB: MultinomialNB
   });
@@ -13945,6 +13959,7 @@
 
 
   var index$2 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     fcnnls: fcnnls,
     fcnnlsVector: fcnnlsVector
   });
@@ -14001,6 +14016,7 @@
   };
 
   var index$3 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     'default': numSort,
     __moduleExports: numSort,
     ascending: ascending,
@@ -15189,6 +15205,7 @@
 
 
   var distances = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     euclidean: euclidean,
     squaredEuclidean: squaredEuclidean,
     additiveSymmetric: additiveSymmetric,
@@ -15353,6 +15370,7 @@
   }
 
   var index$4 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     treeSimilarity: treeSimilarity,
     getFunction: getFunction,
     createTree: createTree
@@ -15414,6 +15432,7 @@
 
 
   var similarities = /*#__PURE__*/Object.freeze({
+    __proto__: null,
     tree: index$4,
     cosine: cosine,
     czekanowski: czekanowskiSimilarity,
@@ -15940,11 +15959,6 @@
 
   var src$6 = padArray;
 
-  const {
-    Matrix: Matrix$2,
-    MatrixTransposeView: MatrixTransposeView$2,
-    inverse: inverse$1
-  } = Matrix;
   const defaultOptions$i = {
     windowSize: 5,
     derivative: 1,
@@ -15960,7 +15974,7 @@
    * @returns {Array}
    */
 
-  function SavitzkyGolay(data, h, options) {
+  function savitzkyGolay(data, h, options) {
     options = Object.assign({}, defaultOptions$i, options);
 
     if (options.windowSize % 2 === 0 || options.windowSize < 5 || !Number.isInteger(options.windowSize)) {
@@ -15975,8 +15989,8 @@
       throw new RangeError('Polynomial should be a positive integer');
     }
 
-    var C, norm;
-    var step = Math.floor(options.windowSize / 2);
+    let C, norm;
+    let step = Math.floor(options.windowSize / 2);
 
     if (options.pad === 'pre') {
       data = src$6(data, {
@@ -15985,7 +15999,7 @@
       });
     }
 
-    var ans = new Array(data.length - 2 * step);
+    let ans = new Array(data.length - 2 * step);
 
     if (options.windowSize === 5 && options.polynomial === 2 && (options.derivative === 1 || options.derivative === 2)) {
       if (options.derivative === 1) {
@@ -15996,28 +16010,28 @@
         norm = 7;
       }
     } else {
-      var J = Matrix$2.ones(options.windowSize, options.polynomial + 1);
-      var inic = -(options.windowSize - 1) / 2;
+      let J = Matrix.ones(options.windowSize, options.polynomial + 1);
+      let inic = -(options.windowSize - 1) / 2;
 
-      for (var i = 0; i < J.rows; i++) {
-        for (var j = 0; j < J.columns; j++) {
+      for (let i = 0; i < J.rows; i++) {
+        for (let j = 0; j < J.columns; j++) {
           if (inic + 1 !== 0 || j !== 0) J.set(i, j, Math.pow(inic + i, j));
         }
       }
 
-      var Jtranspose = new MatrixTransposeView$2(J);
-      var Jinv = inverse$1(Jtranspose.mmul(J));
+      let Jtranspose = new MatrixTransposeView(J);
+      let Jinv = inverse(Jtranspose.mmul(J));
       C = Jinv.mmul(Jtranspose);
       C = C.getRow(options.derivative);
       norm = 1;
     }
 
-    var det = norm * Math.pow(h, options.derivative);
+    let det = norm * Math.pow(h, options.derivative);
 
-    for (var k = step; k < data.length - step; k++) {
-      var d = 0;
+    for (let k = step; k < data.length - step; k++) {
+      let d = 0;
 
-      for (var l = 0; l < C.length; l++) d += C[l] * data[l + k - step] / det;
+      for (let l = 0; l < C.length; l++) d += C[l] * data[l + k - step] / det;
 
       ans[k - step] = d;
     }
@@ -16031,8 +16045,6 @@
 
     return ans;
   }
-
-  var src$7 = SavitzkyGolay;
 
   // auxiliary file to create the 256 look at table elements
   var ans = new Array(256);
@@ -16248,7 +16260,7 @@
     return str;
   }
 
-  var src$8 = {
+  var src$7 = {
     count: count,
     and: and,
     or: or,
@@ -16307,9 +16319,10 @@
    * Computes the norm of the given values
    * @param {Array<number>} input
    * @param {object} [options={}]
-   * @param {string} [algorithm='absolute']
+   * @param {string} [options.algorithm='absolute'] absolute, sum or max
    * @return {number}
    */
+
   function norm$1(input) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var _options$algorithm = options.algorithm,
@@ -16325,11 +16338,31 @@
 
     switch (algorithm.toLowerCase()) {
       case 'absolute':
-        var sum = absoluteSum(input);
-        if (sum === 0) return input.slice(0);
-        return input.map(function (element) {
-          return element / sum;
-        });
+        {
+          var absoluteSumValue = absoluteSum(input);
+          if (absoluteSumValue === 0) return input.slice(0);
+          return input.map(function (element) {
+            return element / absoluteSumValue;
+          });
+        }
+
+      case 'max':
+        {
+          var maxValue = max(input);
+          if (maxValue === 0) return input.slice(0);
+          return input.map(function (element) {
+            return element / maxValue;
+          });
+        }
+
+      case 'sum':
+        {
+          var sumValue = sum(input);
+          if (sumValue === 0) return input.slice(0);
+          return input.map(function (element) {
+            return element / sumValue;
+          });
+        }
 
       default:
         throw new Error("norm: unknown algorithm: ".concat(algorithm));
@@ -16337,13 +16370,13 @@
   }
 
   function absoluteSum(input) {
-    var sum = 0;
+    var sumValue = 0;
 
     for (var i = 0; i < input.length; i++) {
-      sum += Math.abs(input[i]);
+      sumValue += Math.abs(input[i]);
     }
 
-    return sum;
+    return sumValue;
   }
 
   function _typeof(obj) {
@@ -16560,6 +16593,40 @@
           y: y[index]
         };
       }
+    }
+  }
+
+  /**
+   *
+   * @param {object} points
+   * @param {Array<number>} points.x
+   * @param {Array<number>} points.y
+   * @param {object} [options]
+   * @param {boolean} [options.unbiased = true] - if true, divide by (n-1); if false, divide by n.
+   * @return {number}
+   */
+
+  function covariance$1(points) {
+    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    const {
+      x,
+      y
+    } = points;
+    const {
+      unbiased = true
+    } = options;
+    const meanX = mean(x);
+    const meanY = mean(y);
+    var error = 0;
+
+    for (let i = 0; i < x.length; i++) {
+      error += (x[i] - meanX) * (y[i] - meanY);
+    }
+
+    if (unbiased) {
+      return error / (x.length - 1);
+    } else {
+      return error / x.length;
     }
   }
 
@@ -17294,7 +17361,7 @@
   }
 
   const {
-    Matrix: Matrix$3,
+    Matrix: Matrix$2,
     SVD,
     EVD,
     CholeskyDecomposition: CholeskyDecomposition$1,
@@ -17311,11 +17378,13 @@
     rescale,
     sequentialFill,
     standardDeviation,
+    sum,
     variance
   };
   const ArrayXY = {
     centroidsMerge: mergeByCentroids,
     closestX,
+    covariance: covariance$1,
     maxMerge,
     maxY,
     sortX,
@@ -17327,7 +17396,7 @@
 
   exports.Array = Array$1;
   exports.ArrayXY = ArrayXY;
-  exports.BitArray = src$8;
+  exports.BitArray = src$7;
   exports.CholeskyDecomposition = CholeskyDecomposition$1;
   exports.ConfusionMatrix = src$1;
   exports.CrossValidation = src$3;
@@ -17345,7 +17414,7 @@
   exports.KOPLS = KOPLS;
   exports.Kernel = kernel;
   exports.LuDecomposition = LuDecomposition$1;
-  exports.Matrix = Matrix$3;
+  exports.Matrix = Matrix$2;
   exports.MatrixLib = MatrixLib;
   exports.MultivariateLinearRegression = MultivariateLinearRegression;
   exports.NaiveBayes = index$1;
@@ -17371,7 +17440,7 @@
   exports.levenbergMarquardt = levenbergMarquardt;
   exports.numSort = index$3;
   exports.padArray = src$6;
-  exports.savitzkyGolay = src$7;
+  exports.savitzkyGolay = savitzkyGolay;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
