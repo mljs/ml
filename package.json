@@ -74,7 +74,7 @@
     "ml-matrix": "^6.4.1",
     "ml-naivebayes": "^4.0.0",
     "ml-pad-array": "^2.0.0",
-    "ml-pca": "^4.0.0",
+    "ml-pca": "^4.0.1",
     "ml-performance": "^0.2.0",
     "ml-pls": "^2.0.0",
     "ml-random": "^0.5.0",
@@ -89,6 +89,6 @@
   "devDependencies": {
     "cheminfo-build": "^1.0.3",
     "esm": "^3.2.25",
-    "rollup": "^1.23.1"
+    "rollup": "^1.25.0"
   }
 }
