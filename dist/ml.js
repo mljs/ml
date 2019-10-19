@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v5.1.0
+ * @version v5.1.1
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -5663,9 +5663,9 @@
    */
 
   function toDiscreteDistribution(array, numberOfClasses) {
-    var counts = new Array(numberOfClasses).fill(0);
+    let counts = new Array(numberOfClasses).fill(0);
 
-    for (var i = 0; i < array.length; ++i) {
+    for (let i = 0; i < array.length; ++i) {
       counts[array[i]] += 1 / array.length;
     }
 
@@ -5683,10 +5683,10 @@
       return 0;
     }
 
-    var probabilities = toDiscreteDistribution(array, getNumberOfClasses(array)).getRow(0);
-    var sum = 0.0;
+    let probabilities = toDiscreteDistribution(array, getNumberOfClasses(array)).getRow(0);
+    let sum = 0.0;
 
-    for (var i = 0; i < probabilities.length; ++i) {
+    for (let i = 0; i < probabilities.length; ++i) {
       sum += probabilities[i] * probabilities[i];
     }
 
@@ -5702,22 +5702,22 @@
   function getNumberOfClasses(array) {
     return array.filter(function (val, i, arr) {
       return arr.indexOf(val) === i;
-    }).length;
+    }).map(val => val + 1).reduce((a, b) => Math.max(a, b));
   }
   /**
    * @private
    * Calculates the Gini Gain of an array of predictions and those predictions splitted by a feature.
-   * @para {Array} array - Predictions
+   * @param {Array} array - Predictions
    * @param {object} splitted - Object with elements "greater" and "lesser" that contains an array of predictions splitted.
    * @return {number} - Gini Gain.
    */
 
   function giniGain(array, splitted) {
-    var splitsImpurity = 0.0;
-    var splits = ['greater', 'lesser'];
+    let splitsImpurity = 0.0;
+    let splits = ['greater', 'lesser'];
 
-    for (var i = 0; i < splits.length; ++i) {
-      var currentSplit = splitted[splits[i]];
+    for (let i = 0; i < splits.length; ++i) {
+      let currentSplit = splitted[splits[i]];
       splitsImpurity += giniImpurity(currentSplit) * currentSplit.length / array.length;
     }
 
@@ -5731,16 +5731,16 @@
    */
 
   function squaredError(array) {
-    var l = array.length;
-    var m = mean(array);
-    var squaredError = 0.0;
+    let l = array.length;
+    let m = mean(array);
+    let error = 0.0;
 
-    for (var i = 0; i < l; ++i) {
-      var currentElement = array[i];
-      squaredError += (currentElement - m) * (currentElement - m);
+    for (let i = 0; i < l; ++i) {
+      let currentElement = array[i];
+      error += (currentElement - m) * (currentElement - m);
     }
 
-    return squaredError;
+    return error;
   }
   /**
    * @private
@@ -5751,11 +5751,11 @@
    */
 
   function regressionError(array, splitted) {
-    var error = 0.0;
-    var splits = ['greater', 'lesser'];
+    let error = 0.0;
+    let splits = ['greater', 'lesser'];
 
-    for (var i = 0; i < splits.length; ++i) {
-      var currentSplit = splitted[splits[i]];
+    for (let i = 0; i < splits.length; ++i) {
+      let currentSplit = splitted[splits[i]];
       error += squaredError(currentSplit);
     }
 
@@ -5772,12 +5772,12 @@
    */
 
   function matrixSplitter(X, y, column, value) {
-    var lesserX = [];
-    var greaterX = [];
-    var lesserY = [];
-    var greaterY = [];
+    let lesserX = [];
+    let greaterX = [];
+    let lesserY = [];
+    let greaterY = [];
 
-    for (var i = 0; i < X.rows; ++i) {
+    for (let i = 0; i < X.rows; ++i) {
       if (X.get(i, column) < value) {
         lesserX.push(X.getRow(i));
         lesserY.push(y[i]);
@@ -5818,9 +5818,9 @@
       throw new TypeError("Error on zip: the size of a: ".concat(a.length, " is different from b: ").concat(b.length));
     }
 
-    var ret = new Array(a.length);
+    let ret = new Array(a.length);
 
-    for (var i = 0; i < a.length; ++i) {
+    for (let i = 0; i < a.length; ++i) {
       ret[i] = [a[i], b[i]];
     }
 
@@ -5861,19 +5861,19 @@
     bestSplit(XTranspose, y) {
       // Depending in the node tree class, we set the variables to check information gain (to classify)
       // or error (for regression)
-      var bestGain = this.kind === 'classifier' ? -Infinity : Infinity;
-      var check = this.kind === 'classifier' ? (a, b) => a > b : (a, b) => a < b;
-      var maxColumn;
-      var maxValue;
+      let bestGain = this.kind === 'classifier' ? -Infinity : Infinity;
+      let check = this.kind === 'classifier' ? (a, b) => a > b : (a, b) => a < b;
+      let maxColumn;
+      let maxValue;
 
-      for (var i = 0; i < XTranspose.rows; ++i) {
-        var currentFeature = XTranspose.getRow(i);
-        var splitValues = this.featureSplit(currentFeature, y);
+      for (let i = 0; i < XTranspose.rows; ++i) {
+        let currentFeature = XTranspose.getRow(i);
+        let splitValues = this.featureSplit(currentFeature, y);
 
-        for (var j = 0; j < splitValues.length; ++j) {
-          var currentSplitVal = splitValues[j];
-          var splitted = this.split(currentFeature, y, currentSplitVal);
-          var gain = gainFunctions[this.gainFunction](y, splitted);
+        for (let j = 0; j < splitValues.length; ++j) {
+          let currentSplitVal = splitValues[j];
+          let splitted = this.split(currentFeature, y, currentSplitVal);
+          let gain = gainFunctions[this.gainFunction](y, splitted);
 
           if (check(gain, bestGain)) {
             maxColumn = i;
@@ -5900,10 +5900,10 @@
 
 
     split(x, y, splitValue) {
-      var lesser = [];
-      var greater = [];
+      let lesser = [];
+      let greater = [];
 
-      for (var i = 0; i < x.length; ++i) {
+      for (let i = 0; i < x.length; ++i) {
         if (x[i] < splitValue) {
           lesser.push(y[i]);
         } else {
@@ -5926,13 +5926,13 @@
 
 
     featureSplit(x, y) {
-      var splitValues = [];
-      var arr = zip(x, y);
+      let splitValues = [];
+      let arr = zip(x, y);
       arr.sort(function (a, b) {
         return a[0] - b[0];
       });
 
-      for (var i = 1; i < arr.length; ++i) {
+      for (let i = 1; i < arr.length; ++i) {
         if (arr[i - 1][1] !== arr[i][1]) {
           splitValues.push(splitFunctions[this.splitFunction](arr[i - 1][0], arr[i][0]));
         }
@@ -5977,18 +5977,18 @@
       }
 
       if (parentGain === undefined) parentGain = 0.0;
-      var XTranspose = X.transpose();
-      var split = this.bestSplit(XTranspose, y);
+      let XTranspose = X.transpose();
+      let split = this.bestSplit(XTranspose, y);
       this.splitValue = split.maxValue;
       this.splitColumn = split.maxColumn;
       this.gain = split.maxGain;
-      var splittedMatrix = matrixSplitter(X, y, this.splitColumn, this.splitValue);
+      let splittedMatrix = matrixSplitter(X, y, this.splitColumn, this.splitValue);
 
       if (currentDepth < this.maxDepth && this.gain > 0.01 && this.gain !== parentGain && splittedMatrix.lesserX.length > 0 && splittedMatrix.greaterX.length > 0) {
         this.left = new TreeNode(this);
         this.right = new TreeNode(this);
-        var lesserX = new Matrix(splittedMatrix.lesserX);
-        var greaterX = new Matrix(splittedMatrix.greaterX);
+        let lesserX = new Matrix(splittedMatrix.lesserX);
+        let greaterX = new Matrix(splittedMatrix.greaterX);
         this.left.train(lesserX, splittedMatrix.lesserY, currentDepth + 1, this.gain);
         this.right.train(greaterX, splittedMatrix.greaterY, currentDepth + 1, this.gain);
       } else {
@@ -6094,9 +6094,9 @@
 
     predict(toPredict) {
       toPredict = Matrix.checkMatrix(toPredict);
-      var predictions = new Array(toPredict.rows);
+      let predictions = new Array(toPredict.rows);
 
-      for (var i = 0; i < toPredict.rows; ++i) {
+      for (let i = 0; i < toPredict.rows; ++i) {
         predictions[i] = this.root.classify(toPredict.getRow(i)).maxRowIndex(0)[1];
       }
 
@@ -6189,9 +6189,9 @@
       }
 
       toPredict = Matrix.checkMatrix(toPredict);
-      var predictions = new Array(toPredict.rows);
+      let predictions = new Array(toPredict.rows);
 
-      for (var i = 0; i < toPredict.rows; ++i) {
+      for (let i = 0; i < toPredict.rows; ++i) {
         predictions[i] = this.root.classify(toPredict.getRow(i));
       }
 
@@ -6775,8 +6775,8 @@
    */
 
   function examplesBaggingWithReplacement(trainingSet, trainingValue, seed) {
-    var engine;
-    var distribution = integer(0, trainingSet.rows - 1);
+    let engine;
+    let distribution = integer(0, trainingSet.rows - 1);
 
     if (seed === undefined) {
       engine = MersenneTwister19937.autoSeed();
@@ -6786,11 +6786,11 @@
       throw new RangeError("Expected seed must be undefined or integer not ".concat(seed));
     }
 
-    var Xr = new Array(trainingSet.rows);
-    var yr = new Array(trainingSet.rows);
+    let Xr = new Array(trainingSet.rows);
+    let yr = new Array(trainingSet.rows);
 
-    for (var i = 0; i < trainingSet.rows; ++i) {
-      var index = distribution(engine);
+    for (let i = 0; i < trainingSet.rows; ++i) {
+      let index = distribution(engine);
       Xr[i] = trainingSet.getRow(index);
       yr[i] = trainingValue[index];
     }
@@ -6815,8 +6815,8 @@
       throw new RangeError('N should be less or equal to the number of columns of X');
     }
 
-    var distribution = integer(0, trainingSet.columns - 1);
-    var engine;
+    let distribution = integer(0, trainingSet.columns - 1);
+    let engine;
 
     if (seed === undefined) {
       engine = MersenneTwister19937.autoSeed();
@@ -6826,13 +6826,15 @@
       throw new RangeError("Expected seed must be undefined or integer not ".concat(seed));
     }
 
-    var toRet = new Matrix(trainingSet.rows, n);
+    let toRet = new Matrix(trainingSet.rows, n);
+    let usedIndex;
+    let index;
 
     if (replacement) {
-      var usedIndex = new Array(n);
+      usedIndex = new Array(n);
 
-      for (var i = 0; i < n; ++i) {
-        var index = distribution(engine);
+      for (let i = 0; i < n; ++i) {
+        index = distribution(engine);
         usedIndex[i] = index;
         toRet.setColumn(i, trainingSet.getColumn(index));
       }
@@ -6840,7 +6842,7 @@
       usedIndex = new Set();
       index = distribution(engine);
 
-      for (i = 0; i < n; ++i) {
+      for (let i = 0; i < n; ++i) {
         while (usedIndex.has(index)) {
           index = distribution(engine);
         }
@@ -6889,7 +6891,7 @@
         this.n = model.n;
         this.indexes = model.indexes;
         this.useSampleBagging = model.useSampleBagging;
-        var Estimator = this.isClassifier ? DecisionTreeClassifier : DecisionTreeRegression;
+        let Estimator = this.isClassifier ? DecisionTreeClassifier : DecisionTreeRegression;
         this.estimators = model.estimators.map(est => Estimator.load(est));
       } else {
         this.replacement = options.replacement;
@@ -6924,8 +6926,10 @@
         throw new RangeError("Cannot process the maxFeatures parameter ".concat(this.maxFeatures));
       }
 
+      let Estimator;
+
       if (this.isClassifier) {
-        var Estimator = DecisionTreeClassifier;
+        Estimator = DecisionTreeClassifier;
       } else {
         Estimator = DecisionTreeRegression;
       }
@@ -6933,13 +6937,13 @@
       this.estimators = new Array(this.nEstimators);
       this.indexes = new Array(this.nEstimators);
 
-      for (var i = 0; i < this.nEstimators; ++i) {
-        var res = this.useSampleBagging ? examplesBaggingWithReplacement(trainingSet, trainingValues, this.seed) : {
+      for (let i = 0; i < this.nEstimators; ++i) {
+        let res = this.useSampleBagging ? examplesBaggingWithReplacement(trainingSet, trainingValues, this.seed) : {
           X: trainingSet,
           y: trainingValues
         };
-        var X = res.X;
-        var y = res.y;
+        let X = res.X;
+        let y = res.y;
         res = featureBagging(X, this.n, this.replacement, this.seed);
         X = res.X;
         this.indexes[i] = res.usedIndex;
@@ -6969,19 +6973,19 @@
 
 
     predict(toPredict) {
-      var predictionValues = new Array(this.nEstimators);
+      let predictionValues = new Array(this.nEstimators);
       toPredict = Matrix.checkMatrix(toPredict);
 
-      for (var i = 0; i < this.nEstimators; ++i) {
-        var X = new MatrixColumnSelectionView(toPredict, this.indexes[i]); // get features for estimator
+      for (let i = 0; i < this.nEstimators; ++i) {
+        let X = new MatrixColumnSelectionView(toPredict, this.indexes[i]); // get features for estimator
 
         predictionValues[i] = this.estimators[i].predict(X);
       }
 
       predictionValues = new MatrixTransposeView(new WrapperMatrix2D(predictionValues));
-      var predictions = new Array(predictionValues.rows);
+      let predictions = new Array(predictionValues.rows);
 
-      for (i = 0; i < predictionValues.rows; ++i) {
+      for (let i = 0; i < predictionValues.rows; ++i) {
         predictions[i] = this.selection(predictionValues.getRow(i));
       }
 
@@ -7063,7 +7067,7 @@
 
 
     toJSON() {
-      var baseModel = super.toJSON();
+      let baseModel = super.toJSON();
       return {
         baseModel: baseModel,
         name: 'RFClassifier'
@@ -7219,7 +7223,7 @@
 
 
     toJSON() {
-      var baseModel = super.toJSON();
+      let baseModel = super.toJSON();
       return {
         baseModel: baseModel,
         selectionMethod: this.selectionMethod,
@@ -7248,8 +7252,8 @@
    * @param {Matrix} dataset - dataset or covariance matrix.
    * @param {Object} [options]
    * @param {boolean} [options.isCovarianceMatrix=false] - true if the dataset is a covariance matrix.
-   * @param {boolean} [options.method='SVD'] - select which method to use: SVD (default), covarianceMatrirx or NIPALS.
-   * @param {boolean} [options.nCompNIPALS=2] - number of components to be computed with NIPALS.
+   * @param {string} [options.method='SVD'] - select which method to use: SVD (default), covarianceMatrirx or NIPALS.
+   * @param {number} [options.nCompNIPALS=2] - number of components to be computed with NIPALS.
    * @param {boolean} [options.center=true] - should the data be centered (subtract the mean).
    * @param {boolean} [options.scale=false] - should the data be scaled (divide by the standard deviation).
    * @param {boolean} [options.ignoreZeroVariance=false] - ignore columns with zero variance if `scale` is `true`.
@@ -7268,7 +7272,7 @@
         this.U = Matrix.checkMatrix(model.U);
         this.S = model.S;
         this.R = model.R;
-        this.excludedFeatures = model.excludedFeatures;
+        this.excludedFeatures = model.excludedFeatures || [];
         return;
       }
 
@@ -7488,7 +7492,8 @@
         means: this.means,
         stdevs: this.stdevs,
         U: this.U,
-        S: this.S
+        S: this.S,
+        excludedFeatures: this.excludedFeatures
       };
     }
 
@@ -17196,14 +17201,18 @@
       throw new RangeError("'numberOfPoints' option must be a number");
     }
 
+    if (numberOfPoints < 2) {
+      throw new RangeError("'numberOfPoints' option must be greater than 1");
+    }
+
     let zones = getZones(from, to, numberOfPoints, exclusions);
     let xResult = [];
     let yResult = [];
 
     for (let zone of zones) {
       let zoneResult = processZone(x, y, zone.from, zone.to, zone.numberOfPoints, variant);
-      xResult.push(...zoneResult.x);
-      yResult.push(...zoneResult.y);
+      xResult = xResult.concat(zoneResult.x);
+      yResult = yResult.concat(zoneResult.y);
     }
 
     if (reverse) {
