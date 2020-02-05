@@ -76,7 +76,7 @@
     "ml-pad-array": "^2.0.0",
     "ml-pca": "^4.0.1",
     "ml-performance": "^0.2.0",
-    "ml-pls": "^2.0.0",
+    "ml-pls": "^3.0.0",
     "ml-random": "^0.5.0",
     "ml-random-forest": "^2.0.1",
     "ml-regression": "^5.0.0",
@@ -87,8 +87,8 @@
     "num-sort": "^2.0.0"
   },
   "devDependencies": {
-    "cheminfo-build": "^1.0.3",
+    "cheminfo-build": "^1.0.5",
     "esm": "^3.2.25",
-    "rollup": "^1.25.0"
+    "rollup": "^1.31.0"
   }
 }
