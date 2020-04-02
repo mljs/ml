@@ -39,7 +39,7 @@
     "binary-search": "^1.3.6",
     "ml-array-max": "^1.1.2",
     "ml-array-mean": "^1.1.2",
-    "ml-array-median": "^1.1.2",
+    "ml-array-median": "^1.1.3",
     "ml-array-min": "^1.1.2",
     "ml-array-mode": "^1.1.2",
     "ml-array-normed": "^1.0.3",
