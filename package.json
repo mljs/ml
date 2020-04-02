@@ -42,7 +42,7 @@
     "ml-array-median": "^1.1.2",
     "ml-array-min": "^1.1.2",
     "ml-array-mode": "^1.1.2",
-    "ml-array-normed": "^1.0.3",
+    "ml-array-normed": "^1.2.0",
     "ml-array-rescale": "^1.2.2",
     "ml-array-sequential-fill": "^1.1.2",
     "ml-array-standard-deviation": "^1.1.2",
