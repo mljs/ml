@@ -46,7 +46,7 @@
     "ml-array-rescale": "^1.2.2",
     "ml-array-sequential-fill": "^1.1.2",
     "ml-array-standard-deviation": "^1.1.2",
-    "ml-array-variance": "^1.1.2",
+    "ml-array-variance": "^1.1.3",
     "ml-array-xy-centroids-merge": "^1.0.1",
     "ml-array-xy-covariance": "^0.2.0",
     "ml-array-xy-equally-spaced": "^1.0.2",
