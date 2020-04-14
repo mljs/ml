@@ -80,7 +80,7 @@
     "ml-random": "^0.5.0",
     "ml-random-forest": "^2.0.1",
     "ml-regression": "^5.0.0",
-    "ml-savitzky-golay": "^4.1.0",
+    "ml-savitzky-golay": "^4.1.1",
     "ml-som": "^0.0.6",
     "ml-sparse-matrix": "^2.0.0",
     "ml-xsadd": "^2.0.0",
