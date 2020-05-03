@@ -71,7 +71,7 @@
     "ml-kmeans": "^5.0.0",
     "ml-knn": "^3.0.0",
     "ml-levenberg-marquardt": "^2.0.0",
-    "ml-matrix": "^6.4.1",
+    "ml-matrix": "^6.5.0",
     "ml-naivebayes": "^4.0.0",
     "ml-pad-array": "^2.0.0",
     "ml-pca": "^4.0.1",
