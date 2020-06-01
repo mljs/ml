@@ -84,7 +84,7 @@
     "ml-som": "^0.0.6",
     "ml-sparse-matrix": "^2.0.0",
     "ml-xsadd": "^2.0.0",
-    "num-sort": "^2.0.0"
+    "num-sort": "^2.1.0"
   },
   "devDependencies": {
     "cheminfo-build": "^1.0.5",
