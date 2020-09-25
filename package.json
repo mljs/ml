@@ -65,6 +65,7 @@
     "ml-distance-matrix": "^2.0.0",
     "ml-fcnnls": "^1.1.0",
     "ml-fnn": "^5.0.0",
+    "ml-gsd": "^5.0.2",
     "ml-hash-table": "^1.0.0",
     "ml-hclust": "^3.0.0",
     "ml-kernel": "^3.0.0",
