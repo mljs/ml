@@ -108,10 +108,11 @@ let result = ML.ArrayXY.sortX({ x: [2, 3, 1], y: [4, 6, 2] });
 
 - Performance (ROC curve): [`ML.Performance`](https://github.com/mljs/performance)
 
-### Data preprocessing
+### Data processing
 
 - Principal component analysis (PCA): [`ML.PCA`](https://github.com/mljs/pca)
 - Savitzky-Golay filter: [`ML.savitzkyGolay`](https://github.com/mljs/savitzky-golay)
+- Global Spectral Deconvolution (GSD): [`ML.GSD`](https://github.com/mljs/global-spectral-deconvolution)
 
 ### Utility
 
