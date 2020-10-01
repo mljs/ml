@@ -86,6 +86,8 @@ export { default as binarySearch } from "binary-search";
 import * as numSort from "num-sort";
 export { numSort };
 export { default as Random } from "ml-random";
+import * as GSD from 'ml-gsd';
+export { GSD };
 
 import min from "ml-array-min";
 import max from "ml-array-max";
