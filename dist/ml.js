@@ -1,31 +1,24 @@
 /**
  * ml - Machine learning tools
- * @version v5.1.1
+ * @version v5.2.0
  * @link https://github.com/mljs/ml
  * @license MIT
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
   typeof define === 'function' && define.amd ? define(['exports'], factory) :
-  (global = global || self, factory(global.ML = {}));
-}(this, function (exports) { 'use strict';
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.ML = {}));
+}(this, (function (exports) { 'use strict';
 
   const toString = Object.prototype.toString;
-
   function isAnyArray(object) {
     return toString.call(object).endsWith('Array]');
   }
 
-  var src = isAnyArray;
-
-  /**
-   * Computes the maximum of the given values
-   * @param {Array<number>} input
-   * @return {number}
-   */
-
   function max(input) {
-    if (!src(input)) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    if (!isAnyArray(input)) {
       throw new TypeError('input must be an array');
     }
 
@@ -33,23 +26,32 @@
       throw new TypeError('input must not be empty');
     }
 
-    var maxValue = input[0];
+    var _options$fromIndex = options.fromIndex,
+        fromIndex = _options$fromIndex === void 0 ? 0 : _options$fromIndex,
+        _options$toIndex = options.toIndex,
+        toIndex = _options$toIndex === void 0 ? input.length : _options$toIndex;
 
-    for (var i = 1; i < input.length; i++) {
+    if (fromIndex < 0 || fromIndex >= input.length || !Number.isInteger(fromIndex)) {
+      throw new Error('fromIndex must be a positive integer smaller than length');
+    }
+
+    if (toIndex <= fromIndex || toIndex > input.length || !Number.isInteger(toIndex)) {
+      throw new Error('toIndex must be an integer greater than fromIndex and at most equal to length');
+    }
+
+    var maxValue = input[fromIndex];
+
+    for (var i = fromIndex + 1; i < toIndex; i++) {
       if (input[i] > maxValue) maxValue = input[i];
     }
 
     return maxValue;
   }
 
-  /**
-   * Computes the minimum of the given values
-   * @param {Array<number>} input
-   * @return {number}
-   */
-
   function min(input) {
-    if (!src(input)) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    if (!isAnyArray(input)) {
       throw new TypeError('input must be an array');
     }
 
@@ -57,9 +59,22 @@
       throw new TypeError('input must not be empty');
     }
 
-    var minValue = input[0];
+    var _options$fromIndex = options.fromIndex,
+        fromIndex = _options$fromIndex === void 0 ? 0 : _options$fromIndex,
+        _options$toIndex = options.toIndex,
+        toIndex = _options$toIndex === void 0 ? input.length : _options$toIndex;
 
-    for (var i = 1; i < input.length; i++) {
+    if (fromIndex < 0 || fromIndex >= input.length || !Number.isInteger(fromIndex)) {
+      throw new Error('fromIndex must be a positive integer smaller than length');
+    }
+
+    if (toIndex <= fromIndex || toIndex > input.length || !Number.isInteger(toIndex)) {
+      throw new Error('toIndex must be an integer greater than fromIndex and at most equal to length');
+    }
+
+    var minValue = input[fromIndex];
+
+    for (var i = fromIndex + 1; i < toIndex; i++) {
       if (input[i] < minValue) minValue = input[i];
     }
 
@@ -69,7 +84,7 @@
   function rescale(input) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    if (!src(input)) {
+    if (!isAnyArray(input)) {
       throw new TypeError('input must be an array');
     } else if (input.length === 0) {
       throw new TypeError('input must not be empty');
@@ -78,7 +93,7 @@
     var output;
 
     if (options.output !== undefined) {
-      if (!src(options.output)) {
+      if (!isAnyArray(options.output)) {
         throw new TypeError('output option must be an array if specified');
       }
 
@@ -112,377 +127,27 @@
     return output;
   }
 
-  /**
-   * @private
-   * Check that a row index is not out of bounds
-   * @param {Matrix} matrix
-   * @param {number} index
-   * @param {boolean} [outer]
-   */
-  function checkRowIndex(matrix, index, outer) {
-    let max = outer ? matrix.rows : matrix.rows - 1;
-
-    if (index < 0 || index > max) {
-      throw new RangeError('Row index out of range');
-    }
-  }
-  /**
-   * @private
-   * Check that a column index is not out of bounds
-   * @param {Matrix} matrix
-   * @param {number} index
-   * @param {boolean} [outer]
-   */
-
-  function checkColumnIndex(matrix, index, outer) {
-    let max = outer ? matrix.columns : matrix.columns - 1;
-
-    if (index < 0 || index > max) {
-      throw new RangeError('Column index out of range');
-    }
-  }
-  /**
-   * @private
-   * Check that the provided vector is an array with the right length
-   * @param {Matrix} matrix
-   * @param {Array|Matrix} vector
-   * @return {Array}
-   * @throws {RangeError}
-   */
-
-  function checkRowVector(matrix, vector) {
-    if (vector.to1DArray) {
-      vector = vector.to1DArray();
-    }
-
-    if (vector.length !== matrix.columns) {
-      throw new RangeError('vector size must be the same as the number of columns');
-    }
-
-    return vector;
-  }
-  /**
-   * @private
-   * Check that the provided vector is an array with the right length
-   * @param {Matrix} matrix
-   * @param {Array|Matrix} vector
-   * @return {Array}
-   * @throws {RangeError}
-   */
-
-  function checkColumnVector(matrix, vector) {
-    if (vector.to1DArray) {
-      vector = vector.to1DArray();
-    }
-
-    if (vector.length !== matrix.rows) {
-      throw new RangeError('vector size must be the same as the number of rows');
-    }
-
-    return vector;
-  }
-  function checkIndices(matrix, rowIndices, columnIndices) {
-    return {
-      row: checkRowIndices(matrix, rowIndices),
-      column: checkColumnIndices(matrix, columnIndices)
-    };
-  }
-  function checkRowIndices(matrix, rowIndices) {
-    if (typeof rowIndices !== 'object') {
-      throw new TypeError('unexpected type for row indices');
-    }
-
-    let rowOut = rowIndices.some(r => {
-      return r < 0 || r >= matrix.rows;
-    });
-
-    if (rowOut) {
-      throw new RangeError('row indices are out of range');
-    }
-
-    if (!Array.isArray(rowIndices)) rowIndices = Array.from(rowIndices);
-    return rowIndices;
-  }
-  function checkColumnIndices(matrix, columnIndices) {
-    if (typeof columnIndices !== 'object') {
-      throw new TypeError('unexpected type for column indices');
-    }
-
-    let columnOut = columnIndices.some(c => {
-      return c < 0 || c >= matrix.columns;
-    });
-
-    if (columnOut) {
-      throw new RangeError('column indices are out of range');
-    }
-
-    if (!Array.isArray(columnIndices)) columnIndices = Array.from(columnIndices);
-    return columnIndices;
-  }
-  function checkRange(matrix, startRow, endRow, startColumn, endColumn) {
-    if (arguments.length !== 5) {
-      throw new RangeError('expected 4 arguments');
-    }
-
-    checkNumber('startRow', startRow);
-    checkNumber('endRow', endRow);
-    checkNumber('startColumn', startColumn);
-    checkNumber('endColumn', endColumn);
-
-    if (startRow > endRow || startColumn > endColumn || startRow < 0 || startRow >= matrix.rows || endRow < 0 || endRow >= matrix.rows || startColumn < 0 || startColumn >= matrix.columns || endColumn < 0 || endColumn >= matrix.columns) {
-      throw new RangeError('Submatrix indices are out of range');
-    }
-  }
-  function newArray(length) {
-    let value = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
-    let array = [];
-
-    for (let i = 0; i < length; i++) {
-      array.push(value);
-    }
-
-    return array;
-  }
-
-  function checkNumber(name, value) {
-    if (typeof value !== 'number') {
-      throw new TypeError("".concat(name, " must be a number"));
-    }
-  }
-
-  function sumByRow(matrix) {
-    let sum = newArray(matrix.rows);
-
-    for (let i = 0; i < matrix.rows; ++i) {
-      for (let j = 0; j < matrix.columns; ++j) {
-        sum[i] += matrix.get(i, j);
-      }
-    }
-
-    return sum;
-  }
-  function sumByColumn(matrix) {
-    let sum = newArray(matrix.columns);
-
-    for (let i = 0; i < matrix.rows; ++i) {
-      for (let j = 0; j < matrix.columns; ++j) {
-        sum[j] += matrix.get(i, j);
-      }
-    }
-
-    return sum;
-  }
-  function sumAll(matrix) {
-    let v = 0;
-
-    for (let i = 0; i < matrix.rows; i++) {
-      for (let j = 0; j < matrix.columns; j++) {
-        v += matrix.get(i, j);
-      }
-    }
-
-    return v;
-  }
-  function productByRow(matrix) {
-    let sum = newArray(matrix.rows, 1);
-
-    for (let i = 0; i < matrix.rows; ++i) {
-      for (let j = 0; j < matrix.columns; ++j) {
-        sum[i] *= matrix.get(i, j);
-      }
-    }
-
-    return sum;
-  }
-  function productByColumn(matrix) {
-    let sum = newArray(matrix.columns, 1);
-
-    for (let i = 0; i < matrix.rows; ++i) {
-      for (let j = 0; j < matrix.columns; ++j) {
-        sum[j] *= matrix.get(i, j);
-      }
-    }
-
-    return sum;
-  }
-  function productAll(matrix) {
-    let v = 1;
-
-    for (let i = 0; i < matrix.rows; i++) {
-      for (let j = 0; j < matrix.columns; j++) {
-        v *= matrix.get(i, j);
-      }
-    }
-
-    return v;
-  }
-  function varianceByRow(matrix, unbiased, mean) {
-    const rows = matrix.rows;
-    const cols = matrix.columns;
-    const variance = [];
-
-    for (let i = 0; i < rows; i++) {
-      let sum1 = 0;
-      let sum2 = 0;
-      let x = 0;
-
-      for (let j = 0; j < cols; j++) {
-        x = matrix.get(i, j) - mean[i];
-        sum1 += x;
-        sum2 += x * x;
-      }
-
-      if (unbiased) {
-        variance.push((sum2 - sum1 * sum1 / cols) / (cols - 1));
-      } else {
-        variance.push((sum2 - sum1 * sum1 / cols) / cols);
-      }
-    }
-
-    return variance;
-  }
-  function varianceByColumn(matrix, unbiased, mean) {
-    const rows = matrix.rows;
-    const cols = matrix.columns;
-    const variance = [];
-
-    for (let j = 0; j < cols; j++) {
-      let sum1 = 0;
-      let sum2 = 0;
-      let x = 0;
-
-      for (let i = 0; i < rows; i++) {
-        x = matrix.get(i, j) - mean[j];
-        sum1 += x;
-        sum2 += x * x;
-      }
-
-      if (unbiased) {
-        variance.push((sum2 - sum1 * sum1 / rows) / (rows - 1));
-      } else {
-        variance.push((sum2 - sum1 * sum1 / rows) / rows);
-      }
-    }
-
-    return variance;
-  }
-  function varianceAll(matrix, unbiased, mean) {
-    const rows = matrix.rows;
-    const cols = matrix.columns;
-    const size = rows * cols;
-    let sum1 = 0;
-    let sum2 = 0;
-    let x = 0;
-
-    for (let i = 0; i < rows; i++) {
-      for (let j = 0; j < cols; j++) {
-        x = matrix.get(i, j) - mean;
-        sum1 += x;
-        sum2 += x * x;
-      }
-    }
-
-    if (unbiased) {
-      return (sum2 - sum1 * sum1 / size) / (size - 1);
-    } else {
-      return (sum2 - sum1 * sum1 / size) / size;
-    }
-  }
-  function centerByRow(matrix, mean) {
-    for (let i = 0; i < matrix.rows; i++) {
-      for (let j = 0; j < matrix.columns; j++) {
-        matrix.set(i, j, matrix.get(i, j) - mean[i]);
-      }
-    }
-  }
-  function centerByColumn(matrix, mean) {
-    for (let i = 0; i < matrix.rows; i++) {
-      for (let j = 0; j < matrix.columns; j++) {
-        matrix.set(i, j, matrix.get(i, j) - mean[j]);
-      }
-    }
-  }
-  function centerAll(matrix, mean) {
-    for (let i = 0; i < matrix.rows; i++) {
-      for (let j = 0; j < matrix.columns; j++) {
-        matrix.set(i, j, matrix.get(i, j) - mean);
-      }
-    }
-  }
-  function getScaleByRow(matrix) {
-    const scale = [];
-
-    for (let i = 0; i < matrix.rows; i++) {
-      let sum = 0;
-
-      for (let j = 0; j < matrix.columns; j++) {
-        sum += Math.pow(matrix.get(i, j), 2) / (matrix.columns - 1);
-      }
-
-      scale.push(Math.sqrt(sum));
-    }
-
-    return scale;
-  }
-  function scaleByRow(matrix, scale) {
-    for (let i = 0; i < matrix.rows; i++) {
-      for (let j = 0; j < matrix.columns; j++) {
-        matrix.set(i, j, matrix.get(i, j) / scale[i]);
-      }
-    }
-  }
-  function getScaleByColumn(matrix) {
-    const scale = [];
-
-    for (let j = 0; j < matrix.columns; j++) {
-      let sum = 0;
-
-      for (let i = 0; i < matrix.rows; i++) {
-        sum += Math.pow(matrix.get(i, j), 2) / (matrix.rows - 1);
-      }
-
-      scale.push(Math.sqrt(sum));
-    }
-
-    return scale;
-  }
-  function scaleByColumn(matrix, scale) {
-    for (let i = 0; i < matrix.rows; i++) {
-      for (let j = 0; j < matrix.columns; j++) {
-        matrix.set(i, j, matrix.get(i, j) / scale[j]);
-      }
-    }
-  }
-  function getScaleAll(matrix) {
-    const divider = matrix.size - 1;
-    let sum = 0;
-
-    for (let j = 0; j < matrix.columns; j++) {
-      for (let i = 0; i < matrix.rows; i++) {
-        sum += Math.pow(matrix.get(i, j), 2) / divider;
-      }
-    }
-
-    return Math.sqrt(sum);
-  }
-  function scaleAll(matrix, scale) {
-    for (let i = 0; i < matrix.rows; i++) {
-      for (let j = 0; j < matrix.columns; j++) {
-        matrix.set(i, j, matrix.get(i, j) / scale);
-      }
-    }
-  }
-
+  const indent = ' '.repeat(2);
+  const indentData = ' '.repeat(4);
   function inspectMatrix() {
-    const indent = ' '.repeat(2);
-    const indentData = ' '.repeat(4);
-    return "".concat(this.constructor.name, " {\n").concat(indent, "[\n").concat(indentData).concat(inspectData(this, indentData), "\n").concat(indent, "]\n").concat(indent, "rows: ").concat(this.rows, "\n").concat(indent, "columns: ").concat(this.columns, "\n}");
+    return inspectMatrixWithOptions(this);
   }
-  const maxRows = 15;
-  const maxColumns = 10;
-  const maxNumSize = 8;
+  function inspectMatrixWithOptions(matrix, options = {}) {
+    const {
+      maxRows = 15,
+      maxColumns = 10,
+      maxNumSize = 8
+    } = options;
+    return `${matrix.constructor.name} {
+${indent}[
+${indentData}${inspectData(matrix, maxRows, maxColumns, maxNumSize)}
+${indent}]
+${indent}rows: ${matrix.rows}
+${indent}columns: ${matrix.columns}
+}`;
+  }
 
-  function inspectData(matrix, indent) {
+  function inspectData(matrix, maxRows, maxColumns, maxNumSize) {
     const {
       rows,
       columns
@@ -495,24 +160,24 @@
       let line = [];
 
       for (let j = 0; j < maxJ; j++) {
-        line.push(formatNumber(matrix.get(i, j)));
+        line.push(formatNumber(matrix.get(i, j), maxNumSize));
       }
 
-      result.push("".concat(line.join(' ')));
+      result.push(`${line.join(' ')}`);
     }
 
     if (maxJ !== columns) {
-      result[result.length - 1] += " ... ".concat(columns - maxColumns, " more columns");
+      result[result.length - 1] += ` ... ${columns - maxColumns} more columns`;
     }
 
     if (maxI !== rows) {
-      result.push("... ".concat(rows - maxRows, " more rows"));
+      result.push(`... ${rows - maxRows} more rows`);
     }
 
-    return result.join("\n".concat(indent));
+    return result.join(`\n${indentData}`);
   }
 
-  function formatNumber(num) {
+  function formatNumber(num, maxNumSize) {
     const numStr = String(num);
 
     if (numStr.length <= maxNumSize) {
@@ -527,8 +192,8 @@
 
     const exponential = num.toExponential(maxNumSize - 2);
     const eIndex = exponential.indexOf('e');
-    const e = exponential.substring(eIndex);
-    return exponential.substring(0, maxNumSize - e.length) + e;
+    const e = exponential.slice(eIndex);
+    return exponential.slice(0, maxNumSize - e.length) + e;
   }
 
   function installMathOperations(AbstractMatrix, Matrix) {
@@ -1425,6 +1090,366 @@
     };
   }
 
+  /**
+   * @private
+   * Check that a row index is not out of bounds
+   * @param {Matrix} matrix
+   * @param {number} index
+   * @param {boolean} [outer]
+   */
+  function checkRowIndex(matrix, index, outer) {
+    let max = outer ? matrix.rows : matrix.rows - 1;
+
+    if (index < 0 || index > max) {
+      throw new RangeError('Row index out of range');
+    }
+  }
+  /**
+   * @private
+   * Check that a column index is not out of bounds
+   * @param {Matrix} matrix
+   * @param {number} index
+   * @param {boolean} [outer]
+   */
+
+  function checkColumnIndex(matrix, index, outer) {
+    let max = outer ? matrix.columns : matrix.columns - 1;
+
+    if (index < 0 || index > max) {
+      throw new RangeError('Column index out of range');
+    }
+  }
+  /**
+   * @private
+   * Check that the provided vector is an array with the right length
+   * @param {Matrix} matrix
+   * @param {Array|Matrix} vector
+   * @return {Array}
+   * @throws {RangeError}
+   */
+
+  function checkRowVector(matrix, vector) {
+    if (vector.to1DArray) {
+      vector = vector.to1DArray();
+    }
+
+    if (vector.length !== matrix.columns) {
+      throw new RangeError('vector size must be the same as the number of columns');
+    }
+
+    return vector;
+  }
+  /**
+   * @private
+   * Check that the provided vector is an array with the right length
+   * @param {Matrix} matrix
+   * @param {Array|Matrix} vector
+   * @return {Array}
+   * @throws {RangeError}
+   */
+
+  function checkColumnVector(matrix, vector) {
+    if (vector.to1DArray) {
+      vector = vector.to1DArray();
+    }
+
+    if (vector.length !== matrix.rows) {
+      throw new RangeError('vector size must be the same as the number of rows');
+    }
+
+    return vector;
+  }
+  function checkIndices(matrix, rowIndices, columnIndices) {
+    return {
+      row: checkRowIndices(matrix, rowIndices),
+      column: checkColumnIndices(matrix, columnIndices)
+    };
+  }
+  function checkRowIndices(matrix, rowIndices) {
+    if (typeof rowIndices !== 'object') {
+      throw new TypeError('unexpected type for row indices');
+    }
+
+    let rowOut = rowIndices.some(r => {
+      return r < 0 || r >= matrix.rows;
+    });
+
+    if (rowOut) {
+      throw new RangeError('row indices are out of range');
+    }
+
+    if (!Array.isArray(rowIndices)) rowIndices = Array.from(rowIndices);
+    return rowIndices;
+  }
+  function checkColumnIndices(matrix, columnIndices) {
+    if (typeof columnIndices !== 'object') {
+      throw new TypeError('unexpected type for column indices');
+    }
+
+    let columnOut = columnIndices.some(c => {
+      return c < 0 || c >= matrix.columns;
+    });
+
+    if (columnOut) {
+      throw new RangeError('column indices are out of range');
+    }
+
+    if (!Array.isArray(columnIndices)) columnIndices = Array.from(columnIndices);
+    return columnIndices;
+  }
+  function checkRange(matrix, startRow, endRow, startColumn, endColumn) {
+    if (arguments.length !== 5) {
+      throw new RangeError('expected 4 arguments');
+    }
+
+    checkNumber('startRow', startRow);
+    checkNumber('endRow', endRow);
+    checkNumber('startColumn', startColumn);
+    checkNumber('endColumn', endColumn);
+
+    if (startRow > endRow || startColumn > endColumn || startRow < 0 || startRow >= matrix.rows || endRow < 0 || endRow >= matrix.rows || startColumn < 0 || startColumn >= matrix.columns || endColumn < 0 || endColumn >= matrix.columns) {
+      throw new RangeError('Submatrix indices are out of range');
+    }
+  }
+  function newArray(length, value = 0) {
+    let array = [];
+
+    for (let i = 0; i < length; i++) {
+      array.push(value);
+    }
+
+    return array;
+  }
+
+  function checkNumber(name, value) {
+    if (typeof value !== 'number') {
+      throw new TypeError(`${name} must be a number`);
+    }
+  }
+
+  function sumByRow(matrix) {
+    let sum = newArray(matrix.rows);
+
+    for (let i = 0; i < matrix.rows; ++i) {
+      for (let j = 0; j < matrix.columns; ++j) {
+        sum[i] += matrix.get(i, j);
+      }
+    }
+
+    return sum;
+  }
+  function sumByColumn(matrix) {
+    let sum = newArray(matrix.columns);
+
+    for (let i = 0; i < matrix.rows; ++i) {
+      for (let j = 0; j < matrix.columns; ++j) {
+        sum[j] += matrix.get(i, j);
+      }
+    }
+
+    return sum;
+  }
+  function sumAll(matrix) {
+    let v = 0;
+
+    for (let i = 0; i < matrix.rows; i++) {
+      for (let j = 0; j < matrix.columns; j++) {
+        v += matrix.get(i, j);
+      }
+    }
+
+    return v;
+  }
+  function productByRow(matrix) {
+    let sum = newArray(matrix.rows, 1);
+
+    for (let i = 0; i < matrix.rows; ++i) {
+      for (let j = 0; j < matrix.columns; ++j) {
+        sum[i] *= matrix.get(i, j);
+      }
+    }
+
+    return sum;
+  }
+  function productByColumn(matrix) {
+    let sum = newArray(matrix.columns, 1);
+
+    for (let i = 0; i < matrix.rows; ++i) {
+      for (let j = 0; j < matrix.columns; ++j) {
+        sum[j] *= matrix.get(i, j);
+      }
+    }
+
+    return sum;
+  }
+  function productAll(matrix) {
+    let v = 1;
+
+    for (let i = 0; i < matrix.rows; i++) {
+      for (let j = 0; j < matrix.columns; j++) {
+        v *= matrix.get(i, j);
+      }
+    }
+
+    return v;
+  }
+  function varianceByRow(matrix, unbiased, mean) {
+    const rows = matrix.rows;
+    const cols = matrix.columns;
+    const variance = [];
+
+    for (let i = 0; i < rows; i++) {
+      let sum1 = 0;
+      let sum2 = 0;
+      let x = 0;
+
+      for (let j = 0; j < cols; j++) {
+        x = matrix.get(i, j) - mean[i];
+        sum1 += x;
+        sum2 += x * x;
+      }
+
+      if (unbiased) {
+        variance.push((sum2 - sum1 * sum1 / cols) / (cols - 1));
+      } else {
+        variance.push((sum2 - sum1 * sum1 / cols) / cols);
+      }
+    }
+
+    return variance;
+  }
+  function varianceByColumn(matrix, unbiased, mean) {
+    const rows = matrix.rows;
+    const cols = matrix.columns;
+    const variance = [];
+
+    for (let j = 0; j < cols; j++) {
+      let sum1 = 0;
+      let sum2 = 0;
+      let x = 0;
+
+      for (let i = 0; i < rows; i++) {
+        x = matrix.get(i, j) - mean[j];
+        sum1 += x;
+        sum2 += x * x;
+      }
+
+      if (unbiased) {
+        variance.push((sum2 - sum1 * sum1 / rows) / (rows - 1));
+      } else {
+        variance.push((sum2 - sum1 * sum1 / rows) / rows);
+      }
+    }
+
+    return variance;
+  }
+  function varianceAll(matrix, unbiased, mean) {
+    const rows = matrix.rows;
+    const cols = matrix.columns;
+    const size = rows * cols;
+    let sum1 = 0;
+    let sum2 = 0;
+    let x = 0;
+
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        x = matrix.get(i, j) - mean;
+        sum1 += x;
+        sum2 += x * x;
+      }
+    }
+
+    if (unbiased) {
+      return (sum2 - sum1 * sum1 / size) / (size - 1);
+    } else {
+      return (sum2 - sum1 * sum1 / size) / size;
+    }
+  }
+  function centerByRow(matrix, mean) {
+    for (let i = 0; i < matrix.rows; i++) {
+      for (let j = 0; j < matrix.columns; j++) {
+        matrix.set(i, j, matrix.get(i, j) - mean[i]);
+      }
+    }
+  }
+  function centerByColumn(matrix, mean) {
+    for (let i = 0; i < matrix.rows; i++) {
+      for (let j = 0; j < matrix.columns; j++) {
+        matrix.set(i, j, matrix.get(i, j) - mean[j]);
+      }
+    }
+  }
+  function centerAll(matrix, mean) {
+    for (let i = 0; i < matrix.rows; i++) {
+      for (let j = 0; j < matrix.columns; j++) {
+        matrix.set(i, j, matrix.get(i, j) - mean);
+      }
+    }
+  }
+  function getScaleByRow(matrix) {
+    const scale = [];
+
+    for (let i = 0; i < matrix.rows; i++) {
+      let sum = 0;
+
+      for (let j = 0; j < matrix.columns; j++) {
+        sum += Math.pow(matrix.get(i, j), 2) / (matrix.columns - 1);
+      }
+
+      scale.push(Math.sqrt(sum));
+    }
+
+    return scale;
+  }
+  function scaleByRow(matrix, scale) {
+    for (let i = 0; i < matrix.rows; i++) {
+      for (let j = 0; j < matrix.columns; j++) {
+        matrix.set(i, j, matrix.get(i, j) / scale[i]);
+      }
+    }
+  }
+  function getScaleByColumn(matrix) {
+    const scale = [];
+
+    for (let j = 0; j < matrix.columns; j++) {
+      let sum = 0;
+
+      for (let i = 0; i < matrix.rows; i++) {
+        sum += Math.pow(matrix.get(i, j), 2) / (matrix.rows - 1);
+      }
+
+      scale.push(Math.sqrt(sum));
+    }
+
+    return scale;
+  }
+  function scaleByColumn(matrix, scale) {
+    for (let i = 0; i < matrix.rows; i++) {
+      for (let j = 0; j < matrix.columns; j++) {
+        matrix.set(i, j, matrix.get(i, j) / scale[j]);
+      }
+    }
+  }
+  function getScaleAll(matrix) {
+    const divider = matrix.size - 1;
+    let sum = 0;
+
+    for (let j = 0; j < matrix.columns; j++) {
+      for (let i = 0; i < matrix.rows; i++) {
+        sum += Math.pow(matrix.get(i, j), 2) / divider;
+      }
+    }
+
+    return Math.sqrt(sum);
+  }
+  function scaleAll(matrix, scale) {
+    for (let i = 0; i < matrix.rows; i++) {
+      for (let j = 0; j < matrix.columns; j++) {
+        matrix.set(i, j, matrix.get(i, j) / scale);
+      }
+    }
+  }
+
   class AbstractMatrix {
     static from1DArray(newRows, newColumns, newData) {
       let length = newRows * newColumns;
@@ -1472,9 +1497,7 @@
       return new Matrix(rows, columns).fill(1);
     }
 
-    static rand(rows, columns) {
-      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
+    static rand(rows, columns, options = {}) {
       if (typeof options !== 'object') {
         throw new TypeError('options must be an object');
       }
@@ -1493,9 +1516,7 @@
       return matrix;
     }
 
-    static randInt(rows, columns) {
-      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
+    static randInt(rows, columns, options = {}) {
       if (typeof options !== 'object') {
         throw new TypeError('options must be an object');
       }
@@ -1818,9 +1839,7 @@
       throw new Error('get method is unimplemented');
     }
 
-    repeat() {
-      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
+    repeat(options = {}) {
       if (typeof options !== 'object') {
         throw new TypeError('options must be an object');
       }
@@ -2242,8 +2261,7 @@
       return diag;
     }
 
-    norm() {
-      let type = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 'frobenius';
+    norm(type = 'frobenius') {
       let result = 0;
 
       if (type === 'max') {
@@ -2257,7 +2275,7 @@
 
         return Math.sqrt(result);
       } else {
-        throw new RangeError("unknown norm type: ".concat(type));
+        throw new RangeError(`unknown norm type: ${type}`);
       }
     }
 
@@ -2424,7 +2442,7 @@
 
       if (c1 !== r2) {
         // eslint-disable-next-line no-console
-        console.warn("Multiplying ".concat(r1, " x ").concat(c1, " and ").concat(r2, " x ").concat(c2, " matrix: dimensions do not match."));
+        console.warn(`Multiplying ${r1} x ${c1} and ${r2} x ${c2} matrix: dimensions do not match.`);
       } // Put a matrix into the top left of a matrix of zeros.
       // `rows` and `cols` are the dimensions of the output matrix.
 
@@ -2508,9 +2526,7 @@
       return blockMult(x, y, r, c);
     }
 
-    scaleRows() {
-      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
+    scaleRows(options = {}) {
       if (typeof options !== 'object') {
         throw new TypeError('options must be an object');
       }
@@ -2537,9 +2553,7 @@
       return newMatrix;
     }
 
-    scaleColumns() {
-      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
+    scaleColumns(options = {}) {
       if (typeof options !== 'object') {
         throw new TypeError('options must be an object');
       }
@@ -2629,9 +2643,7 @@
       return result;
     }
 
-    sortRows() {
-      let compareFunction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : compareNumbers;
-
+    sortRows(compareFunction = compareNumbers) {
       for (let i = 0; i < this.rows; i++) {
         this.setRow(i, this.getRow(i).sort(compareFunction));
       }
@@ -2639,9 +2651,7 @@
       return this;
     }
 
-    sortColumns() {
-      let compareFunction = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : compareNumbers;
-
+    sortColumns(compareFunction = compareNumbers) {
       for (let i = 0; i < this.columns; i++) {
         this.setColumn(i, this.getColumn(i).sort(compareFunction));
       }
@@ -2675,7 +2685,7 @@
       for (let i = 0; i < indices.length; i++) {
         for (let j = startColumn; j <= endColumn; j++) {
           if (indices[i] < 0 || indices[i] >= this.rows) {
-            throw new RangeError("Row index out of range: ".concat(indices[i]));
+            throw new RangeError(`Row index out of range: ${indices[i]}`);
           }
 
           newMatrix.set(i, j - startColumn, this.get(indices[i], j));
@@ -2698,7 +2708,7 @@
       for (let i = 0; i < indices.length; i++) {
         for (let j = startRow; j <= endRow; j++) {
           if (indices[i] < 0 || indices[i] >= this.columns) {
-            throw new RangeError("Column index out of range: ".concat(indices[i]));
+            throw new RangeError(`Column index out of range: ${indices[i]}`);
           }
 
           newMatrix.set(j - startRow, i, this.get(j, indices[i]));
@@ -2774,7 +2784,7 @@
           return sumAll(this);
 
         default:
-          throw new Error("invalid option: ".concat(by));
+          throw new Error(`invalid option: ${by}`);
       }
     }
 
@@ -2790,7 +2800,7 @@
           return productAll(this);
 
         default:
-          throw new Error("invalid option: ".concat(by));
+          throw new Error(`invalid option: ${by}`);
       }
     }
 
@@ -2820,13 +2830,11 @@
           return sum / this.size;
 
         default:
-          throw new Error("invalid option: ".concat(by));
+          throw new Error(`invalid option: ${by}`);
       }
     }
 
-    variance(by) {
-      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
+    variance(by, options = {}) {
       if (typeof by === 'object') {
         options = by;
         by = undefined;
@@ -2874,7 +2882,7 @@
           }
 
         default:
-          throw new Error("invalid option: ".concat(by));
+          throw new Error(`invalid option: ${by}`);
       }
     }
 
@@ -2897,9 +2905,7 @@
       }
     }
 
-    center(by) {
-      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
+    center(by, options = {}) {
       if (typeof by === 'object') {
         options = by;
         by = undefined;
@@ -2945,13 +2951,11 @@
           }
 
         default:
-          throw new Error("invalid option: ".concat(by));
+          throw new Error(`invalid option: ${by}`);
       }
     }
 
-    scale(by) {
-      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
+    scale(by, options = {}) {
       if (typeof by === 'object') {
         options = by;
         by = undefined;
@@ -3001,8 +3005,12 @@
           }
 
         default:
-          throw new Error("invalid option: ".concat(by));
+          throw new Error(`invalid option: ${by}`);
       }
+    }
+
+    toString(options) {
+      return inspectMatrixWithOptions(this, options);
     }
 
   }
@@ -3330,8 +3338,7 @@
   }
 
   class WrapperMatrix1D extends AbstractMatrix {
-    constructor(data) {
-      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    constructor(data, options = {}) {
       const {
         rows = 1
       } = options;
@@ -3764,8 +3771,7 @@
   }
 
   class SingularValueDecomposition {
-    constructor(value) {
-      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    constructor(value, options = {}) {
       value = WrapperMatrix2D.checkMatrix(value);
       let m = value.rows;
       let n = value.columns;
@@ -4346,8 +4352,7 @@
 
   }
 
-  function inverse(matrix) {
-    let useSVD = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+  function inverse(matrix, useSVD = false) {
     matrix = WrapperMatrix2D.checkMatrix(matrix);
 
     if (useSVD) {
@@ -4356,8 +4361,7 @@
       return solve(matrix, Matrix.eye(matrix.rows));
     }
   }
-  function solve(leftHandSide, rightHandSide) {
-    let useSVD = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+  function solve(leftHandSide, rightHandSide, useSVD = false) {
     leftHandSide = WrapperMatrix2D.checkMatrix(leftHandSide);
     rightHandSide = WrapperMatrix2D.checkMatrix(rightHandSide);
 
@@ -4412,10 +4416,7 @@
     return range;
   }
 
-  function dependenciesOneRow(error, matrix, index) {
-    let thresholdValue = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 10e-10;
-    let thresholdError = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 10e-10;
-
+  function dependenciesOneRow(error, matrix, index, thresholdValue = 10e-10, thresholdError = 10e-10) {
     if (error > thresholdError) {
       return new Array(matrix.rows + 1).fill(0);
     } else {
@@ -4431,8 +4432,7 @@
     }
   }
 
-  function linearDependencies(matrix) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  function linearDependencies(matrix, options = {}) {
     const {
       thresholdValue = 10e-10,
       thresholdError = 10e-10
@@ -4453,8 +4453,7 @@
     return results;
   }
 
-  function pseudoInverse(matrix) {
-    let threshold = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Number.EPSILON;
+  function pseudoInverse(matrix, threshold = Number.EPSILON) {
     matrix = Matrix.checkMatrix(matrix);
     let svdSolution = new SingularValueDecomposition(matrix, {
       autoTranspose: true
@@ -4474,10 +4473,8 @@
     return V.mmul(Matrix.diag(s).mmul(U.transpose()));
   }
 
-  function covariance(xMatrix) {
-    let yMatrix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : xMatrix;
-    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    xMatrix = Matrix.checkMatrix(xMatrix);
+  function covariance(xMatrix, yMatrix = xMatrix, options = {}) {
+    xMatrix = new Matrix(xMatrix);
     let yIsSame = false;
 
     if (typeof yMatrix === 'object' && !Matrix.isMatrix(yMatrix) && !Array.isArray(yMatrix)) {
@@ -4485,7 +4482,7 @@
       yMatrix = xMatrix;
       yIsSame = true;
     } else {
-      yMatrix = Matrix.checkMatrix(yMatrix);
+      yMatrix = new Matrix(yMatrix);
     }
 
     if (xMatrix.rows !== yMatrix.rows) {
@@ -4515,10 +4512,8 @@
     return cov;
   }
 
-  function correlation(xMatrix) {
-    let yMatrix = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : xMatrix;
-    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-    xMatrix = Matrix.checkMatrix(xMatrix);
+  function correlation(xMatrix, yMatrix = xMatrix, options = {}) {
+    xMatrix = new Matrix(xMatrix);
     let yIsSame = false;
 
     if (typeof yMatrix === 'object' && !Matrix.isMatrix(yMatrix) && !Array.isArray(yMatrix)) {
@@ -4526,7 +4521,7 @@
       yMatrix = xMatrix;
       yIsSame = true;
     } else {
-      yMatrix = Matrix.checkMatrix(yMatrix);
+      yMatrix = new Matrix(yMatrix);
     }
 
     if (xMatrix.rows !== yMatrix.rows) {
@@ -4572,8 +4567,7 @@
   }
 
   class EigenvalueDecomposition {
-    constructor(matrix) {
-      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    constructor(matrix, options = {}) {
       const {
         assumeSymmetric = false
       } = options;
@@ -5497,8 +5491,7 @@
   }
 
   class nipals {
-    constructor(X) {
-      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    constructor(X, options = {}) {
       X = WrapperMatrix2D.checkMatrix(X);
       let {
         Y
@@ -5580,8 +5573,6 @@
 
   }
 
-
-
   var MatrixLib = /*#__PURE__*/Object.freeze({
     __proto__: null,
     AbstractMatrix: AbstractMatrix,
@@ -5620,14 +5611,13 @@
     MatrixTransposeView: MatrixTransposeView
   });
 
-  /**
-   * Computes the mean of the given values
-   * @param {Array<number>} input
-   * @return {number}
-   */
+  const toString$1 = Object.prototype.toString;
+  function isAnyArray$1(object) {
+    return toString$1.call(object).endsWith('Array]');
+  }
 
   function sum(input) {
-    if (!src(input)) {
+    if (!isAnyArray$1(input)) {
       throw new TypeError('input must be an array');
     }
 
@@ -5643,12 +5633,6 @@
 
     return sumValue;
   }
-
-  /**
-   * Computes the mean of the given values
-   * @param {Array<number>} input
-   * @return {number}
-   */
 
   function mean(input) {
     return sum(input) / input.length;
@@ -5815,7 +5799,7 @@
 
   function zip(a, b) {
     if (a.length !== b.length) {
-      throw new TypeError("Error on zip: the size of a: ".concat(a.length, " is different from b: ").concat(b.length));
+      throw new TypeError(`Error on zip: the size of a: ${a.length} is different from b: ${b.length}`);
     }
 
     let ret = new Array(a.length);
@@ -6124,7 +6108,7 @@
 
     static load(model) {
       if (model.name !== 'DTClassifier') {
-        throw new RangeError("Invalid model: ".concat(model.name));
+        throw new RangeError(`Invalid model: ${model.name}`);
       }
 
       return new DecisionTreeClassifier(true, model);
@@ -6219,7 +6203,7 @@
 
     static load(model) {
       if (model.name !== 'DTRegression') {
-        throw new RangeError("Invalid model:".concat(model.name));
+        throw new RangeError(`Invalid model:${model.name}`);
       }
 
       return new DecisionTreeRegression(true, model);
@@ -6413,9 +6397,9 @@
     max = Math.floor(max);
 
     if (min < -SMALLEST_UNSAFE_INTEGER || !isFinite(min)) {
-      throw new RangeError("Expected min to be at least ".concat(-SMALLEST_UNSAFE_INTEGER));
+      throw new RangeError(`Expected min to be at least ${-SMALLEST_UNSAFE_INTEGER}`);
     } else if (max > SMALLEST_UNSAFE_INTEGER || !isFinite(max)) {
-      throw new RangeError("Expected max to be at most ".concat(SMALLEST_UNSAFE_INTEGER));
+      throw new RangeError(`Expected max to be at most ${SMALLEST_UNSAFE_INTEGER}`);
     }
 
     const range = max - min;
@@ -6453,8 +6437,7 @@
 
   const DEFAULT_STRING_POOL = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-";
 
-  function string() {
-    let pool = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : DEFAULT_STRING_POOL;
+  function string(pool = DEFAULT_STRING_POOL) {
     const poolLength = pool.length;
 
     if (!poolLength) {
@@ -6539,9 +6522,7 @@
    * @param length the length of the Array, minimum 1, default 16
    */
 
-  function createEntropy() {
-    let engine = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : nativeMath;
-    let length = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 16;
+  function createEntropy(engine = nativeMath, length = 16) {
     const array = [];
     array.push(new Date().getTime() | 0);
 
@@ -6783,7 +6764,7 @@
     } else if (Number.isInteger(seed)) {
       engine = MersenneTwister19937.seed(seed);
     } else {
-      throw new RangeError("Expected seed must be undefined or integer not ".concat(seed));
+      throw new RangeError(`Expected seed must be undefined or integer not ${seed}`);
     }
 
     let Xr = new Array(trainingSet.rows);
@@ -6823,7 +6804,7 @@
     } else if (Number.isInteger(seed)) {
       engine = MersenneTwister19937.seed(seed);
     } else {
-      throw new RangeError("Expected seed must be undefined or integer not ".concat(seed));
+      throw new RangeError(`Expected seed must be undefined or integer not ${seed}`);
     }
 
     let toRet = new Matrix(trainingSet.rows, n);
@@ -6918,12 +6899,12 @@
         this.n = Math.floor(trainingSet.columns * this.maxFeatures);
       } else if (Number.isInteger(this.maxFeatures)) {
         if (this.maxFeatures > trainingSet.columns) {
-          throw new RangeError("The maxFeatures parameter should be less than ".concat(trainingSet.columns));
+          throw new RangeError(`The maxFeatures parameter should be less than ${trainingSet.columns}`);
         } else {
           this.n = this.maxFeatures;
         }
       } else {
-        throw new RangeError("Cannot process the maxFeatures parameter ".concat(this.maxFeatures));
+        throw new RangeError(`Cannot process the maxFeatures parameter ${this.maxFeatures}`);
       }
 
       let Estimator;
@@ -7082,7 +7063,7 @@
 
     static load(model) {
       if (model.name !== 'RFClassifier') {
-        throw new RangeError("Invalid model: ".concat(model.name));
+        throw new RangeError(`Invalid model: ${model.name}`);
       }
 
       return new RandomForestClassifier(true, model);
@@ -7099,10 +7080,40 @@
     return arr.sort((a, b) => arr.filter(v => v === a).length - arr.filter(v => v === b).length).pop();
   }
 
+  const toString$2 = Object.prototype.toString;
+  function isAnyArray$2(object) {
+    return toString$2.call(object).endsWith('Array]');
+  }
+
   var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
-  function createCommonjsModule(fn, module) {
-  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  function createCommonjsModule(fn, basedir, module) {
+  	return module = {
+  		path: basedir,
+  		exports: {},
+  		require: function (path, base) {
+  			return commonjsRequire(path, (base === undefined || base === null) ? module.path : base);
+  		}
+  	}, fn(module, module.exports), module.exports;
+  }
+
+  function getAugmentedNamespace(n) {
+  	if (n.__esModule) return n;
+  	var a = Object.defineProperty({}, '__esModule', {value: true});
+  	Object.keys(n).forEach(function (k) {
+  		var d = Object.getOwnPropertyDescriptor(n, k);
+  		Object.defineProperty(a, k, d.get ? d : {
+  			enumerable: true,
+  			get: function () {
+  				return n[k];
+  			}
+  		});
+  	});
+  	return a;
+  }
+
+  function commonjsRequire () {
+  	throw new Error('Dynamic requires are not currently supported by @rollup/plugin-commonjs');
   }
 
   var medianQuickselect_min = createCommonjsModule(function (module) {
@@ -7138,14 +7149,8 @@
     })();
   });
 
-  /**
-   * Computes the median of the given values
-   * @param {Array<number>} input
-   * @return {number}
-   */
-
   function median(input) {
-    if (!src(input)) {
+    if (!isAnyArray$2(input)) {
       throw new TypeError('input must be an array');
     }
 
@@ -7198,7 +7203,7 @@
         options = Object.assign({}, defaultOptions$3, options);
 
         if (!(options.selectionMethod === 'mean' || options.selectionMethod === 'median')) {
-          throw new RangeError("Unsupported selection method ".concat(options.selectionMethod));
+          throw new RangeError(`Unsupported selection method ${options.selectionMethod}`);
         }
 
         options.isClassifier = false;
@@ -7239,7 +7244,7 @@
 
     static load(model) {
       if (model.name !== 'RFRegression') {
-        throw new RangeError("Invalid model: ".concat(model.name));
+        throw new RangeError(`Invalid model: ${model.name}`);
       }
 
       return new RandomForestRegression(true, model);
@@ -7260,9 +7265,7 @@
    * */
 
   class PCA {
-    constructor(dataset) {
-      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-
+    constructor(dataset, options = {}) {
       if (dataset === true) {
         const model = options;
         this.center = model.center;
@@ -7339,7 +7342,7 @@
 
         default:
           {
-            throw new Error("unknown method: ".concat(method));
+            throw new Error(`unknown method: ${method}`);
           }
       }
     }
@@ -7356,7 +7359,7 @@
       }
 
       if (model.name !== 'PCA') {
-        throw new RangeError("invalid model: ".concat(model.name));
+        throw new RangeError(`invalid model: ${model.name}`);
       }
 
       return new PCA(true, model);
@@ -7369,8 +7372,7 @@
      */
 
 
-    predict(dataset) {
-      let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+    predict(dataset, options = {}) {
       const {
         nComponents = this.U.columns
       } = options;
@@ -7515,7 +7517,7 @@
                 this.excludedFeatures.push(i);
                 i--;
               } else {
-                throw new RangeError("Cannot scale the dataset (standard deviation is zero at index ".concat(i));
+                throw new RangeError(`Cannot scale the dataset (standard deviation is zero at index ${i}`);
               }
             }
           }
@@ -7617,7 +7619,7 @@
       Default comparison function to be used
        */
 
-      defaultCmp = function defaultCmp(x, y) {
+      defaultCmp = function (x, y) {
         if (x < y) {
           return -1;
         }
@@ -7638,7 +7640,7 @@
        */
 
 
-      insort = function insort(a, x, lo, hi, cmp) {
+      insort = function (a, x, lo, hi, cmp) {
         var mid;
 
         if (lo == null) {
@@ -7674,7 +7676,7 @@
        */
 
 
-      heappush = function heappush(array, item, cmp) {
+      heappush = function (array, item, cmp) {
         if (cmp == null) {
           cmp = defaultCmp;
         }
@@ -7687,7 +7689,7 @@
        */
 
 
-      heappop = function heappop(array, cmp) {
+      heappop = function (array, cmp) {
         var lastelt, returnitem;
 
         if (cmp == null) {
@@ -7719,7 +7721,7 @@
        */
 
 
-      heapreplace = function heapreplace(array, item, cmp) {
+      heapreplace = function (array, item, cmp) {
         var returnitem;
 
         if (cmp == null) {
@@ -7738,7 +7740,7 @@
        */
 
 
-      heappushpop = function heappushpop(array, item, cmp) {
+      heappushpop = function (array, item, cmp) {
         var _ref;
 
         if (cmp == null) {
@@ -7758,7 +7760,7 @@
        */
 
 
-      heapify = function heapify(array, cmp) {
+      heapify = function (array, cmp) {
         var i, _i, _len, _ref1, _results, _results1;
 
         if (cmp == null) {
@@ -7791,7 +7793,7 @@
        */
 
 
-      updateItem = function updateItem(array, item, cmp) {
+      updateItem = function (array, item, cmp) {
         var pos;
 
         if (cmp == null) {
@@ -7813,7 +7815,7 @@
        */
 
 
-      nlargest = function nlargest(array, n, cmp) {
+      nlargest = function (array, n, cmp) {
         var elem, result, _i, _len, _ref;
 
         if (cmp == null) {
@@ -7841,7 +7843,7 @@
        */
 
 
-      nsmallest = function nsmallest(array, n, cmp) {
+      nsmallest = function (array, n, cmp) {
         var elem, i, los, result, _i, _j, _len, _ref, _ref1, _results;
 
         if (cmp == null) {
@@ -7881,7 +7883,7 @@
         return _results;
       };
 
-      _siftdown = function _siftdown(array, startpos, pos, cmp) {
+      _siftdown = function (array, startpos, pos, cmp) {
         var newitem, parent, parentpos;
 
         if (cmp == null) {
@@ -7906,7 +7908,7 @@
         return array[pos] = newitem;
       };
 
-      _siftup = function _siftup(array, pos, cmp) {
+      _siftup = function (array, pos, cmp) {
         var childpos, endpos, newitem, rightpos, startpos;
 
         if (cmp == null) {
@@ -8186,8 +8188,7 @@
    */
 
 
-  function agnes(data) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  function agnes(data, options = {}) {
     const {
       distanceFunction = euclidean,
       method = 'complete',
@@ -8240,7 +8241,7 @@
           break;
 
         default:
-          throw new RangeError("unknown clustering method: ".concat(method));
+          throw new RangeError(`unknown clustering method: ${method}`);
       }
     } else if (typeof method !== 'function') {
       throw new TypeError('method must be a string or function');
@@ -8333,8 +8334,7 @@
   const defaultOptions$4 = {
     distanceFunction: squaredEuclidean
   };
-  function nearestVector(listVectors, vector) {
-    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : defaultOptions$4;
+  function nearestVector(listVectors, vector, options = defaultOptions$4) {
     const distanceFunction = options.distanceFunction || defaultOptions$4.distanceFunction;
     const similarityFunction = options.similarityFunction || defaultOptions$4.similarityFunction;
     let vectorIndex = -1;
@@ -8500,8 +8500,7 @@
   }
 
   class XSadd {
-    constructor() {
-      let seed = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Date.now();
+    constructor(seed = Date.now()) {
       this.state = new Uint32Array(4);
       this.init(seed);
       this.random = this.getFloat.bind(this);
@@ -8572,9 +8571,7 @@
 
   const PROB_TOLERANCE = 0.00000001;
 
-  function randomChoice(values) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-    let random = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : Math.random;
+  function randomChoice(values, options = {}, random = Math.random) {
     const {
       size = 1,
       replace = false,
@@ -8606,7 +8603,7 @@
       }
 
       if (Math.abs(1 - cumSum[cumSum.length - 1]) > PROB_TOLERANCE) {
-        throw new Error("probabilities should sum to 1, but instead sums to ".concat(cumSum[cumSum.length - 1]));
+        throw new Error(`probabilities should sum to 1, but instead sums to ${cumSum[cumSum.length - 1]}`);
       }
     }
 
@@ -8663,9 +8660,7 @@
     /**
      * @param [seedOrRandom=Math.random] - Control the random number generator used by the Random class instance. Pass a random number generator function with a uniform distribution over the half-open interval [0, 1[. If seed will pass it to ml-xsadd to create a seeded random number generator. If undefined will use Math.random.
      */
-    constructor() {
-      let seedOrRandom = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : Math.random;
-
+    constructor(seedOrRandom = Math.random) {
       if (typeof seedOrRandom === 'number') {
         const xsadd = new XSadd(seedOrRandom);
         this.randomGenerator = xsadd.random;
@@ -8808,8 +8803,7 @@
     return ans.map(index => data[index]);
   } // Implementation inspired from scikit
 
-  function kmeanspp(X, K) {
-    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  function kmeanspp(X, K, options = {}) {
     X = new Matrix(X);
     const nSamples = X.rows;
     const random = new Random(options.seed); // Set the number of trials
@@ -9061,7 +9055,7 @@
           break;
 
         default:
-          throw new Error("Unknown initialization method: \"".concat(options.initialization, "\""));
+          throw new Error(`Unknown initialization method: "${options.initialization}"`);
       }
     } // infinite loop until convergence
 
@@ -9367,7 +9361,7 @@
 
     static load(model) {
       if (model.name !== 'MultinomialNB') {
-        throw new RangeError("".concat(model.name, " is not a Multinomial Naive Bayes"));
+        throw new RangeError(`${model.name} is not a Multinomial Naive Bayes`);
       }
 
       return new MultinomialNB(model);
@@ -9378,8 +9372,6 @@
   function matrixLog(i, j) {
     this.set(i, j, Math.log(this.get(i, j)));
   }
-
-
 
   var index$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
@@ -9682,9 +9674,7 @@
      * @param {number} [options.k=numberOfClasses + 1] - Number of neighbors to classify.
      * @param {function} [options.distance=euclideanDistance] - Distance function that takes two parameters.
      */
-    constructor(dataset, labels) {
-      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
+    constructor(dataset, labels, options = {}) {
       if (dataset === true) {
         const model = labels;
         this.kdTree = new KDTree(model.kdTree, options);
@@ -9722,11 +9712,9 @@
      */
 
 
-    static load(model) {
-      let distance = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : euclidean;
-
+    static load(model, distance = euclidean) {
       if (model.name !== 'KNN') {
-        throw new Error("invalid model: ".concat(model.name));
+        throw new Error(`invalid model: ${model.name}`);
       }
 
       if (!model.isEuclidean && distance === euclidean) {
@@ -9837,14 +9825,14 @@
 
   function initializeMatrices(array, isMatrix) {
     if (isMatrix) {
-      for (var i = 0; i < array.length; ++i) {
-        for (var j = 0; j < array[i].length; ++j) {
-          var elem = array[i][j];
+      for (let i = 0; i < array.length; ++i) {
+        for (let j = 0; j < array[i].length; ++j) {
+          let elem = array[i][j];
           array[i][j] = elem !== null ? new Matrix(array[i][j]) : undefined;
         }
       }
     } else {
-      for (i = 0; i < array.length; ++i) {
+      for (let i = 0; i < array.length; ++i) {
         array[i] = new Matrix(array[i]);
       }
     }
@@ -9877,7 +9865,7 @@
         this.scaleMethod = model.scaleMethod;
         this.tolerance = model.tolerance;
       } else {
-        var {
+        let {
           tolerance = 1e-5,
           scale = true
         } = options;
@@ -9930,53 +9918,57 @@
         this.latentVectors = Math.min(trainingSet.rows - 1, trainingSet.columns);
       }
 
-      var rx = trainingSet.rows;
-      var cx = trainingSet.columns;
-      var ry = trainingValues.rows;
-      var cy = trainingValues.columns;
-      var ssqXcal = trainingSet.clone().mul(trainingSet).sum(); // for the r²
+      let rx = trainingSet.rows;
+      let cx = trainingSet.columns;
+      let ry = trainingValues.rows;
+      let cy = trainingValues.columns;
+      let ssqXcal = trainingSet.clone().mul(trainingSet).sum(); // for the r²
 
-      var sumOfSquaresY = trainingValues.clone().mul(trainingValues).sum();
-      var tolerance = this.tolerance;
-      var n = this.latentVectors;
-      var T = Matrix.zeros(rx, n);
-      var P = Matrix.zeros(cx, n);
-      var U = Matrix.zeros(ry, n);
-      var Q = Matrix.zeros(cy, n);
-      var B = Matrix.zeros(n, n);
-      var W = P.clone();
-      var k = 0;
+      let sumOfSquaresY = trainingValues.clone().mul(trainingValues).sum();
+      let tolerance = this.tolerance;
+      let n = this.latentVectors;
+      let T = Matrix.zeros(rx, n);
+      let P = Matrix.zeros(cx, n);
+      let U = Matrix.zeros(ry, n);
+      let Q = Matrix.zeros(cy, n);
+      let B = Matrix.zeros(n, n);
+      let W = P.clone();
+      let k = 0;
+      let t;
+      let w;
+      let q;
+      let p;
 
       while (norm(trainingValues) > tolerance && k < n) {
-        var transposeX = trainingSet.transpose();
-        var transposeY = trainingValues.transpose();
-        var tIndex = maxSumColIndex(trainingSet.clone().mul(trainingSet));
-        var uIndex = maxSumColIndex(trainingValues.clone().mul(trainingValues));
-        var t1 = trainingSet.getColumnVector(tIndex);
-        var u = trainingValues.getColumnVector(uIndex);
-        var t = Matrix.zeros(rx, 1);
+        let transposeX = trainingSet.transpose();
+        let transposeY = trainingValues.transpose();
+        let tIndex = maxSumColIndex(trainingSet.clone().mul(trainingSet));
+        let uIndex = maxSumColIndex(trainingValues.clone().mul(trainingValues));
+        let t1 = trainingSet.getColumnVector(tIndex);
+        let u = trainingValues.getColumnVector(uIndex);
+        t = Matrix.zeros(rx, 1);
 
         while (norm(t1.clone().sub(t)) > tolerance) {
-          var w = transposeX.mmul(u);
+          w = transposeX.mmul(u);
           w.div(norm(w));
           t = t1;
           t1 = trainingSet.mmul(w);
-          var q = transposeY.mmul(t1);
+          q = transposeY.mmul(t1);
           q.div(norm(q));
           u = trainingValues.mmul(q);
         }
 
         t = t1;
-        var num = transposeX.mmul(t);
-        var den = t.transpose().mmul(t).get(0, 0);
-        var p = num.div(den);
-        var pnorm = norm(p);
+        let num = transposeX.mmul(t);
+        let den = t.transpose().mmul(t).get(0, 0);
+        p = num.div(den);
+        let pnorm = norm(p);
         p.div(pnorm);
         t.mul(pnorm);
         w.mul(pnorm);
         num = u.transpose().mmul(t);
         den = t.transpose().mmul(t).get(0, 0);
-        var b = num.div(den).get(0, 0);
+        let b = num.div(den).get(0, 0);
         trainingSet.sub(t.mmul(p.transpose()));
         trainingValues.sub(t.clone().mul(b).mmul(q.transpose()));
         T.setColumn(k, t);
@@ -9994,10 +9986,7 @@
       U = U.subMatrix(0, U.rows - 1, 0, k);
       Q = Q.subMatrix(0, Q.rows - 1, 0, k);
       W = W.subMatrix(0, W.rows - 1, 0, k);
-      B = B.subMatrix(0, k, 0, k); // TODO: review of R2Y
-      // this.R2Y = t.transpose().mmul(t).mul(q[k][0]*q[k][0]).divS(ssqYcal)[0][0];
-      //
-
+      B = B.subMatrix(0, k, 0, k);
       this.ssqYcal = sumOfSquaresY;
       this.E = trainingSet;
       this.F = trainingValues;
@@ -10018,13 +10007,13 @@
 
 
     predict(dataset) {
-      var X = Matrix.checkMatrix(dataset);
+      let X = Matrix.checkMatrix(dataset);
 
       if (this.scale) {
         X = X.subRowVector(this.meanX).divRowVector(this.stdDevX);
       }
 
-      var Y = X.mmul(this.PBQ);
+      let Y = X.mmul(this.PBQ);
       Y = Y.mulRowVector(this.stdDevY).addRowVector(this.meanY);
       return Y;
     }
@@ -10065,7 +10054,7 @@
 
     static load(model) {
       if (model.name !== 'PLS') {
-        throw new RangeError("Invalid model: ".concat(model.name));
+        throw new RangeError(`Invalid model: ${model.name}`);
       }
 
       return new PLS(true, model);
@@ -10090,13 +10079,13 @@
 
   class KOPLS {
     /**
-       * Constructor for Kernel-based Orthogonal Projections to Latent Structures (K-OPLS)
-       * @param {object} options
-       * @param {number} [options.predictiveComponents] - Number of predictive components to use.
-       * @param {number} [options.orthogonalComponents] - Number of Y-Orthogonal components.
-       * @param {Kernel} [options.kernel] - Kernel object to apply, see [ml-kernel](https://github.com/mljs/kernel).
-       * @param {object} model - for load purposes.
-       */
+     * Constructor for Kernel-based Orthogonal Projections to Latent Structures (K-OPLS)
+     * @param {object} options
+     * @param {number} [options.predictiveComponents] - Number of predictive components to use.
+     * @param {number} [options.orthogonalComponents] - Number of Y-Orthogonal components.
+     * @param {Kernel} [options.kernel] - Kernel object to apply, see [ml-kernel](https://github.com/mljs/kernel).
+     * @param {object} model - for load purposes.
+     */
     constructor(options, model) {
       if (options === true) {
         this.trainingSet = new Matrix(model.trainingSet);
@@ -10132,10 +10121,10 @@
       }
     }
     /**
-       * Train the K-OPLS model with the given training set and labels.
-       * @param {Matrix|Array} trainingSet
-       * @param {Matrix|Array} trainingValues
-       */
+     * Train the K-OPLS model with the given training set and labels.
+     * @param {Matrix|Array} trainingSet
+     * @param {Matrix|Array} trainingValues
+     */
 
 
     train(trainingSet, trainingValues) {
@@ -10143,9 +10132,9 @@
       trainingValues = Matrix.checkMatrix(trainingValues); // to save and compute kernel with the prediction dataset.
 
       this.trainingSet = trainingSet.clone();
-      var kernelX = this.kernel.compute(trainingSet);
-      var Identity = Matrix.eye(kernelX.rows, kernelX.rows, 1);
-      var temp = kernelX;
+      let kernelX = this.kernel.compute(trainingSet);
+      let Identity = Matrix.eye(kernelX.rows, kernelX.rows, 1);
+      let temp = kernelX;
       kernelX = new Array(this.orthogonalComp + 1);
 
       for (let i = 0; i < this.orthogonalComp + 1; i++) {
@@ -10153,22 +10142,22 @@
       }
 
       kernelX[0][0] = temp;
-      var result = new SingularValueDecomposition(trainingValues.transpose().mmul(kernelX[0][0]).mmul(trainingValues), {
+      let result = new SingularValueDecomposition(trainingValues.transpose().mmul(kernelX[0][0]).mmul(trainingValues), {
         computeLeftSingularVectors: true,
         computeRightSingularVectors: false
       });
-      var YLoadingMat = result.leftSingularVectors;
-      var Sigma = result.diagonalMatrix;
+      let YLoadingMat = result.leftSingularVectors;
+      let Sigma = result.diagonalMatrix;
       YLoadingMat = YLoadingMat.subMatrix(0, YLoadingMat.rows - 1, 0, this.predictiveComp - 1);
       Sigma = Sigma.subMatrix(0, this.predictiveComp - 1, 0, this.predictiveComp - 1);
-      var YScoreMat = trainingValues.mmul(YLoadingMat);
-      var predScoreMat = new Array(this.orthogonalComp + 1);
-      var TURegressionCoeff = new Array(this.orthogonalComp + 1);
-      var YOrthScoreMat = new Array(this.orthogonalComp);
-      var YOrthLoadingVec = new Array(this.orthogonalComp);
-      var YOrthEigen = new Array(this.orthogonalComp);
-      var YOrthScoreNorm = new Array(this.orthogonalComp);
-      var SigmaPow = Matrix.pow(Sigma, -0.5); // to avoid errors, check infinity
+      let YScoreMat = trainingValues.mmul(YLoadingMat);
+      let predScoreMat = new Array(this.orthogonalComp + 1);
+      let TURegressionCoeff = new Array(this.orthogonalComp + 1);
+      let YOrthScoreMat = new Array(this.orthogonalComp);
+      let YOrthLoadingVec = new Array(this.orthogonalComp);
+      let YOrthEigen = new Array(this.orthogonalComp);
+      let YOrthScoreNorm = new Array(this.orthogonalComp);
+      let SigmaPow = Matrix.pow(Sigma, -0.5); // to avoid errors, check infinity
 
       SigmaPow.apply(function (i, j) {
         if (this.get(i, j) === Infinity) {
@@ -10176,29 +10165,29 @@
         }
       });
 
-      for (var i = 0; i < this.orthogonalComp; ++i) {
+      for (let i = 0; i < this.orthogonalComp; ++i) {
         predScoreMat[i] = kernelX[0][i].transpose().mmul(YScoreMat).mmul(SigmaPow);
-        var TpiPrime = predScoreMat[i].transpose();
+        let TpiPrime = predScoreMat[i].transpose();
         TURegressionCoeff[i] = inverse(TpiPrime.mmul(predScoreMat[i])).mmul(TpiPrime).mmul(YScoreMat);
         result = new SingularValueDecomposition(TpiPrime.mmul(Matrix.sub(kernelX[i][i], predScoreMat[i].mmul(TpiPrime))).mmul(predScoreMat[i]), {
           computeLeftSingularVectors: true,
           computeRightSingularVectors: false
         });
-        var CoTemp = result.leftSingularVectors;
-        var SoTemp = result.diagonalMatrix;
+        let CoTemp = result.leftSingularVectors;
+        let SoTemp = result.diagonalMatrix;
         YOrthLoadingVec[i] = CoTemp.subMatrix(0, CoTemp.rows - 1, 0, 0);
         YOrthEigen[i] = SoTemp.get(0, 0);
         YOrthScoreMat[i] = Matrix.sub(kernelX[i][i], predScoreMat[i].mmul(TpiPrime)).mmul(predScoreMat[i]).mmul(YOrthLoadingVec[i]).mul(Math.pow(YOrthEigen[i], -0.5));
-        var toiPrime = YOrthScoreMat[i].transpose();
+        let toiPrime = YOrthScoreMat[i].transpose();
         YOrthScoreNorm[i] = Matrix.sqrt(toiPrime.mmul(YOrthScoreMat[i]));
         YOrthScoreMat[i] = YOrthScoreMat[i].divRowVector(YOrthScoreNorm[i]);
-        var ITo = Matrix.sub(Identity, YOrthScoreMat[i].mmul(YOrthScoreMat[i].transpose()));
+        let ITo = Matrix.sub(Identity, YOrthScoreMat[i].mmul(YOrthScoreMat[i].transpose()));
         kernelX[0][i + 1] = kernelX[0][i].mmul(ITo);
         kernelX[i + 1][i + 1] = ITo.mmul(kernelX[i][i]).mmul(ITo);
       }
 
-      var lastScoreMat = predScoreMat[this.orthogonalComp] = kernelX[0][this.orthogonalComp].transpose().mmul(YScoreMat).mmul(SigmaPow);
-      var lastTpPrime = lastScoreMat.transpose();
+      let lastScoreMat = predScoreMat[this.orthogonalComp] = kernelX[0][this.orthogonalComp].transpose().mmul(YScoreMat).mmul(SigmaPow);
+      let lastTpPrime = lastScoreMat.transpose();
       TURegressionCoeff[this.orthogonalComp] = inverse(lastTpPrime.mmul(lastScoreMat)).mmul(lastTpPrime).mmul(YScoreMat);
       this.YLoadingMat = YLoadingMat;
       this.SigmaPow = SigmaPow;
@@ -10212,15 +10201,15 @@
       this.kernelX = kernelX;
     }
     /**
-       * Predicts the output given the matrix to predict.
-       * @param {Matrix|Array} toPredict
-       * @return {{y: Matrix, predScoreMat: Array<Matrix>, predYOrthVectors: Array<Matrix>}} predictions
-       */
+     * Predicts the output given the matrix to predict.
+     * @param {Matrix|Array} toPredict
+     * @return {{y: Matrix, predScoreMat: Array<Matrix>, predYOrthVectors: Array<Matrix>}} predictions
+     */
 
 
     predict(toPredict) {
-      var KTestTrain = this.kernel.compute(toPredict, this.trainingSet);
-      var temp = KTestTrain;
+      let KTestTrain = this.kernel.compute(toPredict, this.trainingSet);
+      let temp = KTestTrain;
       KTestTrain = new Array(this.orthogonalComp + 1);
 
       for (let i = 0; i < this.orthogonalComp + 1; i++) {
@@ -10228,24 +10217,24 @@
       }
 
       KTestTrain[0][0] = temp;
-      var YOrthScoreVector = new Array(this.orthogonalComp);
-      var predScoreMat = new Array(this.orthogonalComp);
-      var i;
+      let YOrthScoreVector = new Array(this.orthogonalComp);
+      let predScoreMat = new Array(this.orthogonalComp);
+      let i;
 
       for (i = 0; i < this.orthogonalComp; ++i) {
         predScoreMat[i] = KTestTrain[i][0].mmul(this.YScoreMat).mmul(this.SigmaPow);
         YOrthScoreVector[i] = Matrix.sub(KTestTrain[i][i], predScoreMat[i].mmul(this.predScoreMat[i].transpose())).mmul(this.predScoreMat[i]).mmul(this.YOrthLoadingVec[i]).mul(Math.pow(this.YOrthEigen[i], -0.5));
         YOrthScoreVector[i] = YOrthScoreVector[i].divRowVector(this.toNorm[i]);
-        var scoreMatPrime = this.YOrthScoreMat[i].transpose();
+        let scoreMatPrime = this.YOrthScoreMat[i].transpose();
         KTestTrain[i + 1][0] = Matrix.sub(KTestTrain[i][0], YOrthScoreVector[i].mmul(scoreMatPrime).mmul(this.kernelX[0][i].transpose()));
-        var p1 = Matrix.sub(KTestTrain[i][0], KTestTrain[i][i].mmul(this.YOrthScoreMat[i]).mmul(scoreMatPrime));
-        var p2 = YOrthScoreVector[i].mmul(scoreMatPrime).mmul(this.kernelX[i][i]);
-        var p3 = p2.mmul(this.YOrthScoreMat[i]).mmul(scoreMatPrime);
+        let p1 = Matrix.sub(KTestTrain[i][0], KTestTrain[i][i].mmul(this.YOrthScoreMat[i]).mmul(scoreMatPrime));
+        let p2 = YOrthScoreVector[i].mmul(scoreMatPrime).mmul(this.kernelX[i][i]);
+        let p3 = p2.mmul(this.YOrthScoreMat[i]).mmul(scoreMatPrime);
         KTestTrain[i + 1][i + 1] = p1.sub(p2).add(p3);
       }
 
       predScoreMat[i] = KTestTrain[i][0].mmul(this.YScoreMat).mmul(this.SigmaPow);
-      var prediction = predScoreMat[i].mmul(this.TURegressionCoeff[i]).mmul(this.YLoadingMat.transpose());
+      let prediction = predScoreMat[i].mmul(this.TURegressionCoeff[i]).mmul(this.YLoadingMat.transpose());
       return {
         prediction: prediction,
         predScoreMat: predScoreMat,
@@ -10253,9 +10242,9 @@
       };
     }
     /**
-       * Export the current model to JSON.
-       * @return {object} - Current model.
-       */
+     * Export the current model to JSON.
+     * @return {object} - Current model.
+     */
 
 
     toJSON() {
@@ -10277,16 +10266,16 @@
       };
     }
     /**
-       * Load a K-OPLS with the given model.
-       * @param {object} model
-       * @param {Kernel} kernel - kernel used on the model, see [ml-kernel](https://github.com/mljs/kernel).
-       * @return {KOPLS}
-       */
+     * Load a K-OPLS with the given model.
+     * @param {object} model
+     * @param {Kernel} kernel - kernel used on the model, see [ml-kernel](https://github.com/mljs/kernel).
+     * @return {KOPLS}
+     */
 
 
     static load(model, kernel) {
       if (model.name !== 'K-OPLS') {
-        throw new RangeError("Invalid model: ".concat(model.name));
+        throw new RangeError(`Invalid model: ${model.name}`);
       }
 
       if (!kernel) {
@@ -10335,9 +10324,7 @@
      */
 
 
-    static fromLabels(actual, predicted) {
-      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
+    static fromLabels(actual, predicted, options = {}) {
       if (predicted.length !== actual.length) {
         throw new Error('predicted and actual must have the same length');
       }
@@ -10399,8 +10386,8 @@
     getTotalCount() {
       let predicted = 0;
 
-      for (var i = 0; i < this.matrix.length; i++) {
-        for (var j = 0; j < this.matrix.length; j++) {
+      for (let i = 0; i < this.matrix.length; i++) {
+        for (let j = 0; j < this.matrix.length; j++) {
           predicted += this.matrix[i][j];
         }
       }
@@ -10414,9 +10401,9 @@
 
 
     getTrueCount() {
-      var count = 0;
+      let count = 0;
 
-      for (var i = 0; i < this.matrix.length; i++) {
+      for (let i = 0; i < this.matrix.length; i++) {
         count += this.matrix[i][i];
       }
 
@@ -10451,10 +10438,10 @@
 
     getTrueNegativeCount(label) {
       const index = this.getIndex(label);
-      var count = 0;
+      let count = 0;
 
-      for (var i = 0; i < this.matrix.length; i++) {
-        for (var j = 0; j < this.matrix.length; j++) {
+      for (let i = 0; i < this.matrix.length; i++) {
+        for (let j = 0; j < this.matrix.length; j++) {
           if (i !== index && j !== index) {
             count += this.matrix[i][j];
           }
@@ -10472,9 +10459,9 @@
 
     getFalsePositiveCount(label) {
       const index = this.getIndex(label);
-      var count = 0;
+      let count = 0;
 
-      for (var i = 0; i < this.matrix.length; i++) {
+      for (let i = 0; i < this.matrix.length; i++) {
         if (i !== index) {
           count += this.matrix[i][index];
         }
@@ -10491,9 +10478,9 @@
 
     getFalseNegativeCount(label) {
       const index = this.getIndex(label);
-      var count = 0;
+      let count = 0;
 
-      for (var i = 0; i < this.matrix.length; i++) {
+      for (let i = 0; i < this.matrix.length; i++) {
         if (i !== index) {
           count += this.matrix[index][i];
         }
@@ -10693,8 +10680,8 @@
       let correct = 0;
       let incorrect = 0;
 
-      for (var i = 0; i < this.matrix.length; i++) {
-        for (var j = 0; j < this.matrix.length; j++) {
+      for (let i = 0; i < this.matrix.length; i++) {
+        for (let j = 0; j < this.matrix.length; j++) {
           if (i === j) correct += this.matrix[i][j];else incorrect += this.matrix[i][j];
         }
       }
@@ -10737,111 +10724,1008 @@
 
   }
 
-  var src$1 = ConfusionMatrix;
+  var lib = createCommonjsModule(function (module, exports) {
+    (function (global, factory) {
+       factory() ;
+    })(commonjsGlobal, function () {
 
-  const defaultOptions$6 = {
-    mode: 'index'
-  };
-
-  var src$2 = function* src(M, N, options) {
-    options = Object.assign({}, defaultOptions$6, options);
-    var a = new Array(N);
-    var c = new Array(M);
-    var b = new Array(N);
-    var p = new Array(N + 2);
-    var x, y, z; // init a and b
-
-    for (var i = 0; i < N; i++) {
-      a[i] = i;
-      if (i < N - M) b[i] = 0;else b[i] = 1;
-    } // init c
-
-
-    for (i = 0; i < M; i++) {
-      c[i] = N - M + i;
-    } // init p
-
-
-    for (i = 0; i < p.length; i++) {
-      if (i === 0) p[i] = N + 1;else if (i <= N - M) p[i] = 0;else if (i <= N) p[i] = i - N + M;else p[i] = -2;
-    }
-
-    function twiddle() {
-      var i, j, k;
-      j = 1;
-
-      while (p[j] <= 0) {
-        j++;
+      function createCommonjsModule(fn, module) {
+        return module = {
+          exports: {}
+        }, fn(module, module.exports), module.exports;
       }
 
-      if (p[j - 1] === 0) {
-        for (i = j - 1; i !== 1; i--) {
-          p[i] = -1;
-        }
+      var runtime = createCommonjsModule(function (module) {
+        /**
+         * Copyright (c) 2014-present, Facebook, Inc.
+         *
+         * This source code is licensed under the MIT license found in the
+         * LICENSE file in the root directory of this source tree.
+         */
+        !function (global) {
+          var Op = Object.prototype;
+          var hasOwn = Op.hasOwnProperty;
+          var undefined$1; // More compressible than void 0.
 
-        p[j] = 0;
-        x = z = 0;
-        p[1] = 1;
-        y = j - 1;
-      } else {
-        if (j > 1) {
-          p[j - 1] = 0;
-        }
+          var $Symbol = typeof Symbol === "function" ? Symbol : {};
+          var iteratorSymbol = $Symbol.iterator || "@@iterator";
+          var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
+          var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
+          var runtime = global.regeneratorRuntime;
 
-        do {
-          j++;
-        } while (p[j] > 0);
+          if (runtime) {
+            {
+              // If regeneratorRuntime is defined globally and we're in a module,
+              // make the exports object identical to regeneratorRuntime.
+              module.exports = runtime;
+            } // Don't bother evaluating the rest of this file if the runtime was
+            // already defined globally.
 
-        k = j - 1;
-        i = j;
+            return;
+          } // Define the runtime globally (as expected by generated code) as either
+          // module.exports (if we're in a module) or a new, empty object.
 
-        while (p[i] === 0) {
-          p[i++] = -1;
-        }
 
-        if (p[i] === -1) {
-          p[i] = p[k];
-          z = p[k] - 1;
-          x = i - 1;
-          y = k - 1;
-          p[k] = -1;
-        } else {
-          if (i === p[0]) {
-            return 0;
-          } else {
-            p[j] = p[i];
-            z = p[i] - 1;
-            p[i] = 0;
-            x = j - 1;
-            y = i - 1;
+          runtime = global.regeneratorRuntime = module.exports;
+
+          function wrap(innerFn, outerFn, self, tryLocsList) {
+            // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
+            var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
+            var generator = Object.create(protoGenerator.prototype);
+            var context = new Context(tryLocsList || []); // The ._invoke method unifies the implementations of the .next,
+            // .throw, and .return methods.
+
+            generator._invoke = makeInvokeMethod(innerFn, self, context);
+            return generator;
           }
+
+          runtime.wrap = wrap; // Try/catch helper to minimize deoptimizations. Returns a completion
+          // record like context.tryEntries[i].completion. This interface could
+          // have been (and was previously) designed to take a closure to be
+          // invoked without arguments, but in all the cases we care about we
+          // already have an existing method we want to call, so there's no need
+          // to create a new function object. We can even get away with assuming
+          // the method takes exactly one argument, since that happens to be true
+          // in every case, so we don't have to touch the arguments object. The
+          // only additional allocation required is the completion record, which
+          // has a stable shape and so hopefully should be cheap to allocate.
+
+          function tryCatch(fn, obj, arg) {
+            try {
+              return {
+                type: "normal",
+                arg: fn.call(obj, arg)
+              };
+            } catch (err) {
+              return {
+                type: "throw",
+                arg: err
+              };
+            }
+          }
+
+          var GenStateSuspendedStart = "suspendedStart";
+          var GenStateSuspendedYield = "suspendedYield";
+          var GenStateExecuting = "executing";
+          var GenStateCompleted = "completed"; // Returning this object from the innerFn has the same effect as
+          // breaking out of the dispatch switch statement.
+
+          var ContinueSentinel = {}; // Dummy constructor functions that we use as the .constructor and
+          // .constructor.prototype properties for functions that return Generator
+          // objects. For full spec compliance, you may wish to configure your
+          // minifier not to mangle the names of these two functions.
+
+          function Generator() {}
+
+          function GeneratorFunction() {}
+
+          function GeneratorFunctionPrototype() {} // This is a polyfill for %IteratorPrototype% for environments that
+          // don't natively support it.
+
+
+          var IteratorPrototype = {};
+
+          IteratorPrototype[iteratorSymbol] = function () {
+            return this;
+          };
+
+          var getProto = Object.getPrototypeOf;
+          var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
+
+          if (NativeIteratorPrototype && NativeIteratorPrototype !== Op && hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
+            // This environment has a native %IteratorPrototype%; use it instead
+            // of the polyfill.
+            IteratorPrototype = NativeIteratorPrototype;
+          }
+
+          var Gp = GeneratorFunctionPrototype.prototype = Generator.prototype = Object.create(IteratorPrototype);
+          GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
+          GeneratorFunctionPrototype.constructor = GeneratorFunction;
+          GeneratorFunctionPrototype[toStringTagSymbol] = GeneratorFunction.displayName = "GeneratorFunction"; // Helper for defining the .next, .throw, and .return methods of the
+          // Iterator interface in terms of a single ._invoke method.
+
+          function defineIteratorMethods(prototype) {
+            ["next", "throw", "return"].forEach(function (method) {
+              prototype[method] = function (arg) {
+                return this._invoke(method, arg);
+              };
+            });
+          }
+
+          runtime.isGeneratorFunction = function (genFun) {
+            var ctor = typeof genFun === "function" && genFun.constructor;
+            return ctor ? ctor === GeneratorFunction || // For the native GeneratorFunction constructor, the best we can
+            // do is to check its .name property.
+            (ctor.displayName || ctor.name) === "GeneratorFunction" : false;
+          };
+
+          runtime.mark = function (genFun) {
+            if (Object.setPrototypeOf) {
+              Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
+            } else {
+              genFun.__proto__ = GeneratorFunctionPrototype;
+
+              if (!(toStringTagSymbol in genFun)) {
+                genFun[toStringTagSymbol] = "GeneratorFunction";
+              }
+            }
+
+            genFun.prototype = Object.create(Gp);
+            return genFun;
+          }; // Within the body of any async function, `await x` is transformed to
+          // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
+          // `hasOwn.call(value, "__await")` to determine if the yielded value is
+          // meant to be awaited.
+
+
+          runtime.awrap = function (arg) {
+            return {
+              __await: arg
+            };
+          };
+
+          function AsyncIterator(generator) {
+            function invoke(method, arg, resolve, reject) {
+              var record = tryCatch(generator[method], generator, arg);
+
+              if (record.type === "throw") {
+                reject(record.arg);
+              } else {
+                var result = record.arg;
+                var value = result.value;
+
+                if (value && typeof value === "object" && hasOwn.call(value, "__await")) {
+                  return Promise.resolve(value.__await).then(function (value) {
+                    invoke("next", value, resolve, reject);
+                  }, function (err) {
+                    invoke("throw", err, resolve, reject);
+                  });
+                }
+
+                return Promise.resolve(value).then(function (unwrapped) {
+                  // When a yielded Promise is resolved, its final value becomes
+                  // the .value of the Promise<{value,done}> result for the
+                  // current iteration. If the Promise is rejected, however, the
+                  // result for this iteration will be rejected with the same
+                  // reason. Note that rejections of yielded Promises are not
+                  // thrown back into the generator function, as is the case
+                  // when an awaited Promise is rejected. This difference in
+                  // behavior between yield and await is important, because it
+                  // allows the consumer to decide what to do with the yielded
+                  // rejection (swallow it and continue, manually .throw it back
+                  // into the generator, abandon iteration, whatever). With
+                  // await, by contrast, there is no opportunity to examine the
+                  // rejection reason outside the generator function, so the
+                  // only option is to throw it from the await expression, and
+                  // let the generator function handle the exception.
+                  result.value = unwrapped;
+                  resolve(result);
+                }, reject);
+              }
+            }
+
+            var previousPromise;
+
+            function enqueue(method, arg) {
+              function callInvokeWithMethodAndArg() {
+                return new Promise(function (resolve, reject) {
+                  invoke(method, arg, resolve, reject);
+                });
+              }
+
+              return previousPromise = // If enqueue has been called before, then we want to wait until
+              // all previous Promises have been resolved before calling invoke,
+              // so that results are always delivered in the correct order. If
+              // enqueue has not been called before, then it is important to
+              // call invoke immediately, without waiting on a callback to fire,
+              // so that the async generator function has the opportunity to do
+              // any necessary setup in a predictable way. This predictability
+              // is why the Promise constructor synchronously invokes its
+              // executor callback, and why async functions synchronously
+              // execute code before the first await. Since we implement simple
+              // async functions in terms of async generators, it is especially
+              // important to get this right, even though it requires care.
+              previousPromise ? previousPromise.then(callInvokeWithMethodAndArg, // Avoid propagating failures to Promises returned by later
+              // invocations of the iterator.
+              callInvokeWithMethodAndArg) : callInvokeWithMethodAndArg();
+            } // Define the unified helper method that is used to implement .next,
+            // .throw, and .return (see defineIteratorMethods).
+
+
+            this._invoke = enqueue;
+          }
+
+          defineIteratorMethods(AsyncIterator.prototype);
+
+          AsyncIterator.prototype[asyncIteratorSymbol] = function () {
+            return this;
+          };
+
+          runtime.AsyncIterator = AsyncIterator; // Note that simple async functions are implemented on top of
+          // AsyncIterator objects; they just return a Promise for the value of
+          // the final result produced by the iterator.
+
+          runtime.async = function (innerFn, outerFn, self, tryLocsList) {
+            var iter = new AsyncIterator(wrap(innerFn, outerFn, self, tryLocsList));
+            return runtime.isGeneratorFunction(outerFn) ? iter // If outerFn is a generator, return the full iterator.
+            : iter.next().then(function (result) {
+              return result.done ? result.value : iter.next();
+            });
+          };
+
+          function makeInvokeMethod(innerFn, self, context) {
+            var state = GenStateSuspendedStart;
+            return function invoke(method, arg) {
+              if (state === GenStateExecuting) {
+                throw new Error("Generator is already running");
+              }
+
+              if (state === GenStateCompleted) {
+                if (method === "throw") {
+                  throw arg;
+                } // Be forgiving, per 25.3.3.3.3 of the spec:
+                // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
+
+
+                return doneResult();
+              }
+
+              context.method = method;
+              context.arg = arg;
+
+              while (true) {
+                var delegate = context.delegate;
+
+                if (delegate) {
+                  var delegateResult = maybeInvokeDelegate(delegate, context);
+
+                  if (delegateResult) {
+                    if (delegateResult === ContinueSentinel) continue;
+                    return delegateResult;
+                  }
+                }
+
+                if (context.method === "next") {
+                  // Setting context._sent for legacy support of Babel's
+                  // function.sent implementation.
+                  context.sent = context._sent = context.arg;
+                } else if (context.method === "throw") {
+                  if (state === GenStateSuspendedStart) {
+                    state = GenStateCompleted;
+                    throw context.arg;
+                  }
+
+                  context.dispatchException(context.arg);
+                } else if (context.method === "return") {
+                  context.abrupt("return", context.arg);
+                }
+
+                state = GenStateExecuting;
+                var record = tryCatch(innerFn, self, context);
+
+                if (record.type === "normal") {
+                  // If an exception is thrown from innerFn, we leave state ===
+                  // GenStateExecuting and loop back for another invocation.
+                  state = context.done ? GenStateCompleted : GenStateSuspendedYield;
+
+                  if (record.arg === ContinueSentinel) {
+                    continue;
+                  }
+
+                  return {
+                    value: record.arg,
+                    done: context.done
+                  };
+                } else if (record.type === "throw") {
+                  state = GenStateCompleted; // Dispatch the exception by looping back around to the
+                  // context.dispatchException(context.arg) call above.
+
+                  context.method = "throw";
+                  context.arg = record.arg;
+                }
+              }
+            };
+          } // Call delegate.iterator[context.method](context.arg) and handle the
+          // result, either by returning a { value, done } result from the
+          // delegate iterator, or by modifying context.method and context.arg,
+          // setting context.delegate to null, and returning the ContinueSentinel.
+
+
+          function maybeInvokeDelegate(delegate, context) {
+            var method = delegate.iterator[context.method];
+
+            if (method === undefined$1) {
+              // A .throw or .return when the delegate iterator has no .throw
+              // method always terminates the yield* loop.
+              context.delegate = null;
+
+              if (context.method === "throw") {
+                if (delegate.iterator.return) {
+                  // If the delegate iterator has a return method, give it a
+                  // chance to clean up.
+                  context.method = "return";
+                  context.arg = undefined$1;
+                  maybeInvokeDelegate(delegate, context);
+
+                  if (context.method === "throw") {
+                    // If maybeInvokeDelegate(context) changed context.method from
+                    // "return" to "throw", let that override the TypeError below.
+                    return ContinueSentinel;
+                  }
+                }
+
+                context.method = "throw";
+                context.arg = new TypeError("The iterator does not provide a 'throw' method");
+              }
+
+              return ContinueSentinel;
+            }
+
+            var record = tryCatch(method, delegate.iterator, context.arg);
+
+            if (record.type === "throw") {
+              context.method = "throw";
+              context.arg = record.arg;
+              context.delegate = null;
+              return ContinueSentinel;
+            }
+
+            var info = record.arg;
+
+            if (!info) {
+              context.method = "throw";
+              context.arg = new TypeError("iterator result is not an object");
+              context.delegate = null;
+              return ContinueSentinel;
+            }
+
+            if (info.done) {
+              // Assign the result of the finished delegate to the temporary
+              // variable specified by delegate.resultName (see delegateYield).
+              context[delegate.resultName] = info.value; // Resume execution at the desired location (see delegateYield).
+
+              context.next = delegate.nextLoc; // If context.method was "throw" but the delegate handled the
+              // exception, let the outer generator proceed normally. If
+              // context.method was "next", forget context.arg since it has been
+              // "consumed" by the delegate iterator. If context.method was
+              // "return", allow the original .return call to continue in the
+              // outer generator.
+
+              if (context.method !== "return") {
+                context.method = "next";
+                context.arg = undefined$1;
+              }
+            } else {
+              // Re-yield the result returned by the delegate method.
+              return info;
+            } // The delegate iterator is finished, so forget it and continue with
+            // the outer generator.
+
+
+            context.delegate = null;
+            return ContinueSentinel;
+          } // Define Generator.prototype.{next,throw,return} in terms of the
+          // unified ._invoke helper method.
+
+
+          defineIteratorMethods(Gp);
+          Gp[toStringTagSymbol] = "Generator"; // A Generator should always return itself as the iterator object when the
+          // @@iterator function is called on it. Some browsers' implementations of the
+          // iterator prototype chain incorrectly implement this, causing the Generator
+          // object to not be returned from this call. This ensures that doesn't happen.
+          // See https://github.com/facebook/regenerator/issues/274 for more details.
+
+          Gp[iteratorSymbol] = function () {
+            return this;
+          };
+
+          Gp.toString = function () {
+            return "[object Generator]";
+          };
+
+          function pushTryEntry(locs) {
+            var entry = {
+              tryLoc: locs[0]
+            };
+
+            if (1 in locs) {
+              entry.catchLoc = locs[1];
+            }
+
+            if (2 in locs) {
+              entry.finallyLoc = locs[2];
+              entry.afterLoc = locs[3];
+            }
+
+            this.tryEntries.push(entry);
+          }
+
+          function resetTryEntry(entry) {
+            var record = entry.completion || {};
+            record.type = "normal";
+            delete record.arg;
+            entry.completion = record;
+          }
+
+          function Context(tryLocsList) {
+            // The root entry object (effectively a try statement without a catch
+            // or a finally block) gives us a place to store values thrown from
+            // locations where there is no enclosing try statement.
+            this.tryEntries = [{
+              tryLoc: "root"
+            }];
+            tryLocsList.forEach(pushTryEntry, this);
+            this.reset(true);
+          }
+
+          runtime.keys = function (object) {
+            var keys = [];
+
+            for (var key in object) {
+              keys.push(key);
+            }
+
+            keys.reverse(); // Rather than returning an object with a next method, we keep
+            // things simple and return the next function itself.
+
+            return function next() {
+              while (keys.length) {
+                var key = keys.pop();
+
+                if (key in object) {
+                  next.value = key;
+                  next.done = false;
+                  return next;
+                }
+              } // To avoid creating an additional object, we just hang the .value
+              // and .done properties off the next function object itself. This
+              // also ensures that the minifier will not anonymize the function.
+
+
+              next.done = true;
+              return next;
+            };
+          };
+
+          function values(iterable) {
+            if (iterable) {
+              var iteratorMethod = iterable[iteratorSymbol];
+
+              if (iteratorMethod) {
+                return iteratorMethod.call(iterable);
+              }
+
+              if (typeof iterable.next === "function") {
+                return iterable;
+              }
+
+              if (!isNaN(iterable.length)) {
+                var i = -1,
+                    next = function next() {
+                  while (++i < iterable.length) {
+                    if (hasOwn.call(iterable, i)) {
+                      next.value = iterable[i];
+                      next.done = false;
+                      return next;
+                    }
+                  }
+
+                  next.value = undefined$1;
+                  next.done = true;
+                  return next;
+                };
+
+                return next.next = next;
+              }
+            } // Return an iterator with no values.
+
+
+            return {
+              next: doneResult
+            };
+          }
+
+          runtime.values = values;
+
+          function doneResult() {
+            return {
+              value: undefined$1,
+              done: true
+            };
+          }
+
+          Context.prototype = {
+            constructor: Context,
+            reset: function (skipTempReset) {
+              this.prev = 0;
+              this.next = 0; // Resetting context._sent for legacy support of Babel's
+              // function.sent implementation.
+
+              this.sent = this._sent = undefined$1;
+              this.done = false;
+              this.delegate = null;
+              this.method = "next";
+              this.arg = undefined$1;
+              this.tryEntries.forEach(resetTryEntry);
+
+              if (!skipTempReset) {
+                for (var name in this) {
+                  // Not sure about the optimal order of these conditions:
+                  if (name.charAt(0) === "t" && hasOwn.call(this, name) && !isNaN(+name.slice(1))) {
+                    this[name] = undefined$1;
+                  }
+                }
+              }
+            },
+            stop: function () {
+              this.done = true;
+              var rootEntry = this.tryEntries[0];
+              var rootRecord = rootEntry.completion;
+
+              if (rootRecord.type === "throw") {
+                throw rootRecord.arg;
+              }
+
+              return this.rval;
+            },
+            dispatchException: function (exception) {
+              if (this.done) {
+                throw exception;
+              }
+
+              var context = this;
+
+              function handle(loc, caught) {
+                record.type = "throw";
+                record.arg = exception;
+                context.next = loc;
+
+                if (caught) {
+                  // If the dispatched exception was caught by a catch block,
+                  // then let that catch block handle the exception normally.
+                  context.method = "next";
+                  context.arg = undefined$1;
+                }
+
+                return !!caught;
+              }
+
+              for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+                var entry = this.tryEntries[i];
+                var record = entry.completion;
+
+                if (entry.tryLoc === "root") {
+                  // Exception thrown outside of any try block that could handle
+                  // it, so set the completion value of the entire function to
+                  // throw the exception.
+                  return handle("end");
+                }
+
+                if (entry.tryLoc <= this.prev) {
+                  var hasCatch = hasOwn.call(entry, "catchLoc");
+                  var hasFinally = hasOwn.call(entry, "finallyLoc");
+
+                  if (hasCatch && hasFinally) {
+                    if (this.prev < entry.catchLoc) {
+                      return handle(entry.catchLoc, true);
+                    } else if (this.prev < entry.finallyLoc) {
+                      return handle(entry.finallyLoc);
+                    }
+                  } else if (hasCatch) {
+                    if (this.prev < entry.catchLoc) {
+                      return handle(entry.catchLoc, true);
+                    }
+                  } else if (hasFinally) {
+                    if (this.prev < entry.finallyLoc) {
+                      return handle(entry.finallyLoc);
+                    }
+                  } else {
+                    throw new Error("try statement without catch or finally");
+                  }
+                }
+              }
+            },
+            abrupt: function (type, arg) {
+              for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+                var entry = this.tryEntries[i];
+
+                if (entry.tryLoc <= this.prev && hasOwn.call(entry, "finallyLoc") && this.prev < entry.finallyLoc) {
+                  var finallyEntry = entry;
+                  break;
+                }
+              }
+
+              if (finallyEntry && (type === "break" || type === "continue") && finallyEntry.tryLoc <= arg && arg <= finallyEntry.finallyLoc) {
+                // Ignore the finally entry if control is not jumping to a
+                // location outside the try/catch block.
+                finallyEntry = null;
+              }
+
+              var record = finallyEntry ? finallyEntry.completion : {};
+              record.type = type;
+              record.arg = arg;
+
+              if (finallyEntry) {
+                this.method = "next";
+                this.next = finallyEntry.finallyLoc;
+                return ContinueSentinel;
+              }
+
+              return this.complete(record);
+            },
+            complete: function (record, afterLoc) {
+              if (record.type === "throw") {
+                throw record.arg;
+              }
+
+              if (record.type === "break" || record.type === "continue") {
+                this.next = record.arg;
+              } else if (record.type === "return") {
+                this.rval = this.arg = record.arg;
+                this.method = "return";
+                this.next = "end";
+              } else if (record.type === "normal" && afterLoc) {
+                this.next = afterLoc;
+              }
+
+              return ContinueSentinel;
+            },
+            finish: function (finallyLoc) {
+              for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+                var entry = this.tryEntries[i];
+
+                if (entry.finallyLoc === finallyLoc) {
+                  this.complete(entry.completion, entry.afterLoc);
+                  resetTryEntry(entry);
+                  return ContinueSentinel;
+                }
+              }
+            },
+            "catch": function (tryLoc) {
+              for (var i = this.tryEntries.length - 1; i >= 0; --i) {
+                var entry = this.tryEntries[i];
+
+                if (entry.tryLoc === tryLoc) {
+                  var record = entry.completion;
+
+                  if (record.type === "throw") {
+                    var thrown = record.arg;
+                    resetTryEntry(entry);
+                  }
+
+                  return thrown;
+                }
+              } // The context.catch method must only be called with a location
+              // argument that corresponds to a known catch block.
+
+
+              throw new Error("illegal catch attempt");
+            },
+            delegateYield: function (iterable, resultName, nextLoc) {
+              this.delegate = {
+                iterator: values(iterable),
+                resultName: resultName,
+                nextLoc: nextLoc
+              };
+
+              if (this.method === "next") {
+                // Deliberately forget the last sent value so that we don't
+                // accidentally pass it on to the delegate.
+                this.arg = undefined$1;
+              }
+
+              return ContinueSentinel;
+            }
+          };
+        }( // In sloppy mode, unbound `this` refers to the global object, fallback to
+        // Function constructor if we're in global strict mode. That is sadly a form
+        // of indirect eval which violates Content Security Policy.
+        function () {
+          return this;
+        }() || Function("return this")());
+      });
+      /**
+       * Copyright (c) 2014-present, Facebook, Inc.
+       *
+       * This source code is licensed under the MIT license found in the
+       * LICENSE file in the root directory of this source tree.
+       */
+      // This method of obtaining a reference to the global object needs to be
+      // kept identical to the way it is obtained in runtime.js
+
+      var g = function () {
+        return this;
+      }() || Function("return this")(); // Use `getOwnPropertyNames` because not all browsers support calling
+      // `hasOwnProperty` on the global `self` object in a worker. See #183.
+
+
+      var hadRuntime = g.regeneratorRuntime && Object.getOwnPropertyNames(g).indexOf("regeneratorRuntime") >= 0; // Save the old regeneratorRuntime in case it needs to be restored later.
+
+      var oldRuntime = hadRuntime && g.regeneratorRuntime; // Force reevalutation of runtime.js.
+
+      g.regeneratorRuntime = undefined;
+      var runtimeModule = runtime;
+
+      if (hadRuntime) {
+        // Restore the original runtime.
+        g.regeneratorRuntime = oldRuntime;
+      } else {
+        // Remove the global property added by runtime.js.
+        try {
+          delete g.regeneratorRuntime;
+        } catch (e) {
+          g.regeneratorRuntime = undefined;
         }
       }
 
-      return 1;
+      var regenerator = runtimeModule;
+      var defaultOptions = {
+        mode: 'index'
+      };
+      module.exports = /*#__PURE__*/regenerator.mark(function _callee(M, N, options) {
+        var a, c, b, p, x, y, z, i, twiddle;
+        return regenerator.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                twiddle = function twiddle() {
+                  var i, j, k;
+                  j = 1;
+
+                  while (p[j] <= 0) {
+                    j++;
+                  }
+
+                  if (p[j - 1] === 0) {
+                    for (i = j - 1; i !== 1; i--) {
+                      p[i] = -1;
+                    }
+
+                    p[j] = 0;
+                    x = z = 0;
+                    p[1] = 1;
+                    y = j - 1;
+                  } else {
+                    if (j > 1) {
+                      p[j - 1] = 0;
+                    }
+
+                    do {
+                      j++;
+                    } while (p[j] > 0);
+
+                    k = j - 1;
+                    i = j;
+
+                    while (p[i] === 0) {
+                      p[i++] = -1;
+                    }
+
+                    if (p[i] === -1) {
+                      p[i] = p[k];
+                      z = p[k] - 1;
+                      x = i - 1;
+                      y = k - 1;
+                      p[k] = -1;
+                    } else {
+                      if (i === p[0]) {
+                        return 0;
+                      } else {
+                        p[j] = p[i];
+                        z = p[i] - 1;
+                        p[i] = 0;
+                        x = j - 1;
+                        y = i - 1;
+                      }
+                    }
+                  }
+
+                  return 1;
+                };
+
+                options = Object.assign({}, defaultOptions, options);
+                a = new Array(N);
+                c = new Array(M);
+                b = new Array(N);
+                p = new Array(N + 2); // init a and b
+
+                for (i = 0; i < N; i++) {
+                  a[i] = i;
+                  if (i < N - M) b[i] = 0;else b[i] = 1;
+                } // init c
+
+
+                for (i = 0; i < M; i++) {
+                  c[i] = N - M + i;
+                } // init p
+
+
+                for (i = 0; i < p.length; i++) {
+                  if (i === 0) p[i] = N + 1;else if (i <= N - M) p[i] = 0;else if (i <= N) p[i] = i - N + M;else p[i] = -2;
+                }
+
+                if (!(options.mode === 'index')) {
+                  _context.next = 20;
+                  break;
+                }
+
+                _context.next = 12;
+                return c.slice();
+
+              case 12:
+                if (!twiddle()) {
+                  _context.next = 18;
+                  break;
+                }
+
+                c[z] = a[x];
+                _context.next = 16;
+                return c.slice();
+
+              case 16:
+                _context.next = 12;
+                break;
+
+              case 18:
+                _context.next = 33;
+                break;
+
+              case 20:
+                if (!(options.mode === 'mask')) {
+                  _context.next = 32;
+                  break;
+                }
+
+                _context.next = 23;
+                return b.slice();
+
+              case 23:
+                if (!twiddle()) {
+                  _context.next = 30;
+                  break;
+                }
+
+                b[x] = 1;
+                b[y] = 0;
+                _context.next = 28;
+                return b.slice();
+
+              case 28:
+                _context.next = 23;
+                break;
+
+              case 30:
+                _context.next = 33;
+                break;
+
+              case 32:
+                throw new Error('Invalid mode');
+
+              case 33:
+              case 'end':
+                return _context.stop();
+            }
+          }
+        }, _callee, this);
+      });
+    });
+  });
+
+  /**
+   * get folds indexes
+   * @param {Array} features
+   * @param {Number} k - number of folds, a
+   */
+  function getFolds(features, k = 5) {
+    let N = features.length;
+    let allIdx = new Array(N);
+
+    for (let i = 0; i < N; i++) {
+      allIdx[i] = i;
     }
 
-    if (options.mode === 'index') {
-      yield c.slice();
+    let l = Math.floor(N / k); // create random k-folds
 
-      while (twiddle()) {
-        c[z] = a[x];
-        yield c.slice();
+    let current = [];
+    let folds = [];
+
+    while (allIdx.length) {
+      let randi = Math.floor(Math.random() * allIdx.length);
+      current.push(allIdx[randi]);
+      allIdx.splice(randi, 1);
+
+      if (current.length === l) {
+        folds.push(current);
+        current = [];
       }
-    } else if (options.mode === 'mask') {
-      yield b.slice();
+    } // we push the remaining to the last fold so that the total length is
+    // preserved. Otherwise the Q2 will fail.
 
-      while (twiddle()) {
-        b[x] = 1;
-        b[y] = 0;
-        yield b.slice();
+
+    if (current.length) current.forEach(e => folds[k - 1].push(e));
+    folds = folds.slice(0, k);
+    let foldsIndex = folds.map((x, idx) => ({
+      testIndex: x,
+      trainIndex: [].concat(...folds.filter((el, idx2) => idx2 !== idx))
+    }));
+    return foldsIndex;
+  }
+
+  /**
+   * A function to sample a dataset maintaining classes equilibrated
+   * @param {Array} classVector - an array containing class or group information
+   * @param {Number} fraction - a fraction of the class to sample
+   * @return {Object} - an object with indexes
+   */
+  function sampleAClass(classVector, fraction) {
+    // sort the vector
+    let classVectorSorted = JSON.parse(JSON.stringify(classVector));
+    let result = Array.from(Array(classVectorSorted.length).keys()).sort((a, b) => classVectorSorted[a] < classVectorSorted[b] ? -1 : classVectorSorted[b] < classVectorSorted[a] | 0);
+    classVectorSorted.sort((a, b) => a < b ? -1 : b < a | 0); // counts the class elements
+
+    let counts = {};
+    classVectorSorted.forEach(x => counts[x] = (counts[x] || 0) + 1); // pick a few per class
+
+    let indexOfSelected = [];
+    Object.keys(counts).forEach((e, i) => {
+      let shift = [];
+      Object.values(counts).reduce((a, c, item) => shift[item] = a + c, 0);
+      let arr = [...Array(counts[e]).keys()];
+      let r = [];
+
+      for (let j = 0; j < Math.floor(counts[e] * fraction); j++) {
+        let n = arr[Math.floor(Math.random() * arr.length)];
+        r.push(n);
+        let ind = arr.indexOf(n);
+        arr.splice(ind, 1);
       }
-    } else {
-      throw new Error('Invalid mode');
-    }
-  };
 
-  const CV = {};
+      if (i === 0) {
+        indexOfSelected = indexOfSelected.concat(r);
+      } else {
+        indexOfSelected = indexOfSelected.concat(r.map(x => x + shift[i - 1]));
+      }
+    }); // sort back the index
+
+    let trainIndex = [];
+    indexOfSelected.forEach(e => trainIndex.push(result[e]));
+    let testIndex = [];
+    let mask = [];
+    classVector.forEach((el, idx) => {
+      if (trainIndex.includes(idx)) {
+        mask.push(true);
+      } else {
+        mask.push(false);
+        testIndex.push(idx);
+      }
+    });
+    return {
+      trainIndex,
+      testIndex,
+      mask
+    };
+  }
+
   /**
    * Performs a leave-one-out cross-validation (LOO-CV) of the given samples. In LOO-CV, 1 observation is used as the
    * validation set while the rest is used as the training set. This is repeated once for each observation. LOO-CV is a
@@ -10854,16 +11738,16 @@
    * @return {ConfusionMatrix} - The cross-validation confusion matrix
    */
 
-  CV.leaveOneOut = function (Classifier, features, labels, classifierOptions) {
+  function leaveOneOut(Classifier, features, labels, classifierOptions) {
     if (typeof labels === 'function') {
-      var callback = labels;
+      let callback = labels;
       labels = features;
       features = Classifier;
-      return CV.leavePOut(features, labels, 1, callback);
+      return leavePOut(features, labels, 1, callback);
     }
 
-    return CV.leavePOut(Classifier, features, labels, classifierOptions, 1);
-  };
+    return leavePOut(Classifier, features, labels, classifierOptions, 1);
+  }
   /**
    * Performs a leave-p-out cross-validation (LPO-CV) of the given samples. In LPO-CV, p observations are used as the
    * validation set while the rest is used as the training set. This is repeated as many times as there are possible
@@ -10878,10 +11762,11 @@
    * @return {ConfusionMatrix} - The cross-validation confusion matrix
    */
 
+  function leavePOut(Classifier, features, labels, classifierOptions, p) {
+    let callback;
 
-  CV.leavePOut = function (Classifier, features, labels, classifierOptions, p) {
     if (typeof classifierOptions === 'function') {
-      var callback = classifierOptions;
+      callback = classifierOptions;
       p = labels;
       labels = features;
       features = Classifier;
@@ -10890,16 +11775,16 @@
     check(features, labels);
     const distinct = getDistinct(labels);
     const confusionMatrix = initMatrix(distinct.length, distinct.length);
-    var N = features.length;
-    var gen = src$2(p, N);
-    var allIdx = new Array(N);
+    let N = features.length;
+    let gen = lib(p, N);
+    let allIdx = new Array(N);
 
     for (let i = 0; i < N; i++) {
       allIdx[i] = i;
     }
 
     for (const testIdx of gen) {
-      var trainIdx = allIdx.slice();
+      let trainIdx = allIdx.slice();
 
       for (let i = testIdx.length - 1; i >= 0; i--) {
         trainIdx.splice(testIdx[i], 1);
@@ -10912,8 +11797,8 @@
       }
     }
 
-    return new src$1(confusionMatrix, distinct);
-  };
+    return new ConfusionMatrix(confusionMatrix, distinct);
+  }
   /**
    * Performs k-fold cross-validation (KF-CV). KF-CV separates the data-set into k random equally sized partitions, and
    * uses each as a validation set, with all other partitions used in the training set. Observations left over from if k
@@ -10926,10 +11811,11 @@
    * @return {ConfusionMatrix} - The cross-validation confusion matrix
    */
 
+  function kFold(Classifier, features, labels, classifierOptions, k) {
+    let callback;
 
-  CV.kFold = function (Classifier, features, labels, classifierOptions, k) {
     if (typeof classifierOptions === 'function') {
-      var callback = classifierOptions;
+      callback = classifierOptions;
       k = labels;
       labels = features;
       features = Classifier;
@@ -10938,39 +11824,11 @@
     check(features, labels);
     const distinct = getDistinct(labels);
     const confusionMatrix = initMatrix(distinct.length, distinct.length);
-    var N = features.length;
-    var allIdx = new Array(N);
+    let folds = getFolds(features, k);
 
-    for (var i = 0; i < N; i++) {
-      allIdx[i] = i;
-    }
-
-    var l = Math.floor(N / k); // create random k-folds
-
-    var current = [];
-    var folds = [];
-
-    while (allIdx.length) {
-      var randi = Math.floor(Math.random() * allIdx.length);
-      current.push(allIdx[randi]);
-      allIdx.splice(randi, 1);
-
-      if (current.length === l) {
-        folds.push(current);
-        current = [];
-      }
-    }
-
-    if (current.length) folds.push(current);
-    folds = folds.slice(0, k);
-
-    for (i = 0; i < folds.length; i++) {
-      var testIdx = folds[i];
-      var trainIdx = [];
-
-      for (var j = 0; j < folds.length; j++) {
-        if (j !== i) trainIdx = trainIdx.concat(folds[j]);
-      }
+    for (let i = 0; i < folds.length; i++) {
+      let testIdx = folds[i].testIndex;
+      let trainIdx = folds[i].trainIndex;
 
       if (callback) {
         validateWithCallback(features, labels, testIdx, trainIdx, confusionMatrix, distinct, callback);
@@ -10979,8 +11837,8 @@
       }
     }
 
-    return new src$1(confusionMatrix, distinct);
-  };
+    return new ConfusionMatrix(confusionMatrix, distinct);
+  }
 
   function check(features, labels) {
     if (features.length !== labels.length) {
@@ -10993,7 +11851,7 @@
   }
 
   function getDistinct(arr) {
-    var s = new Set();
+    let s = new Set();
 
     for (let i = 0; i < arr.length; i++) {
       s.add(arr[i]);
@@ -11009,7 +11867,7 @@
       testLabels,
       trainLabels
     } = getTrainTest(features, labels, testIdx, trainIdx);
-    var classifier;
+    let classifier;
 
     if (Classifier.prototype.train) {
       classifier = new Classifier(classifierOptions);
@@ -11018,7 +11876,7 @@
       classifier = new Classifier(trainFeatures, trainLabels, classifierOptions);
     }
 
-    var predictedLabels = classifier.predict(testFeatures);
+    let predictedLabels = classifier.predict(testFeatures);
     updateConfusionMatrix(confusionMatrix, testLabels, predictedLabels, distinct);
   }
 
@@ -11034,13 +11892,13 @@
   }
 
   function updateConfusionMatrix(confusionMatrix, testLabels, predictedLabels, distinct) {
-    for (var i = 0; i < predictedLabels.length; i++) {
+    for (let i = 0; i < predictedLabels.length; i++) {
       const actualIdx = distinct.indexOf(testLabels[i]);
       const predictedIdx = distinct.indexOf(predictedLabels[i]);
 
       if (actualIdx < 0 || predictedIdx < 0) {
         // eslint-disable-next-line no-console
-        console.warn("ignore unknown predicted label ".concat(predictedLabels[i]));
+        console.warn(`ignore unknown predicted label ${predictedLabels[i]}`);
       }
 
       confusionMatrix[actualIdx][predictedIdx]++;
@@ -11064,7 +11922,561 @@
     };
   }
 
-  var src$3 = CV;
+  var index$2 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    leaveOneOut: leaveOneOut,
+    leavePOut: leavePOut,
+    kFold: kFold,
+    getTrainTest: getTrainTest,
+    sampleAClass: sampleAClass,
+    getFolds: getFolds
+  });
+
+  /**
+   * OPLS loop
+   * @param {Array} x a matrix with features
+   * @param {Array} y an array of labels (dependent variable)
+   * @param {Object} options an object with options
+   * @return {Object} an object with model (filteredX: err,
+      loadingsXOrtho: pOrtho,
+      scoresXOrtho: tOrtho,
+      weightsXOrtho: wOrtho,
+      weightsPred: w,
+      loadingsXpred: p,
+      scoresXpred: t,
+      loadingsY:)
+   */
+
+  function OPLSNipals(x, y, options = {}) {
+    const {
+      numberOSC = 100
+    } = options;
+    let X = Matrix.checkMatrix(x);
+    let Y = Matrix.checkMatrix(y);
+    let u = Y.getColumnVector(0);
+    let diff = 1;
+    let t, c, w, uNew;
+
+    for (let i = 0; i < numberOSC && diff > 1e-10; i++) {
+      w = u.transpose().mmul(X).div(u.transpose().mmul(u).get(0, 0));
+      w = w.transpose().div(norm(w));
+      t = X.mmul(w).div(w.transpose().mmul(w).get(0, 0)); // t_h paso 3
+      // calc loading
+
+      c = t.transpose().mmul(Y).div(t.transpose().mmul(t).get(0, 0)); // calc new u and compare with one in previus iteration (stop criterion)
+
+      uNew = Y.mmul(c.transpose());
+      uNew = uNew.div(c.transpose().mmul(c).get(0, 0));
+
+      if (i > 0) {
+        diff = uNew.clone().sub(u).pow(2).sum() / uNew.clone().pow(2).sum();
+      }
+
+      u = uNew.clone();
+    } // calc loadings
+
+
+    let p = t.transpose().mmul(X).div(t.transpose().mmul(t).get(0, 0));
+    let wOrtho = p.clone().sub(w.transpose().mmul(p.transpose()).div(w.transpose().mmul(w).get(0, 0)).mmul(w.transpose()));
+    wOrtho.div(norm(wOrtho)); // orthogonal scores
+
+    let tOrtho = X.mmul(wOrtho.transpose()).div(wOrtho.mmul(wOrtho.transpose()).get(0, 0)); // orthogonal loadings
+
+    let pOrtho = tOrtho.transpose().mmul(X).div(tOrtho.transpose().mmul(tOrtho).get(0, 0)); // filtered data
+
+    let err = X.clone().sub(tOrtho.mmul(pOrtho));
+    return {
+      filteredX: err,
+      weightsXOrtho: wOrtho,
+      loadingsXOrtho: pOrtho,
+      scoresXOrtho: tOrtho,
+      weightsXPred: w,
+      loadingsXpred: p,
+      scoresXpred: t,
+      loadingsY: c
+    };
+  }
+
+  /**
+   * Get total sum of square
+   * @param {Array} x an array
+   * @return {Number} - the sum of the squares
+   */
+
+  function tss(x) {
+    return Matrix.mul(x, x).sum();
+  }
+
+  /**
+   * Creates new OPLS (orthogonal partial latent structures) from features and labels.
+   * @param {Matrix} data - matrix containing data (X).
+   * @param {Array} labels - 1D Array containing metadata (Y).
+   * @param {Object} [options]
+   * @param {number} [options.nComp = 3] - number of latent structures computed.
+   * @param {boolean} [options.center = true] - should the data be centered (subtract the mean).
+   * @param {boolean} [options.scale = false] - should the data be scaled (divide by the standard deviation).
+   * @param {Array} [options.cvFolds = []] - allows to provide folds as 2D array for testing purpose.
+   * */
+
+  class OPLS {
+    constructor(data, labels, options = {}) {
+      if (data === true) {
+        const opls = options;
+        this.center = opls.center;
+        this.scale = opls.scale;
+        this.means = opls.means;
+        this.meansY = opls.meansY;
+        this.stdevs = opls.stdevs;
+        this.stdevs = opls.stdevsY;
+        this.model = opls.model;
+        this.tCV = opls.tCV;
+        this.tOrthCV = opls.tOrthCV;
+        this.yHatCV = opls.yHatCV;
+        this.mode = opls.mode;
+        return;
+      }
+
+      let features = data.clone(); // set default values
+      // cvFolds allows to define folds for testing purpose
+
+      const {
+        nComp = 3,
+        center = true,
+        scale = true,
+        cvFolds = []
+      } = options;
+      let group;
+
+      if (typeof labels[0] === 'number') {
+        // numeric labels: OPLS regression is used
+        this.mode = 'regression';
+        group = Matrix.from1DArray(labels.length, 1, labels);
+      } else if (typeof labels[0] === 'string') {
+        // non-numeric labels: OPLS-DA is used
+        this.mode = 'discriminantAnalysis';
+        group = labels;
+        throw new Error('discriminant analysis is not yet supported');
+      } // check types of features and labels
+
+
+      if (features.constructor.name !== 'Matrix') {
+        throw new TypeError('features must be of class Matrix');
+      } // getting center and scale the features (all)
+
+
+      this.center = center;
+
+      if (this.center) {
+        this.means = features.mean('column');
+        this.meansY = group.mean('column');
+      } else {
+        this.stdevs = null;
+      }
+
+      this.scale = scale;
+
+      if (this.scale) {
+        this.stdevs = features.standardDeviation('column');
+        this.stdevsY = group.standardDeviation('column');
+      } else {
+        this.means = null;
+      } // check and remove for features with sd = 0 TODO here
+      // check opls.R line 70
+
+
+      let folds;
+
+      if (cvFolds.length > 0) {
+        folds = cvFolds;
+      } else {
+        folds = getFolds(labels, 5);
+      }
+
+      let Q2 = [];
+      this.model = [];
+      this.tCV = [];
+      this.tOrthCV = [];
+      this.yHatCV = [];
+      let oplsCV = [];
+      let modelNC = []; // this code could be made more efficient by reverting the order of the loops
+      // this is a legacy loop to be consistent with R code from MetaboMate package
+      // this allows for having statistic (R2) from CV to decide wether to continue
+      // with more latent structures
+
+      let nc;
+
+      for (nc = 0; nc < nComp; nc++) {
+        let yHatk = new Matrix(group.rows, 1);
+        let tPredk = new Matrix(group.rows, 1);
+        let tOrthk = new Matrix(group.rows, 1);
+        let oplsk = [];
+        let f = 0;
+
+        for (let fold of folds) {
+          let trainTest = this._getTrainTest(features, group, fold);
+
+          let testXk = trainTest.testFeatures;
+          let Xk = trainTest.trainFeatures;
+          let Yk = trainTest.trainLabels; // determine center and scale of training set
+
+          let dataCenter = Xk.mean('column');
+          let dataSD = Xk.standardDeviation('column'); // center and scale training set
+
+          if (center) {
+            Xk.center('column');
+            Yk.center('column');
+          }
+
+          if (scale) {
+            Xk.scale('column');
+            Yk.scale('column');
+          } // perform opls
+
+
+          if (nc === 0) {
+            oplsk[f] = OPLSNipals(Xk, Yk);
+          } else {
+            oplsk[f] = OPLSNipals(oplsCV[nc - 1][f].filteredX, Yk);
+          } // store model for next component
+
+
+          oplsCV[nc] = oplsk;
+          let plsCV = new nipals(oplsk[f].filteredX, {
+            Y: Yk
+          }); // scaling the test dataset with respect to the train
+
+          testXk.center('column', {
+            center: dataCenter
+          });
+          testXk.scale('column', {
+            scale: dataSD
+          });
+          let Eh = testXk; // removing the orthogonal components from PLS
+
+          let scores;
+
+          for (let idx = 0; idx < nc + 1; idx++) {
+            scores = Eh.mmul(oplsCV[idx][f].weightsXOrtho.transpose()); // ok
+
+            Eh.sub(scores.mmul(oplsCV[idx][f].loadingsXOrtho));
+          } // prediction
+
+
+          let tPred = Eh.mmul(plsCV.w.transpose()); // this should be summed over ncomp (pls_prediction.R line 23)
+
+          let yHat = tPred.mmul(plsCV.betas); // ok
+          // adding all prediction from all folds
+
+          for (let i = 0; i < fold.testIndex.length; i++) {
+            yHatk.setRow(fold.testIndex[i], [yHat.get(i, 0)]);
+            tPredk.setRow(fold.testIndex[i], [tPred.get(i, 0)]);
+            tOrthk.setRow(fold.testIndex[i], [scores.get(i, 0)]);
+          }
+
+          f++;
+        } // end of loop over folds
+
+
+        this.tCV.push(tPredk);
+        this.tOrthCV.push(tOrthk);
+        this.yHatCV.push(yHatk); // calculate Q2y for all the prediction (all folds)
+        // ROC for DA is not implemented (check opls.R line 183) TODO
+
+        if (this.mode === 'regression') {
+          let tssy = tss(group.center('column').scale('column'));
+          let press = tss(group.clone().sub(yHatk));
+          let Q2y = 1 - press / tssy;
+          Q2.push(Q2y);
+        } else if (this.mode === 'discriminantAnalysis') {
+          throw new Error('discriminant analysis is not yet supported');
+        } // calculate the R2y for the complete data
+
+
+        if (nc === 0) {
+          modelNC = this._predictAll(features, group);
+        } else {
+          modelNC = this._predictAll(modelNC.xRes, group, options = {
+            scale: false,
+            center: false
+          });
+        } // adding the predictive statistics from CV
+
+
+        modelNC.Q2y = Q2; // store the model for each component
+
+        this.model.push(modelNC); // console.warn(`OPLS iteration over # of Components: ${nc + 1}`);
+      } // end of loop over nc
+      // store scores from CV
+
+
+      let tCV = this.tCV;
+      let tOrthCV = this.tOrthCV;
+      let m = this.model[nc - 1];
+      let XOrth = m.XOrth;
+      let FeaturesCS = features.center('column').scale('column');
+      let labelsCS = group.center('column').scale('column');
+      let Xres = FeaturesCS.clone().sub(XOrth);
+      let plsCall = new nipals(Xres, {
+        Y: labelsCS
+      });
+      let E = Xres.clone().sub(plsCall.t.mmul(plsCall.p));
+      let R2x = this.model.map(x => x.R2x);
+      let R2y = this.model.map(x => x.R2y);
+      this.output = {
+        Q2y: Q2,
+        R2x,
+        R2y,
+        tPred: m.plsC.t,
+        pPred: m.plsC.p,
+        wPred: m.plsC.w,
+        betasPred: m.plsC.betas,
+        Qpc: m.plsC.q,
+        tCV,
+        tOrthCV,
+        tOrth: m.tOrth,
+        pOrth: m.pOrth,
+        wOrth: m.wOrth,
+        XOrth,
+        yHat: m.totalPred,
+        Yres: m.plsC.yResidual,
+        E
+      };
+    }
+    /**
+     * get access to all the computed elements
+     * Mainly for debug and testing
+     * @return {Object} output object
+     */
+
+
+    getLogs() {
+      return this.output;
+    }
+
+    getScores() {
+      let scoresX = this.tCV.map(x => x.to1DArray());
+      let scoresY = this.tOrthCV.map(x => x.to1DArray());
+      return {
+        scoresX,
+        scoresY
+      };
+    }
+    /**
+     * Load an OPLS model from JSON
+     * @param {Object} model
+     * @return {OPLS}
+     */
+
+
+    static load(model) {
+      if (typeof model.name !== 'string') {
+        throw new TypeError('model must have a name property');
+      }
+
+      if (model.name !== 'OPLS') {
+        throw new RangeError(`invalid model: ${model.name}`);
+      }
+
+      return new OPLS(true, [], model);
+    }
+    /**
+     * Export the current model to a JSON object
+     * @return {Object} model
+     */
+
+
+    toJSON() {
+      return {
+        name: 'OPLS',
+        center: this.center,
+        scale: this.scale,
+        means: this.means,
+        stdevs: this.stdevs,
+        model: this.model,
+        tCV: this.tCV,
+        tOrthCV: this.tOrthCV,
+        yHatCV: this.yHatCV
+      };
+    }
+    /**
+     * Predict scores for new data
+     * @param {Matrix} features - a matrix containing new data
+     * @param {Object} [options]
+     * @param {Array} [options.trueLabel] - an array with true values to compute confusion matrix
+     * @param {Number} [options.nc] - the number of components to be used
+     * @return {Object} - predictions
+     */
+
+
+    predict(newData, options = {}) {
+      let {
+        trueLabels = [],
+        nc = 1
+      } = options;
+      let labels = [];
+
+      if (trueLabels.length > 0) {
+        trueLabels = Matrix.from1DArray(trueLabels.length, 1, trueLabels);
+        labels = trueLabels.clone();
+      }
+
+      let features = newData.clone(); // scaling the test dataset with respect to the train
+
+      if (this.center) {
+        features.center('column', {
+          center: this.means
+        });
+
+        if (labels.rows > 0 && this.mode === 'regression') {
+          labels.center('column', {
+            center: this.meansY
+          });
+        }
+      }
+
+      if (this.scale) {
+        features.scale('column', {
+          scale: this.stdevs
+        });
+
+        if (labels.rows > 0 && this.mode === 'regression') {
+          labels.scale('column', {
+            scale: this.stdevsY
+          });
+        }
+      }
+
+      let Eh = features.clone(); // removing the orthogonal components from PLS
+
+      let tOrth;
+      let wOrth;
+      let pOrth;
+      let yHat;
+      let tPred;
+
+      for (let idx = 0; idx < nc; idx++) {
+        wOrth = this.model[idx].wOrth.transpose();
+        pOrth = this.model[idx].pOrth;
+        tOrth = Eh.mmul(wOrth);
+        Eh.sub(tOrth.mmul(pOrth)); // prediction
+
+        tPred = Eh.mmul(this.model[idx].plsC.w.transpose()); // this should be summed over ncomp (pls_prediction.R line 23)
+
+        yHat = tPred.mmul(this.model[idx].plsC.betas);
+      }
+
+      if (labels.rows > 0) {
+        if (this.mode === 'regression') {
+          let tssy = tss(labels);
+          let press = tss(labels.clone().sub(yHat));
+          let Q2y = 1 - press / tssy;
+          return {
+            tPred,
+            tOrth,
+            yHat,
+            Q2y
+          };
+        } else if (this.mode === 'discriminantAnalysis') {
+          let confusionMatrix = [];
+          confusionMatrix = ConfusionMatrix.fromLabels(trueLabels.to1DArray(), yHat.to1DArray());
+          return {
+            tPred,
+            tOrth,
+            yHat,
+            confusionMatrix
+          };
+        }
+      } else {
+        return {
+          tPred,
+          tOrth,
+          yHat
+        };
+      }
+    }
+
+    _predictAll(features, labels, options = {}) {
+      // cannot use the global this.center here
+      // since it is used in the NC loop and
+      // centering and scaling should only be
+      // performed once
+      const {
+        center = true,
+        scale = true
+      } = options;
+
+      if (center) {
+        features.center('column');
+        labels.center('column');
+      }
+
+      if (scale) {
+        features.scale('column');
+        labels.scale('column'); // reevaluate tssy and tssx after scaling
+        // must be global because re-used for next nc iteration
+        // tssx is only evaluate the first time
+
+        this.tssy = tss(labels);
+        this.tssx = tss(features);
+      }
+
+      let oplsC = OPLSNipals(features, labels);
+      let plsC = new nipals(oplsC.filteredX, {
+        Y: labels
+      });
+      let tPred = oplsC.filteredX.mmul(plsC.w.transpose());
+      let yHat = tPred.mmul(plsC.betas);
+      let rss = tss(labels.clone().sub(yHat));
+      let R2y = 1 - rss / this.tssy;
+      let xEx = plsC.t.mmul(plsC.p);
+      let rssx = tss(xEx);
+      let R2x = rssx / this.tssx;
+      return {
+        R2y,
+        R2x,
+        xRes: oplsC.filteredX,
+        tOrth: oplsC.scoresXOrtho,
+        pOrth: oplsC.loadingsXOrtho,
+        wOrth: oplsC.weightsXOrtho,
+        tPred: tPred,
+        totalPred: yHat,
+        XOrth: oplsC.scoresXOrtho.mmul(oplsC.loadingsXOrtho),
+        oplsC,
+        plsC
+      };
+    }
+    /**
+     *
+     * @param {*} X - dataset matrix object
+     * @param {*} group - labels matrix object
+     * @param {*} index - train and test index (output from getFold())
+     */
+
+
+    _getTrainTest(X, group, index) {
+      let testFeatures = new Matrix(index.testIndex.length, X.columns);
+      let testLabels = new Matrix(index.testIndex.length, 1);
+      index.testIndex.forEach((el, idx) => {
+        testFeatures.setRow(idx, X.getRow(el));
+        testLabels.setRow(idx, group.getRow(el));
+      });
+      let trainFeatures = new Matrix(index.trainIndex.length, X.columns);
+      let trainLabels = new Matrix(index.trainIndex.length, 1);
+      index.trainIndex.forEach((el, idx) => {
+        trainFeatures.setRow(idx, X.getRow(el));
+        trainLabels.setRow(idx, group.getRow(el));
+      });
+      return {
+        trainFeatures,
+        testFeatures,
+        trainLabels,
+        testLabels
+      };
+    }
+
+  }
+
+  var require$$0 = /*@__PURE__*/getAugmentedNamespace(MatrixLib);
 
   function logistic(val) {
     return 1 / (1 + Math.exp(-val));
@@ -11187,12 +12599,12 @@
 
       if (options.model) {
         // load model
-        this.W = Matrix.Matrix.checkMatrix(options.W);
-        this.b = Matrix.Matrix.checkMatrix(options.b);
+        this.W = require$$0.Matrix.checkMatrix(options.W);
+        this.b = require$$0.Matrix.checkMatrix(options.b);
       } else {
         // default constructor
-        this.W = Matrix.Matrix.rand(this.inputSize, this.outputSize);
-        this.b = Matrix.Matrix.zeros(1, this.outputSize);
+        this.W = require$$0.Matrix.rand(this.inputSize, this.outputSize);
+        this.b = require$$0.Matrix.zeros(1, this.outputSize);
         this.W.apply(function (i, j) {
           this.set(i, j, this.get(i, j) / Math.sqrt(options.inputSize));
         });
@@ -11223,7 +12635,7 @@
 
     backpropagation(delta, a) {
       this.dW = a.transpose().mmul(delta);
-      this.db = Matrix.Matrix.rowVector(delta.sum('column'));
+      this.db = require$$0.Matrix.rowVector(delta.sum('column'));
       var aCopy = a.clone();
       return delta.mmul(this.W.transpose()).mul(aCopy.apply(this.derivate));
     }
@@ -11391,7 +12803,7 @@
 
 
     train(features, labels) {
-      features = Matrix.Matrix.checkMatrix(features);
+      features = require$$0.Matrix.checkMatrix(features);
       this.dicts = dictOutputs(labels);
       var inputSize = features.columns;
       var outputSize = Object.keys(this.dicts.inputs).length;
@@ -11458,7 +12870,7 @@
 
 
     predict(features) {
-      features = Matrix.Matrix.checkMatrix(features);
+      features = require$$0.Matrix.checkMatrix(features);
       var outputs = new Array(features.rows);
       var probabilities = this.propagate(features);
 
@@ -11679,7 +13091,7 @@
 
   var nodeHexagonal = NodeHexagonal;
 
-  var defaultOptions$7 = {
+  var defaultOptions$6 = {
     fields: 3,
     randomizer: Math.random,
     distance: squareEuclidean,
@@ -11696,11 +13108,11 @@
     options = options || {};
     this.options = {};
 
-    for (var i in defaultOptions$7) {
+    for (var i in defaultOptions$6) {
       if (options.hasOwnProperty(i)) {
         this.options[i] = options[i];
       } else {
-        this.options[i] = defaultOptions$7[i];
+        this.options[i] = defaultOptions$6[i];
       }
     }
 
@@ -12136,16 +13548,16 @@
     return distance(zero, one);
   }
 
-  var src$4 = SOM;
+  var src = SOM;
 
   function maybeToPrecision(value, digits) {
     if (value < 0) {
       value = 0 - value;
 
       if (typeof digits === 'number') {
-        return "- ".concat(value.toPrecision(digits));
+        return `- ${value.toPrecision(digits)}`;
       } else {
-        return "- ".concat(value.toString());
+        return `- ${value.toString()}`;
       }
     } else {
       if (typeof digits === 'number') {
@@ -12319,16 +13731,16 @@
             str = maybeToPrecision(this.coefficients[k], precision);
           } else {
             if (this.powers[k] === 1) {
-              str = "".concat(maybeToPrecision(this.coefficients[k], precision) + times, "x");
+              str = `${maybeToPrecision(this.coefficients[k], precision) + times}x`;
             } else {
-              str = "".concat(maybeToPrecision(this.coefficients[k], precision) + times, "x").concat(sup).concat(this.powers[k]).concat(closeSup);
+              str = `${maybeToPrecision(this.coefficients[k], precision) + times}x${sup}${this.powers[k]}${closeSup}`;
             }
           }
 
           if (this.coefficients[k] > 0 && k !== this.coefficients.length - 1) {
-            str = " + ".concat(str);
+            str = ` + ${str}`;
           } else if (k !== this.coefficients.length - 1) {
-            str = " ".concat(str);
+            str = ` ${str}`;
           }
         }
 
@@ -12339,7 +13751,7 @@
         fn = fn.slice(1);
       }
 
-      return "f(x) = ".concat(fn);
+      return `f(x) = ${fn}`;
     }
 
     static load(json) {
@@ -12424,12 +13836,12 @@
 
       if (this.slope !== 0) {
         const xFactor = maybeToPrecision(this.slope, precision);
-        result += "".concat(xFactor === '1' ? '' : "".concat(xFactor, " * "), "x");
+        result += `${xFactor === '1' ? '' : `${xFactor} * `}x`;
 
         if (this.intercept !== 0) {
           const absIntercept = Math.abs(this.intercept);
           const operator = absIntercept === this.intercept ? '+' : '-';
-          result += " ".concat(operator, " ").concat(maybeToPrecision(absIntercept, precision));
+          result += ` ${operator} ${maybeToPrecision(absIntercept, precision)}`;
         }
       } else {
         result += maybeToPrecision(this.intercept, precision);
@@ -12498,14 +13910,14 @@
     }
 
     toString(precision) {
-      return "f(x) = ".concat(maybeToPrecision(this.B, precision), " * e^(").concat(maybeToPrecision(this.A, precision), " * x)");
+      return `f(x) = ${maybeToPrecision(this.B, precision)} * e^(${maybeToPrecision(this.A, precision)} * x)`;
     }
 
     toLaTeX(precision) {
       if (this.A >= 0) {
-        return "f(x) = ".concat(maybeToPrecision(this.B, precision), "e^{").concat(maybeToPrecision(this.A, precision), "x}");
+        return `f(x) = ${maybeToPrecision(this.B, precision)}e^{${maybeToPrecision(this.A, precision)}x}`;
       } else {
-        return "f(x) = \\frac{".concat(maybeToPrecision(this.B, precision), "}{e^{").concat(maybeToPrecision(-this.A, precision), "x}}");
+        return `f(x) = \\frac{${maybeToPrecision(this.B, precision)}}{e^{${maybeToPrecision(-this.A, precision)}x}}`;
       }
     }
 
@@ -12559,16 +13971,16 @@
     }
 
     toString(precision) {
-      return "f(x) = ".concat(maybeToPrecision(this.A, precision), " * x^").concat(maybeToPrecision(this.B, precision));
+      return `f(x) = ${maybeToPrecision(this.A, precision)} * x^${maybeToPrecision(this.B, precision)}`;
     }
 
     toLaTeX(precision) {
       let latex = '';
 
       if (this.B >= 0) {
-        latex = "f(x) = ".concat(maybeToPrecision(this.A, precision), "x^{").concat(maybeToPrecision(this.B, precision), "}");
+        latex = `f(x) = ${maybeToPrecision(this.A, precision)}x^{${maybeToPrecision(this.B, precision)}}`;
       } else {
-        latex = "f(x) = \\frac{".concat(maybeToPrecision(this.A, precision), "}{x^{").concat(maybeToPrecision(-this.B, precision), "}}");
+        latex = `f(x) = \\frac{${maybeToPrecision(this.A, precision)}}{x^{${maybeToPrecision(-this.B, precision)}}}`;
       }
 
       latex = latex.replace(/e([+-]?[0-9]+)/g, 'e^{$1}');
@@ -12601,8 +14013,7 @@
   }
 
   class MultivariateLinearRegression {
-    constructor(x, y) {
-      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+    constructor(x, y, options = {}) {
       const {
         intercept = true,
         statistics = true
@@ -12715,7 +14126,7 @@
           },
           variables: this.weights.map((d, i) => {
             return {
-              label: i === this.weights.length - 1 ? 'Intercept' : "X Variable ".concat(i + 1),
+              label: i === this.weights.length - 1 ? 'Intercept' : `X Variable ${i + 1}`,
               coefficients: d,
               standardError: this.stdErrors[i],
               tStat: this.tStats[i]
@@ -12735,16 +14146,18 @@
 
   }
 
+  var require$$0$1 = /*@__PURE__*/getAugmentedNamespace(euclidean$1);
+
   const {
     squaredEuclidean: squaredEuclidean$1
-  } = euclidean$1;
-  const defaultOptions$8 = {
+  } = require$$0$1;
+  const defaultOptions$7 = {
     sigma: 1
   };
 
   class GaussianKernel {
     constructor(options) {
-      options = Object.assign({}, defaultOptions$8, options);
+      options = Object.assign({}, defaultOptions$7, options);
       this.sigma = options.sigma;
       this.divisor = 2 * options.sigma * options.sigma;
     }
@@ -12758,7 +14171,7 @@
 
   var gaussianKernel = GaussianKernel;
 
-  const defaultOptions$9 = {
+  const defaultOptions$8 = {
     degree: 1,
     constant: 1,
     scale: 1
@@ -12766,7 +14179,7 @@
 
   class PolynomialKernel {
     constructor(options) {
-      options = Object.assign({}, defaultOptions$9, options);
+      options = Object.assign({}, defaultOptions$8, options);
       this.degree = options.degree;
       this.constant = options.constant;
       this.scale = options.scale;
@@ -12786,14 +14199,14 @@
 
   var polynomialKernel = PolynomialKernel;
 
-  const defaultOptions$a = {
+  const defaultOptions$9 = {
     alpha: 0.01,
     constant: -Math.E
   };
 
   class SigmoidKernel {
     constructor(options) {
-      options = Object.assign({}, defaultOptions$a, options);
+      options = Object.assign({}, defaultOptions$9, options);
       this.alpha = options.alpha;
       this.constant = options.constant;
     }
@@ -12812,14 +14225,14 @@
 
   var sigmoidKernel = SigmoidKernel;
 
-  const defaultOptions$b = {
+  const defaultOptions$a = {
     sigma: 1,
     degree: 1
   };
 
   class ANOVAKernel {
     constructor(options) {
-      options = Object.assign({}, defaultOptions$b, options);
+      options = Object.assign({}, defaultOptions$a, options);
       this.sigma = options.sigma;
       this.degree = options.degree;
     }
@@ -12841,14 +14254,14 @@
 
   const {
     squaredEuclidean: squaredEuclidean$2
-  } = euclidean$1;
-  const defaultOptions$c = {
+  } = require$$0$1;
+  const defaultOptions$b = {
     sigma: 1
   };
 
   class CauchyKernel {
     constructor(options) {
-      options = Object.assign({}, defaultOptions$c, options);
+      options = Object.assign({}, defaultOptions$b, options);
       this.sigma = options.sigma;
     }
 
@@ -12862,14 +14275,14 @@
 
   const {
     euclidean: euclidean$2
-  } = euclidean$1;
-  const defaultOptions$d = {
+  } = require$$0$1;
+  const defaultOptions$c = {
     sigma: 1
   };
 
   class ExponentialKernel {
     constructor(options) {
-      options = Object.assign({}, defaultOptions$d, options);
+      options = Object.assign({}, defaultOptions$c, options);
       this.sigma = options.sigma;
       this.divisor = 2 * options.sigma * options.sigma;
     }
@@ -12901,14 +14314,14 @@
 
   const {
     euclidean: euclidean$3
-  } = euclidean$1;
-  const defaultOptions$e = {
+  } = require$$0$1;
+  const defaultOptions$d = {
     sigma: 1
   };
 
   class LaplacianKernel {
     constructor(options) {
-      options = Object.assign({}, defaultOptions$e, options);
+      options = Object.assign({}, defaultOptions$d, options);
       this.sigma = options.sigma;
     }
 
@@ -12923,14 +14336,14 @@
 
   const {
     squaredEuclidean: squaredEuclidean$3
-  } = euclidean$1;
-  const defaultOptions$f = {
+  } = require$$0$1;
+  const defaultOptions$e = {
     constant: 1
   };
 
   class MultiquadraticKernel {
     constructor(options) {
-      options = Object.assign({}, defaultOptions$f, options);
+      options = Object.assign({}, defaultOptions$e, options);
       this.constant = options.constant;
     }
 
@@ -12944,14 +14357,14 @@
 
   const {
     squaredEuclidean: squaredEuclidean$4
-  } = euclidean$1;
-  const defaultOptions$g = {
+  } = require$$0$1;
+  const defaultOptions$f = {
     constant: 1
   };
 
   class RationalQuadraticKernel {
     constructor(options) {
-      options = Object.assign({}, defaultOptions$g, options);
+      options = Object.assign({}, defaultOptions$f, options);
       this.constant = options.constant;
     }
 
@@ -12967,7 +14380,7 @@
   const {
     Matrix: Matrix$1,
     MatrixTransposeView: MatrixTransposeView$1
-  } = Matrix;
+  } = require$$0;
   const kernelType = {
     gaussian: gaussianKernel,
     rbf: gaussianKernel,
@@ -12997,7 +14410,7 @@
         if (KernelConstructor) {
           this.kernelFunction = new KernelConstructor(options);
         } else {
-          throw new Error("unsupported kernel type: ".concat(type));
+          throw new Error(`unsupported kernel type: ${type}`);
         }
       } else if (typeof type === 'object' && typeof type.compute === 'function') {
         this.kernelFunction = type;
@@ -13089,12 +14502,12 @@
 
       if (this.slope) {
         var xFactor = maybeToPrecision(this.slope, precision);
-        result += "".concat(Math.abs(xFactor - 1) < 1e-5 ? '' : "".concat(xFactor, " * "), "x");
+        result += `${Math.abs(xFactor - 1) < 1e-5 ? '' : `${xFactor} * `}x`;
 
         if (this.intercept) {
           var absIntercept = Math.abs(this.intercept);
           var operator = absIntercept === this.intercept ? '+' : '-';
-          result += " ".concat(operator, " ").concat(maybeToPrecision(absIntercept, precision));
+          result += ` ${operator} ${maybeToPrecision(absIntercept, precision)}`;
         }
       } else {
         result += maybeToPrecision(this.intercept, precision);
@@ -13219,16 +14632,16 @@
             str = maybeToPrecision(this.coefficients[k], precision);
           } else {
             if (this.powers[k] === 1) {
-              str = "".concat(maybeToPrecision(this.coefficients[k], precision) + times, "x");
+              str = `${maybeToPrecision(this.coefficients[k], precision) + times}x`;
             } else {
-              str = "".concat(maybeToPrecision(this.coefficients[k], precision) + times, "x").concat(sup).concat(this.powers[k]).concat(closeSup);
+              str = `${maybeToPrecision(this.coefficients[k], precision) + times}x${sup}${this.powers[k]}${closeSup}`;
             }
           }
 
           if (this.coefficients[k] > 0 && k !== this.coefficients.length - 1) {
-            str = " + ".concat(str);
+            str = ` + ${str}`;
           } else if (k !== this.coefficients.length - 1) {
-            str = " ".concat(str);
+            str = ` ${str}`;
           }
         }
 
@@ -13239,7 +14652,7 @@
         fn = fn.slice(1);
       }
 
-      return "f(x) = ".concat(fn);
+      return `f(x) = ${fn}`;
     }
 
     static load(json) {
@@ -13365,6 +14778,11 @@
     return l % 2 === 0 ? residuals[half - 1] : residuals[half];
   }
 
+  const toString$3 = Object.prototype.toString;
+  function isAnyArray$3(object) {
+    return toString$3.call(object).endsWith('Array]');
+  }
+
   /**
    * Calculate current error
    * @ignore
@@ -13374,10 +14792,10 @@
    * @return {number}
    */
   function errorCalculation(data, parameters, parameterizedFunction) {
-    var error = 0;
+    let error = 0;
     const func = parameterizedFunction(parameters);
 
-    for (var i = 0; i < data.x.length; i++) {
+    for (let i = 0; i < data.x.length; i++) {
       error += Math.abs(data.y[i] - func(data.x[i]));
     }
 
@@ -13398,15 +14816,15 @@
   function gradientFunction(data, evaluatedData, params, gradientDifference, paramFunction) {
     const n = params.length;
     const m = data.x.length;
-    var ans = new Array(n);
+    let ans = new Array(n);
 
-    for (var param = 0; param < n; param++) {
+    for (let param = 0; param < n; param++) {
       ans[param] = new Array(m);
-      var auxParams = params.concat();
+      let auxParams = params.slice();
       auxParams[param] += gradientDifference;
-      var funcParam = paramFunction(auxParams);
+      let funcParam = paramFunction(auxParams);
 
-      for (var point = 0; point < m; point++) {
+      for (let point = 0; point < m; point++) {
         ans[param][point] = evaluatedData[point] - funcParam(data.x[point]);
       }
     }
@@ -13424,9 +14842,9 @@
 
   function matrixFunction(data, evaluatedData) {
     const m = data.x.length;
-    var ans = new Array(m);
+    let ans = new Array(m);
 
-    for (var point = 0; point < m; point++) {
+    for (let point = 0; point < m; point++) {
       ans[point] = [data.y[point] - evaluatedData[point]];
     }
 
@@ -13445,13 +14863,18 @@
 
 
   function step$1(data, params, damping, gradientDifference, parameterizedFunction) {
-    var value = damping * gradientDifference * gradientDifference;
-    var identity = Matrix.eye(params.length, params.length, value);
+    let value = damping * gradientDifference * gradientDifference;
+    let identity = Matrix.eye(params.length, params.length, value);
     const func = parameterizedFunction(params);
-    var evaluatedData = data.x.map(e => func(e));
-    var gradientFunc = gradientFunction(data, evaluatedData, params, gradientDifference, parameterizedFunction);
-    var matrixFunc = matrixFunction(data, evaluatedData);
-    var inverseMatrix = inverse(identity.add(gradientFunc.mmul(gradientFunc.transpose())));
+    let evaluatedData = new Float64Array(data.x.length);
+
+    for (let i = 0; i < data.x.length; i++) {
+      evaluatedData[i] = func(data.x[i]);
+    }
+
+    let gradientFunc = gradientFunction(data, evaluatedData, params, gradientDifference, parameterizedFunction);
+    let matrixFunc = matrixFunction(data, evaluatedData);
+    let inverseMatrix = inverse(identity.add(gradientFunc.mmul(gradientFunc.transpose())));
     params = new Matrix([params]);
     params = params.sub(inverseMatrix.mmul(gradientFunc).mmul(matrixFunc).mul(gradientDifference).transpose());
     return params.to1DArray();
@@ -13472,8 +14895,7 @@
    * @return {{parameterValues: Array<number>, parameterError: number, iterations: number}}
    */
 
-  function levenbergMarquardt(data, parameterizedFunction) {
-    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  function levenbergMarquardt(data, parameterizedFunction, options = {}) {
     let {
       maxIterations = 100,
       gradientDifference = 10e-2,
@@ -13488,13 +14910,13 @@
       throw new Error('The damping option must be a positive number');
     } else if (!data.x || !data.y) {
       throw new Error('The data parameter must have x and y elements');
-    } else if (!Array.isArray(data.x) || data.x.length < 2 || !Array.isArray(data.y) || data.y.length < 2) {
+    } else if (!isAnyArray$3(data.x) || data.x.length < 2 || !isAnyArray$3(data.y) || data.y.length < 2) {
       throw new Error('The data parameter elements must be an array with more than 2 points');
     } else if (data.x.length !== data.y.length) {
       throw new Error('The data parameter elements must have the same size');
     }
 
-    var parameters = initialValues || new Array(parameterizedFunction.length).fill(1);
+    let parameters = initialValues || new Array(parameterizedFunction.length).fill(1);
     let parLen = parameters.length;
     maxValues = maxValues || new Array(parLen).fill(Number.MAX_SAFE_INTEGER);
     minValues = minValues || new Array(parLen).fill(Number.MIN_SAFE_INTEGER);
@@ -13503,14 +14925,15 @@
       throw new Error('minValues and maxValues must be the same size');
     }
 
-    if (!Array.isArray(parameters)) {
+    if (!isAnyArray$3(parameters)) {
       throw new Error('initialValues must be an array');
     }
 
-    var error = errorCalculation(data, parameters, parameterizedFunction);
-    var converged = error <= errorTolerance;
+    let error = errorCalculation(data, parameters, parameterizedFunction);
+    let converged = error <= errorTolerance;
+    let iteration;
 
-    for (var iteration = 0; iteration < maxIterations && !converged; iteration++) {
+    for (iteration = 0; iteration < maxIterations && !converged; iteration++) {
       parameters = step$1(data, parameters, damping, gradientDifference, parameterizedFunction);
 
       for (let k = 0; k < parLen; k++) {
@@ -13803,8 +15226,7 @@
    * @returns {Matrix} K
    */
 
-  function fcnnls(X, Y) {
-    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  function fcnnls(X, Y, options = {}) {
     X = Matrix.checkMatrix(X);
     Y = Matrix.checkMatrix(Y);
     let {
@@ -13948,9 +15370,7 @@
    * @returns {Array} k
    */
 
-  function fcnnlsVector(X, y) {
-    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
+  function fcnnlsVector(X, y, options = {}) {
     if (Array.isArray(y) === false) {
       throw new TypeError('y must be a 1D Array');
     }
@@ -13961,15 +15381,13 @@
     return k;
   }
 
-
-
-  var index$2 = /*#__PURE__*/Object.freeze({
+  var index$3 = /*#__PURE__*/Object.freeze({
     __proto__: null,
     fcnnls: fcnnls,
     fcnnlsVector: fcnnlsVector
   });
 
-  var binarySearch = function binarySearch(haystack, needle, comparator, low, high) {
+  var binarySearch = function (haystack, needle, comparator, low, high) {
     var mid, cmp;
     if (low === undefined) low = 0;else {
       low = low | 0;
@@ -13998,7 +15416,7 @@
   };
 
   function assertNumber(number) {
-    if (typeof number !== 'number' || Number.isNaN(number)) {
+    if (typeof number !== 'number') {
       throw new TypeError('Expected a number');
     }
   }
@@ -14006,12 +15424,30 @@
   var ascending = (left, right) => {
     assertNumber(left);
     assertNumber(right);
+
+    if (Number.isNaN(left)) {
+      return -1;
+    }
+
+    if (Number.isNaN(right)) {
+      return 1;
+    }
+
     return left - right;
   };
 
   var descending = (left, right) => {
     assertNumber(left);
     assertNumber(right);
+
+    if (Number.isNaN(left)) {
+      return 1;
+    }
+
+    if (Number.isNaN(right)) {
+      return -1;
+    }
+
     return right - left;
   };
 
@@ -14020,13 +15456,11 @@
     descending: descending
   };
 
-  var index$3 = /*#__PURE__*/Object.freeze({
-    __proto__: null,
+  var index$4 = /*#__PURE__*/Object.freeze(/*#__PURE__*/Object.assign(/*#__PURE__*/Object.create(null), numSort, {
     'default': numSort,
-    __moduleExports: numSort,
     ascending: ascending,
     descending: descending
-  });
+  }));
 
   const largestPrime = 0x7fffffff;
   const primeNumbers = [// chunk #0
@@ -14063,9 +15497,7 @@
   const defaultMinLoadFactor = 1 / 6;
   const defaultMaxLoadFactor = 2 / 3;
   class HashTable {
-    constructor() {
-      let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-
+    constructor(options = {}) {
       if (options instanceof HashTable) {
         this.table = options.table.slice();
         this.values = options.values.slice();
@@ -14082,22 +15514,22 @@
       const initialCapacity = options.initialCapacity === undefined ? defaultInitialCapacity : options.initialCapacity;
 
       if (initialCapacity < 0) {
-        throw new RangeError("initial capacity must not be less than zero: ".concat(initialCapacity));
+        throw new RangeError(`initial capacity must not be less than zero: ${initialCapacity}`);
       }
 
       const minLoadFactor = options.minLoadFactor === undefined ? defaultMinLoadFactor : options.minLoadFactor;
       const maxLoadFactor = options.maxLoadFactor === undefined ? defaultMaxLoadFactor : options.maxLoadFactor;
 
       if (minLoadFactor < 0 || minLoadFactor >= 1) {
-        throw new RangeError("invalid minLoadFactor: ".concat(minLoadFactor));
+        throw new RangeError(`invalid minLoadFactor: ${minLoadFactor}`);
       }
 
       if (maxLoadFactor <= 0 || maxLoadFactor >= 1) {
-        throw new RangeError("invalid maxLoadFactor: ".concat(maxLoadFactor));
+        throw new RangeError(`invalid maxLoadFactor: ${maxLoadFactor}`);
       }
 
       if (minLoadFactor >= maxLoadFactor) {
-        throw new RangeError("minLoadFactor (".concat(minLoadFactor, ") must be smaller than maxLoadFactor (").concat(maxLoadFactor, ")"));
+        throw new RangeError(`minLoadFactor (${minLoadFactor}) must be smaller than maxLoadFactor (${maxLoadFactor})`);
       }
 
       let capacity = initialCapacity; // User wants to put at least capacity elements. We need to choose the size based on the maxLoadFactor to
@@ -14350,9 +15782,7 @@
   }
 
   class SparseMatrix {
-    constructor(rows, columns) {
-      let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
-
+    constructor(rows, columns, options = {}) {
       if (rows instanceof SparseMatrix) {
         // clone
         const other = rows;
@@ -14392,9 +15822,7 @@
       this.threshold = threshold || 0;
     }
 
-    static eye() {
-      let rows = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 1;
-      let columns = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : rows;
+    static eye(rows = 1, columns = rows) {
       const min = Math.min(rows, columns);
       const matrix = new SparseMatrix(rows, columns, {
         initialCapacity: min
@@ -14610,12 +16038,45 @@
    Add dynamically instance and static methods for mathematical operations
    */
 
-  var inplaceOperator = "\n(function %name%(value) {\n    if (typeof value === 'number') return this.%name%S(value);\n    return this.%name%M(value);\n})\n";
-  var inplaceOperatorScalar = "\n(function %name%S(value) {\n    this.forEachNonZero((i, j, v) => v %op% value);\n    return this;\n})\n";
-  var inplaceOperatorMatrix = "\n(function %name%M(matrix) {\n    matrix.forEachNonZero((i, j, v) => {\n        this.set(i, j, this.get(i, j) %op% v);\n        return v;\n    });\n    return this;\n})\n";
-  var staticOperator = "\n(function %name%(matrix, value) {\n    var newMatrix = new SparseMatrix(matrix);\n    return newMatrix.%name%(value);\n})\n";
-  var inplaceMethod = "\n(function %name%() {\n    this.forEachNonZero((i, j, v) => %method%(v));\n    return this;\n})\n";
-  var staticMethod = "\n(function %name%(matrix) {\n    var newMatrix = new SparseMatrix(matrix);\n    return newMatrix.%name%();\n})\n";
+  var inplaceOperator = `
+(function %name%(value) {
+    if (typeof value === 'number') return this.%name%S(value);
+    return this.%name%M(value);
+})
+`;
+  var inplaceOperatorScalar = `
+(function %name%S(value) {
+    this.forEachNonZero((i, j, v) => v %op% value);
+    return this;
+})
+`;
+  var inplaceOperatorMatrix = `
+(function %name%M(matrix) {
+    matrix.forEachNonZero((i, j, v) => {
+        this.set(i, j, this.get(i, j) %op% v);
+        return v;
+    });
+    return this;
+})
+`;
+  var staticOperator = `
+(function %name%(matrix, value) {
+    var newMatrix = new SparseMatrix(matrix);
+    return newMatrix.%name%(value);
+})
+`;
+  var inplaceMethod = `
+(function %name%() {
+    this.forEachNonZero((i, j, v) => %method%(v));
+    return this;
+})
+`;
+  var staticMethod = `
+(function %name%(matrix) {
+    var newMatrix = new SparseMatrix(matrix);
+    return newMatrix.%name%();
+})
+`;
   const operators = [// Arithmetic operators
   ['+', 'add'], ['-', 'sub', 'subtract'], ['*', 'mul', 'multiply'], ['/', 'div', 'divide'], ['%', 'mod', 'modulus'], // Bitwise operators
   ['&', 'and'], ['|', 'or'], ['^', 'xor'], ['<<', 'leftShift'], ['>>', 'signPropagatingRightShift'], ['>>>', 'rightShift', 'zeroFillRightShift']];
@@ -14626,12 +16087,12 @@
         name: operator[i],
         op: operator[0]
       }));
-      SparseMatrix.prototype["".concat(operator[i], "S")] = eval(fillTemplateFunction(inplaceOperatorScalar, {
-        name: "".concat(operator[i], "S"),
+      SparseMatrix.prototype[`${operator[i]}S`] = eval(fillTemplateFunction(inplaceOperatorScalar, {
+        name: `${operator[i]}S`,
         op: operator[0]
       }));
-      SparseMatrix.prototype["".concat(operator[i], "M")] = eval(fillTemplateFunction(inplaceOperatorMatrix, {
-        name: "".concat(operator[i], "M"),
+      SparseMatrix.prototype[`${operator[i]}M`] = eval(fillTemplateFunction(inplaceOperatorMatrix, {
+        name: `${operator[i]}M`,
         op: operator[0]
       }));
       SparseMatrix[operator[i]] = eval(fillTemplateFunction(staticOperator, {
@@ -14642,7 +16103,7 @@
 
   var methods = [['~', 'not']];
   ['abs', 'acos', 'acosh', 'asin', 'asinh', 'atan', 'atanh', 'cbrt', 'ceil', 'clz32', 'cos', 'cosh', 'exp', 'expm1', 'floor', 'fround', 'log', 'log1p', 'log10', 'log2', 'round', 'sign', 'sin', 'sinh', 'sqrt', 'tan', 'tanh', 'trunc'].forEach(function (mathMethod) {
-    methods.push(["Math.".concat(mathMethod), mathMethod]);
+    methods.push([`Math.${mathMethod}`, mathMethod]);
   });
 
   for (const method of methods) {
@@ -14659,7 +16120,7 @@
 
   function fillTemplateFunction(template, values) {
     for (const i in values) {
-      template = template.replace(new RegExp("%".concat(i, "%"), 'g'), values[i]);
+      template = template.replace(new RegExp(`%${i}%`, 'g'), values[i]);
     }
 
     return template;
@@ -15207,8 +16668,6 @@
     return ans;
   }
 
-
-
   var distances = /*#__PURE__*/Object.freeze({
     __proto__: null,
     euclidean: euclidean,
@@ -15265,8 +16724,7 @@
    * or are null if they are leaves
    */
 
-  function createTree(spectrum) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  function createTree(spectrum, options = {}) {
     var X = spectrum[0];
     const {
       minWindow = 0.16,
@@ -15341,8 +16799,7 @@
    * @return {number} similarity measure between tree nodes
    */
 
-  function getSimilarity(a, b) {
-    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  function getSimilarity(a, b, options = {}) {
     const {
       alpha = 0.1,
       beta = 0.33,
@@ -15365,16 +16822,14 @@
     return beta * C + (1 - beta) * (getSimilarity(a.left, b.left, options) + getSimilarity(a.right, b.right, options)) / 2;
   }
 
-  function treeSimilarity(A, B) {
-    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  function treeSimilarity(A, B, options = {}) {
     return getSimilarity(A, B, options);
   }
-  function getFunction() {
-    let options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  function getFunction(options = {}) {
     return (A, B) => getSimilarity(A, B, options);
   }
 
-  var index$4 = /*#__PURE__*/Object.freeze({
+  var index$5 = /*#__PURE__*/Object.freeze({
     __proto__: null,
     treeSimilarity: treeSimilarity,
     getFunction: getFunction,
@@ -15434,11 +16889,9 @@
     return 1 - squaredChord(a, b);
   }
 
-
-
   var similarities = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    tree: index$4,
+    tree: index$5,
     cosine: cosine,
     czekanowski: czekanowskiSimilarity,
     dice: dice$1,
@@ -15753,7 +17206,7 @@
       }
 
       if (!measures[measure]) {
-        throw new Error("The specified measure (".concat(measure, ") does not exist"));
+        throw new Error(`The specified measure (${measure}) does not exist`);
       }
 
       return measures[measure](this);
@@ -15863,9 +17316,9 @@
     rnp: 'Rate of negative predictions',
     threshold: 'Threshold'
   };
-  var src$5 = Performance;
+  var src$1 = Performance;
 
-  var defaultOptions$h = {
+  var defaultOptions$g = {
     size: 1,
     value: 0
   };
@@ -15953,7 +17406,7 @@
 
 
   function padArray(data, options) {
-    options = Object.assign({}, defaultOptions$h, options);
+    options = Object.assign({}, defaultOptions$g, options);
 
     if (Array.isArray(data)) {
       if (Array.isArray(data[0])) return matrixCase(data, options);else return arrayCase(data, options);
@@ -15962,9 +17415,24 @@
     }
   }
 
-  var src$6 = padArray;
+  var src$2 = padArray;
 
-  const defaultOptions$i = {
+  /**
+   * Factorial of a number
+   * @ignore
+   * @param n
+   * @return {number}
+   */
+
+  function factorial(n) {
+    let r = 1;
+
+    while (n > 0) r *= n--;
+
+    return r;
+  }
+
+  const defaultOptions$h = {
     windowSize: 5,
     derivative: 1,
     polynomial: 2,
@@ -15980,7 +17448,7 @@
    */
 
   function savitzkyGolay(data, h, options) {
-    options = Object.assign({}, defaultOptions$i, options);
+    options = Object.assign({}, defaultOptions$h, options);
 
     if (options.windowSize % 2 === 0 || options.windowSize < 5 || !Number.isInteger(options.windowSize)) {
       throw new RangeError('Invalid window size (should be odd and at least 5 integer number)');
@@ -15998,7 +17466,7 @@
     let step = Math.floor(options.windowSize / 2);
 
     if (options.pad === 'pre') {
-      data = src$6(data, {
+      data = src$2(data, {
         size: step,
         value: options.padValue
       });
@@ -16028,7 +17496,7 @@
       let Jinv = inverse(Jtranspose.mmul(J));
       C = Jinv.mmul(Jtranspose);
       C = C.getRow(options.derivative);
-      norm = 1;
+      norm = 1 / factorial(options.derivative);
     }
 
     let det = norm * Math.pow(h, options.derivative);
@@ -16042,7 +17510,7 @@
     }
 
     if (options.pad === 'post') {
-      ans = src$6(ans, {
+      ans = src$2(ans, {
         size: step,
         value: options.padValue
       });
@@ -16265,7 +17733,7 @@
     return str;
   }
 
-  var src$7 = {
+  var src$3 = {
     count: count,
     and: and,
     or: or,
@@ -16280,14 +17748,1201 @@
     toDebug: toDebug
   };
 
+  function SavitzkyGolay(data, h, options = {}) {
+    let {
+      windowSize = 9,
+      derivative = 0,
+      polynomial = 3
+    } = options;
+
+    if (windowSize % 2 === 0 || windowSize < 5 || !Number.isInteger(windowSize)) {
+      throw new RangeError('Invalid window size (should be odd and at least 5 integer number)');
+    }
+
+    if (windowSize > data.length) {
+      throw new RangeError(`Window size is higher than the data length ${windowSize}>${data.length}`);
+    }
+
+    if (derivative < 0 || !Number.isInteger(derivative)) {
+      throw new RangeError('Derivative should be a positive integer');
+    }
+
+    if (polynomial < 1 || !Number.isInteger(polynomial)) {
+      throw new RangeError('Polynomial should be a positive integer');
+    }
+
+    if (polynomial >= 6) {
+      // eslint-disable-next-line no-console
+      console.warn('You should not use polynomial grade higher than 5 if you are' + ' not sure that your data arises from such a model. Possible polynomial oscillation problems');
+    }
+
+    let half = Math.floor(windowSize / 2);
+    let np = data.length;
+    let ans = new Array(np);
+    let weights = fullWeights(windowSize, polynomial, derivative);
+    let hs = 0;
+    let constantH = true;
+
+    if (Array.isArray(h)) {
+      constantH = false;
+    } else {
+      hs = Math.pow(h, derivative);
+    } //For the borders
+
+
+    for (let i = 0; i < half; i++) {
+      let wg1 = weights[half - i - 1];
+      let wg2 = weights[half + i + 1];
+      let d1 = 0;
+      let d2 = 0;
+
+      for (let l = 0; l < windowSize; l++) {
+        d1 += wg1[l] * data[l];
+        d2 += wg2[l] * data[np - windowSize + l];
+      }
+
+      if (constantH) {
+        ans[half - i - 1] = d1 / hs;
+        ans[np - half + i] = d2 / hs;
+      } else {
+        hs = getHs(h, half - i - 1, half, derivative);
+        ans[half - i - 1] = d1 / hs;
+        hs = getHs(h, np - half + i, half, derivative);
+        ans[np - half + i] = d2 / hs;
+      }
+    } //For the internal points
+
+
+    let wg = weights[half];
+
+    for (let i = windowSize; i <= np; i++) {
+      let d = 0;
+
+      for (let l = 0; l < windowSize; l++) d += wg[l] * data[l + i - windowSize];
+
+      if (!constantH) hs = getHs(h, i - half - 1, half, derivative);
+      ans[i - half - 1] = d / hs;
+    }
+
+    return ans;
+  }
+
+  function getHs(h, center, half, derivative) {
+    let hs = 0;
+    let count = 0;
+
+    for (let i = center - half; i < center + half; i++) {
+      if (i >= 0 && i < h.length - 1) {
+        hs += h[i + 1] - h[i];
+        count++;
+      }
+    }
+
+    return Math.pow(hs / count, derivative);
+  }
+
+  function GramPoly(i, m, k, s) {
+    let Grampoly = 0;
+
+    if (k > 0) {
+      Grampoly = (4 * k - 2) / (k * (2 * m - k + 1)) * (i * GramPoly(i, m, k - 1, s) + s * GramPoly(i, m, k - 1, s - 1)) - (k - 1) * (2 * m + k) / (k * (2 * m - k + 1)) * GramPoly(i, m, k - 2, s);
+    } else {
+      if (k === 0 && s === 0) {
+        Grampoly = 1;
+      } else {
+        Grampoly = 0;
+      }
+    }
+
+    return Grampoly;
+  }
+
+  function GenFact(a, b) {
+    let gf = 1;
+
+    if (a >= b) {
+      for (let j = a - b + 1; j <= a; j++) {
+        gf *= j;
+      }
+    }
+
+    return gf;
+  }
+
+  function Weight(i, t, m, n, s) {
+    let sum = 0;
+
+    for (let k = 0; k <= n; k++) {
+      //console.log(k);
+      sum += (2 * k + 1) * (GenFact(2 * m, k) / GenFact(2 * m + k + 1, k + 1)) * GramPoly(i, m, k, 0) * GramPoly(t, m, k, s);
+    }
+
+    return sum;
+  }
   /**
-   * Computes the mode of the given values
-   * @param {Array<number>} input
-   * @return {number}
+   *
+   * @param m  Number of points
+   * @param n  Polynomial grade
+   * @param s  Derivative
    */
 
+
+  function fullWeights(m, n, s) {
+    let weights = new Array(m);
+    let np = Math.floor(m / 2);
+
+    for (let t = -np; t <= np; t++) {
+      weights[t + np] = new Array(m);
+
+      for (let j = -np; j <= np; j++) {
+        weights[t + np][j + np] = Weight(j, t, np, n, s);
+      }
+    }
+
+    return weights;
+  }
+  /*function entropy(data,h,options){
+      var trend = SavitzkyGolay(data,h,trendOptions);
+      var copy = new Array(data.length);
+      var sum = 0;
+      var max = 0;
+      for(var i=0;i<data.length;i++){
+          copy[i] = data[i]-trend[i];
+      }
+
+      sum/=data.length;
+      console.log(sum+" "+max);
+      console.log(stat.array.standardDeviation(copy));
+      console.log(Math.abs(stat.array.mean(copy))/stat.array.standardDeviation(copy));
+      return sum;
+
+  }
+
+
+
+  function guessWindowSize(data, h){
+      console.log("entropy "+entropy(data,h,trendOptions));
+      return 5;
+  }
+  */
+
+  /**
+   * Global spectra deconvolution
+   * @param {Array<number>} x - Independent variable
+   * @param {Array<number>} yIn - Dependent variable
+   * @param {object} [options] - Options object
+   * @param {object} [options.sgOptions] - Options object for Savitzky-Golay filter. See https://github.com/mljs/savitzky-golay-generalized#options
+   * @param {number} [options.sgOptions.windowSize = 9] - points to use in the approximations
+   * @param {number} [options.sgOptions.polynomial = 3] - degree of the polynomial to use in the approximations
+   * @param {number} [options.minMaxRatio = 0.00025] - Threshold to determine if a given peak should be considered as a noise
+   * @param {number} [options.broadRatio = 0.00] - If `broadRatio` is higher than 0, then all the peaks which second derivative
+   * smaller than `broadRatio * maxAbsSecondDerivative` will be marked with the soft mask equal to true.
+   * @param {number} [options.noiseLevel = 0] - Noise threshold in spectrum units
+   * @param {boolean} [options.maxCriteria = true] - Peaks are local maximum(true) or minimum(false)
+   * @param {boolean} [options.smoothY = true] - Select the peak intensities from a smoothed version of the independent variables
+   * @param {boolean} [options.realTopDetection = false] - Use a quadratic optimizations with the peak and its 3 closest neighbors
+   * to determine the true x,y values of the peak?
+   * @param {number} [options.heightFactor = 0] - Factor to multiply the calculated height (usually 2)
+   * @param {number} [options.derivativeThreshold = -1] - Filters based on the amplitude of the first derivative
+   * @return {Array<object>}
+   */
+
+  function gsd(x, yIn, options = {}) {
+    let {
+      noiseLevel,
+      sgOptions = {
+        windowSize: 9,
+        polynomial: 3
+      },
+      smoothY = true,
+      heightFactor = 0,
+      broadRatio = 0.0,
+      maxCriteria = true,
+      minMaxRatio = 0.00025,
+      derivativeThreshold = -1,
+      realTopDetection = false
+    } = options;
+    const y = yIn.slice();
+    let equalSpaced = isEqualSpaced(x);
+
+    if (noiseLevel === undefined) {
+      noiseLevel = equalSpaced ? getNoiseLevel(y) : 0;
+    }
+
+    const yCorrection = {
+      m: 1,
+      b: noiseLevel
+    };
+
+    if (!maxCriteria) {
+      yCorrection.m = -1;
+      yCorrection.b *= -1;
+    }
+
+    for (let i = 0; i < y.length; i++) {
+      y[i] = yCorrection.m * y[i] - yCorrection.b;
+    }
+
+    for (let i = 0; i < y.length; i++) {
+      if (y[i] < 0) {
+        y[i] = 0;
+      }
+    } // If the max difference between delta x is less than 5%, then,
+    // we can assume it to be equally spaced variable
+
+
+    let yData = y;
+    let dY, ddY;
+    const {
+      windowSize,
+      polynomial
+    } = sgOptions;
+
+    if (equalSpaced) {
+      if (smoothY) {
+        yData = SavitzkyGolay(y, x[1] - x[0], {
+          windowSize,
+          polynomial,
+          derivative: 0
+        });
+      }
+
+      dY = SavitzkyGolay(y, x[1] - x[0], {
+        windowSize,
+        polynomial,
+        derivative: 1
+      });
+      ddY = SavitzkyGolay(y, x[1] - x[0], {
+        windowSize,
+        polynomial,
+        derivative: 2
+      });
+    } else {
+      if (smoothY) {
+        yData = SavitzkyGolay(y, x, {
+          windowSize,
+          polynomial,
+          derivative: 0
+        });
+      }
+
+      dY = SavitzkyGolay(y, x, {
+        windowSize,
+        polynomial,
+        derivative: 1
+      });
+      ddY = SavitzkyGolay(y, x, {
+        windowSize,
+        polynomial,
+        derivative: 2
+      });
+    }
+
+    const xData = x;
+    const dX = x[1] - x[0];
+    let maxDdy = 0;
+    let maxY = 0;
+
+    for (let i = 0; i < yData.length; i++) {
+      if (Math.abs(ddY[i]) > maxDdy) {
+        maxDdy = Math.abs(ddY[i]);
+      }
+
+      if (Math.abs(yData[i]) > maxY) {
+        maxY = Math.abs(yData[i]);
+      }
+    }
+
+    let lastMax = null;
+    let lastMin = null;
+    let minddY = new Array(yData.length - 2);
+    let intervalL = new Array(yData.length);
+    let intervalR = new Array(yData.length);
+    let broadMask = new Array(yData.length - 2);
+    let minddYLen = 0;
+    let intervalLLen = 0;
+    let intervalRLen = 0;
+    let broadMaskLen = 0; // By the intermediate value theorem We cannot find 2 consecutive maximum or minimum
+
+    for (let i = 1; i < yData.length - 1; ++i) {
+      // filter based on derivativeThreshold
+      // console.log('pasa', y[i], dY[i], ddY[i]);
+      if (Math.abs(dY[i]) > derivativeThreshold) {
+        // Minimum in first derivative
+        if (dY[i] < dY[i - 1] && dY[i] <= dY[i + 1] || dY[i] <= dY[i - 1] && dY[i] < dY[i + 1]) {
+          lastMin = {
+            x: xData[i],
+            index: i
+          };
+
+          if (dX > 0 && lastMax !== null) {
+            intervalL[intervalLLen++] = lastMax;
+            intervalR[intervalRLen++] = lastMin;
+          }
+        } // Maximum in first derivative
+
+
+        if (dY[i] >= dY[i - 1] && dY[i] > dY[i + 1] || dY[i] > dY[i - 1] && dY[i] >= dY[i + 1]) {
+          lastMax = {
+            x: xData[i],
+            index: i
+          };
+
+          if (dX < 0 && lastMin !== null) {
+            intervalL[intervalLLen++] = lastMax;
+            intervalR[intervalRLen++] = lastMin;
+          }
+        }
+      } // Minimum in second derivative
+
+
+      if (ddY[i] < ddY[i - 1] && ddY[i] < ddY[i + 1]) {
+        // TODO should we change this to have 3 arrays ? Huge overhead creating arrays
+        minddY[minddYLen++] = i; // ( [xData[i], yData[i], i] );
+
+        broadMask[broadMaskLen++] = Math.abs(ddY[i]) <= broadRatio * maxDdy;
+      }
+    }
+
+    minddY.length = minddYLen;
+    intervalL.length = intervalLLen;
+    intervalR.length = intervalRLen;
+    broadMask.length = broadMaskLen;
+    let signals = new Array(minddY.length);
+    let signalsLen = 0;
+    let lastK = -1;
+    let possible, frequency, distanceJ, minDistance, gettingCloser;
+
+    for (let j = 0; j < minddY.length; ++j) {
+      frequency = xData[minddY[j]];
+      possible = -1;
+      let k = lastK + 1;
+      minDistance = Number.MAX_VALUE;
+      distanceJ = 0;
+      gettingCloser = true;
+
+      while (possible === -1 && k < intervalL.length && gettingCloser) {
+        distanceJ = Math.abs(frequency - (intervalL[k].x + intervalR[k].x) / 2); // Still getting closer?
+
+        if (distanceJ < minDistance) {
+          minDistance = distanceJ;
+        } else {
+          gettingCloser = false;
+        }
+
+        if (distanceJ < Math.abs(intervalL[k].x - intervalR[k].x) / 2) {
+          possible = k;
+          lastK = k;
+        }
+
+        ++k;
+      }
+
+      if (possible !== -1) {
+        if (Math.abs(yData[minddY[j]]) > minMaxRatio * maxY) {
+          signals[signalsLen++] = {
+            index: minddY[j],
+            x: frequency,
+            y: (yData[minddY[j]] + yCorrection.b) / yCorrection.m,
+            width: Math.abs(intervalR[possible].x - intervalL[possible].x),
+            // widthCorrection
+            soft: broadMask[j]
+          };
+          signals[signalsLen - 1].left = intervalL[possible];
+          signals[signalsLen - 1].right = intervalR[possible];
+
+          if (heightFactor) {
+            let yLeft = yData[intervalL[possible].index];
+            let yRight = yData[intervalR[possible].index];
+            signals[signalsLen - 1].height = heightFactor * (signals[signalsLen - 1].y - (yLeft + yRight) / 2);
+          }
+        }
+      }
+    }
+
+    signals.length = signalsLen;
+
+    if (realTopDetection) {
+      determineRealTop(signals, xData, yData);
+    } // Correct the values to fit the original spectra data
+
+
+    for (let j = 0; j < signals.length; j++) {
+      signals[j].base = noiseLevel;
+    }
+
+    signals.sort(function (a, b) {
+      return a.x - b.x;
+    });
+    return signals;
+  }
+
+  const isEqualSpaced = x => {
+    let tmp;
+    let maxDx = 0;
+    let minDx = Number.MAX_SAFE_INTEGER;
+
+    for (let i = 0; i < x.length - 1; ++i) {
+      tmp = Math.abs(x[i + 1] - x[i]);
+
+      if (tmp < minDx) {
+        minDx = tmp;
+      }
+
+      if (tmp > maxDx) {
+        maxDx = tmp;
+      }
+    }
+
+    return (maxDx - minDx) / maxDx < 0.05;
+  };
+
+  const getNoiseLevel = y => {
+    let mean = 0;
+    let stddev = 0;
+    let length = y.length;
+
+    for (let i = 0; i < length; ++i) {
+      mean += y[i];
+    }
+
+    mean /= length;
+    let averageDeviations = new Array(length);
+
+    for (let i = 0; i < length; ++i) {
+      averageDeviations[i] = Math.abs(y[i] - mean);
+    }
+
+    averageDeviations.sort((a, b) => a - b);
+
+    if (length % 2 === 1) {
+      stddev = averageDeviations[(length - 1) / 2] / 0.6745;
+    } else {
+      stddev = 0.5 * (averageDeviations[length / 2] + averageDeviations[length / 2 - 1]) / 0.6745;
+    }
+
+    return stddev;
+  };
+
+  const determineRealTop = (peakList, x, y) => {
+    let alpha, beta, gamma, p, currentPoint;
+
+    for (let j = 0; j < peakList.length; j++) {
+      currentPoint = peakList[j].index; // peakList[j][2];
+      // The detected peak could be moved 1 or 2 units to left or right.
+
+      if (y[currentPoint - 1] >= y[currentPoint - 2] && y[currentPoint - 1] >= y[currentPoint]) {
+        currentPoint--;
+      } else {
+        if (y[currentPoint + 1] >= y[currentPoint] && y[currentPoint + 1] >= y[currentPoint + 2]) {
+          currentPoint++;
+        } else {
+          if (y[currentPoint - 2] >= y[currentPoint - 3] && y[currentPoint - 2] >= y[currentPoint - 1]) {
+            currentPoint -= 2;
+          } else {
+            if (y[currentPoint + 2] >= y[currentPoint + 1] && y[currentPoint + 2] >= y[currentPoint + 3]) {
+              currentPoint += 2;
+            }
+          }
+        }
+      } // interpolation to a sin() function
+
+
+      if (y[currentPoint - 1] > 0 && y[currentPoint + 1] > 0 && y[currentPoint] >= y[currentPoint - 1] && y[currentPoint] >= y[currentPoint + 1] && (y[currentPoint] !== y[currentPoint - 1] || y[currentPoint] !== y[currentPoint + 1])) {
+        alpha = 20 * Math.log10(y[currentPoint - 1]);
+        beta = 20 * Math.log10(y[currentPoint]);
+        gamma = 20 * Math.log10(y[currentPoint + 1]);
+        p = 0.5 * (alpha - gamma) / (alpha - 2 * beta + gamma); // console.log(alpha, beta, gamma, `p: ${p}`);
+        // console.log(x[currentPoint]+" "+tmp+" "+currentPoint);
+
+        peakList[j].x = x[currentPoint] + (x[currentPoint] - x[currentPoint - 1]) * p;
+        peakList[j].y = y[currentPoint] - 0.25 * (y[currentPoint - 1] - y[currentPoint + 1]) * p;
+      }
+    }
+  };
+
+  /**
+   * This function calculates the spectrum as a sum of gaussian functions. The Gaussian
+   * parameters are divided in 3 batches. 1st: centers; 2nd: height; 3th: std's;
+   * @param t Ordinate values
+   * @param p Gaussian parameters
+   * @param c Constant parameters(Not used)
+   * @returns {*}
+   */
+  function sumOfGaussians(p) {
+    return function (t) {
+      let nL = p.length / 3;
+      let factor;
+      let rows = t.length;
+      let result = rows === undefined ? 0 : new Float64Array(rows).fill(0);
+
+      for (let i = 0; i < nL; i++) {
+        factor = Math.pow(p[i + nL * 2], 2) * 2;
+
+        if (rows === undefined) {
+          result += p[i + nL] * Math.exp(-Math.pow(t - p[i], 2) / factor);
+        } else {
+          for (let j = 0; j < rows; j++) {
+            result[j] += p[i + nL] * Math.exp(-Math.pow(t[j] - p[i], 2) / factor);
+          }
+        }
+      }
+
+      return result;
+    };
+  }
+
+  /**
+   *
+   * @param xy A two column matrix containing the x and y data to be fitted
+   * @param group A set of initial lorentzian parameters to be optimized [center, heigth, half_width_at_half_height]
+   * @returns {Array} A set of final lorentzian parameters [center, heigth, hwhh*2]
+   */
+
+  function optimizeGaussianSum(xy, group, opts = {}) {
+    let t = xy[0];
+    let yData = xy[1];
+    let maxY = Math.max(...yData);
+    yData.forEach((x, i, arr) => arr[i] /= maxY);
+    let nL = group.length;
+    let pInit = new Float64Array(nL * 3);
+    let pMin = new Float64Array(nL * 3);
+    let pMax = new Float64Array(nL * 3);
+    let dt = Math.abs(t[0] - t[1]);
+
+    for (let i = 0; i < nL; i++) {
+      pInit[i] = group[i].x;
+      pInit[i + nL] = group[i].y / maxY;
+      pInit[i + 2 * nL] = group[i].width;
+      pMin[i] = group[i].x - dt;
+      pMin[i + nL] = 0;
+      pMin[i + 2 * nL] = group[i].width / 4;
+      pMax[i] = group[i].x + dt;
+      pMax[i + nL] = group[i].y * 1.2 / maxY;
+      pMax[i + 2 * nL] = group[i].width * 4;
+    }
+
+    let data = {
+      x: t,
+      y: yData
+    };
+    let result = new Array(nL);
+    let lmOptions = {
+      damping: 1.5,
+      initialValues: pInit,
+      minValues: pMin,
+      maxValues: pMax,
+      gradientDifference: dt / 10000,
+      maxIterations: 100,
+      errorTolerance: 10e-5
+    };
+    opts = Object.assign({}, lmOptions, opts);
+    let pFit = levenbergMarquardt(data, sumOfGaussians, opts);
+
+    for (let i = 0; i < nL; i++) {
+      result[i] = {
+        parameters: [pFit.parameterValues[i], pFit.parameterValues[i + nL] * maxY, pFit.parameterValues[i + nL * 2]],
+        error: pFit.parameterError
+      };
+    }
+
+    return result;
+  }
+
+  /**
+   * Single 3 parameter gaussian function
+   * @param t Ordinate values
+   * @param p Gaussian parameters [mean, height, std]
+   * @param c Constant parameters(Not used)
+   * @returns {*}
+   */
+  function singleGaussian(p) {
+    return function (t) {
+      let factor2 = p[2] * p[2] / 2;
+      let rows = t.length;
+      if (!rows) return p[1] * Math.exp(-(t - p[0]) * (t - p[0]) / factor2);
+      let result = new Float64Array(t.length);
+
+      for (let i = 0; i < t.length; i++) {
+        result[i] = p[1] * Math.exp(-(t[i] - p[0]) * (t[i] - p[0]) / factor2);
+      }
+
+      return result;
+    };
+  }
+
+  /**
+   * Fits a set of points to a gaussian bell. Returns the mean of the peak, the std and the height of the signal.
+   * @param data,[y]
+   * @returns {*[]}
+   */
+
+  function optimizeSingleGaussian(xy, peak, opts = {}) {
+    let t = xy[0];
+    let yData = xy[1];
+    let maxY = Math.max(...yData);
+    yData.forEach((x, i, arr) => arr[i] /= maxY);
+    let dt = Math.abs(t[0] - t[1]);
+    let pInit = new Float64Array([peak.x, 1, peak.width]);
+    let pMin = new Float64Array([peak.x - dt, 0, peak.width / 4]);
+    let pMax = new Float64Array([peak.x + dt, 1.25, peak.width * 4]);
+    let data = {
+      x: t,
+      y: yData
+    };
+    let lmOptions = {
+      damping: 1.5,
+      initialValues: pInit,
+      minValues: pMin,
+      maxValues: pMax,
+      gradientDifference: dt / 10000,
+      maxIterations: 100,
+      errorTolerance: 10e-5
+    };
+    opts = Object.assign({}, lmOptions, opts);
+    let pFit = levenbergMarquardt(data, singleGaussian, opts);
+    return {
+      parameters: [pFit.parameterValues[0], pFit.parameterValues[1] * maxY, pFit.parameterValues[2]],
+      error: pFit.parameterError
+    };
+  }
+
+  /**
+   * This function calculates the spectrum as a sum of lorentzian functions. The Lorentzian
+   * parameters are divided in 3 batches. 1st: centers; 2nd: heights; 3th: widths;
+   * @param t Ordinate values
+   * @param p Lorentzian parameters
+   * @returns {*}
+   */
+  function sumOfLorentzians(p) {
+    return function (t) {
+      let nL = p.length / 3;
+      let factor;
+      let p2;
+      let rows = t.length;
+      let result = rows === undefined ? 0 : new Float64Array(rows).fill(0);
+
+      for (let i = 0; i < nL; i++) {
+        p2 = Math.pow(p[i + nL * 2] / 2, 2);
+        factor = p[i + nL] * p2;
+
+        if (rows === undefined) {
+          result += factor / (Math.pow(t - p[i], 2) + p2);
+        } else {
+          for (let j = 0; j < rows; j++) {
+            result[j] += factor / (Math.pow(t[j] - p[i], 2) + p2);
+          }
+        }
+      }
+
+      return result;
+    };
+  }
+
+  /**
+   *
+   * @param xy A two column matrix containing the x and y data to be fitted
+   * @param group A set of initial lorentzian parameters to be optimized [center, heigth, half_width_at_half_height]
+   * @returns {Array} A set of final lorentzian parameters [center, heigth, hwhh*2]
+   */
+
+  function optimizeLorentzianSum(xy, group, opts = {}) {
+    let t = xy[0];
+    let yData = xy[1];
+    let maxY = Math.max(...yData);
+    yData.forEach((x, i, arr) => arr[i] /= maxY);
+    let nL = group.length;
+    let pInit = new Float64Array(nL * 3);
+    let pMin = new Float64Array(nL * 3);
+    let pMax = new Float64Array(nL * 3);
+    let dt = Math.abs(t[0] - t[1]);
+
+    for (let i = 0; i < nL; i++) {
+      pInit[i] = group[i].x;
+      pInit[i + nL] = 1;
+      pInit[i + 2 * nL] = group[i].width;
+      pMin[i] = group[i].x - dt;
+      pMin[i + nL] = 0;
+      pMin[i + 2 * nL] = group[i].width / 4;
+      pMax[i] = group[i].x + dt;
+      pMax[i + nL] = 1.5;
+      pMax[i + 2 * nL] = group[i].width * 4;
+    }
+
+    let data = {
+      x: t,
+      y: yData
+    };
+    let result = new Array(nL);
+    let lmOptions = {
+      damping: 1.5,
+      initialValues: pInit,
+      minValues: pMin,
+      maxValues: pMax,
+      gradientDifference: dt / 10000,
+      maxIterations: 100,
+      errorTolerance: 10e-5
+    };
+    opts = Object.assign({}, lmOptions, opts);
+    let pFit = levenbergMarquardt(data, sumOfLorentzians, opts);
+
+    for (let i = 0; i < nL; i++) {
+      result[i] = {
+        parameters: [pFit.parameterValues[i], pFit.parameterValues[i + nL] * maxY, pFit.parameterValues[i + nL * 2]],
+        error: pFit.parameterError
+      };
+    }
+
+    return result;
+  }
+
+  /**
+   * Single 4 parameter lorentzian function
+   * @param t Ordinate values
+   * @param p Lorentzian parameters
+   * @param c Constant parameters(Not used)
+   * @returns {*}
+   */
+  function singleLorentzian(p) {
+    return function (t) {
+      let factor = p[1] * Math.pow(p[2] / 2, 2);
+      let rows = t.length;
+      if (!rows) return factor / (Math.pow(t - p[0], 2) + Math.pow(p[2] / 2, 2));
+      let result = new Float64Array(rows);
+
+      for (let i = 0; i < rows; i++) {
+        result[i] = factor / (Math.pow(t[i] - p[0], 2) + Math.pow(p[2] / 2, 2));
+      }
+
+      return result;
+    };
+  }
+
+  /**
+   * * Fits a set of points to a Lorentzian function. Returns the center of the peak, the width at half height, and the height of the signal.
+   * @param data,[y]
+   * @returns {*[]}
+   */
+
+  function optimizeSingleLorentzian(xy, peak, opts = {}) {
+    let t = xy[0];
+    let yData = xy[1];
+    let maxY = Math.max(...yData);
+    yData.forEach((x, i, arr) => arr[i] /= maxY);
+    let dt = Math.abs(t[0] - t[1]);
+    let pInit = new Float64Array([peak.x, 1, peak.width]);
+    let pMin = new Float64Array([peak.x - dt, 0.75, peak.width / 4]);
+    let pMax = new Float64Array([peak.x + dt, 1.25, peak.width * 4]);
+    let data = {
+      x: t,
+      y: yData
+    };
+    let lmOptions = {
+      damping: 1.5,
+      initialValues: pInit,
+      minValues: pMin,
+      maxValues: pMax,
+      gradientDifference: dt / 10000,
+      maxIterations: 100,
+      errorTolerance: 10e-5
+    };
+    opts = Object.assign({}, lmOptions, opts);
+    let pFit = levenbergMarquardt(data, singleLorentzian, opts);
+    return {
+      parameters: [pFit.parameterValues[0], pFit.parameterValues[1] * maxY, pFit.parameterValues[2]],
+      error: pFit.parameterError
+    };
+  }
+
+  function optimizePeaks(peakList, x, y, options = {}) {
+    const {
+      functionName = 'gaussian',
+      factorWidth = 4,
+      optimizationOptions = {
+        damping: 1.5,
+        maxIterations: 100,
+        errorTolerance: 10e-5
+      }
+    } = options;
+    let lastIndex = [0];
+    let groups = groupPeaks(peakList, factorWidth);
+    let result = [];
+    let factor = 1;
+
+    if (functionName === 'gaussian') {
+      factor = 1.17741;
+    } // From https://en.wikipedia.org/wiki/Gaussian_function#Properties
+
+
+    let sampling;
+
+    for (let i = 0; i < groups.length; i++) {
+      let peaks = groups[i].group;
+
+      if (peaks.length > 1) {
+        // Multiple peaks
+        sampling = sampleFunction(groups[i].limits[0] - groups[i].limits[1], groups[i].limits[0] + groups[i].limits[1], x, y, lastIndex);
+
+        if (sampling[0].length > 5) {
+          let optPeaks = [];
+
+          if (functionName === 'gaussian') {
+            optPeaks = optimizeGaussianSum(sampling, peaks, optimizationOptions);
+          } else {
+            if (functionName === 'lorentzian') {
+              optPeaks = optimizeLorentzianSum(sampling, peaks, optimizationOptions);
+            }
+          }
+
+          for (let j = 0; j < optPeaks.length; j++) {
+            let {
+              parameters
+            } = optPeaks[j];
+            result.push({
+              x: parameters[0],
+              y: parameters[1],
+              width: parameters[2] * factor,
+              index: peaks[j].index
+            });
+          }
+        }
+      } else {
+        // Single peak
+        peaks = peaks[0];
+        sampling = sampleFunction(peaks.x - factorWidth * peaks.width, peaks.x + factorWidth * peaks.width, x, y, lastIndex);
+
+        if (sampling[0].length > 5) {
+          let fitResult = [];
+
+          if (functionName === 'gaussian') {
+            fitResult = optimizeSingleGaussian([sampling[0], sampling[1]], peaks, optimizationOptions);
+          } else {
+            if (functionName === 'lorentzian') {
+              fitResult = optimizeSingleLorentzian([sampling[0], sampling[1]], peaks, optimizationOptions);
+            }
+          }
+
+          let {
+            parameters
+          } = fitResult;
+          result.push({
+            x: parameters[0],
+            y: parameters[1],
+            width: parameters[2] * factor,
+            index: peaks.index
+          }); // From https://en.wikipedia.org/wiki/Gaussian_function#Properties}
+        }
+      }
+    }
+
+    return result;
+  }
+
+  function sampleFunction(from, to, x, y, lastIndex) {
+    let nbPoints = x.length;
+    let sampleX = [];
+    let sampleY = [];
+    let direction = Math.sign(x[1] - x[0]); // Direction of the derivative
+
+    if (direction === -1) {
+      lastIndex[0] = x.length - 1;
+    }
+
+    let delta = Math.abs(to - from) / 2;
+    let mid = (from + to) / 2;
+    let stop = false;
+    let index = lastIndex[0];
+
+    while (!stop && index < nbPoints && index >= 0) {
+      if (Math.abs(x[index] - mid) <= delta) {
+        sampleX.push(x[index]);
+        sampleY.push(y[index]);
+        index += direction;
+      } else {
+        // It is outside the range.
+        if (Math.sign(mid - x[index]) === 1) {
+          // We'll reach the mid going in the current direction
+          index += direction;
+        } else {
+          // There is not more peaks in the current range
+          stop = true;
+        }
+      }
+    }
+
+    lastIndex[0] = index;
+    return [sampleX, sampleY];
+  }
+
+  function groupPeaks(peakList, nL) {
+    let group = [];
+    let groups = [];
+    let limits = [peakList[0].x, nL * peakList[0].width];
+    let upperLimit, lowerLimit; // Merge forward
+
+    for (let i = 0; i < peakList.length; i++) {
+      // If the 2 things overlaps
+      if (Math.abs(peakList[i].x - limits[0]) < nL * peakList[i].width + limits[1]) {
+        // Add the peak to the group
+        group.push(peakList[i]); // Update the group limits
+
+        upperLimit = limits[0] + limits[1];
+
+        if (peakList[i].x + nL * peakList[i].width > upperLimit) {
+          upperLimit = peakList[i].x + nL * peakList[i].width;
+        }
+
+        lowerLimit = limits[0] - limits[1];
+
+        if (peakList[i].x - nL * peakList[i].width < lowerLimit) {
+          lowerLimit = peakList[i].x - nL * peakList[i].width;
+        }
+
+        limits = [(upperLimit + lowerLimit) / 2, Math.abs(upperLimit - lowerLimit) / 2];
+      } else {
+        groups.push({
+          limits: limits,
+          group: group
+        }); // var optmimalPeak = fitSpectrum(group,limits,spectrum);
+
+        group = [peakList[i]];
+        limits = [peakList[i].x, nL * peakList[i].width];
+      }
+    }
+
+    groups.push({
+      limits: limits,
+      group: group
+    }); // Merge backward
+
+    for (let i = groups.length - 2; i >= 0; i--) {
+      // The groups overlaps
+      if (Math.abs(groups[i].limits[0] - groups[i + 1].limits[0]) < (groups[i].limits[1] + groups[i + 1].limits[1]) / 2) {
+        for (let j = 0; j < groups[i + 1].group.length; j++) {
+          groups[i].group.push(groups[i + 1].group[j]);
+        }
+
+        upperLimit = groups[i].limits[0] + groups[i].limits[1];
+
+        if (groups[i + 1].limits[0] + groups[i + 1].limits[1] > upperLimit) {
+          upperLimit = groups[i + 1].limits[0] + groups[i + 1].limits[1];
+        }
+
+        lowerLimit = groups[i].limits[0] - groups[i].limits[1];
+
+        if (groups[i + 1].limits[0] - groups[i + 1].limits[1] < lowerLimit) {
+          lowerLimit = groups[i + 1].limits[0] - groups[i + 1].limits[1];
+        }
+
+        groups[i].limits = [(upperLimit + lowerLimit) / 2, Math.abs(upperLimit - lowerLimit) / 2];
+        groups.splice(i + 1, 1);
+      }
+    }
+
+    return groups;
+  }
+
+  /**
+   * This function try to join the peaks that seems to belong to a broad signal in a single broad peak.
+   * @param peakList
+   * @param options
+   */
+
+  function joinBroadPeaks(peakList, options = {}) {
+    let width = options.width;
+    let broadLines = []; // Optimize the possible broad lines
+
+    let max = 0;
+    let maxI = 0;
+    let count = 1;
+
+    for (let i = peakList.length - 1; i >= 0; i--) {
+      if (peakList[i].soft) {
+        broadLines.push(peakList.splice(i, 1)[0]);
+      }
+    } // Push a feke peak
+
+
+    broadLines.push({
+      x: Number.MAX_VALUE
+    });
+    let candidates = [[broadLines[0].x, broadLines[0].y]];
+    let indexes = [broadLines[0].index];
+
+    for (let i = 1; i < broadLines.length; i++) {
+      // console.log(broadLines[i-1].x+" "+broadLines[i].x);
+      if (Math.abs(broadLines[i - 1].x - broadLines[i].x) < width) {
+        candidates.push([broadLines[i].x, broadLines[i].y]);
+
+        if (broadLines[i].y > max) {
+          max = broadLines[i].y;
+          maxI = i;
+        }
+
+        indexes.push(broadLines[i].index);
+        count++;
+      } else {
+        if (count > 2) {
+          let fitted = optimizeSingleLorentzian(candidates, {
+            x: broadLines[maxI].x,
+            y: max,
+            width: Math.abs(candidates[0][0] - candidates[candidates.length - 1][0])
+          });
+          let {
+            parameters
+          } = fitted;
+          peakList.push({
+            x: parameters[0],
+            y: parameters[1],
+            width: parameters[2],
+            index: Math.floor(indexes.reduce((a, b) => a + b, 0) / indexes.length),
+            soft: false
+          });
+        } else {
+          // Put back the candidates to the signals list
+          indexes.forEach(index => {
+            peakList.push(broadLines[index]);
+          });
+        }
+
+        candidates = [[broadLines[i].x, broadLines[i].y]];
+        indexes = [i];
+        max = broadLines[i].y;
+        maxI = i;
+        count = 1;
+      }
+    }
+
+    peakList.sort(function (a, b) {
+      return a.x - b.x;
+    });
+    return peakList;
+  }
+
+  /**
+   * This method will allow to enlarge peaks and prevent overlap between peaks
+   * Because peaks may not be symmetric after we add 2 properties, from and to.
+   * @param {Array} peakList
+   * @param {object} [options={}]
+   * @param {number} [factor=2]
+   * @param {boolean} [overlap=false] by default we don't allow overlap
+   * @return {Array} peakList
+   */
+  function broadenPeaks(peakList, options = {}) {
+    const {
+      factor = 2,
+      overlap = false
+    } = options;
+
+    for (let peak of peakList) {
+      if (!peak.right || !peak.left) {
+        peak.from = peak.x - peak.width / 2 * factor;
+        peak.to = peak.x + peak.width / 2 * factor;
+      } else {
+        peak.from = peak.x - (peak.x - peak.left.x) * factor;
+        peak.to = peak.x + (peak.right.x - peak.x) * factor;
+      }
+    }
+
+    if (!overlap) {
+      for (let i = 0; i < peakList.length - 1; i++) {
+        let peak = peakList[i];
+        let nextPeak = peakList[i + 1];
+
+        if (peak.to > nextPeak.from) {
+          peak.to = nextPeak.from = (peak.to + nextPeak.from) / 2;
+        }
+      }
+    }
+
+    for (let peak of peakList) {
+      peak.width = peak.to - peak.from;
+    }
+
+    return peakList;
+  }
+
+  var index$6 = /*#__PURE__*/Object.freeze({
+    __proto__: null,
+    gsd: gsd,
+    optimizePeaks: optimizePeaks,
+    joinBroadPeaks: joinBroadPeaks,
+    broadenPeaks: broadenPeaks
+  });
+
+  const toString$4 = Object.prototype.toString;
+  function isAnyArray$4(object) {
+    return toString$4.call(object).endsWith('Array]');
+  }
+
+  function min$1(input) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    if (!isAnyArray$4(input)) {
+      throw new TypeError('input must be an array');
+    }
+
+    if (input.length === 0) {
+      throw new TypeError('input must not be empty');
+    }
+
+    var _options$fromIndex = options.fromIndex,
+        fromIndex = _options$fromIndex === void 0 ? 0 : _options$fromIndex,
+        _options$toIndex = options.toIndex,
+        toIndex = _options$toIndex === void 0 ? input.length : _options$toIndex;
+
+    if (fromIndex < 0 || fromIndex >= input.length || !Number.isInteger(fromIndex)) {
+      throw new Error('fromIndex must be a positive integer smaller than length');
+    }
+
+    if (toIndex <= fromIndex || toIndex > input.length || !Number.isInteger(toIndex)) {
+      throw new Error('toIndex must be an integer greater than fromIndex and at most equal to length');
+    }
+
+    var minValue = input[fromIndex];
+
+    for (var i = fromIndex + 1; i < toIndex; i++) {
+      if (input[i] < minValue) minValue = input[i];
+    }
+
+    return minValue;
+  }
+
+  function max$1(input) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    if (!isAnyArray$4(input)) {
+      throw new TypeError('input must be an array');
+    }
+
+    if (input.length === 0) {
+      throw new TypeError('input must not be empty');
+    }
+
+    var _options$fromIndex = options.fromIndex,
+        fromIndex = _options$fromIndex === void 0 ? 0 : _options$fromIndex,
+        _options$toIndex = options.toIndex,
+        toIndex = _options$toIndex === void 0 ? input.length : _options$toIndex;
+
+    if (fromIndex < 0 || fromIndex >= input.length || !Number.isInteger(fromIndex)) {
+      throw new Error('fromIndex must be a positive integer smaller than length');
+    }
+
+    if (toIndex <= fromIndex || toIndex > input.length || !Number.isInteger(toIndex)) {
+      throw new Error('toIndex must be an integer greater than fromIndex and at most equal to length');
+    }
+
+    var maxValue = input[fromIndex];
+
+    for (var i = fromIndex + 1; i < toIndex; i++) {
+      if (input[i] > maxValue) maxValue = input[i];
+    }
+
+    return maxValue;
+  }
+
   function mode$1(input) {
-    if (!src(input)) {
+    if (!isAnyArray$4(input)) {
       throw new TypeError('input must be an array');
     }
 
@@ -16320,21 +18975,67 @@
     return maxValue;
   }
 
-  /**
-   * Computes the norm of the given values
-   * @param {Array<number>} input
-   * @param {object} [options={}]
-   * @param {string} [options.algorithm='absolute'] absolute, sum or max
-   * @return {number}
-   */
+  const toString$5 = Object.prototype.toString;
+  function isAnyArray$5(object) {
+    return toString$5.call(object).endsWith('Array]');
+  }
+
+  function max$2(input) {
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    if (!isAnyArray$5(input)) {
+      throw new TypeError('input must be an array');
+    }
+
+    if (input.length === 0) {
+      throw new TypeError('input must not be empty');
+    }
+
+    var _options$fromIndex = options.fromIndex,
+        fromIndex = _options$fromIndex === void 0 ? 0 : _options$fromIndex,
+        _options$toIndex = options.toIndex,
+        toIndex = _options$toIndex === void 0 ? input.length : _options$toIndex;
+
+    if (fromIndex < 0 || fromIndex >= input.length || !Number.isInteger(fromIndex)) {
+      throw new Error('fromIndex must be a positive integer smaller than length');
+    }
+
+    if (toIndex <= fromIndex || toIndex > input.length || !Number.isInteger(toIndex)) {
+      throw new Error('toIndex must be an integer greater than fromIndex and at most equal to length');
+    }
+
+    var maxValue = input[fromIndex];
+
+    for (var i = fromIndex + 1; i < toIndex; i++) {
+      if (input[i] > maxValue) maxValue = input[i];
+    }
+
+    return maxValue;
+  }
 
   function norm$1(input) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     var _options$algorithm = options.algorithm,
-        algorithm = _options$algorithm === void 0 ? 'absolute' : _options$algorithm;
+        algorithm = _options$algorithm === void 0 ? 'absolute' : _options$algorithm,
+        _options$sumValue = options.sumValue,
+        sumValue = _options$sumValue === void 0 ? 1 : _options$sumValue,
+        _options$maxValue = options.maxValue,
+        maxValue = _options$maxValue === void 0 ? 1 : _options$maxValue;
 
-    if (!Array.isArray(input)) {
+    if (!isAnyArray$5(input)) {
       throw new Error('input must be an array');
+    }
+
+    var output;
+
+    if (options.output !== undefined) {
+      if (!isAnyArray$5(options.output)) {
+        throw new TypeError('output option must be an array if specified');
+      }
+
+      output = options.output;
+    } else {
+      output = new Array(input.length);
     }
 
     if (input.length === 0) {
@@ -16344,29 +19045,39 @@
     switch (algorithm.toLowerCase()) {
       case 'absolute':
         {
-          var absoluteSumValue = absoluteSum(input);
+          var absoluteSumValue = absoluteSum(input) / sumValue;
           if (absoluteSumValue === 0) return input.slice(0);
-          return input.map(function (element) {
-            return element / absoluteSumValue;
-          });
+
+          for (var i = 0; i < input.length; i++) {
+            output[i] = input[i] / absoluteSumValue;
+          }
+
+          return output;
         }
 
       case 'max':
         {
-          var maxValue = max(input);
-          if (maxValue === 0) return input.slice(0);
-          return input.map(function (element) {
-            return element / maxValue;
-          });
+          var currentMaxValue = max$2(input);
+          if (currentMaxValue === 0) return input.slice(0);
+          var factor = maxValue / currentMaxValue;
+
+          for (var _i = 0; _i < input.length; _i++) {
+            output[_i] = input[_i] * factor;
+          }
+
+          return output;
         }
 
       case 'sum':
         {
-          var sumValue = sum(input);
-          if (sumValue === 0) return input.slice(0);
-          return input.map(function (element) {
-            return element / sumValue;
-          });
+          var sumFactor = sum(input) / sumValue;
+          if (sumFactor === 0) return input.slice(0);
+
+          for (var _i2 = 0; _i2 < input.length; _i2++) {
+            output[_i2] = input[_i2] / sumFactor;
+          }
+
+          return output;
         }
 
       default:
@@ -16385,12 +19096,14 @@
   }
 
   function _typeof(obj) {
+    "@babel/helpers - typeof";
+
     if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
-      _typeof = function _typeof(obj) {
+      _typeof = function (obj) {
         return typeof obj;
       };
     } else {
-      _typeof = function _typeof(obj) {
+      _typeof = function (obj) {
         return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
       };
     }
@@ -16413,12 +19126,12 @@
     var input = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : [];
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    if (_typeof(input) === 'object' && !src(input)) {
+    if (_typeof(input) === 'object' && !isAnyArray$4(input)) {
       options = input;
       input = [];
     }
 
-    if (!src(input)) {
+    if (!isAnyArray$4(input)) {
       throw new TypeError('input must be an array');
     }
 
@@ -16431,7 +19144,7 @@
         size = _options$size === void 0 ? input.length : _options$size,
         step = _options.step;
 
-    if (size && step) {
+    if (size !== 0 && step) {
       throw new Error('step is defined by the array size');
     }
 
@@ -16448,7 +19161,8 @@
     }
 
     if (Array.isArray(input)) {
-      input.length = 0; // only works with normal array
+      // only works with normal array
+      input.length = 0;
 
       for (var i = 0; i < size; i++) {
         input.push(from);
@@ -16468,19 +19182,15 @@
     return input;
   }
 
-  /**
-   * Computes the variance of the given values
-   * @param {Array} values
-   * @param {object} [options]
-   * @param {boolean} [options.unbiased = true] - if true, divide by (n-1); if false, divide by n.
-   * @param {number} [options.mean = arrayMean] - precalculated mean, if any.
-   * @return {number}
-   */
+  const toString$6 = Object.prototype.toString;
+  function isAnyArray$6(object) {
+    return toString$6.call(object).endsWith('Array]');
+  }
 
   function variance(values) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
-    if (!src(values)) {
+    if (!isAnyArray$6(values)) {
       throw new TypeError('input must be an array');
     }
 
@@ -16502,15 +19212,6 @@
     }
   }
 
-  /**
-   * Computes the standard deviation of the given values
-   * @param {Array} values
-   * @param {object} [options]
-   * @param {boolean} [options.unbiased = true] - if true, divide by (n-1); if false, divide by n.
-   * @param {number} [options.mean = arrayMean] - precalculated mean, if any.
-   * @return {number}
-   */
-
   function standardDeviation(values) {
     var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
     return Math.sqrt(variance(values, options));
@@ -16526,8 +19227,7 @@
    * @param {number} [options.window = 0.01] - has to be a positive number
    * @return {{x: Array<number>, y: Array<number>}}
    */
-  function mergeByCentroids(originalPoints, centroids) {
-    let options = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : {};
+  function mergeByCentroids(originalPoints, centroids, options = {}) {
     const {
       window = 0.01
     } = options;
@@ -16611,8 +19311,7 @@
    * @return {number}
    */
 
-  function covariance$1(points) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  function covariance$1(points, options = {}) {
     const {
       x,
       y
@@ -16644,8 +19343,7 @@
    * @param {number} [options.groupWidth = 0.001] - window for abscissas to merge
    * @return {{x: Array<number>, y: Array<number>}}
    */
-  function maxMerge(points) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  function maxMerge(points, options = {}) {
     const {
       x,
       y
@@ -16699,8 +19397,7 @@
    * @return {{index: number, value: number}}
    */
 
-  function maxY(points) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  function maxY(points, options = {}) {
     const {
       x,
       y
@@ -16755,14 +19452,13 @@
     }
 
     if (index < 0) {
-      throw new Error("the value ".concat(value, " doesn't belongs to the abscissa value"));
+      throw new Error(`the value ${value} doesn't belongs to the abscissa value`);
     }
 
     return index;
   }
 
-  function sortX(points) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  function sortX(points, options = {}) {
     const {
       x,
       y
@@ -16800,8 +19496,7 @@
    * @param {object} [points={}] : Object of points contains property x (an array) and y (an array)
    * @return points
    */
-  function uniqueX() {
-    let points = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+  function uniqueX(points = {}) {
     const {
       x,
       y
@@ -16844,8 +19539,7 @@
    * @param {number} [options.groupWidth = 0.001] - window for abscissas to merge
    * @return {{x: Array<number>, y: Array<number>}}
    */
-  function weightedMerge(points) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  function weightedMerge(points, options = {}) {
     const {
       x,
       y
@@ -16889,6 +19583,140 @@
   }
 
   /**
+   * Normalize an array of zones:
+   * - ensure than from < to
+   * - merge overlapping zones
+   *
+   * The method will always check if from if lower than to and will swap if required.
+   * @param {Array} [zones=[]]
+   * @param {object} [options={}]
+   * @param {number} [options.from=Number.NEGATIVE_INFINITY] Specify min value of a zone
+   * @param {number} [options.to=Number.POSITIVE_INFINITY] Specify max value of a zone
+   */
+  function normalize(zones = [], options = {}) {
+    if (zones.length === 0) return [];
+    let {
+      from = Number.NEGATIVE_INFINITY,
+      to = Number.POSITIVE_INFINITY
+    } = options;
+    if (from > to) [from, to] = [to, from];
+    zones = JSON.parse(JSON.stringify(zones)).map(zone => zone.from > zone.to ? {
+      from: zone.to,
+      to: zone.from
+    } : zone);
+    zones = zones.sort((a, b) => {
+      if (a.from !== b.from) return a.from - b.from;
+      return a.to - b.to;
+    });
+    zones.forEach(zone => {
+      if (from > zone.from) zone.from = from;
+      if (to < zone.to) zone.to = to;
+    });
+    zones = zones.filter(zone => zone.from <= zone.to);
+    if (zones.length === 0) return [];
+    let currentZone = zones[0];
+    let result = [currentZone];
+
+    for (let i = 1; i < zones.length; i++) {
+      let zone = zones[i];
+
+      if (zone.from <= currentZone.to) {
+        currentZone.to = zone.to;
+      } else {
+        currentZone = zone;
+        result.push(currentZone);
+      }
+    }
+
+    return result;
+  }
+
+  /**
+   * Convert an array of exclusions and keep only from / to
+   *
+   * The method will always check if from if lower than to and will swap if required.
+   * @param {Array} [exclusions=[]]
+   * @param {object} [options={}]
+   * @param {number} [options.from=Number.NEGATIVE_INFINITY] Specify min value of zones (after inversion)
+   * @param {number} [options.to=Number.POSITIVE_INFINITY] Specify max value of zones (after inversion)
+   */
+
+  function invert(exclusions = [], options = {}) {
+    let {
+      from = Number.NEGATIVE_INFINITY,
+      to = Number.POSITIVE_INFINITY
+    } = options;
+    if (from > to) [from, to] = [to, from];
+    exclusions = normalize(exclusions, {
+      from,
+      to
+    });
+    if (exclusions.length === 0) return [{
+      from,
+      to
+    }];
+    let zones = [];
+
+    for (let i = 0; i < exclusions.length; i++) {
+      let exclusion = exclusions[i];
+      let nextExclusion = exclusions[i + 1];
+
+      if (i === 0) {
+        if (exclusion.from > from) {
+          zones.push({
+            from,
+            to: exclusion.from
+          });
+        }
+      }
+
+      if (i === exclusions.length - 1) {
+        if (exclusion.to < to) {
+          zones.push({
+            from: exclusion.to,
+            to
+          });
+        }
+      } else {
+        zones.push({
+          from: exclusion.to,
+          to: nextExclusion.from
+        });
+      }
+    }
+
+    return zones;
+  }
+
+  /**
+   * Add the number of points per zone to reach a specified total
+   * @param {Array} [zones=[]]
+   * @param {number} [numberOfPoints] Total number of points to distribute between zones
+   * @param {object} [options={}]
+   * @param {number} [options.from=Number.NEGATIVE_INFINITY] Specify min value of a zone
+   * @param {number} [options.to=Number.POSITIVE_INFINITY] Specify max value of a zone
+   */
+
+  function zonesWithPoints(zones, numberOfPoints, options = {}) {
+    if (zones.length === 0) return zones;
+    zones = normalize(zones, options);
+    const totalSize = zones.reduce((previous, current) => {
+      return previous + (current.to - current.from);
+    }, 0);
+    let unitsPerPoint = totalSize / numberOfPoints;
+    let currentTotal = 0;
+
+    for (let i = 0; i < zones.length - 1; i++) {
+      let zone = zones[i];
+      zone.numberOfPoints = Math.min(Math.round((zone.to - zone.from) / unitsPerPoint), numberOfPoints - currentTotal);
+      currentTotal += zone.numberOfPoints;
+    }
+
+    zones[zones.length - 1].numberOfPoints = numberOfPoints - currentTotal;
+    return zones;
+  }
+
+  /**
    * Function that calculates the integral of the line between two
    * x-coordinates, given the slope and intercept of the line.
    * @param {number} x0
@@ -16913,31 +19741,33 @@
    */
 
   function equallySpacedSmooth(x, y, from, to, numberOfPoints) {
-    var xLength = x.length;
-    var step = (to - from) / (numberOfPoints - 1);
-    var halfStep = step / 2;
-    var output = new Array(numberOfPoints);
-    var initialOriginalStep = x[1] - x[0];
-    var lastOriginalStep = x[xLength - 1] - x[xLength - 2]; // Init main variables
+    let xLength = x.length;
+    let step = (to - from) / (numberOfPoints - 1);
+    let halfStep = step / 2;
+    let output = new Array(numberOfPoints);
+    let initialOriginalStep = x[1] - x[0];
+    let lastOriginalStep = x[xLength - 1] - x[xLength - 2]; // Init main variables
 
-    var min = from - halfStep;
-    var max = from + halfStep;
-    var previousX = Number.MIN_VALUE;
-    var previousY = 0;
-    var nextX = x[0] - initialOriginalStep;
-    var nextY = 0;
-    var currentValue = 0;
-    var slope = 0;
-    var intercept = 0;
-    var sumAtMin = 0;
-    var sumAtMax = 0;
-    var i = 0; // index of input
+    let min = from - halfStep;
+    let max = from + halfStep;
+    let previousX = Number.MIN_VALUE;
+    let previousY = 0;
+    let nextX = x[0] - initialOriginalStep;
+    let nextY = 0;
+    let currentValue = 0;
+    let slope = 0;
+    let intercept = 0;
+    let sumAtMin = 0;
+    let sumAtMax = 0;
+    let i = 0; // index of input
 
-    var j = 0; // index of output
+    let j = 0; // index of output
 
     function getSlope(x0, y0, x1, y1) {
       return (y1 - y0) / (x1 - x0);
     }
+
+    let add = 0;
 
     main: while (true) {
       if (previousX <= min && min <= nextX) {
@@ -16947,7 +19777,7 @@
 
       while (nextX - max >= 0) {
         // no overlap with original point, just consume current value
-        var add = integral(0, max - previousX, slope, previousY);
+        add = integral(0, max - previousX, slope, previousY);
         sumAtMax = currentValue + add;
         output[j++] = (sumAtMax - sumAtMin) / step;
 
@@ -16991,27 +19821,27 @@
    * @return {Array} - Array of y's equally spaced with the variant "slot"
    */
   function equallySpacedSlot(x, y, from, to, numberOfPoints) {
-    var xLength = x.length;
-    var step = (to - from) / (numberOfPoints - 1);
-    var halfStep = step / 2;
-    var lastStep = x[x.length - 1] - x[x.length - 2];
-    var start = from - halfStep;
-    var output = new Array(numberOfPoints); // Init main variables
+    let xLength = x.length;
+    let step = (to - from) / (numberOfPoints - 1);
+    let halfStep = step / 2;
+    let lastStep = x[x.length - 1] - x[x.length - 2];
+    let start = from - halfStep;
+    let output = new Array(numberOfPoints); // Init main variables
 
-    var min = start;
-    var max = start + step;
-    var previousX = -Number.MAX_VALUE;
-    var previousY = 0;
-    var nextX = x[0];
-    var nextY = y[0];
-    var frontOutsideSpectra = 0;
-    var backOutsideSpectra = true;
-    var currentValue = 0; // for slot algorithm
+    let min = start;
+    let max = start + step;
+    let previousX = -Number.MAX_VALUE;
+    let previousY = 0;
+    let nextX = x[0];
+    let nextY = y[0];
+    let frontOutsideSpectra = 0;
+    let backOutsideSpectra = true;
+    let currentValue = 0; // for slot algorithm
 
-    var currentPoints = 0;
-    var i = 1; // index of input
+    let currentPoints = 0;
+    let i = 1; // index of input
 
-    var j = 0; // index of output
+    let j = 0; // index of output
 
     main: while (true) {
       if (previousX >= nextX) throw new Error('x must be an increasing serie');
@@ -17062,79 +19892,6 @@
     return output;
   }
 
-  function getZones(from, to, numberOfPoints) {
-    let exclusions = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : [];
-
-    if (from > to) {
-      [from, to] = [to, from];
-    } // in exclusions from and to have to be defined
-
-
-    exclusions = exclusions.filter(exclusion => exclusion.from !== undefined && exclusion.to !== undefined);
-    exclusions = JSON.parse(JSON.stringify(exclusions)); // we ensure that from before to
-
-    exclusions.forEach(exclusion => {
-      if (exclusion.from > exclusion.to) {
-        [exclusion.to, exclusion.from] = [exclusion.from, exclusion.to];
-      }
-    });
-    exclusions.sort((a, b) => a.from - b.from); // we will rework the exclusions in order to remove overlap and outside range (from / to)
-
-    exclusions.forEach(exclusion => {
-      if (exclusion.from < from) exclusion.from = from;
-      if (exclusion.to > to) exclusion.to = to;
-    });
-
-    for (let i = 0; i < exclusions.length - 1; i++) {
-      if (exclusions[i].to > exclusions[i + 1].from) {
-        exclusions[i].to = exclusions[i + 1].from;
-      }
-    }
-
-    exclusions = exclusions.filter(exclusion => exclusion.from < exclusion.to);
-
-    if (!exclusions || exclusions.length === 0) {
-      return [{
-        from,
-        to,
-        numberOfPoints
-      }];
-    } // need to deal with overlapping exclusions and out of bound exclusions
-
-
-    let toRemove = exclusions.reduce((previous, exclusion) => previous += exclusion.to - exclusion.from, 0);
-    let total = to - from;
-    let unitsPerPoint = (total - toRemove) / numberOfPoints;
-    let zones = [];
-    let currentFrom = from;
-    let totalPoints = 0;
-
-    for (let exclusion of exclusions) {
-      let currentNbPoints = Math.round((exclusion.from - currentFrom) / unitsPerPoint);
-      totalPoints += currentNbPoints;
-
-      if (currentNbPoints > 0) {
-        zones.push({
-          from: currentFrom,
-          to: exclusion.from,
-          numberOfPoints: currentNbPoints
-        });
-      }
-
-      currentFrom = exclusion.to;
-    }
-
-    if (numberOfPoints - totalPoints > 0) {
-      zones.push({
-        from: currentFrom,
-        to: to,
-        numberOfPoints: numberOfPoints - totalPoints
-      });
-    }
-
-    return zones;
-  }
-
   /**
    * Function that returns a Number array of equally spaced numberOfPoints
    * containing a representation of intensities of the spectra arguments x
@@ -17151,6 +19908,7 @@
    * value. The smooth variant is the same but takes the integral of the range
    * of the slot and divide by the step size between two points in the new array.
    *
+   * If exclusions zone are present, zones are ignored !
    * @param {object} [arrayXY={}] - object containing 2 properties x and y (both an array)
    * @param {object} [options={}]
    * @param {number} [options.from=x[0]]
@@ -17158,12 +19916,11 @@
    * @param {string} [options.variant='smooth']
    * @param {number} [options.numberOfPoints=100]
    * @param {Array} [options.exclusions=[]] array of from / to that should be skipped for the generation of the points
+   * @param {Array} [options.zones=[]] array of from / to that should be kept
    * @return {object<x: Array, y:Array>} new object with x / y array with the equally spaced data.
    */
 
-  function equallySpaced() {
-    let arrayXY = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  function equallySpaced(arrayXY = {}, options = {}) {
     let {
       x,
       y
@@ -17182,7 +19939,8 @@
       to = x[xLength - 1],
       variant = 'smooth',
       numberOfPoints = 100,
-      exclusions = []
+      exclusions = [],
+      zones = []
     } = options;
 
     if (xLength !== y.length) {
@@ -17205,7 +19963,17 @@
       throw new RangeError("'numberOfPoints' option must be greater than 1");
     }
 
-    let zones = getZones(from, to, numberOfPoints, exclusions);
+    if (zones.length === 0) {
+      zones = invert(exclusions, {
+        from,
+        to
+      });
+    }
+
+    zones = zonesWithPoints(zones, numberOfPoints, {
+      from,
+      to
+    });
     let xResult = [];
     let yResult = [];
 
@@ -17247,7 +20015,7 @@
       throw new RangeError('the number of points must be at least 1');
     }
 
-    var output = variant === 'slot' ? equallySpacedSlot(x, y, from, to, numberOfPoints) : equallySpacedSmooth(x, y, from, to, numberOfPoints);
+    let output = variant === 'slot' ? equallySpacedSlot(x, y, from, to, numberOfPoints) : equallySpacedSmooth(x, y, from, to, numberOfPoints);
     return {
       x: sequentialFill({
         from,
@@ -17258,9 +20026,7 @@
     };
   }
 
-  function getZones$1(from, to) {
-    let exclusions = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
-
+  function getZones(from, to, exclusions = []) {
     if (from > to) {
       [from, to] = [to, from];
     } // in exclusions from and to have to be defined
@@ -17332,8 +20098,7 @@
    * @return {{x: Array<number>, y: Array<number>}}
    */
 
-  function filterX(points) {
-    let options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+  function filterX(points, options = {}) {
     const {
       x,
       y
@@ -17343,7 +20108,7 @@
       to = x[x.length - 1],
       exclusions = []
     } = options;
-    let zones = getZones$1(from, to, exclusions);
+    let zones = getZones(from, to, exclusions);
     let currentZoneIndex = 0;
     let newX = [];
     let newY = [];
@@ -17378,8 +20143,8 @@
     QrDecomposition: QrDecomposition$1
   } = MatrixLib;
   const Array$1 = {
-    min,
-    max,
+    min: min$1,
+    max: max$1,
     median,
     mean,
     mode: mode$1,
@@ -17405,17 +20170,18 @@
 
   exports.Array = Array$1;
   exports.ArrayXY = ArrayXY;
-  exports.BitArray = src$7;
+  exports.BitArray = src$3;
   exports.CholeskyDecomposition = CholeskyDecomposition$1;
-  exports.ConfusionMatrix = src$1;
-  exports.CrossValidation = src$3;
+  exports.ConfusionMatrix = ConfusionMatrix;
+  exports.CrossValidation = index$2;
   exports.DecisionTreeClassifier = DecisionTreeClassifier;
   exports.DecisionTreeRegression = DecisionTreeRegression;
   exports.Distance = distances;
   exports.EVD = EVD;
   exports.ExponentialRegression = ExponentialRegression;
-  exports.FCNNLS = index$2;
+  exports.FCNNLS = index$3;
   exports.FNN = FeedForwardNeuralNetwork;
+  exports.GSD = index$6;
   exports.HClust = index;
   exports.HashTable = HashTable;
   exports.KMeans = kmeans;
@@ -17427,9 +20193,11 @@
   exports.MatrixLib = MatrixLib;
   exports.MultivariateLinearRegression = MultivariateLinearRegression;
   exports.NaiveBayes = index$1;
+  exports.OPLS = OPLS;
+  exports.OPLSNipals = OPLSNipals;
   exports.PCA = PCA;
   exports.PLS = PLS;
-  exports.Performance = src$5;
+  exports.Performance = src$1;
   exports.PolynomialRegression = PolynomialRegression;
   exports.PowerRegression = PowerRegression;
   exports.QrDecomposition = QrDecomposition$1;
@@ -17437,7 +20205,7 @@
   exports.RandomForestClassifier = RandomForestClassifier;
   exports.RandomForestRegression = RandomForestRegression;
   exports.RobustPolynomialRegression = RobustPolynomialRegression;
-  exports.SOM = src$4;
+  exports.SOM = src;
   exports.SVD = SVD;
   exports.Similarity = similarities;
   exports.SimpleLinearRegression = SimpleLinearRegression;
@@ -17447,11 +20215,11 @@
   exports.binarySearch = binarySearch;
   exports.distanceMatrix = distanceMatrix;
   exports.levenbergMarquardt = levenbergMarquardt;
-  exports.numSort = index$3;
-  exports.padArray = src$6;
+  exports.numSort = index$4;
+  exports.padArray = src$2;
   exports.savitzkyGolay = savitzkyGolay;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-}));
+})));
 //# sourceMappingURL=ml.js.map
