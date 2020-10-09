@@ -1,6 +1,6 @@
 /**
  * ml - Machine learning tools
- * @version v5.2.0
+ * @version v5.3.0
  * @link https://github.com/mljs/ml
  * @license MIT
  */
@@ -16904,6 +16904,510 @@ ${indent}columns: ${matrix.columns}
     tanimoto: tanimoto
   });
 
+  function zeroInsteadOfNegative(X) {
+    let rows = X.rows;
+    let columns = X.columns;
+    let newMatrix = new Matrix(X);
+
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < columns; c++) {
+        if (newMatrix.get(r, c) < 0) {
+          newMatrix.set(r, c, 0);
+        }
+      }
+    }
+
+    return newMatrix;
+  }
+
+  function checkMatrixS(data, originalMatrix) {
+    let {
+      A,
+      S
+    } = data; //check if is there at least one element cero
+
+    let indices = [];
+    let sum = S.sum('row');
+
+    for (let i = 0; i < sum.length; i++) {
+      if (sum[i] === 0) {
+        indices.push(i);
+        continue;
+      } else {
+        for (let j = 0; j < S.columns; j++) {
+          if (isNaN(S.get(i, j))) {
+            indices.push(i);
+            break;
+          }
+        }
+      }
+    } // if there than just one zero or NaN element
+    // run a NMF with the residual matrix Y - A*B
+
+
+    if (indices.length > 0) {
+      let temp = fastExtractNMF(originalMatrix.clone().subM(A.mmul(S)), indices.length);
+
+      for (let i = 0; i < indices.length; i++) {
+        for (let j = 0; j < S.columns; j++) {
+          S.set(indices[i], j, temp.S.get(i, j));
+        }
+
+        for (let j = 0; j < A.rows; j++) {
+          A.set(j, indices[i], temp.A.get(j, i));
+        }
+      }
+    }
+
+    return Object.assign({}, data, {
+      A,
+      S
+    });
+  }
+
+  function fastExtractNMF(residual, r) {
+    if (r <= 0) return {
+      A: [],
+      S: []
+    };
+    const {
+      columns,
+      rows
+    } = residual;
+    let A = Matrix.zeros(rows, r);
+    let S = Matrix.zeros(r, columns);
+
+    for (let i = 0; i < r; i++) {
+      residual = zeroInsteadOfNegative(residual);
+      if (residual.sum() === 0) continue;
+      let res2 = Matrix.pow(residual, 2).sum('column'); //find the max of the first column
+
+      let maxIndex = 0;
+
+      for (let j = 1; j < res2.length; j++) {
+        if (res2[maxIndex] < res2[j]) maxIndex = j;
+      }
+
+      if (res2[maxIndex] > 0) {
+        let sqrtMaxValue = Math.sqrt(res2[maxIndex]);
+
+        for (let j = 0; j < rows; j++) {
+          let value = residual.get(j, maxIndex) / sqrtMaxValue;
+          A.set(j, i, value);
+        }
+
+        let temp = A.getColumnVector(i).transpose().mmul(residual);
+
+        for (let j = 0; j < columns; j++) {
+          S.set(i, j, Math.max(temp.get(0, j), 0));
+        }
+
+        let subtracting = A.getColumnVector(i).mmul(S.getRowVector(i));
+        residual = residual.sub(subtracting);
+      }
+    }
+
+    return {
+      A,
+      S
+    };
+  }
+
+  function normBy(x, by = 'column') {
+    let norms = Matrix.mul(x, x).sum(by);
+    let length = norms.length;
+
+    for (let i = 0; i < length; i++) {
+      norms[i] = Math.sqrt(norms[i]);
+    }
+
+    return by === 'row' ? Matrix.from1DArray(length, 1, norms) : Matrix.from1DArray(1, length, norms);
+  }
+
+  function normProj(X, normLimits) {
+    let norms;
+    let r = X.rows;
+    let c = X.columns;
+
+    if (normLimits.rows === r) {
+      norms = normBy(X, 'row'); //select rows with norm > 0 then multiply twise by the min
+
+      for (let i = 0; i < r; i++) {
+        if (norms.get(i, 0) <= 0) continue;
+
+        for (let j = 0; j < c; j++) {
+          let value = X.get(i, j) * Math.min(norms.get(i, 0), normLimits.get(i, 0) / norms.get(i, 0));
+          X.set(i, j, value);
+        }
+      }
+    } else {
+      norms = normBy(X, 'column');
+
+      for (let i = 0; i < c; i++) {
+        if (norms.get(0, i) <= 0) continue;
+
+        for (let j = 0; j < r; j++) {
+          let value = X.get(j, i) * Math.min(norms.get(0, i), normLimits.get(0, i) / norms.get(0, i));
+          X.set(j, i, value);
+        }
+      }
+    }
+
+    return X;
+  }
+
+  function updateMatrixA(Ainit, S, originalMatrix, options) {
+    let {
+      maxFBIteration,
+      toleranceFB,
+      normConstrained = false,
+      lambda
+    } = options;
+    let St = S.transpose();
+    let H = S.mmul(St);
+    let YSt = originalMatrix.mmul(St);
+    let evd = new EigenvalueDecomposition(H, {
+      assumeSymmetric: true
+    });
+    let L = Math.max(...evd.realEigenvalues);
+    let A = Ainit;
+    let prevA = A.clone();
+    let t = 1;
+
+    let gradient = a => a.mmul(H).sub(YSt);
+
+    let proximal;
+
+    if (normConstrained) {
+      let normLimits = normBy(Ainit, 'column');
+
+      proximal = (x, threshold) => normProj(zeroInsteadOfNegative(x.subS(threshold)), normLimits);
+    } else {
+      proximal = (x, threshold) => zeroInsteadOfNegative(x.subS(threshold));
+    }
+
+    for (let i = 0; i < maxFBIteration; i++) {
+      let tNext = (1 + Math.sqrt(1 + 4 * t * t)) / 2;
+      let w = (t - 1) / tNext;
+      t = tNext;
+      let B = Matrix.mul(A, w + 1).sub(Matrix.mul(prevA, w));
+      prevA = A.clone();
+      A = proximal(B.sub(gradient(B).divS(L)), lambda / L);
+
+      if (Matrix.sub(prevA, A).norm() / A.norm() < toleranceFB) {
+        break;
+      }
+    }
+
+    return A;
+  }
+
+  function getMax(array = []) {
+    let max = Number.MIN_SAFE_INTEGER;
+
+    for (let i = 0; i < array.length; i++) {
+      if (max < array[i]) max = array[i];
+    }
+
+    return max;
+  }
+
+  function updateMatrixS(A, Sinit, originalMatrix, lambda, options) {
+    let {
+      maxFBIteration,
+      toleranceFB
+    } = options;
+    let At = A.transpose();
+    let H = At.mmul(A);
+    let AtY = At.mmul(originalMatrix);
+    let evd = new EigenvalueDecomposition(H, {
+      assumeSymmetric: true
+    });
+    let L = getMax(evd.realEigenvalues);
+    let t = 1;
+    let S = Sinit.clone();
+    let prevS = S.clone();
+
+    let gradient = s => H.mmul(s).sub(AtY);
+
+    let proximal = (x, threshold) => zeroInsteadOfNegative(x.subS(threshold));
+
+    for (let i = 0; i < maxFBIteration; i++) {
+      let tNext = (1 + Math.sqrt(1 + 4 * t * t)) / 2;
+      let w = (t - 1) / tNext;
+      t = tNext; // R = S_k + w [S_k - S_(k-1)] = (1 + w) .* S_k - w .* S_(k-1)
+
+      let R = Matrix.mul(S, 1 + w).sub(Matrix.mul(prevS, w));
+      prevS = S.clone();
+      S = proximal(R.sub(gradient(R).divS(L)), lambda / L);
+
+      if (Matrix.sub(prevS, S).norm() / S.norm() < toleranceFB) {
+        break;
+      }
+    }
+
+    return S;
+  }
+
+  function initialize(originalMatrix, options = {}) {
+    const {
+      rank,
+      randGenerator,
+      maxInitFBIteration,
+      toleranceFBInit,
+      maxFBIteration,
+      toleranceFB,
+      normConstrained
+    } = options;
+    let result = {};
+    let rows = originalMatrix.rows;
+    result.A = Matrix.rand(rows, rank, {
+      random: randGenerator
+    });
+
+    for (let iter = 0; iter < maxInitFBIteration; iter++) {
+      //select columns with sum positive from A
+      let sumC = result.A.sum('column');
+
+      for (let i = 0; i < sumC.length; i++) {
+        while (sumC[i] === 0) {
+          sumC[i] = 0;
+
+          for (let j = 0; j < rows; j++) {
+            result.A.set(j, i, randGenerator());
+            sumC[i] += result.A.get(j, i);
+          }
+        }
+      } //resolve the system of equation Lx = D for x, then select just non negative values;
+
+
+      result.S = zeroInsteadOfNegative(solve(result.A, originalMatrix)); //select rows with positive sum by row
+
+      let sumR = result.S.sum('row');
+      let positiveSumRowIndexS = [];
+      let positiveSumRowS = [];
+
+      for (let i = 0; i < sumR.length; i++) {
+        if (sumR[i] > 0) {
+          positiveSumRowIndexS.push(i);
+          positiveSumRowS.push(result.S.getRow(i));
+        }
+      }
+
+      positiveSumRowS = Matrix.checkMatrix(positiveSumRowS); // solve the system of linear equation xL = D for x. knowing that D/L = (L'\D')'.
+
+      let candidateA = zeroInsteadOfNegative(solve(positiveSumRowS.transpose(), originalMatrix.transpose())); //then, set the columns of A with an index equal to the row index with sum > 0 into S
+      //this step complete the last transpose of D/L = (L'\D')'.
+
+      for (let i = 0; i < positiveSumRowIndexS.length; i++) {
+        let colCandidate = candidateA.getRow(i);
+
+        for (let j = 0; j < rows; j++) {
+          result.A.set(j, positiveSumRowIndexS[i], colCandidate[j]);
+        }
+      }
+
+      let prevS = result.S.clone();
+      result.S = updateMatrixS(result.A, result.S, originalMatrix, 0, {
+        maxFBIteration,
+        toleranceFB
+      });
+      result = checkMatrixS(result, originalMatrix);
+      result.A = updateMatrixA(result.A, result.S, originalMatrix, 0);
+
+      if (Matrix.sub(prevS, result.S).norm() / result.S.norm() < toleranceFBInit) {
+        break;
+      }
+    }
+
+    return result;
+  }
+
+  function normalize(data, options) {
+    const {
+      normOnA
+    } = options;
+    let DS = normBy(data.S.transpose(), 'column');
+    let DA = normBy(data.A, 'column');
+    let D = Matrix.mul(DS, DA);
+    let onS, onA;
+
+    if (normOnA) {
+      onS = (index, c) => data.S.get(index, c) * D.get(0, index) / DS.get(0, index);
+
+      onA = (index, r) => data.A.get(r, index) / DA.get(0, index);
+    } else {
+      onS = (index, c) => data.S.get(index, c) / DS.get(0, index);
+
+      onA = (index, r) => data.A.get(r, index) * D.get(0, index) / DA.get(0, index);
+    }
+
+    const sColumns = data.S.columns;
+    const aRows = data.A.rows;
+
+    for (let index = 0; index < D.columns; index++) {
+      let valueForS, valueForA;
+
+      if (D.get(0, index) > 0) {
+        valueForS = onS;
+        valueForA = onA;
+      } else {
+        valueForA = () => 0;
+
+        valueForS = () => 0;
+      }
+
+      for (let c = 0; c < sColumns; c++) {
+        data.S.set(index, c, valueForS(index, c));
+      }
+
+      for (let r = 0; r < aRows; r++) {
+        data.A.set(r, index, valueForA(index, r));
+      }
+    }
+
+    return data;
+  }
+
+  function getMedians(X, by) {
+    let medians = [];
+    let rows = X.rows;
+    let columns = X.columns;
+
+    switch (by) {
+      case 'column':
+        for (let i = 0; i < columns; i++) {
+          medians.push(medianQuickselect_min(X.getColumn(i)));
+        }
+
+        medians = Matrix.from1DArray(1, columns, medians);
+        break;
+
+      default:
+        for (let i = 0; i < rows; i++) {
+          medians.push(medianQuickselect_min(X.getRow(i)));
+        }
+
+        medians = Matrix.from1DArray(rows, 1, medians);
+    }
+
+    return medians;
+  }
+
+  function dimMADstd(X, by) {
+    let medians = getMedians(X, by);
+    let matrix = X.clone();
+    matrix = by === 'column' ? matrix.subRowVector(medians.to1DArray()) : matrix.subColumnVector(medians.to1DArray());
+    return Matrix.mul(getMedians(matrix.abs(), by), 1.4826);
+  }
+
+  function updateLambda(data, originalMatrix, options = {}) {
+    let {
+      refinementBeginning,
+      tauMAD
+    } = options;
+    let {
+      iteration,
+      lambda,
+      A,
+      S
+    } = data;
+    if (refinementBeginning <= iteration) return lambda;
+    let sigmaResidue;
+
+    if (options.lambdaInf !== undefined) {
+      sigmaResidue = options.lambdaInf / options.tauMAD;
+    } else if (options.addStd !== undefined) {
+      sigmaResidue = options.addStd;
+    } else {
+      let alY = Matrix.sub(originalMatrix, A.mmul(S)).to1DArray();
+      let result = dimMADstd(Matrix.from1DArray(1, alY.length, alY), 'row');
+      sigmaResidue = result.get(0, 0);
+    }
+
+    let nextLambda = Math.max(tauMAD * sigmaResidue, lambda - 1 / (refinementBeginning - iteration));
+    return nextLambda;
+  }
+
+  /**
+   * Performing non-negative matrix factorization solving argmin_(A >= 0, S >= 0) 1 / 2 * ||Y - AS||_2^2 + lambda * ||S||_1
+   * @param {Matrix||Array<Array>} originalMatrix - Matrix to be separated.
+   * @param {Number} rank - The maximum number of linearly independent column/row vectors in the matrix.
+   * @param {Object} [options = {}] - Options of ngmca factorization method.
+   * @param {Number} [options.maximumIteration = 500] - Maximum number of iterations.
+   * @param {Number} [options.maxFBIteration = 80] - Maximum number of iterations of the Forward-Backward subroutine.
+   * @param {Object} [options.randGenerator = Math.random] - Random number generator for the subroutine of initialization.
+   * @param {Number} [options.maxInitFBIteration = 50] - Maximum number of iterations of the Forward-Backward subroutine at the initialization.
+   * @param {Number} [options.toleranceFB = 1e-5] - relative difference tolerance for convergence of the Forward-Backward sub-iterations.
+   * @param {Number} [options.toleranceFBInit = 0] - relative difference tolerance for convergence of the Forward-Backward sub-iterations at the initialization.
+   * @param {Number} [options.phaseRatio = 0.8] - transition between decreasing thresholding phase and refinement phase in percent of the iterations.
+   * @param {Number} [options.tauMAD = 1] - constant coefficient for the final threshold computation.
+   * @param {Boolean} [options.useTranspose = false] - if true the originalMatrix is transposed.
+   */
+
+  function nGMCA(originalMatrix, rank, options = {}) {
+    const {
+      maximumIteration = 500,
+      maxFBIteration = 80,
+      maxInitFBIteration = 50,
+      toleranceFBInit = 0,
+      toleranceFB = 0.00001,
+      phaseRatio = 0.8,
+      randGenerator = Math.random,
+      tauMAD = 1,
+      useTranspose = false
+    } = options;
+    let {
+      normConstrained = false
+    } = options;
+    originalMatrix = Matrix.checkMatrix(originalMatrix);
+    if (useTranspose) originalMatrix = originalMatrix.transpose();
+    let refinementBeginning = Math.floor(phaseRatio * maximumIteration);
+    let data = initialize(originalMatrix, {
+      rank,
+      randGenerator,
+      maxInitFBIteration,
+      toleranceFBInit,
+      maxFBIteration,
+      toleranceFB
+    });
+    data = normalize(data, {
+      normOnA: true
+    });
+    data.lambda = data.A.transpose().mmul(data.A.mmul(data.S).sub(originalMatrix)).abs().max();
+
+    for (let iter = 0; iter < maximumIteration; iter++) {
+      data.iteration = iter;
+      data.S = updateMatrixS(data.A, data.S, originalMatrix, data.lambda, options);
+      data = checkMatrixS(data, originalMatrix);
+      data = normalize(data, {
+        normOnA: false
+      });
+      if (iter > refinementBeginning) normConstrained = true;
+      data.A = updateMatrixA(data.A, data.S, originalMatrix, {
+        maxFBIteration,
+        toleranceFB,
+        normConstrained,
+        lambda: 0
+      });
+      data = normalize(data, {
+        normOnA: true
+      });
+      data.lambda = updateLambda(data, originalMatrix, {
+        refinementBeginning,
+        tauMAD
+      });
+    }
+
+    if (useTranspose) {
+      let temp = data.A.transpose();
+      data.A = data.S.transpose();
+      data.S = temp;
+    }
+
+    return data;
+  }
+
   var acc = pred => {
     const l = pred.cutoffs.length;
     const result = new Array(l);
@@ -19593,7 +20097,7 @@ ${indent}columns: ${matrix.columns}
    * @param {number} [options.from=Number.NEGATIVE_INFINITY] Specify min value of a zone
    * @param {number} [options.to=Number.POSITIVE_INFINITY] Specify max value of a zone
    */
-  function normalize(zones = [], options = {}) {
+  function normalize$1(zones = [], options = {}) {
     if (zones.length === 0) return [];
     let {
       from = Number.NEGATIVE_INFINITY,
@@ -19647,7 +20151,7 @@ ${indent}columns: ${matrix.columns}
       to = Number.POSITIVE_INFINITY
     } = options;
     if (from > to) [from, to] = [to, from];
-    exclusions = normalize(exclusions, {
+    exclusions = normalize$1(exclusions, {
       from,
       to
     });
@@ -19699,7 +20203,7 @@ ${indent}columns: ${matrix.columns}
 
   function zonesWithPoints(zones, numberOfPoints, options = {}) {
     if (zones.length === 0) return zones;
-    zones = normalize(zones, options);
+    zones = normalize$1(zones, options);
     const totalSize = zones.reduce((previous, current) => {
       return previous + (current.to - current.from);
     }, 0);
@@ -20215,6 +20719,7 @@ ${indent}columns: ${matrix.columns}
   exports.binarySearch = binarySearch;
   exports.distanceMatrix = distanceMatrix;
   exports.levenbergMarquardt = levenbergMarquardt;
+  exports.nGMCA = nGMCA;
   exports.numSort = index$4;
   exports.padArray = src$2;
   exports.savitzkyGolay = savitzkyGolay;
