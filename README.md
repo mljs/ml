@@ -70,6 +70,7 @@ It will be available as the global `ML` variable. The package is in UMD format.
 - Similarity functions: [`ML.Similarity`](https://github.com/mljs/distance)
 - Distance matrix: [`ML.distanceMatrix`](https://github.com/mljs/distance-matrix)
 - XORShift-add RNG: [`ML.XSadd`](https://github.com/mljs/xsadd)
+- non-negative Generalized Morphological Component Analysis [`ML.nGMCA`](https://github.com/mljs/nGMCA)
 
 ### [`ML.Array`](https://github.com/mljs/array)
 

@@ -74,6 +74,7 @@
     "ml-levenberg-marquardt": "^2.1.1",
     "ml-matrix": "^6.5.1",
     "ml-naivebayes": "^4.0.0",
+    "ml-ngmca": "^0.1.2",
     "ml-pad-array": "^2.0.0",
     "ml-pca": "^4.0.1",
     "ml-performance": "^0.2.0",

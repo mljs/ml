@@ -1,7 +1,7 @@
 import { DecisionTreeClassifier, DecisionTreeRegression } from "ml-cart";
 import {
   RandomForestClassifier,
-  RandomForestRegression
+  RandomForestRegression,
 } from "ml-random-forest";
 
 // Try to keep this list in the same structure as the README.
@@ -35,7 +35,7 @@ export {
   PowerRegression,
   ExponentialRegression,
   TheilSenRegression,
-  RobustPolynomialRegression
+  RobustPolynomialRegression,
 } from "ml-regression";
 export { DecisionTreeRegression };
 export { RandomForestRegression };
@@ -53,7 +53,7 @@ const {
   EVD,
   CholeskyDecomposition,
   LuDecomposition,
-  QrDecomposition
+  QrDecomposition,
 } = MatrixLib;
 export {
   MatrixLib,
@@ -62,7 +62,7 @@ export {
   EVD,
   CholeskyDecomposition,
   LuDecomposition,
-  QrDecomposition
+  QrDecomposition,
 };
 
 export { SparseMatrix } from "ml-sparse-matrix";
@@ -71,6 +71,7 @@ import { distance, similarity } from "ml-distance";
 export { distance as Distance, similarity as Similarity };
 export { default as distanceMatrix } from "ml-distance-matrix";
 export { default as XSadd } from "ml-xsadd";
+export { nGMCA } from "ml-ngmca";
 
 // Statistics
 export { default as Performance } from "ml-performance";
@@ -111,7 +112,7 @@ export const Array = {
   sequentialFill,
   standardDeviation,
   sum,
-  variance
+  variance,
 };
 
 import centroidsMerge from "ml-array-xy-centroids-merge";
@@ -134,5 +135,5 @@ export const ArrayXY = {
   uniqueX,
   weightedMerge,
   equallySpaced,
-  filterX
+  filterX,
 };
