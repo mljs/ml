@@ -1,0 +1,3 @@
+extends: cheminfo
+parserOptions:
+  sourceType: module
