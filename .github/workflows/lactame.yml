@@ -1,0 +1,29 @@
+name: Deploy build on lactame.com
+
+on:
+  release:
+    types: [published]
+
+env:
+  NODE_VERSION: 14.x
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Get package name
+        run: echo "PACKAGE_NAME=$(jq .name package.json | tr -d '"')" >> $GITHUB_ENV
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Install dependencies
+        run: npm install
+      - name: Build project
+        run: npm run build
+      - name: Deploy to lactame.com
+        uses: zakodium/lactame-action@v1
+        with:
+          token: ${{ secrets.LACTAME_TOKEN }}
+          name: ${{ env.PACKAGE_NAME }}
+          folder: dist
