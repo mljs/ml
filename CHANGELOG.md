@@ -1,3 +1,5 @@
+# Changelog
+
 ## [6.0.0](https://github.com/mljs/ml/compare/v5.3.0...v6.0.0) (2021-06-10)
 
 
