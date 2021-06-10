@@ -1,0 +1,21 @@
+name: Deploy documentation.js on GitHub pages
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build documentation
+        uses: zakodium/documentationjs-action@v1
+      - name: Deploy to GitHub pages
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: docs
+          CLEAN: true
