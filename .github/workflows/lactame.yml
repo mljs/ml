@@ -1,6 +1,7 @@
 name: Deploy build on lactame.com
 
 on:
+  workflow_dispatch:
   release:
     types: [published]
 
