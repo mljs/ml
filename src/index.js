@@ -88,8 +88,6 @@ export { default as BitArray } from 'ml-bit-array';
 export { default as HashTable } from 'ml-hash-table';
 export { default as padArray } from 'ml-pad-array';
 export { default as binarySearch } from 'binary-search';
-import * as numSort from 'num-sort';
-export { numSort };
 export { default as Random } from 'ml-random';
 import * as GSD from 'ml-gsd';
 export { GSD };
