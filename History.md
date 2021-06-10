@@ -1,3 +1,26 @@
+## [6.0.0](https://github.com/mljs/ml/compare/v5.3.0...v6.0.0) (2021-06-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove num-sort package exportation
+* update all dependencies
+* Remove dist from git
+
+### Features
+
+* Remove dist from git ([90392a5](https://github.com/mljs/ml/commit/90392a5dec7e1d75cf73398cdfffc0e91765302f))
+* remove num-sort package exportation ([4b8c47b](https://github.com/mljs/ml/commit/4b8c47b25a903dd06d664afd84d3738bdcbc26ae))
+* update all dependencies ([114d814](https://github.com/mljs/ml/commit/114d81448d47eca961223f2c2f38da297466c238))
+* update and improve GSD ([7222a2c](https://github.com/mljs/ml/commit/7222a2c797dfff0ae1b4777dbbd09c3c41488187))
+
+
+### Bug Fixes
+
+* add missing ml-array-sum package ([d471033](https://github.com/mljs/ml/commit/d471033dc121a50313a2ab8ae0cccdb61f26c113))
+* correct link to lactame.com to v6.0.0 ([65e9ca0](https://github.com/mljs/ml/commit/65e9ca0629dfc6b64ea1b17e8c11273e97fa0656))
+* update dependencies to fix nGMCA ([9b040d0](https://github.com/mljs/ml/commit/9b040d0fa66baca16f3c8fb2ebb2a74eb39f5b46))
+
 <a name="3.5.0"></a>
 # [3.5.0](https://github.com/mljs/ml/compare/v3.4.0...v3.5.0) (2018-08-16)
 
