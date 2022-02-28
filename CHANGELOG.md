@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0](https://www.github.com/mljs/ml/compare/v6.0.0...v6.1.0) (2022-02-28)
+
+
+### Features
+
+* add lactame.com action release ([2547a9a](https://www.github.com/mljs/ml/commit/2547a9a1760582612e3c5a012f5ff977655a3f6c))
+
 ## [6.0.0](https://github.com/mljs/ml/compare/v5.3.0...v6.0.0) (2021-06-10)
 
 
@@ -411,6 +418,3 @@
 
 <a name="0.0.1"></a>
 ## 0.0.1 (2014-10-28)
-
-
-
