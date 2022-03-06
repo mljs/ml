@@ -12,3 +12,4 @@ jobs:
     uses: zakodium/workflows/.github/workflows/nodejs.yml@nodejs-v1
     with:
       node-version-matrix: '[12, 14, 16]'
+      test-setup-command: 'npm run build && node dist/ml.js && node dist/ml.min.js'

@@ -20,7 +20,7 @@ export { default as KMeans } from 'ml-kmeans';
 import * as NaiveBayes from 'ml-naivebayes';
 export { NaiveBayes };
 export { default as KNN } from 'ml-knn';
-export { PLS, KOPLS, OPLS, OPLSNipals } from 'ml-pls';
+export { PLS, KOPLS, OPLS, oplsNipals } from 'ml-pls';
 import * as CrossValidation from 'ml-cross-validation';
 export { CrossValidation };
 export { default as ConfusionMatrix } from 'ml-confusion-matrix';
@@ -45,7 +45,7 @@ export { DecisionTreeRegression };
 export { RandomForestRegression };
 
 // Optimization
-export { default as levenbergMarquardt } from 'ml-levenberg-marquardt';
+export { levenbergMarquardt } from 'ml-levenberg-marquardt';
 import * as FCNNLS from 'ml-fcnnls';
 export { FCNNLS };
 
