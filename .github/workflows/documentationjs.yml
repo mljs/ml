@@ -13,9 +13,9 @@ jobs:
       - name: Build documentation
         uses: zakodium/documentationjs-action@v1
       - name: Deploy to GitHub pages
-        uses: JamesIves/github-pages-deploy-action@releases/v3
+        uses: JamesIves/github-pages-deploy-action@releases/v4
         with:
-          GITHUB_TOKEN: ${{ secrets.BOT_TOKEN }}
-          BRANCH: gh-pages
-          FOLDER: docs
-          CLEAN: true
+          token: ${{ secrets.BOT_TOKEN }}
+          branch: gh-pages
+          folder: docs
+          clean: true
