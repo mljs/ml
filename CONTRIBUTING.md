@@ -99,7 +99,7 @@ parameter is the object returned by an earlier call of `toJSON`.
 
 ## Commit Guidelines
 
-The rules are based on the [AngularJS commit guidelines](https://github.com/angular/angular.js/blob/master/CONTRIBUTING.md#commit). This leads to **more readable messages** that are easy to follow when looking through the **project history**.
+The rules are based on the [AngularJS commit guidelines](https://github.com/angular/angular.js/blob/main/CONTRIBUTING.md#commit). This leads to **more readable messages** that are easy to follow when looking through the **project history**.
 
 ### Commit Message Format
 Each commit message consists of a **header**, a **body** and a **footer**.  The header has a special
