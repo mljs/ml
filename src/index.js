@@ -14,7 +14,8 @@ import {
 export { PCA } from 'ml-pca';
 import * as HClust from 'ml-hclust';
 export { HClust };
-export { default as KMeans } from 'ml-kmeans';
+import * as KMeans from 'ml-kmeans';
+export { KMeans };
 
 // Supervised learning
 import * as NaiveBayes from 'ml-naivebayes';
@@ -23,7 +24,7 @@ export { default as KNN } from 'ml-knn';
 export { PLS, KOPLS, OPLS, oplsNipals } from 'ml-pls';
 import * as CrossValidation from 'ml-cross-validation';
 export { CrossValidation };
-export { default as ConfusionMatrix } from 'ml-confusion-matrix';
+export { ConfusionMatrix } from 'ml-confusion-matrix';
 export { DecisionTreeClassifier };
 export { RandomForestClassifier };
 

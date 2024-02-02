@@ -1,3 +1,5 @@
 extends: cheminfo
 parserOptions:
   sourceType: module
+env:
+  jest: true
