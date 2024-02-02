@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.1](https://github.com/mljs/ml/compare/v7.0.0...v7.0.1) (2024-02-02)
+
+
+### Bug Fixes
+
+* rename rollup to rollup.config.mjs ([c63c278](https://github.com/mljs/ml/commit/c63c2784f84c4909081ae0a2bf2e6b17619f75dd))
+
 ## [7.0.0](https://github.com/mljs/ml/compare/v5.3.0...v7.0.0) (2024-02-02)
 
 
