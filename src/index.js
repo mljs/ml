@@ -2,31 +2,28 @@
 /* eslint-disable import/order */
 /* eslint-disable import/first */
 
-import { DecisionTreeClassifier, DecisionTreeRegression } from 'ml-cart';
-import {
-  RandomForestClassifier,
-  RandomForestRegression,
-} from 'ml-random-forest';
+
+
 
 // Try to keep this list in the same structure as the README.
 
 // Unsupervised learning
 export { PCA } from 'ml-pca';
-import * as HClust from 'ml-hclust';
-export { HClust };
-import * as KMeans from 'ml-kmeans';
-export { KMeans };
+
+
+
+
 
 // Supervised learning
-import * as NaiveBayes from 'ml-naivebayes';
-export { NaiveBayes };
+
+
 export { default as KNN } from 'ml-knn';
 export { PLS, KOPLS, OPLS, oplsNipals } from 'ml-pls';
-import * as CrossValidation from 'ml-cross-validation';
-export { CrossValidation };
+
+
 export { ConfusionMatrix } from 'ml-confusion-matrix';
-export { DecisionTreeClassifier };
-export { RandomForestClassifier };
+
+
 
 // Artificial neural networks
 export { default as FNN } from 'ml-fnn';
@@ -42,13 +39,13 @@ export {
   TheilSenRegression,
   RobustPolynomialRegression,
 } from 'ml-regression';
-export { DecisionTreeRegression };
-export { RandomForestRegression };
+
+
 
 // Optimization
 export { levenbergMarquardt } from 'ml-levenberg-marquardt';
-import * as FCNNLS from 'ml-fcnnls';
-export { FCNNLS };
+
+
 
 // Math
 import * as MatrixLib from 'ml-matrix';
@@ -61,7 +58,7 @@ const {
   QrDecomposition,
 } = MatrixLib;
 export {
-  MatrixLib,
+
   Matrix,
   SVD,
   EVD,
@@ -72,8 +69,7 @@ export {
 
 export { SparseMatrix } from 'ml-sparse-matrix';
 export { default as Kernel } from 'ml-kernel';
-import { distance, similarity } from 'ml-distance';
-export { distance as Distance, similarity as Similarity };
+export { distance as Distance, similarity as Similarity } from 'ml-distance';
 export { default as distanceMatrix } from 'ml-distance-matrix';
 export { default as XSadd } from 'ml-xsadd';
 export { nGMCA } from 'ml-ngmca';
@@ -90,8 +86,8 @@ export { default as HashTable } from 'ml-hash-table';
 export { default as padArray } from 'ml-pad-array';
 export { default as binarySearch } from 'binary-search';
 export { default as Random } from 'ml-random';
-import * as GSD from 'ml-gsd';
-export { GSD };
+
+
 
 import min from 'ml-array-min';
 import max from 'ml-array-max';
@@ -140,3 +136,12 @@ export const ArrayXY = {
   equallySpaced,
   filterX,
 };
+export { DecisionTreeClassifier, DecisionTreeRegression } from 'ml-cart';
+export { RandomForestClassifier, RandomForestRegression } from 'ml-random-forest';
+export * as HClust from 'ml-hclust';
+export * as KMeans from 'ml-kmeans';
+export * as NaiveBayes from 'ml-naivebayes';
+export * as CrossValidation from 'ml-cross-validation';
+export * as FCNNLS from 'ml-fcnnls';
+export * as MatrixLib from 'ml-matrix';
+export * as GSD from 'ml-gsd';
