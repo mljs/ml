@@ -2,28 +2,17 @@
 /* eslint-disable import/order */
 /* eslint-disable import/first */
 
-
-
-
 // Try to keep this list in the same structure as the README.
 
 // Unsupervised learning
 export { PCA } from 'ml-pca';
 
-
-
-
-
 // Supervised learning
-
 
 export { default as KNN } from 'ml-knn';
 export { PLS, KOPLS, OPLS, oplsNipals } from 'ml-pls';
 
-
 export { ConfusionMatrix } from 'ml-confusion-matrix';
-
-
 
 // Artificial neural networks
 export { default as FNN } from 'ml-fnn';
@@ -40,12 +29,8 @@ export {
   RobustPolynomialRegression,
 } from 'ml-regression';
 
-
-
 // Optimization
 export { levenbergMarquardt } from 'ml-levenberg-marquardt';
-
-
 
 // Math
 import * as MatrixLib from 'ml-matrix';
@@ -58,7 +43,6 @@ const {
   QrDecomposition,
 } = MatrixLib;
 export {
-
   Matrix,
   SVD,
   EVD,
@@ -86,8 +70,6 @@ export { default as HashTable } from 'ml-hash-table';
 export { default as padArray } from 'ml-pad-array';
 export { default as binarySearch } from 'binary-search';
 export { default as Random } from 'ml-random';
-
-
 
 import min from 'ml-array-min';
 import max from 'ml-array-max';
@@ -137,7 +119,10 @@ export const ArrayXY = {
   filterX,
 };
 export { DecisionTreeClassifier, DecisionTreeRegression } from 'ml-cart';
-export { RandomForestClassifier, RandomForestRegression } from 'ml-random-forest';
+export {
+  RandomForestClassifier,
+  RandomForestRegression,
+} from 'ml-random-forest';
 export * as HClust from 'ml-hclust';
 export * as KMeans from 'ml-kmeans';
 export * as NaiveBayes from 'ml-naivebayes';
