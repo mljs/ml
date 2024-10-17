@@ -1,4 +1,5 @@
-/* eslint-disable import/namespace */
+import { it, describe, expect } from 'vitest';
+
 import * as ML from '..';
 
 describe('Check all properties are defined', () => {
