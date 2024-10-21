@@ -55,7 +55,7 @@ export { SparseMatrix } from 'ml-sparse-matrix';
 export { default as Kernel } from 'ml-kernel';
 export { distance as Distance, similarity as Similarity } from 'ml-distance';
 export { default as distanceMatrix } from 'ml-distance-matrix';
-export { default as XSadd } from 'ml-xsadd';
+export { XSadd } from 'ml-xsadd';
 export { nGMCA } from 'ml-ngmca';
 
 // Statistics
@@ -69,7 +69,7 @@ export { default as BitArray } from 'ml-bit-array';
 export { default as HashTable } from 'ml-hash-table';
 export { default as padArray } from 'ml-pad-array';
 export { default as binarySearch } from 'binary-search';
-export { default as Random } from 'ml-random';
+export { Random } from 'ml-random';
 
 import min from 'ml-array-min';
 import max from 'ml-array-max';

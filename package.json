@@ -6,7 +6,6 @@
   "scripts": {
     "build": "cheminfo-build --root ML",
     "compile": "rollup -c",
-    "dupe": "find-duplicate-dependencies",
     "eslint": "eslint src --cache",
     "eslint-fix": "npm run eslint -- --fix",
     "prepack": "npm run compile",
@@ -86,13 +85,13 @@
     "ml-pca": "^4.1.1",
     "ml-performance": "^0.2.0",
     "ml-pls": "^4.3.2",
-    "ml-random": "^1.0.1",
+    "ml-random": "^2.0.0",
     "ml-random-forest": "^2.1.0",
     "ml-regression": "^6.2.0",
     "ml-savitzky-golay": "^5.0.0",
     "ml-som": "^0.0.6",
     "ml-sparse-matrix": "^2.1.0",
-    "ml-xsadd": "^2.0.0",
+    "ml-xsadd": "^3.0.1",
     "num-sort": "^3.0.0"
   },
   "devDependencies": {
@@ -102,7 +101,6 @@
     "eslint": "^9.12.0",
     "eslint-config-cheminfo": "^12.0.1",
     "esm": "^3.2.25",
-    "find-duplicate-dependencies": "^3.0.0",
     "prettier": "^3.3.3",
     "rollup": "^4.24.0",
     "vitest": "^2.1.3"
