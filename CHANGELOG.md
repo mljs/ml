@@ -1,5 +1,21 @@
 # Changelog
 
+## [8.0.0](https://github.com/mljs/ml/compare/v7.0.0...v8.0.0) (2024-10-21)
+
+
+### ⚠ BREAKING CHANGES
+
+* update dependencies ([#186](https://github.com/mljs/ml/issues/186))
+
+### Features
+
+* update dependencies ([#186](https://github.com/mljs/ml/issues/186)) ([9cf0471](https://github.com/mljs/ml/commit/9cf0471c1c2787b136f6e1ad537fee20abc02a39))
+
+
+### Bug Fixes
+
+* rename rollup to rollup.config.mjs ([c63c278](https://github.com/mljs/ml/commit/c63c2784f84c4909081ae0a2bf2e6b17619f75dd))
+
 ## [7.0.0](https://github.com/mljs/ml/compare/v5.3.0...v7.0.0) (2024-02-02)
 
 
